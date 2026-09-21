@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#020617">
+    <title>Diisoo - Apprendre l'anglais avec le français et le wolof</title>
+    <!-- Tailwind CSS (lien corrigé) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SDK Supabase (lien corrigé) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @keyframes custom-bounce {
+            0%, 100% { transform: scaleY(0.2); }
+            50% { transform: scaleY(1); }
+        }
+        .bar-animate { animation: custom-bounce 0.5s ease-in-out infinite alternate; transform-origin: bottom; }
+        button:focus-visible, input:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) { .bar-animate, .animate-pulse { animation: none; } }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans antialiased text-white">
+
+    <div class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-6 relative overflow-hidden">
+
+        <!-- BANDEAU DE STATUT APIS & RESEAU -->
+        <div id="db-status" class="hidden text-center text-[10px] bg-amber-500/10 text-amber-400 py-1 rounded-md mb-2"></div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 1 : ONBOARDING & CAPTURE DU COMPTE WHATSAPP -->
+        <!-- ======================================================== -->
+        <div id="screen-onboarding" class="flex flex-col justify-between h-full space-y-6 my-auto">
+            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-2"><div class="bg-blue-500 h-full w-1/3"></div></div>
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2"><span class="text-4xl">🎙️</span><h1 class="text-3xl font-black tracking-tight">Diisoo</h1></div>
+                <h2 class="text-xl font-bold text-slate-200">Créer votre profil en ligne</h2>
+                <p class="text-xs text-slate-400">Votre profil sera sauvegardé pour suivre votre progression et vous accompagner dans vos cours.</p>
+            </div>
+
+            <form id="form-onboarding" class="space-y-4" onsubmit="handleOnboarding(event)">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label for="user-firstname" class="text-xs font-semibold text-slate-400 uppercase">Prénom</label>
+                        <input type="text" id="user-firstname" required placeholder="Awa" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label for="user-lastname" class="text-xs font-semibold text-slate-400 uppercase">Nom</label>
+                        <input type="text" id="user-lastname" required placeholder="Ndiaye" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label for="user-phone" class="text-xs font-semibold text-slate-400 uppercase">Numéro WhatsApp</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-3.5 text-sm text-slate-500 font-medium">🇸🇳 +221</span>
+                        <input type="tel" id="user-phone" required inputmode="numeric" autocomplete="tel-national" placeholder="77 123 45 67" class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-20 pr-4 py-3 text-sm font-mono text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <p id="phone-error" class="hidden text-[11px] text-rose-400"></p>
+                </div>
+                <div class="flex items-start space-x-3 pt-2">
+                    <input type="checkbox" id="whatsapp-optin" required class="mt-1 accent-emerald-500 h-4 w-4 rounded border-slate-800 bg-slate-900 text-emerald-500">
+                    <label for="whatsapp-optin" class="text-[11px] text-slate-400 leading-relaxed cursor-pointer select-none">
+                        J'autorise Diisoo à sauvegarder mon profil (prénom, nom, numéro WhatsApp) et à me contacter sur WhatsApp au sujet de mes cours.
+                    </label>
+                </div>
+                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 bg-blue-600 hover:bg-blue-500 font-bold rounded-2xl text-sm transition mt-4 shadow-lg shadow-blue-600/20">S'inscrire & Se connecter</button>
+            </form>
+            <div class="text-center text-[10px] text-slate-600">Sénégal 🇸🇳 · Souveraineté & Inclusion par la voix</div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 2 : LE DASHBOARD CENTRAL (3 PILIERS) -->
+        <!-- ======================================================== -->
+        <div id="screen-dashboard" class="hidden flex flex-col justify-between h-full space-y-6 my-auto">
+            <div class="pt-2 flex justify-between items-center">
+                <h1 class="text-xl font-black">Diisoo <span class="text-blue-500 text-xs px-2 py-0.5 bg-blue-500/10 rounded ml-1 uppercase">Dashboard</span></h1>
+                <span id="welcome-tag" class="text-xs text-slate-400 font-medium"></span>
+            </div>
+
+            <div class="space-y-4 my-auto">
+                <!-- PILIER 1 -->
+                <button onclick="openEnglishMenu()" class="w-full text-left bg-gradient-to-br from-slate-900 to-slate-800 p-4 rounded-2xl border border-slate-800 hover:border-blue-500/30 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">📚</span><h3 class="text-sm font-bold text-slate-100">1. Anglais Général (en français)</h3></div>
+                        <span class="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-medium">Speaking</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Pratiquez l'anglais à voix haute : écouter et répéter, questions, dialogues, et grammaire, sur 6 thèmes de la vie de tous les jours.</p>
+                </button>
+                <!-- PILIER 2 -->
+                <button onclick="openWolofModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-emerald-950/20 p-4 rounded-2xl border border-slate-800 hover:border-emerald-500/30 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">🇸🇳</span><h3 class="text-sm font-bold text-slate-100">2. Anglais Wolof (Vie & Commerce)</h3></div>
+                        <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-medium">6 thèmes</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">6 thèmes de la vie de tous les jours et du commerce, avec le wolof, le français et l'anglais côte à côte. Écoutez, répétez à voix haute, puis testez-vous avec un quiz.</p>
+                </button>
+                <!-- PILIER 3 -->
+                <button onclick="openIeltsHome()" class="w-full text-left bg-gradient-to-br from-slate-900 to-indigo-950/40 p-4 rounded-2xl border border-indigo-900/20 hover:border-indigo-500/40 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-slate-100">3. Simulateur de Test IELTS</h3></div>
+                        <span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Simulation complète du test IELTS Life Skills A1 (Speaking and Listening) : questions de l'examinateur, échange avec un partenaire, écoute et discussion, en 16 à 18 minutes.</p>
+                </button>
+            </div>
+            <div class="space-y-2">
+                <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
+                <button onclick="logout()" class="w-full text-center text-[10px] text-slate-600 hover:text-slate-400 py-1">Changer de profil</button>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 2b : ANGLAIS GÉNÉRAL (QUIZ ÉCRIT) -->
+        <!-- ======================================================== -->
+        <div id="screen-general" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span id="quiz-label" class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">Bases classiques</span>
+                <h3 id="quiz-title" class="text-lg font-bold text-slate-100">Anglais Général</h3>
+                <p id="quiz-progress" class="text-xs text-slate-400 mt-1"></p>
+            </div>
+            <div id="quiz-container" class="space-y-4"></div>
+            <button onclick="changeScreen(quizBack)" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Retour</button>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 2a : MENU ANGLAIS GÉNÉRAL (THÈMES + 4 ACTIVITÉS) -->
+        <!-- ======================================================== -->
+        <div id="screen-english" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">Pratique de l'anglais</span>
+                <h3 class="text-lg font-bold text-slate-100">Anglais Général</h3>
+                <p class="text-xs text-slate-400 mt-1">Choisissez un thème, puis une activité.</p>
+            </div>
+            <div id="en-themes" class="flex flex-wrap gap-2"></div>
+            <p id="en-sr-warning" class="hidden text-[11px] text-amber-400">Pour parler à l'app, ouvrez Diisoo dans Chrome. Sur ce navigateur, vous pouvez seulement écouter.</p>
+            <div class="space-y-3">
+                <button onclick="openSpeaking('repeat')" class="w-full text-left bg-slate-900 p-4 rounded-2xl border border-slate-800 hover:border-blue-500/40 transition">
+                    <p class="text-sm font-bold text-slate-100">🔊 Écouter et répéter</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Écoutez une phrase, puis répétez-la à voix haute. 5 phrases par thème.</p>
+                </button>
+                <button onclick="openSpeaking('questions')" class="w-full text-left bg-slate-900 p-4 rounded-2xl border border-slate-800 hover:border-blue-500/40 transition">
+                    <p class="text-sm font-bold text-slate-100">🎤 Questions à voix haute</p>
+                    <p class="text-[11px] text-slate-400 mt-1">L'app pose une question, vous répondez avec vos propres mots. 5 questions par thème.</p>
+                </button>
+                <button onclick="openSpeaking('dialogue')" class="w-full text-left bg-slate-900 p-4 rounded-2xl border border-slate-800 hover:border-blue-500/40 transition">
+                    <p class="text-sm font-bold text-slate-100">💬 Dialogue</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Un jeu de rôle court : l'app joue l'autre personne, vous répondez.</p>
+                </button>
+                <button onclick="openGeneralModule()" class="w-full text-left bg-slate-900 p-4 rounded-2xl border border-slate-800 hover:border-blue-500/40 transition">
+                    <p class="text-sm font-bold text-slate-100">✏️ Grammaire</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Quiz écrit sur les bases de la grammaire, avec explications en français.</p>
+                </button>
+            </div>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 2b : ACTIVITÉS ORALES (RÉPÉTER, QUESTIONS, DIALOGUE) -->
+        <!-- ======================================================== -->
+        <div id="screen-speaking" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span id="sp-label" class="text-[10px] font-bold tracking-widest text-blue-400 uppercase"></span>
+                <h3 id="sp-title" class="text-lg font-bold text-slate-100"></h3>
+                <p id="sp-progress" class="text-xs text-slate-400 mt-1"></p>
+            </div>
+            <div id="sp-content" class="space-y-4"></div>
+            <button onclick="changeScreen('screen-english')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Retour au menu</button>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 3 : MODULE ANGLAIS WOLOF INTERACTIF (WIKIDATA) -->
+        <!-- ======================================================== -->
+        <div id="screen-wolof" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">Souveraineté Économique</span>
+                <h3 class="text-lg font-bold text-slate-100">Anglais Wolof</h3>
+                <p class="text-xs text-slate-400 mt-1">Écoutez le mot, puis entraînez-vous au micro. La voix wolof est une synthèse approximative, en attendant de vrais enregistrements.</p>
+            </div>
+            <div id="wolof-tabs" class="flex flex-wrap gap-2"></div>
+            <div id="lexicon-container" class="space-y-4 overflow-y-auto max-h-[50vh] pr-1">
+                <!-- Les cartes de vocabulaire sont injectées ici via JS -->
+            </div>
+            <button id="btn-theme-quiz" onclick="openThemeQuiz()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold">Faire le quiz de ce thème</button>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 4 : SIMULATION COMPLÈTE IELTS LIFE SKILLS A1 -->
+        <!-- ======================================================== -->
+        <div id="screen-ielts" class="hidden flex flex-col justify-between h-full min-h-[85vh]">
+            <div class="flex justify-between items-start border-b border-slate-900 pb-3">
+                <div>
+                    <span id="ie-label" class="text-[10px] font-bold text-blue-400 uppercase tracking-wider"></span>
+                    <h3 id="ie-title" class="text-base font-bold text-slate-200"></h3>
+                </div>
+                <div class="text-right">
+                    <div id="ie-timer" class="text-2xl font-mono font-black text-slate-600">--:--</div>
+                    <div id="ie-total" class="text-[10px] text-slate-500"></div>
+                </div>
+            </div>
+            <div id="ie-body" class="flex-1 py-4 space-y-4"></div>
+            <button onclick="quitIelts()" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Quitter le simulateur</button>
+        </div>
+    </div>
+
+<script>
+/* ==========================================================
+   CONFIGURATION SUPABASE
+   Colle ici l'URL du projet et la clé "anon public".
+   Ne mets jamais la clé "service_role" dans ce fichier.
+   Tant que ces valeurs ne sont pas remplies, l'app fonctionne
+   en mode local (profil gardé sur l'appareil).
+   ========================================================== */
+const SUPABASE_URL = "https://jkwtyoefqvafnlqkhium.supabase.co";
+const SUPABASE_KEY = "sb_publishable__lzrlmMaJdFC_kav6DkfEA_UbH6DiTC";
+
+let db = null;
+try {
+    if (SUPABASE_URL.startsWith("https://") && !SUPABASE_KEY.startsWith("COLLE") && window.supabase) {
+        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+} catch (e) { db = null; }
+
+/* ---------- Utilitaires ---------- */
+const $ = (id) => document.getElementById(id);
+const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+function showStatus(msg, type) {
+    const el = $("db-status");
+    el.textContent = msg;
+    el.className = "text-center text-[10px] py-1 rounded-md mb-2 " +
+        (type === "ok" ? "bg-emerald-500/10 text-emerald-400" :
+         type === "error" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400");
+    if (type === "ok") setTimeout(() => el.classList.add("hidden"), 3000);
+}
+
+let testRun = 0;
+let currentStop = null;
+let countdownId = null;
+
+function changeScreen(id) {
+    testRun++;                                   // annule un test en cours
+    if (currentStop) { try { currentStop(); } catch (e) {} currentStop = null; }
+    clearInterval(countdownId);
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    document.querySelectorAll("[id^='screen-']").forEach(s => s.classList.add("hidden"));
+    $(id).classList.remove("hidden");
+    window.scrollTo(0, 0);
+}
+
+/* ---------- Voix : synthèse et reconnaissance ---------- */
+function speak(text, lang, rate, pitch) {
+    return new Promise(resolve => {
+        if (!("speechSynthesis" in window)) return resolve();
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang; u.rate = rate || 0.9; u.pitch = pitch || 1;
+        u.onend = resolve; u.onerror = resolve;
+        speechSynthesis.speak(u);
+    });
+}
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+/* Retourne { promise, stop }. La promesse donne { text, error, unsupported } */
+function startListening(lang, ms, continuous, onText) {
+    let stopFn = () => {};
+    const promise = new Promise(resolve => {
+        if (!SR) {
+            const t = setTimeout(() => resolve({ text: "", unsupported: true }), ms);
+            stopFn = () => { clearTimeout(t); resolve({ text: "", unsupported: true }); };
+            return;
+        }
+        const rec = new SR();
+        rec.lang = lang; rec.continuous = !!continuous; rec.interimResults = true;
+        let finalText = "", interim = "", error = null;
+        const timer = setTimeout(() => { try { rec.stop(); } catch (e) {} }, ms);
+        rec.onresult = (e) => {
+            interim = "";
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                const t = e.results[i][0].transcript;
+                if (e.results[i].isFinal) finalText += t + " "; else interim += t;
+            }
+            if (onText) onText((finalText + interim).trim());
+        };
+        rec.onerror = (e) => { error = e.error; };
+        rec.onend = () => { clearTimeout(timer); resolve({ text: (finalText + interim).trim(), error }); };
+        stopFn = () => { try { rec.stop(); } catch (e) {} };
+        try { rec.start(); } catch (e) { clearTimeout(timer); resolve({ text: "", error: "start-failed" }); }
+    });
+    return { promise, stop: () => stopFn() };
+}
+
+/* ==========================================================
+   ÉCRAN 1 : INSCRIPTION
+   ========================================================== */
+function getProfile() { return store.get("diisoo_profile"); }
+
+async function handleOnboarding(e) {
+    e.preventDefault();
+    const btn = $("btn-submit-onboarding");
+    const err = $("phone-error");
+    err.classList.add("hidden");
+
+    const first = $("user-firstname").value.trim();
+    const last = $("user-lastname").value.trim();
+    const digits = $("user-phone").value.replace(/\D/g, "").replace(/^221/, "");
+
+    if (!/^7[05-8]\d{7}$/.test(digits)) {
+        err.textContent = "Numéro invalide. Exemple : 77 123 45 67 (9 chiffres).";
+        err.classList.remove("hidden");
+        return;
+    }
+
+    const profile = {
+        first_name: first,
+        last_name: last,
+        phone: "+221" + digits,
+        whatsapp_optin: $("whatsapp-optin").checked
+    };
+
+    btn.disabled = true;
+    btn.textContent = "Inscription en cours...";
+
+    if (db) {
+        try {
+            const { error } = await db.from("profiles").insert(profile);
+            if (error && error.code !== "23505") {   // 23505 = numéro déjà inscrit, on continue
+                showStatus("Profil gardé sur cet appareil. Synchronisation impossible pour le moment.", "warn");
+            } else {
+                showStatus("Profil enregistré.", "ok");
+            }
+        } catch (ex) {
+            showStatus("Réseau indisponible. Profil gardé sur cet appareil.", "warn");
+        }
+    } else {
+        showStatus("Mode local : le profil reste sur cet appareil.", "warn");
+    }
+
+    store.set("diisoo_profile", profile);
+    btn.disabled = false;
+    btn.textContent = "S'inscrire & Se connecter";
+    openDashboard();
+}
+
+function updateStreak() {
+    const today = new Date().toISOString().slice(0, 10);
+    const s = store.get("diisoo_streak") || { count: 0, last: null };
+    if (s.last !== today) {
+        const y = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        s.count = (s.last === y) ? s.count + 1 : 1;
+        s.last = today;
+        store.set("diisoo_streak", s);
+    }
+    const n = s.count;
+    $("streak-counter").textContent = "🔥 Série active : " + n + (n > 1 ? " jours" : " jour") + " de révision !";
+}
+
+function openDashboard() {
+    const p = getProfile();
+    $("welcome-tag").textContent = p ? "Bonjour " + p.first_name : "";
+    updateStreak();
+    changeScreen("screen-dashboard");
+}
+
+function logout() {
+    store.del("diisoo_profile");
+    $("form-onboarding").reset();
+    $("whatsapp-optin").checked = false;
+    changeScreen("screen-onboarding");
+}
+
+/* ==========================================================
+   PILIER 1 : ANGLAIS GÉNÉRAL (QUIZ)
+   ========================================================== */
+const QUIZ = [
+    { q: "She ___ a teacher.", o: ["am", "is", "are"], a: 1, why: "Avec he, she, it, on utilise « is »." },
+    { q: "I have two ___.", o: ["brother", "brothers", "brotheres"], a: 1, why: "Le pluriel se forme avec -s : brothers." },
+    { q: "___ you speak English?", o: ["Do", "Does", "Is"], a: 0, why: "Avec you, la question se fait avec « Do »." },
+    { q: "What ___ your name?", o: ["am", "are", "is"], a: 2, why: "« What is your name? » est la forme correcte." },
+    { q: "There ___ a market near my house.", o: ["is", "are", "be"], a: 0, why: "Un seul marché : « There is »." },
+    { q: "How much ___ this bag?", o: ["are", "is", "do"], a: 1, why: "Un seul sac : « How much is this bag? »." },
+    { q: "He ___ to work every day.", o: ["go", "goes", "going"], a: 1, why: "Avec he, le verbe prend -es : goes." },
+    { q: "« Ma voisine » se dit en anglais :", o: ["my neighbour", "my brother", "my teacher"], a: 0, why: "Neighbour = voisin ou voisine." },
+    { q: "Where ___ you from?", o: ["is", "are", "am"], a: 1, why: "Avec you, on utilise « are »." },
+    { q: "I ___ rice every day.", o: ["eat", "eats", "eating"], a: 0, why: "Avec I, le verbe reste à la forme de base : eat." },
+    { q: "This is ___ book.", o: ["I", "my", "me"], a: 1, why: "« my » indique la possession : my book." },
+    { q: "They ___ at the market now.", o: ["is", "am", "are"], a: 2, why: "Avec they, on utilise « are »." }
+];
+let quizIndex = 0, quizScore = 0;
+
+let quizItems = QUIZ;
+let quizBack = "screen-dashboard";
+
+function shuffle(a) {
+    const r = a.slice();
+    for (let i = r.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [r[i], r[j]] = [r[j], r[i]];
+    }
+    return r;
+}
+
+function openGeneralModule() {
+    quizItems = QUIZ; quizBack = "screen-english";
+    quizIndex = 0; quizScore = 0;
+    $("quiz-label").textContent = "Grammaire";
+    $("quiz-title").textContent = "Bases classiques";
+    changeScreen("screen-general");
+    renderQuiz();
+}
+
+/* Quiz d'un thème : 5 questions tirées au hasard parmi les mots du thème */
+function buildThemeQuiz(cat) {
+    const words = LEXICON.filter(w => w.cat === cat);
+    return shuffle(words).slice(0, QUIZ_PER_THEME).map(w => {
+        const others = shuffle(words.filter(x => x.en !== w.en)).slice(0, 2).map(x => x.en);
+        const options = shuffle([w.en].concat(others));
+        return {
+            q: "Que veut dire « " + w.wo + " » en anglais ?",
+            o: options,
+            a: options.indexOf(w.en),
+            why: "« " + w.wo + " » veut dire « " + w.en + " » (" + w.fr + ")."
+        };
+    });
+}
+
+function openThemeQuiz() {
+    if (wolofCat === "wikidata") return;
+    const theme = THEMES.find(t => t.id === wolofCat);
+    quizItems = buildThemeQuiz(wolofCat); quizBack = "screen-wolof";
+    quizIndex = 0; quizScore = 0;
+    $("quiz-label").textContent = "Quiz du thème";
+    $("quiz-title").textContent = theme ? theme.label : "Quiz";
+    changeScreen("screen-general");
+    renderQuiz();
+}
+
+function restartQuiz() {
+    if (quizBack === "screen-wolof") openThemeQuiz(); else openGeneralModule();
+}
+
+function renderQuiz() {
+    const box = $("quiz-container");
+    if (quizIndex >= quizItems.length) {
+        $("quiz-progress").textContent = "Exercice terminé";
+        box.innerHTML = "";
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center space-y-3";
+        const pct = Math.round(quizScore / quizItems.length * 100);
+        card.innerHTML = '<p class="text-3xl font-black text-blue-400">' + quizScore + " / " + quizItems.length + "</p>" +
+            '<p class="text-xs text-slate-400">' + (pct >= 70 ? "Très bien, continuez comme ça." : "Refaites l'exercice pour progresser.") + "</p>" +
+            '<button class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold" onclick="restartQuiz()">Recommencer</button>';
+        box.appendChild(card);
+        return;
+    }
+    const item = quizItems[quizIndex];
+    $("quiz-progress").textContent = "Question " + (quizIndex + 1) + " sur " + quizItems.length;
+    box.innerHTML = "";
+    const q = document.createElement("p");
+    q.className = "text-base font-bold text-slate-100 text-center";
+    q.textContent = item.q;
+    box.appendChild(q);
+    item.o.forEach((opt, i) => {
+        const b = document.createElement("button");
+        b.className = "w-full text-left bg-slate-900 border border-slate-800 hover:border-blue-500/40 rounded-xl px-4 py-3 text-sm transition";
+        b.textContent = opt;
+        b.onclick = () => answerQuiz(i, box);
+        box.appendChild(b);
+    });
+}
+
+function answerQuiz(i, box) {
+    const item = quizItems[quizIndex];
+    const ok = i === item.a;
+    if (ok) quizScore++;
+    box.querySelectorAll("button").forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === item.a) b.className = "w-full text-left bg-emerald-500/10 border border-emerald-500/50 rounded-xl px-4 py-3 text-sm";
+        else if (idx === i) b.className = "w-full text-left bg-rose-500/10 border border-rose-500/50 rounded-xl px-4 py-3 text-sm";
+    });
+    const fb = document.createElement("p");
+    fb.className = "text-xs " + (ok ? "text-emerald-400" : "text-rose-400");
+    fb.textContent = (ok ? "Correct. " : "Pas tout à fait. ") + item.why;
+    box.appendChild(fb);
+    const next = document.createElement("button");
+    next.className = "w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold";
+    next.textContent = quizIndex === quizItems.length - 1 ? "Voir mon score" : "Question suivante";
+    next.onclick = () => { quizIndex++; renderQuiz(); };
+    box.appendChild(next);
+}
+
+/* ==========================================================
+   PILIER 1 : ANGLAIS GÉNÉRAL (menu, activités orales, dialogues)
+   Contenu pilote de niveau A1, sans contractions pour faciliter
+   la reconnaissance vocale. À faire relire par un enseignant.
+   ========================================================== */
+const SPEAK_REPEAT = {
+    salutations: ["Hello, my name is Awa.", "How are you today?", "I am fine, thank you.", "Nice to meet you.", "See you tomorrow."],
+    marche: ["How much is this?", "This is too expensive.", "Can you make it cheaper, please?", "I would like to buy two kilos of rice.", "Here is the money."],
+    famille: ["This is my mother.", "I have two brothers and one sister.", "My father works in a shop.", "My family lives in Senegal.", "She is my best friend."],
+    temps: ["What time is it?", "It is eight o'clock.", "I work every day from Monday to Friday.", "Tomorrow I have an appointment.", "See you in the afternoon."],
+    transport: ["Where is the bus station?", "I want a ticket to Dakar, please.", "How long does the trip take?", "The bus is late.", "Please stop here."],
+    restaurant: ["I would like some water, please.", "What do you have to eat?", "I am hungry.", "The food is very good.", "Can I have the bill, please?"]
+};
+
+const SPEAK_QUESTIONS = {
+    salutations: [
+        { q: "What is your name?", ex: "My name is Awa." },
+        { q: "Where are you from?", ex: "I am from Senegal." },
+        { q: "How are you today?", ex: "I am fine, thank you." },
+        { q: "What do you do?", ex: "I am a shopkeeper." },
+        { q: "Do you speak English?", ex: "Yes, I speak a little English." }
+    ],
+    marche: [
+        { q: "What do you buy at the market?", ex: "I buy vegetables and fish at the market." },
+        { q: "How much is a kilo of rice?", ex: "A kilo of rice is about six hundred francs." },
+        { q: "Do you like the market?", ex: "Yes, I like the market. It is very busy." },
+        { q: "Who goes to the market in your family?", ex: "My mother goes to the market every Saturday." },
+        { q: "What do you say to lower a price?", ex: "I say, can you make it cheaper, please?" }
+    ],
+    famille: [
+        { q: "How many people are in your family?", ex: "There are six people in my family." },
+        { q: "Do you have brothers or sisters?", ex: "I have two brothers and one sister." },
+        { q: "What does your mother do?", ex: "My mother is a nurse." },
+        { q: "Where does your family live?", ex: "My family lives in Senegal." },
+        { q: "Who is your best friend?", ex: "My best friend is called Fatou." }
+    ],
+    temps: [
+        { q: "What time do you wake up?", ex: "I wake up at six o'clock." },
+        { q: "What do you do in the morning?", ex: "In the morning I go to work." },
+        { q: "What day is it today?", ex: "Today is Monday." },
+        { q: "What are you doing tomorrow?", ex: "Tomorrow I am going to the market." },
+        { q: "When do you go to bed?", ex: "I go to bed at ten o'clock." }
+    ],
+    transport: [
+        { q: "How do you go to work?", ex: "I go to work by bus." },
+        { q: "Do you like travelling?", ex: "Yes, I like travelling." },
+        { q: "Where do you want to travel?", ex: "I want to travel to Dakar." },
+        { q: "How long is the trip from your house to the market?", ex: "It takes twenty minutes." },
+        { q: "Do you have a car?", ex: "No, I do not have a car." }
+    ],
+    restaurant: [
+        { q: "What is your favourite food?", ex: "My favourite food is rice with fish." },
+        { q: "What do you drink in the morning?", ex: "I drink tea in the morning." },
+        { q: "Do you cook at home?", ex: "Yes, I cook every day." },
+        { q: "What do you eat for lunch?", ex: "I eat rice and fish for lunch." },
+        { q: "Are you hungry now?", ex: "Yes, I am hungry." }
+    ]
+};
+
+const SPEAK_DIALOGUES = {
+    salutations: { title: "Rencontrer quelqu'un", setting: "Vous rencontrez une personne pour la première fois.", turns: [
+        { a: "Hello! How are you?", y: "I am fine, thank you. And you?", fr: "Je vais bien, merci. Et vous ?" },
+        { a: "I am fine too. What is your name?", y: "My name is Awa. Nice to meet you.", fr: "Je m'appelle Awa. Enchanté(e)." },
+        { a: "Nice to meet you. Where are you from?", y: "I am from Senegal.", fr: "Je viens du Sénégal." },
+        { a: "Great! See you soon.", y: "See you tomorrow. Goodbye.", fr: "À demain. Au revoir." }
+    ] },
+    marche: { title: "Au marché", setting: "Vous achetez du riz à une vendeuse.", turns: [
+        { a: "Hello! What would you like?", y: "I would like some rice, please.", fr: "Je voudrais du riz, s'il vous plaît." },
+        { a: "How many kilos do you want?", y: "I want two kilos.", fr: "Je veux deux kilos." },
+        { a: "That is one thousand francs.", y: "It is too expensive. Can you make it cheaper?", fr: "C'est trop cher. Pouvez-vous baisser le prix ?" },
+        { a: "Okay, eight hundred francs.", y: "Thank you. Here is the money.", fr: "Merci. Voici l'argent." }
+    ] },
+    famille: { title: "Parler de sa famille", setting: "Une collègue vous pose des questions sur votre famille.", turns: [
+        { a: "Tell me about your family. Do you have children?", y: "Yes, I have two children.", fr: "Oui, j'ai deux enfants." },
+        { a: "That is nice. How old are they?", y: "My son is five and my daughter is eight.", fr: "Mon fils a cinq ans et ma fille huit ans." },
+        { a: "Do you live with your parents?", y: "No, I live with my family.", fr: "Non, je vis avec ma famille." },
+        { a: "Thank you for sharing. Have a good day!", y: "Thank you. You too.", fr: "Merci. Vous aussi." }
+    ] },
+    temps: { title: "Prendre rendez-vous", setting: "Vous appelez pour prendre un rendez-vous.", turns: [
+        { a: "Hello, how can I help you?", y: "I would like to make an appointment.", fr: "Je voudrais prendre rendez-vous." },
+        { a: "What day is good for you?", y: "Tomorrow, if possible.", fr: "Demain, si possible." },
+        { a: "We have a free time at ten o'clock.", y: "Ten o'clock is perfect.", fr: "Dix heures, c'est parfait." },
+        { a: "Great, see you tomorrow at ten.", y: "Thank you. See you tomorrow.", fr: "Merci. À demain." }
+    ] },
+    transport: { title: "À la gare routière", setting: "Vous achetez un billet de bus pour Dakar.", turns: [
+        { a: "Good morning. Where do you want to go?", y: "I want a ticket to Dakar, please.", fr: "Je voudrais un billet pour Dakar, s'il vous plaît." },
+        { a: "The bus leaves at nine o'clock.", y: "How long does the trip take?", fr: "Combien de temps dure le voyage ?" },
+        { a: "It takes about two hours.", y: "How much is the ticket?", fr: "Combien coûte le billet ?" },
+        { a: "The ticket is three thousand francs.", y: "Here is the money. Thank you.", fr: "Voici l'argent. Merci." }
+    ] },
+    restaurant: { title: "Au restaurant", setting: "Vous commandez un repas.", turns: [
+        { a: "Welcome! What would you like to eat?", y: "I would like rice with fish, please.", fr: "Je voudrais du riz au poisson, s'il vous plaît." },
+        { a: "And what would you like to drink?", y: "Water, please.", fr: "De l'eau, s'il vous plaît." },
+        { a: "Here is your food. Enjoy your meal!", y: "Thank you. The food is very good.", fr: "Merci. Le plat est très bon." },
+        { a: "Do you want anything else?", y: "No, thank you. The bill, please.", fr: "Non merci. L'addition, s'il vous plaît." }
+    ] }
+};
+
+const BTN_PRIMARY = "w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold";
+const BTN_SECOND = "w-full py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold";
+
+let spTheme = "salutations", spMode = null, spItems = [], spIndex = 0, spScore = 0, spBusy = false;
+
+function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+}
+
+/* Chiffres reconnus par le navigateur ("10") convertis en mots ("ten") */
+const ONES = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+function numToWords(n) {
+    if (n < 20) return ONES[n];
+    if (n < 100) return TENS[Math.floor(n / 10)] + (n % 10 ? " " + ONES[n % 10] : "");
+    if (n < 1000) return ONES[Math.floor(n / 100)] + " hundred" + (n % 100 ? " " + numToWords(n % 100) : "");
+    if (n < 10000) return numToWords(Math.floor(n / 1000)) + " thousand" + (n % 1000 ? " " + numToWords(n % 1000) : "");
+    return String(n);
+}
+function speechWords(text) {
+    const t = String(text || "").replace(/\d+/g, m => " " + numToWords(parseInt(m, 10)) + " ");
+    return normalize(t).split(" ").filter(Boolean);
+}
+function scoreSpeech(target, heardRaw) {
+    const t = normalize(target).split(" ").filter(Boolean);
+    const pool = speechWords(heardRaw);
+    const missing = [];
+    let hit = 0;
+    t.forEach(w => {
+        const i = pool.indexOf(w);
+        if (i >= 0) { hit++; pool.splice(i, 1); } else missing.push(w);
+    });
+    return { score: t.length ? hit / t.length : 0, missing: missing };
+}
+
+function evaluateSpeech(r, target) {
+    if (r.error === "not-allowed" || r.error === "service-not-allowed") return { kind: "blocked" };
+    if (!r.text) return { kind: "empty" };
+    if (target === null) {
+        const n = speechWords(r.text).length;
+        return { kind: "free", ok: n >= 3, text: r.text };
+    }
+    const sc = scoreSpeech(target, r.text);
+    const need = spMode === "dialogue" ? 0.6 : 0.7;
+    return { kind: "match", ok: sc.score >= need, great: sc.score >= 0.85, text: r.text, missing: sc.missing };
+}
+
+function renderFeedback(res, out, item) {
+    res.innerHTML = "";
+    if (out.kind === "blocked") { res.appendChild(el("p", "text-amber-400", "Micro bloqué. Autorisez le micro dans Chrome, puis réessayez.")); return; }
+    if (out.kind === "empty") { res.appendChild(el("p", "text-amber-400", "Rien entendu. Rapprochez-vous du micro et réessayez.")); return; }
+    res.appendChild(el("p", "text-slate-400 italic", "J'ai entendu : « " + out.text + " »"));
+    if (out.kind === "free") {
+        res.appendChild(el("p", out.ok ? "text-emerald-400" : "text-amber-400", out.ok ? "✅ Bien, vous avez répondu par une phrase." : "Essayez une phrase complète, avec au moins trois mots."));
+        if (item && item.ex) {
+            res.appendChild(el("p", "text-xs text-slate-400", "Exemple : " + item.ex));
+            const hear = el("button", "mt-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold", "🔊 Écouter l'exemple");
+            hear.onclick = () => speak(item.ex, "en-GB", 0.85);
+            res.appendChild(hear);
+        }
+        return;
+    }
+    res.appendChild(el("p", out.ok ? "text-emerald-400" : "text-amber-400",
+        out.great ? "✅ Très bien !" : out.ok ? "👍 Bien, c'est compris." : "🔁 Pas tout à fait. Écoutez le modèle et réessayez."));
+    if (!out.ok && out.missing.length) res.appendChild(el("p", "text-xs text-slate-500", "Mots à retravailler : " + out.missing.join(", ")));
+}
+
+function openEnglishMenu() {
+    changeScreen("screen-english");
+    $("en-sr-warning").classList.toggle("hidden", !!SR);
+    renderEnglishThemes();
+}
+
+function renderEnglishThemes() {
+    const box = $("en-themes");
+    box.innerHTML = "";
+    THEMES.forEach(t => {
+        const b = el("button", "px-3 py-2 rounded-xl text-xs font-bold transition " +
+            (t.id === spTheme ? "bg-blue-600 text-white" : "bg-slate-900 text-slate-400"), t.icon + " " + t.label);
+        b.onclick = () => { spTheme = t.id; renderEnglishThemes(); };
+        box.appendChild(b);
+    });
+}
+
+function openSpeaking(mode) {
+    spMode = mode; spIndex = 0; spScore = 0; spBusy = false;
+    const th = THEMES.find(t => t.id === spTheme);
+    if (mode === "repeat") spItems = SPEAK_REPEAT[spTheme];
+    else if (mode === "questions") spItems = SPEAK_QUESTIONS[spTheme];
+    else spItems = SPEAK_DIALOGUES[spTheme].turns;
+    changeScreen("screen-speaking");
+    $("sp-label").textContent = mode === "repeat" ? "Écouter et répéter" : mode === "questions" ? "Questions à voix haute" : "Dialogue";
+    $("sp-title").textContent = mode === "dialogue" ? SPEAK_DIALOGUES[spTheme].title : th.icon + " " + th.label;
+    renderSpeaking();
+}
+
+function renderSpeakingEnd(box) {
+    $("sp-progress").textContent = "Activité terminée";
+    const total = spItems.length;
+    const card = el("div", "bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center space-y-3");
+    card.appendChild(el("p", "text-3xl font-black text-blue-400", spScore + " / " + total));
+    card.appendChild(el("p", "text-xs text-slate-400",
+        spMode === "repeat" ? "phrases bien répétées" : spMode === "questions" ? "réponses en phrase complète" : "répliques réussies"));
+    card.appendChild(el("p", "text-xs text-slate-400", spScore / total >= 0.7 ? "Très bien, continuez comme ça." : "Refaites l'activité pour progresser."));
+    const again = el("button", BTN_PRIMARY, "Recommencer");
+    again.onclick = () => openSpeaking(spMode);
+    card.appendChild(again);
+    box.appendChild(card);
+}
+
+function renderSpeaking() {
+    const box = $("sp-content");
+    box.innerHTML = "";
+    if (spIndex >= spItems.length) { renderSpeakingEnd(box); return; }
+    const total = spItems.length;
+    const isDialogue = spMode === "dialogue";
+    const item = spItems[spIndex];
+    $("sp-progress").textContent = (spMode === "questions" ? "Question " : isDialogue ? "Réplique " : "Phrase ") + (spIndex + 1) + " sur " + total;
+
+    // Ce que l'app affiche et ce que l'apprenant doit dire
+    let target = null;
+    if (isDialogue) {
+        if (spIndex === 0) box.appendChild(el("p", "text-xs text-slate-500 text-center", SPEAK_DIALOGUES[spTheme].setting));
+        if (spIndex > 0) {
+            const prev = spItems[spIndex - 1];
+            box.appendChild(el("p", "text-xs text-slate-500", "🗣️ " + prev.a));
+            box.appendChild(el("p", "text-xs text-slate-500 text-right", "🙋 " + prev.y));
+        }
+        box.appendChild(el("p", "bg-slate-900 border border-slate-800 rounded-2xl p-3 text-sm text-slate-100", "🗣️ " + item.a));
+        box.appendChild(el("p", "text-xs text-slate-400 text-center", "Vous répondez :"));
+        box.appendChild(el("p", "text-lg font-bold text-emerald-400 text-center leading-snug", item.y));
+        box.appendChild(el("p", "text-xs italic text-slate-500 text-center", item.fr));
+        target = item.y;
+    } else if (spMode === "repeat") {
+        box.appendChild(el("p", "text-xl font-bold text-slate-100 text-center leading-snug", item));
+        target = item;
+    } else {
+        box.appendChild(el("p", "text-xl font-bold text-slate-100 text-center leading-snug", item.q));
+        box.appendChild(el("p", "text-xs text-slate-400 text-center", "Répondez à voix haute par une phrase complète."));
+    }
+
+    // Boutons d'écoute et de micro
+    const row = el("div", isDialogue ? "grid grid-cols-3 gap-2" : "grid grid-cols-2 gap-2");
+    const mic = el("button", "py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold", spMode === "questions" ? "🎤 Répondre" : "🎤 Parler");
+    if (isDialogue) {
+        const hearLine = el("button", "py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold", "🔊 Réplique");
+        hearLine.onclick = () => speak(item.a, "en-GB", 0.85);
+        const hearModel = el("button", "py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold", "🔊 Modèle");
+        hearModel.onclick = () => speak(item.y, "en-GB", 0.8);
+        row.append(hearLine, hearModel, mic);
+    } else {
+        const hear = el("button", "py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold",
+            spMode === "repeat" ? "🔊 Écouter" : "🔊 La question");
+        hear.onclick = () => speak(spMode === "repeat" ? item : item.q, "en-GB", 0.8);
+        row.append(hear, mic);
+    }
+    box.appendChild(row);
+
+    const res = el("div", "text-sm text-center min-h-[3rem] space-y-1");
+    box.appendChild(res);
+
+    const nextBtn = el("button", BTN_SECOND, "Passer");
+    nextBtn.onclick = () => {
+        if (spBusy) return;
+        spIndex++;
+        renderSpeaking();
+    };
+    box.appendChild(nextBtn);
+
+    let counted = false;
+    mic.onclick = async () => {
+        if (spBusy) { if (currentStop) currentStop(); return; }   // en cours d'écoute : terminer
+        if (!SR) { res.textContent = "La reconnaissance vocale n'est pas disponible ici. Ouvrez Diisoo dans Chrome."; return; }
+        const run = testRun;
+        const free = spMode === "questions";
+        spBusy = true;
+        mic.textContent = free ? "⏹ Terminer" : "🎤 J'écoute...";
+        res.textContent = "";
+        if ("speechSynthesis" in window) speechSynthesis.cancel();
+        const session = startListening("en-GB", free ? 20000 : 9000, free, t => { if (run === testRun) res.textContent = "« " + t + " »"; });
+        currentStop = session.stop;
+        const r = await session.promise;
+        currentStop = null;
+        spBusy = false;
+        if (run !== testRun) return;
+        mic.textContent = "🎤 Réessayer";
+        nextBtn.textContent = spIndex === total - 1 ? "Terminer" : "Suivant";
+        const out = evaluateSpeech(r, free ? null : target);
+        renderFeedback(res, out, item);
+        if (out.ok && !counted) { counted = true; spScore++; }
+    };
+
+    if (isDialogue && "speechSynthesis" in window) speak(item.a, "en-GB", 0.85);
+}
+
+/* ==========================================================
+   PILIER 2 : ANGLAIS WOLOF (6 thèmes, 10 mots chacun)
+   Vocabulaire pilote. À FAIRE VALIDER par des locuteurs wolof
+   (orthographe et sens) avant tout usage commercial.
+   Pour un vrai audio wolof, renseigner "audio" avec l'URL d'un
+   fichier MP3 (sinon une voix de synthèse lit le texte).
+   ========================================================== */
+const THEMES = [
+    { id: "salutations", label: "Salutations", icon: "👋" },
+    { id: "marche", label: "Marché", icon: "🛒" },
+    { id: "famille", label: "Famille", icon: "👨‍👩‍👧" },
+    { id: "temps", label: "Temps", icon: "🕐" },
+    { id: "transport", label: "Transport", icon: "🚌" },
+    { id: "restaurant", label: "Restaurant", icon: "🍚" }
+];
+const QUIZ_PER_THEME = 5;
+
+const W = (cat, en, wo, fr) => ({ cat: cat, en: en, wo: wo, fr: fr, audio: null });
+const LEXICON = [
+    W("salutations", "Hello", "Salaam aleekum", "Bonjour"),
+    W("salutations", "Hello (reply)", "Maalekum salaam", "Bonjour (réponse)"),
+    W("salutations", "How are you?", "Nanga def ?", "Comment vas-tu ?"),
+    W("salutations", "I am fine", "Maa ngi fi rekk", "Je vais bien"),
+    W("salutations", "Thank you", "Jërëjëf", "Merci"),
+    W("salutations", "Sorry", "Baal ma", "Pardon, excuse-moi"),
+    W("salutations", "Yes", "Waaw", "Oui"),
+    W("salutations", "No", "Déedéet", "Non"),
+    W("salutations", "See you next time", "Ba beneen yoon", "À la prochaine"),
+    W("salutations", "Welcome", "Dalal ak jàmm", "Bienvenue"),
+
+    W("marche", "Market", "Marse", "Marché"),
+    W("marche", "Money", "Xaalis", "Argent"),
+    W("marche", "Price", "Njëg", "Prix"),
+    W("marche", "How much is it?", "Ñaata la ?", "C'est combien ?"),
+    W("marche", "Buy", "Jënd", "Acheter"),
+    W("marche", "Sell", "Jaay", "Vendre"),
+    W("marche", "Seller", "Jaaykat", "Vendeur"),
+    W("marche", "Buyer", "Jëndkat", "Acheteur"),
+    W("marche", "Shop", "Butik", "Boutique"),
+    W("marche", "Work", "Liggéey", "Travail"),
+
+    W("famille", "Family", "Njaboot", "Famille"),
+    W("famille", "Mother", "Yaay", "Mère"),
+    W("famille", "Father", "Baay", "Père"),
+    W("famille", "Child", "Xale", "Enfant"),
+    W("famille", "Husband", "Jëkkër", "Mari"),
+    W("famille", "Wife", "Jabar", "Épouse"),
+    W("famille", "Grandparent", "Maam", "Grand-parent"),
+    W("famille", "Older sibling", "Mag", "Grand frère ou grande sœur"),
+    W("famille", "Younger sibling", "Rakk", "Petit frère ou petite sœur"),
+    W("famille", "Friend", "Xarit", "Ami"),
+
+    W("temps", "Today", "Tey", "Aujourd'hui"),
+    W("temps", "Tomorrow", "Ëllëg", "Demain"),
+    W("temps", "Yesterday", "Démb", "Hier"),
+    W("temps", "Now", "Léegi", "Maintenant"),
+    W("temps", "Morning", "Suba", "Matin"),
+    W("temps", "Afternoon", "Ngoon", "Après-midi"),
+    W("temps", "Night", "Guddi", "Nuit"),
+    W("temps", "Day", "Bés", "Jour"),
+    W("temps", "Week", "Ayubés", "Semaine"),
+    W("temps", "Month", "Weer", "Mois"),
+
+    W("transport", "Car", "Woto", "Voiture"),
+    W("transport", "Taxi", "Taksi", "Taxi"),
+    W("transport", "Road", "Yoon", "Route, chemin"),
+    W("transport", "Trip", "Tukki", "Voyage"),
+    W("transport", "Airplane", "Roppalaan", "Avion"),
+    W("transport", "To go", "Dem", "Aller"),
+    W("transport", "To arrive", "Agsi", "Arriver"),
+    W("transport", "Far", "Sori", "Loin"),
+    W("transport", "Near", "Jege", "Près"),
+    W("transport", "Where?", "Fan ?", "Où ?"),
+
+    W("restaurant", "Food", "Ñam", "Nourriture"),
+    W("restaurant", "Water", "Ndox", "Eau"),
+    W("restaurant", "Rice", "Ceeb", "Riz"),
+    W("restaurant", "Fish", "Jën", "Poisson"),
+    W("restaurant", "Meat", "Yapp", "Viande"),
+    W("restaurant", "Bread", "Mburu", "Pain"),
+    W("restaurant", "Tea", "Attaya", "Thé"),
+    W("restaurant", "I am hungry", "Dama xiif", "J'ai faim"),
+    W("restaurant", "I am thirsty", "Dama mar", "J'ai soif"),
+    W("restaurant", "It is delicious", "Neex na", "C'est bon")
+];
+let wolofCat = "salutations";
+
+function renderTabs() {
+    const box = $("wolof-tabs");
+    box.innerHTML = "";
+    THEMES.concat([{ id: "wikidata", label: "Wikidata", icon: "🌐" }]).forEach(t => {
+        const b = document.createElement("button");
+        b.id = "tab-" + t.id;
+        b.textContent = t.icon + " " + t.label;
+        b.onclick = () => setWolofCat(t.id);
+        box.appendChild(b);
+    });
+}
+
+function openWolofModule() {
+    changeScreen("screen-wolof");
+    renderTabs();
+    setWolofCat(wolofCat);
+}
+
+function setWolofCat(cat) {
+    wolofCat = cat;
+    const on = "px-3 py-2 rounded-xl text-xs font-bold transition bg-emerald-600 text-white";
+    const off = "px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-900 text-slate-400";
+    document.querySelectorAll("#wolof-tabs button").forEach(b => { b.className = (b.id === "tab-" + cat) ? on : off; });
+    $("btn-theme-quiz").classList.toggle("hidden", cat === "wikidata");
+    if (cat === "wikidata" && !wikidataLoaded) loadWikidata(); else renderLexicon();
+}
+
+/* ---------- Source Wikidata (lexèmes en wolof, licence CC0) ---------- */
+let wikidataLoaded = false;
+let wdMessage = "";
+const WD_CACHE_DAYS = 7;
+const WD_QUERY = `
+SELECT ?lemma (SAMPLE(?en) AS ?glossEn) (SAMPLE(?fr) AS ?glossFr) WHERE {
+  ?l dct:language wd:Q34257 ; wikibase:lemma ?lemma .
+  OPTIONAL { ?l ontolex:sense ?s .
+    OPTIONAL { ?s skos:definition ?en . FILTER(LANG(?en) = "en") }
+    OPTIONAL { ?s skos:definition ?fr . FILTER(LANG(?fr) = "fr") } }
+} GROUP BY ?lemma LIMIT 400`;
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function applyWikidataItems(items) {
+    for (let i = LEXICON.length - 1; i >= 0; i--) if (LEXICON[i].cat === "wikidata") LEXICON.splice(i, 1);
+    items.forEach(it => LEXICON.push({ cat: "wikidata", wo: it.wo, en: it.en, fr: it.fr, audio: null }));
+    wikidataLoaded = true;
+    wdMessage = items.length
+        ? items.length + " mots wolof issus de Wikidata (licence CC0). Vocabulaire à vérifier avant usage pédagogique."
+        : "Aucun mot avec définition trouvé pour le moment sur Wikidata.";
+}
+
+async function loadWikidata() {
+    const cache = store.get("diisoo_wikidata");
+    const fresh = cache && (Date.now() - cache.time) < WD_CACHE_DAYS * 86400000;
+    if (fresh) { applyWikidataItems(cache.items); renderLexicon(); return; }
+
+    wdMessage = "Chargement depuis Wikidata...";
+    renderLexicon();
+    try {
+        const url = "https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(WD_QUERY);
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const data = await resp.json();
+        const items = data.results.bindings
+            .map(b => ({
+                wo: b.lemma.value,
+                en: b.glossEn ? b.glossEn.value : "",
+                fr: b.glossFr ? b.glossFr.value : ""
+            }))
+            .filter(it => (it.en || it.fr) && it.wo.length <= 30)
+            .sort((a, b) => a.wo.localeCompare(b.wo))
+            .slice(0, 80);
+        store.set("diisoo_wikidata", { time: Date.now(), items });
+        applyWikidataItems(items);
+    } catch (e) {
+        if (cache) {
+            applyWikidataItems(cache.items);
+            wdMessage = "Hors ligne. Affichage de la dernière version enregistrée. " + wdMessage;
+        } else {
+            wikidataLoaded = false;
+            wdMessage = "Wikidata est inaccessible pour le moment. Vérifiez la connexion et rouvrez cet onglet.";
+        }
+    }
+    renderLexicon();
+}
+
+function wikidataCardHTML(w, i) {
+    const meaning = w.fr || w.en;
+    const shortEn = w.en && w.en.split(/\s+/).length <= 3;
+    return '<div class="flex justify-between items-start gap-3">' +
+             '<p class="text-lg font-bold text-emerald-400">' + esc(w.wo) + '</p>' +
+             '<p class="text-xs text-slate-300 text-right">' + esc(meaning) + '</p>' +
+           '</div>' +
+           '<div class="grid ' + (shortEn ? "grid-cols-3" : "grid-cols-1") + ' gap-2">' +
+             '<button onclick="playWolof(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+             (shortEn
+               ? '<button onclick="playEnglish(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+                 '<button onclick="practiceWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Parler</button>'
+               : "") +
+           '</div>' +
+           '<div id="res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>' +
+           '<p class="text-[9px] text-slate-600">Source : Wikidata</p>';
+}
+
+function renderLexicon() {
+    const box = $("lexicon-container");
+    box.innerHTML = "";
+    if (wolofCat === "wikidata") {
+        const note = document.createElement("p");
+        note.className = "text-[11px] text-slate-500 text-center";
+        note.textContent = wdMessage;
+        box.appendChild(note);
+    }
+    LEXICON.forEach((w, i) => {
+        if (w.cat !== wolofCat) return;
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3";
+        if (w.cat === "wikidata") { card.innerHTML = wikidataCardHTML(w, i); box.appendChild(card); return; }
+        card.innerHTML =
+            '<div class="flex justify-between items-start">' +
+              '<div><p class="text-lg font-bold text-emerald-400">' + w.wo + '</p>' +
+              '<p class="text-xs text-slate-500">' + w.fr + '</p></div>' +
+              '<p class="text-base font-bold text-slate-100 text-right">' + w.en + '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-3 gap-2">' +
+              '<button onclick="playWolof(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+              '<button onclick="playEnglish(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+              '<button onclick="practiceWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Parler</button>' +
+            '</div>' +
+            '<div id="res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>';
+        box.appendChild(card);
+    });
+}
+
+function playWolof(i) {
+    const w = LEXICON[i];
+    if (w.audio) { new Audio(w.audio).play().catch(() => {}); return; }
+    speak(w.wo, "fr-FR", 0.8);
+}
+function playEnglish(i) { speak(LEXICON[i].en, "en-US", 0.85); }
+
+function normalize(s) { return s.toLowerCase().replace(/[^a-z\s']/g, " ").replace(/\s+/g, " ").trim(); }
+
+async function practiceWord(i) {
+    const w = LEXICON[i];
+    const res = $("res-" + i);
+    if (!SR) {
+        res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome.";
+        return;
+    }
+    res.innerHTML = '<span class="text-blue-400">🎤 Parlez maintenant...</span>';
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    const r = await startListening("en-US", 6000, false).promise;
+    if (r.error === "not-allowed" || r.error === "service-not-allowed") {
+        res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
+        return;
+    }
+    if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
+    const heard = normalize(r.text), target = normalize(w.en);
+    if (heard.includes(target)) {
+        res.innerHTML = '<span class="text-emerald-400">✅ Bravo ! J\'ai entendu : « ' + heard + ' »</span>';
+    } else {
+        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + esc(w.en) + ' ». Réessayez.</span>';
+    }
+}
+
+/* ==========================================================
+   PILIER 3 : SIMULATION COMPLÈTE IELTS LIFE SKILLS A1
+   Speaking and Listening : 16 à 18 minutes, en 4 phases.
+   Format d'après l'exemple officiel publié par IELTS. Les
+   contenus (questions, enregistrements) sont originaux.
+   Dans le vrai test : un examinateur et deux candidats.
+   Ici, l'application joue l'examinateur et le partenaire.
+   Le score est un repère d'entraînement, PAS une note officielle.
+   ========================================================== */
+const IE_TOTAL_POINTS = 23;   // 6 (1a) + 5 (1b poser) + 5 (1b répondre) + 3 (2a) + 4 (2b)
+
+const IELTS_SETS = {
+    A: {
+        label: "Test A", theme: "Le week-end",
+        p1a: [
+            { q: "What is your name?", ex: "My name is Awa." },
+            { q: "Where are you from?", ex: "I am from Senegal." },
+            { q: "Do you work or study?", ex: "I work. I am a shopkeeper." },
+            { q: "Where do you live?", ex: "I live in Thies." },
+            { q: "Do you live in a house or a flat?", ex: "I live in a house." },
+            { q: "What do you like to do in your free time?", ex: "I like to cook and visit my friends." }
+        ],
+        p1b: {
+            ask: { topic: "your neighbours", fr: "vos voisins",
+                answers: [
+                    [/\b(name|called|who)\b/, "My neighbour is called Mister Diallo."],
+                    [/\b(like|nice|friendly|kind)\b/, "Yes, I like my neighbours. They are very kind."],
+                    [/\b(where|live|house|street)\b/, "They live in the house next to mine."],
+                    [/\b(how many|have)\b/, "I have three neighbours."],
+                    [/\b(often|talk|speak|see|meet)\b/, "I talk to them almost every day."],
+                    [/\b(children|kids|family|old)\b/, "Yes, they have two children."]
+                ],
+                fallback: ["Yes, that is right.", "I think so, yes.", "Sorry, I do not know."] },
+            answer: { topic: "your favourite time of year", fr: "votre période de l'année préférée",
+                qs: ["What is your favourite time of year?", "Why do you like it?", "What is the weather like then?", "What do you do at that time?", "Who do you spend that time with?"],
+                ex: ["My favourite time of year is the rainy season.", "I like it because the air is fresh.", "It is warm and it rains a lot.", "I visit my family.", "I spend it with my friends."] }
+        },
+        p2a: {
+            rec: [
+                { who: "woman", pitch: 1.3, text: "Hello, I am Mariama. On Saturday I want to go to the beach with my sister. We take the bus at eight o'clock. The bus ticket costs five hundred francs. We want to eat fish and swim in the sea." },
+                { who: "man", pitch: 0.7, text: "Hi, my name is Ibrahima. On Saturday I am going to the market with my brother. We go by car because the market is far. I need to buy vegetables and a new shirt. The market is very busy on Saturday morning." }
+            ],
+            gist: { q: "In the first recording, where does the woman want to go on Saturday? To the beach, to the market, or to the park?", options: ["to the beach", "to the market", "to the park"], accept: ["beach"], answer: "to the beach" },
+            details: [
+                { q: "In the second recording, who goes to the market with the man?", accept: ["brother"], answer: "his brother" },
+                { q: "How do they travel to the market?", accept: ["car"], answer: "by car" }
+            ]
+        },
+        p2b: {
+            topic: "your weekend",
+            prompts: [
+                { q: "Where do you like to go at the weekend?", ex: "I like to go to the beach with my family." },
+                { q: "Who do you go with?", ex: "I go with my sister and my friends." },
+                { q: "Do you like going to the market? Why or why not?", ex: "Yes, I like it because it is lively." },
+                { q: "What do people in your country like to do at the weekend?", ex: "They visit their family and eat together." }
+            ],
+            comments: ["I see. That sounds nice.", "Good. I go with my friends too.", "I understand. Thank you.", "Interesting. Thank you very much."]
+        }
+    },
+    B: {
+        label: "Test B", theme: "La famille",
+        p1a: [
+            { q: "What is your name?", ex: "My name is Awa." },
+            { q: "What is your nationality?", ex: "I am Senegalese." },
+            { q: "What do you do?", ex: "I am a teacher." },
+            { q: "Where do you live?", ex: "I live in Thies." },
+            { q: "Do you have brothers or sisters?", ex: "I have two brothers and one sister." },
+            { q: "Do you like music?", ex: "Yes, I like music. I listen to music every day." }
+        ],
+        p1b: {
+            ask: { topic: "your family", fr: "votre famille",
+                answers: [
+                    [/\b(name|called|who)\b/, "My mother is called Awa."],
+                    [/\b(like|love|close|happy)\b/, "Yes, I love my family very much."],
+                    [/\b(where|live|house)\b/, "My family lives in Dakar."],
+                    [/\b(how many|have|brothers|sisters)\b/, "I have two brothers and one sister."],
+                    [/\b(often|see|meet|visit)\b/, "I see my family every Sunday."],
+                    [/\b(work|job|does)\b/, "My father works in a shop."]
+                ],
+                fallback: ["Yes, that is right.", "I think so, yes.", "Sorry, I do not know."] },
+            answer: { topic: "your favourite food", fr: "votre plat préféré",
+                qs: ["What is your favourite food?", "Who cooks it?", "How often do you eat it?", "Do you like fish?", "Do you cook at home?"],
+                ex: ["My favourite food is rice with fish.", "My mother cooks it.", "I eat it every Sunday.", "Yes, I like fish very much.", "Yes, I cook every day."] }
+        },
+        p2a: {
+            rec: [
+                { who: "woman", pitch: 1.3, text: "My name is Awa. Every Sunday my family eats lunch together at my grandmother's house. My mother cooks rice and chicken. There are twelve people at the table. After lunch the children play football in the garden." },
+                { who: "man", pitch: 0.7, text: "I am Moussa. On Sunday I like to visit my aunt. She lives in a small house near the river. I take her some bread and milk. We drink tea and talk for two hours." }
+            ],
+            gist: { q: "In the second recording, what does the man do on Sunday? Does he have lunch with his family, visit a relative, or go shopping?", options: ["have lunch with his family", "visit a relative", "go shopping"], accept: ["visit", "aunt", "relative"], answer: "visit a relative (his aunt)" },
+            details: [
+                { q: "In the first recording, how many people are at the table?", accept: ["twelve"], answer: "twelve" },
+                { q: "What do the children play after lunch?", accept: ["football", "soccer"], answer: "football" }
+            ]
+        },
+        p2b: {
+            topic: "family meals",
+            prompts: [
+                { q: "Who do you eat lunch with on Sunday?", ex: "I eat lunch with my family." },
+                { q: "What food do you like?", ex: "I like rice and fish." },
+                { q: "Do you like cooking? Why or why not?", ex: "Yes, I like cooking because it is fun." },
+                { q: "What do families in your country eat on special days?", ex: "They eat rice, meat and drink juice." }
+            ],
+            comments: ["I see. That sounds nice.", "Good. I like fish too.", "I understand. Thank you.", "Interesting. Thank you very much."]
+        }
+    },
+    C: {
+        label: "Test C", theme: "Le travail et les achats",
+        p1a: [
+            { q: "What is your name?", ex: "My name is Awa." },
+            { q: "Where are you from?", ex: "I am from Senegal." },
+            { q: "Do you work?", ex: "Yes, I work in a shop." },
+            { q: "Where do you live?", ex: "I live in Thies." },
+            { q: "What time do you get up?", ex: "I get up at six o'clock." },
+            { q: "What do you like to do on Sunday?", ex: "I like to visit my family." }
+        ],
+        p1b: {
+            ask: { topic: "your job or your studies", fr: "votre travail ou vos études",
+                answers: [
+                    [/\b(what|job|do you do|work)\b/, "I work in a small shop."],
+                    [/\b(where|place|near)\b/, "It is near the market."],
+                    [/\b(how long|years|since)\b/, "I work there for two years."],
+                    [/\b(like|enjoy|interesting)\b/, "Yes, I like my job. It is interesting."],
+                    [/\b(time|start|finish|hours|begin)\b/, "I start at eight and I finish at five."],
+                    [/\b(who|colleagues|people)\b/, "I work with three colleagues."]
+                ],
+                fallback: ["Yes, that is right.", "I think so, yes.", "Sorry, I do not know."] },
+            answer: { topic: "shopping", fr: "les achats",
+                qs: ["Where do you go shopping?", "Who goes shopping with you?", "What do you like to buy?", "How often do you go shopping?", "Do you like shopping at the market?"],
+                ex: ["I go shopping at the market.", "I go with my sister.", "I like to buy vegetables and clothes.", "I go shopping every week.", "Yes, I like it because it is cheap."] }
+        },
+        p2a: {
+            rec: [
+                { who: "woman", pitch: 1.3, text: "Hello, this is Fatou. I want to buy a bag for my daughter. The shop is in the centre of town and it opens at nine o'clock. The bag costs three thousand francs. It is red and it is very nice." },
+                { who: "man", pitch: 0.7, text: "My name is Ousmane. I am looking for shoes for my son. The market opens early on Friday. I want black shoes, size forty. I need to pay with cash because the seller has no card machine." }
+            ],
+            gist: { q: "In the first recording, what does the woman want to buy? A bag, shoes, or a phone?", options: ["a bag", "shoes", "a phone"], accept: ["bag"], answer: "a bag" },
+            details: [
+                { q: "In the second recording, what colour are the shoes?", accept: ["black"], answer: "black" },
+                { q: "How does the man pay?", accept: ["cash"], answer: "with cash" }
+            ]
+        },
+        p2b: {
+            topic: "shopping",
+            prompts: [
+                { q: "Where do you like to buy your clothes?", ex: "I like to buy my clothes at the market." },
+                { q: "Is it expensive to buy clothes in your country?", ex: "No, it is not very expensive at the market." },
+                { q: "Who goes shopping in your family?", ex: "My mother and my sister go shopping." },
+                { q: "What do people in your country buy at the market?", ex: "They buy vegetables, fish and clothes." }
+            ],
+            comments: ["I see. That sounds good.", "I understand. Thank you.", "Good. I go with my sister too.", "Interesting. Thank you very much."]
+        }
+    }
+};
+
+let ie = null;
+const ieCfg = { setId: "A", exam: false };
+
+function fmt(sec) {
+    const m = Math.floor(sec / 60), r = sec % 60;
+    return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r;
+}
+function ieBody() { const b = $("ie-body"); b.innerHTML = ""; return b; }
+function ieHeader(label, title) { $("ie-label").textContent = label; $("ie-title").textContent = title; }
+function ieAlive(run) { return !!ie && run === testRun; }
+function ieSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function updateTotal() {
+    if (!ie) { $("ie-total").textContent = ""; return; }
+    $("ie-total").textContent = "Total " + fmt(Math.round((Date.now() - ie.startTime) / 1000)) + " / 18:00";
+}
+
+function startTimer(sec, enforce) {
+    clearInterval(countdownId);
+    ie.deadline = Date.now() + sec * 1000; ie.timeUp = false; ie.enforce = !!enforce;
+    const tick = () => {
+        if (!ie) return;
+        const left = Math.max(0, Math.round((ie.deadline - Date.now()) / 1000));
+        const t = $("ie-timer");
+        t.textContent = fmt(left);
+        t.className = "text-2xl font-mono font-black " + (left <= 10 ? "text-rose-400" : "text-slate-200");
+        updateTotal();
+        if (left <= 0 && !ie.timeUp && ie.enforce) {
+            ie.timeUp = true;
+            if (currentStop) currentStop(); else if (ie.onTimeUp) ie.onTimeUp();
+        }
+    };
+    tick();
+    countdownId = setInterval(tick, 500);
+}
+function stopTimer() {
+    clearInterval(countdownId);
+    $("ie-timer").textContent = "--:--";
+    $("ie-timer").className = "text-2xl font-mono font-black text-slate-600";
+}
+
+/* ---------- Outils de reconnaissance des réponses ---------- */
+function isQuestionText(t) {
+    const w = speechWords(t);
+    if (w.length < 3) return false;
+    const starters = /^(what|where|when|who|whom|why|how|do|does|did|is|are|can|could|have|has|which|will|would)$/;
+    return starters.test(w[0]) || starters.test(w[1] || "");
+}
+function partnerAnswer(text) {
+    const s = speechWords(text).join(" ");
+    const a = ie.set.p1b.ask;
+    for (let i = 0; i < a.answers.length; i++) if (a.answers[i][0].test(s)) return a.answers[i][1];
+    ie.fb = (ie.fb || 0) + 1;
+    return a.fallback[ie.fb % a.fallback.length];
+}
+function acceptAnswer(text, accept) {
+    const w = speechWords(text);
+    return accept.some(x => w.includes(x));
+}
+
+/* ---------- Composants d'interface ---------- */
+async function examinerAsk(run, box, text, showText, pitch, prefix) {
+    const bubble = el("p", "bg-slate-900 border border-slate-800 rounded-2xl p-3 text-sm text-slate-100",
+        showText ? (prefix || "🗣️ ") + text : (prefix || "🗣️ ") + "Écoutez la question");
+    box.appendChild(bubble);
+    let replays = 0;
+    const rep = el("button", "px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold",
+        ie.exam ? "🔊 Répéter (1 fois)" : "🔊 Réécouter");
+    rep.dataset.role = "replay";
+    rep.onclick = () => {
+        replays++;
+        speak(text, "en-GB", 0.85, pitch || 1);
+        if (ie.exam && replays >= 1) rep.disabled = true;
+    };
+    box.appendChild(rep);
+    await speak(text, "en-GB", 0.85, pitch || 1);
+}
+
+function collectAnswer(run, box, opts) {
+    opts = opts || {};
+    ie.cur = opts;
+    return new Promise(resolve => {
+        let done = false, listening = false;
+        const wrap = el("div", "space-y-2");
+        const finish = (val) => {
+            if (done) return;
+            done = true; ie.onTimeUp = null;
+            wrap.remove();
+            resolve(val);
+        };
+        if (opts.choices) {
+            const row = el("div", "flex flex-wrap gap-2 justify-center");
+            opts.choices.forEach(c => {
+                const b = el("button", "px-3 py-2 bg-slate-800 hover:bg-blue-600 rounded-xl text-xs font-semibold", c);
+                b.dataset.role = "choice";
+                b.onclick = () => finish({ text: c });
+                row.appendChild(b);
+            });
+            wrap.appendChild(row);
+        }
+        const mic = el("button", BTN_PRIMARY, opts.mic || "🎤 Répondre");
+        mic.dataset.role = "mic";
+        const status = el("p", "text-xs text-slate-400 text-center min-h-[1.25rem]");
+        wrap.append(mic, status);
+        if (!SR || !ie.exam) {
+            const row = el("div", "flex gap-2");
+            const inp = el("input", "flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500");
+            inp.placeholder = "Ou écrivez votre réponse";
+            const ok = el("button", "px-4 py-2 bg-slate-800 rounded-xl text-xs font-bold", "OK");
+            ok.dataset.role = "typed-ok";
+            ok.onclick = () => { if (inp.value.trim()) finish({ text: inp.value.trim() }); };
+            row.append(inp, ok);
+            wrap.appendChild(row);
+        }
+        if (opts.skip) {
+            const sk = el("button", "w-full py-2 text-[11px] text-slate-500 hover:text-slate-300", opts.skip);
+            sk.dataset.role = "skip";
+            sk.onclick = () => finish({ text: "", skipped: true });
+            wrap.appendChild(sk);
+        }
+        box.appendChild(wrap);
+        ie.onTimeUp = () => finish({ text: "", timeUp: true });
+
+        mic.onclick = async () => {
+            if (listening) { if (currentStop) currentStop(); return; }
+            if (!SR) { status.textContent = "Micro indisponible. Ouvrez Diisoo dans Chrome ou écrivez votre réponse."; return; }
+            listening = true;
+            mic.textContent = "⏹ Terminer";
+            status.textContent = "🎤 Je vous écoute...";
+            if ("speechSynthesis" in window) speechSynthesis.cancel();
+            const sess = startListening("en-GB", opts.ms || 12000, !!opts.long, t => {
+                if (run === testRun && !ie.exam) status.textContent = "« " + t + " »";
+            });
+            currentStop = sess.stop;
+            const r = await sess.promise;
+            currentStop = null; listening = false;
+            if (run !== testRun || done) return;
+            mic.textContent = "🎤 Réessayer";
+            if (r.error === "not-allowed" || r.error === "service-not-allowed") {
+                status.textContent = "Micro bloqué. Autorisez le micro dans Chrome, puis réessayez.";
+                return;
+            }
+            if (!r.text) { status.textContent = "Rien entendu. Rapprochez-vous du micro et réessayez."; return; }
+            finish({ text: r.text });
+        };
+    });
+}
+
+function waitNext(box, label) {
+    return new Promise(resolve => {
+        const b = el("button", BTN_PRIMARY, label);
+        b.dataset.role = "next";
+        b.onclick = () => { b.remove(); resolve(); };
+        box.appendChild(b);
+    });
+}
+function phaseIntro(box, lines, label) {
+    lines.forEach(l => box.appendChild(el("p", "text-sm text-slate-300 leading-relaxed", l)));
+    return new Promise(resolve => {
+        const b = el("button", BTN_PRIMARY, label);
+        b.dataset.role = "intro-next";
+        b.onclick = resolve;
+        box.appendChild(b);
+    });
+}
+function note(box, ok, text) { box.appendChild(el("p", "text-xs " + (ok ? "text-emerald-400" : "text-amber-400"), text)); }
+
+/* ---------- Phase 1a : questions de l'examinateur ---------- */
+async function phase1a(run) {
+    ieHeader("Phase 1a · 4 à 5 minutes", "Questions de l'examinateur");
+    stopTimer();
+    let box = ieBody();
+    await phaseIntro(box, [
+        "L'examinateur vous pose des questions simples sur vous : nom, pays, travail ou études, lieu de vie, loisirs.",
+        "Répondez à voix haute, avec une phrase complète si possible."
+    ], "Commencer");
+    if (!ieAlive(run)) return false;
+    startTimer(300, false);
+    const items = ie.set.p1a, log = [];
+    let ok = 0;
+    for (let i = 0; i < items.length; i++) {
+        if (!ieAlive(run)) return false;
+        box = ieBody();
+        box.appendChild(el("p", "text-xs text-slate-500 text-center", "Question " + (i + 1) + " sur " + items.length));
+        await examinerAsk(run, box, items[i].q, !ie.exam);
+        if (!ieAlive(run)) return false;
+        const ans = await collectAnswer(run, box, { tag: "p1a", ms: 10000 });
+        if (!ieAlive(run)) return false;
+        const words = speechWords(ans.text).length;
+        if (words >= 1) ok++;
+        log.push({ q: items[i].q, text: ans.text });
+        if (!ie.exam) {
+            note(box, words >= 3, words >= 3 ? "✅ Bien, réponse en phrase complète." : words >= 1 ? "Essayez une phrase complète." : "Pas de réponse détectée.");
+            box.appendChild(el("p", "text-xs text-slate-400", "Exemple : " + items[i].ex));
+            await waitNext(box, i === items.length - 1 ? "Continuer" : "Question suivante");
+        } else {
+            await speak("Thank you.", "en-GB", 0.9);
+        }
+    }
+    ie.res.p1a = { ok: ok, total: items.length, log: log };
+    return true;
+}
+
+/* ---------- Phase 1b : poser puis répondre à des questions ---------- */
+async function phase1b(run) {
+    const p = ie.set.p1b;
+    ieHeader("Phase 1b · 5 minutes", "Vous et votre partenaire");
+    stopTimer();
+    let box = ieBody();
+    await phaseIntro(box, [
+        "Vous allez d'abord poser des questions à votre partenaire (l'application) sur : " + p.ask.topic + " (" + p.ask.fr + ").",
+        "Ensuite, votre partenaire vous posera des questions sur : " + p.answer.topic + ".",
+        "Vous avez 1 min 30 pour préparer vos questions, puis 2 minutes pour poser vos questions et 2 minutes pour répondre."
+    ], "Commencer la préparation");
+    if (!ieAlive(run)) return false;
+
+    // Préparation : 1 min 30, prise de notes possible
+    box = ieBody();
+    box.appendChild(el("p", "text-sm font-bold text-slate-100 text-center", "Préparez vos questions sur : " + p.ask.topic));
+    box.appendChild(ie.notes1b);
+    if (!ie.exam) box.appendChild(el("p", "text-xs text-slate-500", "Aide (absente au vrai test) : Do you ...? Where do ...? What ...? How many ...? Who ...? How often ...?"));
+    const ready = el("button", BTN_PRIMARY, "Je suis prêt(e)");
+    ready.dataset.role = "ready";
+    box.appendChild(ready);
+    startTimer(90, true);
+    speak("Now I would like you to ask me some questions about " + p.ask.topic + ". Then I will ask you about " + p.answer.topic + ". Think about the questions you want to ask. You have one and a half minutes.", "en-GB", 0.85);
+    await new Promise(res => { ie.onTimeUp = res; ready.onclick = res; });
+    ie.onTimeUp = null;
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    if (!ieAlive(run)) return false;
+
+    // Poser des questions : 2 minutes maximum
+    startTimer(120, true);
+    box = ieBody();
+    box.appendChild(el("p", "text-sm font-bold text-slate-100 text-center", "À vous : posez vos questions sur " + p.ask.topic));
+    box.appendChild(ie.notes1b);
+    const feed = el("div", "space-y-2");
+    box.appendChild(feed);
+    await speak("Are you ready? Please ask me your questions.", "en-GB", 0.9);
+    let valid = 0;
+    const askLog = [];
+    while (ieAlive(run) && !ie.timeUp && valid < 6) {
+        const ans = await collectAnswer(run, box, { tag: "p1b-ask", ms: 9000, skip: "J'ai fini mes questions" });
+        if (!ieAlive(run)) return false;
+        if (ans.skipped || (ans.timeUp && !ans.text)) break;
+        if (isQuestionText(ans.text)) {
+            valid++;
+            const reply = partnerAnswer(ans.text);
+            askLog.push({ q: ans.text, a: reply });
+            if (!ie.exam) feed.appendChild(el("p", "text-xs text-slate-400 italic", "🙋 " + ans.text));
+            feed.appendChild(el("p", "text-sm text-slate-100", "🗣️ " + (ie.exam ? "(audio)" : reply)));
+            await speak(reply, "en-GB", 0.85, 1.15);
+        } else {
+            askLog.push({ q: ans.text, a: "(ce n'était pas une question)" });
+            if (!ie.exam) feed.appendChild(el("p", "text-xs text-amber-400", "Essayez une question complète, par exemple : « Do you like ...? »"));
+            await speak("Sorry?", "en-GB", 0.9, 1.15);
+        }
+    }
+    ie.res.p1bAsk = { valid: Math.min(valid, 5), target: 5, log: askLog };
+
+    // Répondre aux questions du partenaire : 2 minutes maximum
+    if (!ieAlive(run)) return false;
+    startTimer(120, true);
+    const qs = p.answer.qs, ansLog = [];
+    let good = 0;
+    box = ieBody();
+    box.appendChild(el("p", "text-sm font-bold text-slate-100 text-center", "À mon tour : je vous pose des questions sur " + p.answer.topic));
+    await speak("Thank you. Now it is my turn. I will ask you some questions about " + p.answer.topic + ".", "en-GB", 0.9, 1.15);
+    for (let i = 0; i < qs.length; i++) {
+        if (!ieAlive(run)) return false;
+        if (ie.timeUp) break;
+        box = ieBody();
+        box.appendChild(el("p", "text-xs text-slate-500 text-center", "Question " + (i + 1) + " sur " + qs.length));
+        await examinerAsk(run, box, qs[i], !ie.exam, 1.15, "🙋 ");
+        if (!ieAlive(run)) return false;
+        const ans = await collectAnswer(run, box, { tag: "p1b-ans", ms: 12000 });
+        if (!ieAlive(run)) return false;
+        const words = speechWords(ans.text).length;
+        if (words >= 3) good++;
+        ansLog.push({ q: qs[i], text: ans.text });
+        if (!ie.exam && !ie.timeUp) {
+            note(box, words >= 3, words >= 3 ? "✅ Bien, vous avez répondu par une phrase." : "Essayez une phrase d'au moins trois mots.");
+            box.appendChild(el("p", "text-xs text-slate-400", "Exemple : " + p.answer.ex[i]));
+            await waitNext(box, i === qs.length - 1 ? "Continuer" : "Question suivante");
+        } else if (!ie.timeUp) {
+            await speak("Thank you.", "en-GB", 0.9, 1.15);
+        }
+    }
+    ie.res.p1bAns = { good: good, total: qs.length, log: ansLog };
+    return true;
+}
+
+/* ---------- Phase 2a : écoute ---------- */
+async function playRecordings(run, box, p) {
+    for (let i = 0; i < p.rec.length; i++) {
+        if (!ieAlive(run)) return false;
+        const tag = el("p", "text-sm text-blue-400 text-center", "🎧 Enregistrement " + (i + 1) + " en cours...");
+        box.appendChild(tag);
+        await speak(p.rec[i].text, "en-GB", 0.8, p.rec[i].pitch);
+        tag.textContent = "✔️ Enregistrement " + (i + 1) + " terminé";
+        await ieSleep(400);
+    }
+    return true;
+}
+
+async function phase2a(run) {
+    const p = ie.set.p2a;
+    ieHeader("Phase 2a · 4 minutes", "Écoute");
+    stopTimer();
+    let box = ieBody();
+    await phaseIntro(box, [
+        "Vous allez écouter deux enregistrements courts, deux fois chacun.",
+        "Après la première écoute, vous répondez à une question générale. Après la deuxième écoute, vous répondez à deux questions de détail.",
+        "Vous pouvez prendre des notes pendant l'écoute."
+    ], "Commencer l'écoute");
+    if (!ieAlive(run)) return false;
+    startTimer(240, false);
+    const log = [];
+    let correct = 0;
+
+    // Première écoute
+    box = ieBody();
+    box.appendChild(el("p", "text-xs text-slate-500 text-center", "Première écoute"));
+    box.appendChild(ie.notes2a);
+    speak("In this part of the test, you are going to listen to two recordings and answer some questions. You can make notes.", "en-GB", 0.85);
+    await ieSleep(200);
+    if (!(await playRecordings(run, box, p))) return false;
+    await examinerAsk(run, box, p.gist.q, true);
+    const g = await collectAnswer(run, box, { tag: "p2a-gist", choices: p.gist.options, accept: p.gist.accept, ms: 8000 });
+    if (!ieAlive(run)) return false;
+    const gOk = acceptAnswer(g.text, p.gist.accept);
+    if (gOk) correct++;
+    log.push({ q: p.gist.q, text: g.text, ok: gOk, answer: p.gist.answer });
+    if (!ie.exam) { note(box, gOk, gOk ? "✅ Correct." : "Pas tout à fait. Bonne réponse : " + p.gist.answer + "."); await waitNext(box, "Deuxième écoute"); }
+
+    // Deuxième écoute
+    if (!ieAlive(run)) return false;
+    box = ieBody();
+    box.appendChild(el("p", "text-xs text-slate-500 text-center", "Deuxième écoute"));
+    box.appendChild(ie.notes2a);
+    speak("Now listen again and answer these questions.", "en-GB", 0.85);
+    await ieSleep(200);
+    if (!(await playRecordings(run, box, p))) return false;
+    for (let i = 0; i < p.details.length; i++) {
+        if (!ieAlive(run)) return false;
+        const dbox = el("div", "space-y-3");
+        box.appendChild(dbox);
+        await examinerAsk(run, dbox, p.details[i].q, true);
+        const a = await collectAnswer(run, dbox, { tag: "p2a-detail", accept: p.details[i].accept, ms: 9000 });
+        if (!ieAlive(run)) return false;
+        const ok = acceptAnswer(a.text, p.details[i].accept);
+        if (ok) correct++;
+        log.push({ q: p.details[i].q, text: a.text, ok: ok, answer: p.details[i].answer });
+        if (!ie.exam) {
+            note(dbox, ok, ok ? "✅ Correct." : "Pas tout à fait. Bonne réponse : " + p.details[i].answer + ".");
+            await waitNext(dbox, i === p.details.length - 1 ? "Continuer" : "Question suivante");
+        }
+    }
+    ie.res.p2a = { correct: correct, total: 1 + p.details.length, log: log };
+    return true;
+}
+
+/* ---------- Phase 2b : discussion ---------- */
+async function phase2b(run) {
+    const p = ie.set.p2b;
+    ieHeader("Phase 2b · 3 à 4 minutes", "Discussion");
+    stopTimer();
+    let box = ieBody();
+    await phaseIntro(box, [
+        "Vous parlez maintenant avec votre partenaire (l'application) d'un sujet lié aux enregistrements : " + p.topic + ".",
+        "Donnez votre avis, ajoutez une raison, et parlez avec des phrases complètes."
+    ], "Commencer la discussion");
+    if (!ieAlive(run)) return false;
+    startTimer(210, true);
+    await speak("Now you are going to talk together about " + p.topic + ".", "en-GB", 0.9);
+    const log = [];
+    let good = 0;
+    for (let i = 0; i < p.prompts.length; i++) {
+        if (!ieAlive(run)) return false;
+        if (ie.timeUp) break;
+        box = ieBody();
+        box.appendChild(el("p", "text-xs text-slate-500 text-center", "Question " + (i + 1) + " sur " + p.prompts.length));
+        await examinerAsk(run, box, p.prompts[i].q, !ie.exam, 1.15, "🙋 ");
+        if (!ieAlive(run)) return false;
+        const ans = await collectAnswer(run, box, { tag: "p2b", ms: 20000, long: true });
+        if (!ieAlive(run)) return false;
+        const words = speechWords(ans.text).length;
+        if (words >= 4) good++;
+        log.push({ q: p.prompts[i].q, text: ans.text });
+        if (!ie.timeUp) {
+            if (!ie.exam) {
+                note(box, words >= 4, words >= 4 ? "✅ Bien, vous développez votre réponse." : "Essayez d'ajouter une raison avec « because ».");
+                box.appendChild(el("p", "text-xs text-slate-400", "Exemple : " + p.prompts[i].ex));
+            }
+            await speak(p.comments[i], "en-GB", 0.9, 1.15);
+            if (!ie.exam) await waitNext(box, i === p.prompts.length - 1 ? "Voir mes résultats" : "Question suivante");
+        }
+    }
+    ie.res.p2b = { good: good, total: p.prompts.length, log: log };
+    return true;
+}
+
+/* ---------- Résultats ---------- */
+function phaseRow(label, got, max) {
+    const row = el("div", "space-y-1");
+    const top = el("div", "flex justify-between text-xs");
+    top.append(el("span", "text-slate-300", label), el("span", "font-bold " + (got / max >= 0.6 ? "text-emerald-400" : "text-amber-400"), got + " / " + max));
+    const bar = el("div", "h-1.5 bg-slate-800 rounded-full overflow-hidden");
+    const fill = el("div", "h-full " + (got / max >= 0.6 ? "bg-emerald-500" : "bg-amber-500"));
+    fill.style.width = Math.round(got / max * 100) + "%";
+    bar.appendChild(fill);
+    row.append(top, bar);
+    return row;
+}
+
+function finishIelts() {
+    stopTimer();
+    const r = ie.res;
+    const parts = [
+        { label: "1a · Questions de l'examinateur", got: r.p1a.ok, max: r.p1a.total, tip: "Répondez avec une phrase complète : « I am ... », « I live in ... », « I like ... »." },
+        { label: "1b · Poser des questions", got: r.p1bAsk.valid, max: r.p1bAsk.target, tip: "Commencez vos questions par Do you..., Where..., What..., How many..., Who..." },
+        { label: "1b · Répondre au partenaire", got: r.p1bAns.good, max: r.p1bAns.total, tip: "Répondez avec une vraie phrase, pas un seul mot, et ajoutez un détail." },
+        { label: "2a · Écoute", got: r.p2a.correct, max: r.p2a.total, tip: "Écoutez les noms, chiffres, lieux et couleurs : ce sont eux qui sont demandés." },
+        { label: "2b · Discussion", got: r.p2b.good, max: r.p2b.total, tip: "Donnez votre avis avec une raison : « I like ... because ... »." }
+    ];
+    const score = parts.reduce((t, x) => t + x.got, 0);
+    const pct = score / IE_TOTAL_POINTS;
+    const elapsed = Math.round((Date.now() - ie.startTime) / 1000);
+
+    ieHeader("Simulation terminée", "Résultats · " + ie.set.label);
+    $("ie-total").textContent = "Durée " + fmt(elapsed);
+    const box = ieBody();
+    const head = el("div", "text-center space-y-1");
+    head.appendChild(el("p", "text-4xl font-black text-blue-400", score + " / " + IE_TOTAL_POINTS));
+    head.appendChild(el("p", "text-sm font-bold text-slate-100", pct >= 0.75 ? "Très bon entraînement" : pct >= 0.5 ? "Presque prêt(e)" : "À retravailler"));
+    head.appendChild(el("p", "text-[11px] text-slate-500", "Repère d'entraînement, pas une note officielle. L'app compte les mots reconnus, elle ne juge ni la grammaire ni la prononciation."));
+    box.appendChild(head);
+    const rows = el("div", "space-y-3");
+    parts.forEach(x => rows.appendChild(phaseRow(x.label, x.got, x.max)));
+    box.appendChild(rows);
+
+    const weak = parts.filter(x => x.got / x.max < 0.6);
+    if (weak.length) {
+        const adv = el("div", "bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-1");
+        adv.appendChild(el("p", "text-xs font-bold text-slate-200", "À travailler en priorité"));
+        weak.forEach(x => adv.appendChild(el("p", "text-[11px] text-slate-400", "• " + x.label + " : " + x.tip)));
+        box.appendChild(adv);
+    }
+
+    const rev = el("div", "bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-2");
+    rev.appendChild(el("p", "text-xs font-bold text-slate-200", "Correction de l'écoute (2a)"));
+    r.p2a.log.forEach(x => {
+        rev.appendChild(el("p", "text-[11px] text-slate-400", x.q));
+        rev.appendChild(el("p", "text-[11px] " + (x.ok ? "text-emerald-400" : "text-amber-400"),
+            (x.ok ? "✅ " : "❌ ") + "Votre réponse : " + (x.text || "aucune") + (x.ok ? "" : " | Bonne réponse : " + x.answer)));
+    });
+    ie.set.p2a.rec.forEach((rc, i) => rev.appendChild(el("p", "text-[10px] text-slate-500 italic", "Enregistrement " + (i + 1) + " : " + rc.text)));
+    box.appendChild(rev);
+
+    const again = el("button", BTN_PRIMARY, "Refaire une simulation");
+    again.dataset.role = "again";
+    again.onclick = () => openIeltsHome();
+    const home = el("button", BTN_SECOND, "Retour au tableau de bord");
+    home.onclick = () => changeScreen("screen-dashboard");
+    box.append(again, home);
+
+    // Historique local + Supabase
+    const label = "IELTS A1 " + ie.set.label + (ie.exam ? " examen" : " entrainement");
+    const hist = store.get("diisoo_tests") || [];
+    hist.push({ date: new Date().toISOString(), topic: label, score: score, total: IE_TOTAL_POINTS });
+    store.set("diisoo_tests", hist);
+    const prof = getProfile();
+    if (db && prof) {
+        db.from("test_results").insert({ phone: prof.phone, topic: label, score: score, total: IE_TOTAL_POINTS }).then(() => {}, () => {});
+    }
+}
+
+/* ---------- Écran d'accueil et déroulement ---------- */
+function openIeltsHome() {
+    ie = null;
+    changeScreen("screen-ielts");
+    renderIeltsHome();
+}
+function quitIelts() { changeScreen("screen-dashboard"); }
+
+function renderIeltsHome() {
+    stopTimer();
+    $("ie-total").textContent = "";
+    ieHeader("Simulation complète", "IELTS Life Skills A1");
+    const box = ieBody();
+    box.appendChild(el("p", "text-sm text-slate-300 leading-relaxed",
+        "Test de Speaking and Listening d'environ 16 à 18 minutes, en 4 phases. Ici, l'application joue l'examinateur et le partenaire."));
+    const list = el("div", "bg-slate-900 border border-slate-800 rounded-2xl p-3 space-y-1");
+    ["1a · Questions personnelles (4 à 5 min)", "1b · Poser puis répondre à des questions (5 min)", "2a · Écoute de deux enregistrements (4 min)", "2b · Discussion avec le partenaire (3 à 4 min)"]
+        .forEach(t => list.appendChild(el("p", "text-xs text-slate-300", t)));
+    box.appendChild(list);
+
+    box.appendChild(el("p", "text-xs font-bold text-slate-400", "Choisissez un test"));
+    const sets = el("div", "flex flex-wrap gap-2");
+    Object.keys(IELTS_SETS).forEach(id => {
+        const b = el("button", "px-3 py-2 rounded-xl text-xs font-bold transition " +
+            (id === ieCfg.setId ? "bg-blue-600 text-white" : "bg-slate-900 text-slate-400"), IELTS_SETS[id].label + " : " + IELTS_SETS[id].theme);
+        b.onclick = () => { ieCfg.setId = id; renderIeltsHome(); };
+        sets.appendChild(b);
+    });
+    box.appendChild(sets);
+
+    box.appendChild(el("p", "text-xs font-bold text-slate-400", "Choisissez le mode"));
+    const modes = el("div", "flex flex-wrap gap-2");
+    [[false, "Entraînement"], [true, "Examen"]].forEach(m => {
+        const b = el("button", "px-3 py-2 rounded-xl text-xs font-bold transition " +
+            (m[0] === ieCfg.exam ? "bg-emerald-600 text-white" : "bg-slate-900 text-slate-400"), m[1]);
+        b.onclick = () => { ieCfg.exam = m[0]; renderIeltsHome(); };
+        modes.appendChild(b);
+    });
+    box.appendChild(modes);
+    box.appendChild(el("p", "text-[11px] text-slate-500",
+        ieCfg.exam
+            ? "Examen : questions en audio seulement, une seule répétition par question, aucune aide, résultats à la fin."
+            : "Entraînement : questions affichées, aides, exemples de réponses et corrections pendant le test."));
+    if (!SR) box.appendChild(el("p", "text-[11px] text-amber-400", "Pour parler à l'app, ouvrez Diisoo dans Chrome. Sur ce navigateur, vous pouvez écrire vos réponses."));
+    const start = el("button", BTN_PRIMARY, "Commencer la simulation");
+    start.dataset.role = "start";
+    start.onclick = startIelts;
+    box.appendChild(start);
+}
+
+async function startIelts() {
+    const run = testRun;
+    const notes = (ph) => { const t = el("textarea", "w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-white h-24 focus:outline-none focus:border-blue-500"); t.placeholder = ph; return t; };
+    ie = {
+        set: IELTS_SETS[ieCfg.setId], exam: ieCfg.exam, startTime: Date.now(), res: {},
+        deadline: 0, timeUp: false, enforce: false, onTimeUp: null, fb: 0, cur: null,
+        notes1b: notes("Notes : écrivez vos questions ici"),
+        notes2a: notes("Notes : écrivez ce que vous entendez")
+    };
+    if (!(await phase1a(run))) return;
+    if (!(await phase1b(run))) return;
+    if (!(await phase2a(run))) return;
+    if (!(await phase2b(run))) return;
+    if (!ieAlive(run)) return;
+    finishIelts();
+}
+
+/* ---------- Démarrage ---------- */
+window.addEventListener("load", () => {
+    if (!db) showStatus("Mode local : Supabase n'est pas encore configuré.", "warn");
+    if (getProfile()) openDashboard();
+});
+</script>
+</body>
+</html>
