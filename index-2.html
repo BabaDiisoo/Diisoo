@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#020617">
+    <title>Diisoo - Apprendre l'anglais avec le français et le wolof</title>
+    <!-- Tailwind CSS (lien corrigé) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SDK Supabase (lien corrigé) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @keyframes custom-bounce {
+            0%, 100% { transform: scaleY(0.2); }
+            50% { transform: scaleY(1); }
+        }
+        .bar-animate { animation: custom-bounce 0.5s ease-in-out infinite alternate; transform-origin: bottom; }
+        button:focus-visible, input:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) { .bar-animate, .animate-pulse { animation: none; } }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans antialiased text-white">
+
+    <div class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-6 relative overflow-hidden">
+
+        <!-- BANDEAU DE STATUT APIS & RESEAU -->
+        <div id="db-status" class="hidden text-center text-[10px] bg-amber-500/10 text-amber-400 py-1 rounded-md mb-2"></div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 1 : ONBOARDING & CAPTURE DU COMPTE WHATSAPP -->
+        <!-- ======================================================== -->
+        <div id="screen-onboarding" class="flex flex-col justify-between h-full space-y-6 my-auto">
+            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-2"><div class="bg-blue-500 h-full w-1/3"></div></div>
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2"><span class="text-4xl">🎙️</span><h1 class="text-3xl font-black tracking-tight">Diisoo</h1></div>
+                <h2 class="text-xl font-bold text-slate-200">Créer votre profil en ligne</h2>
+                <p class="text-xs text-slate-400">Votre profil sera sauvegardé pour suivre votre progression et vous accompagner dans vos cours.</p>
+            </div>
+
+            <form id="form-onboarding" class="space-y-4" onsubmit="handleOnboarding(event)">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label for="user-firstname" class="text-xs font-semibold text-slate-400 uppercase">Prénom</label>
+                        <input type="text" id="user-firstname" required placeholder="Babacar" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label for="user-lastname" class="text-xs font-semibold text-slate-400 uppercase">Nom</label>
+                        <input type="text" id="user-lastname" required placeholder="Dioum" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label for="user-phone" class="text-xs font-semibold text-slate-400 uppercase">Numéro WhatsApp</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-3.5 text-sm text-slate-500 font-medium">🇸🇳 +221</span>
+                        <input type="tel" id="user-phone" required inputmode="numeric" autocomplete="tel-national" placeholder="77 288 21 09" class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-20 pr-4 py-3 text-sm font-mono text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <p id="phone-error" class="hidden text-[11px] text-rose-400"></p>
+                </div>
+                <div class="flex items-start space-x-3 pt-2">
+                    <input type="checkbox" id="whatsapp-optin" required class="mt-1 accent-emerald-500 h-4 w-4 rounded border-slate-800 bg-slate-900 text-emerald-500">
+                    <label for="whatsapp-optin" class="text-[11px] text-slate-400 leading-relaxed cursor-pointer select-none">
+                        J'autorise Diisoo à sauvegarder mon profil (prénom, nom, numéro WhatsApp) et à me contacter sur WhatsApp au sujet de mes cours.
+                    </label>
+                </div>
+                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 bg-blue-600 hover:bg-blue-500 font-bold rounded-2xl text-sm transition mt-4 shadow-lg shadow-blue-600/20">S'inscrire & Se connecter</button>
+            </form>
+            <div class="text-center text-[10px] text-slate-600">Sénégal 🇸🇳 · Souveraineté & Inclusion par la voix</div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 2 : LE DASHBOARD CENTRAL (3 PILIERS) -->
+        <!-- ======================================================== -->
+        <div id="screen-dashboard" class="hidden flex flex-col justify-between h-full space-y-6 my-auto">
+            <div class="pt-2 flex justify-between items-center">
+                <h1 class="text-xl font-black">Diisoo <span class="text-blue-500 text-xs px-2 py-0.5 bg-blue-500/10 rounded ml-1 uppercase">Dashboard</span></h1>
+                <span id="welcome-tag" class="text-xs text-slate-400 font-medium"></span>
+            </div>
+
+            <div class="space-y-4 my-auto">
+                <!-- PILIER 1 -->
+                <button onclick="openGeneralModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-slate-800 p-4 rounded-2xl border border-slate-800 hover:border-blue-500/30 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">📚</span><h3 class="text-sm font-bold text-slate-100">1. Anglais Général (en français)</h3></div>
+                        <span class="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-medium">Anglais / Fr</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Bases classiques pour public scolarisé. Exercices écrits, grammaire et vocabulaire de la vie de tous les jours.</p>
+                </button>
+                <!-- PILIER 2 -->
+                <button onclick="openWolofModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-emerald-950/20 p-4 rounded-2xl border border-slate-800 hover:border-emerald-500/30 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">🇸🇳</span><h3 class="text-sm font-bold text-slate-100">2. Anglais Wolof (Vie & Commerce)</h3></div>
+                        <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-medium">Général & Business</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Apprenez le vocabulaire de tous les jours et du commerce, avec le wolof, le français et l'anglais côte à côte. Écoutez et répétez à voix haute.</p>
+                </button>
+                <!-- PILIER 3 -->
+                <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-slate-900 to-indigo-950/40 p-4 rounded-2xl border border-indigo-900/20 hover:border-indigo-500/40 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-slate-100">3. Simulateur de Test IELTS</h3></div>
+                        <span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Simulateur chronométré, 100% en anglais, inspiré du test IELTS Life Skills A1, pour s'habituer au rythme de l'examen.</p>
+                </button>
+            </div>
+            <div class="space-y-2">
+                <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
+                <button onclick="logout()" class="w-full text-center text-[10px] text-slate-600 hover:text-slate-400 py-1">Changer de profil</button>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 2b : ANGLAIS GÉNÉRAL (QUIZ ÉCRIT) -->
+        <!-- ======================================================== -->
+        <div id="screen-general" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">Bases classiques</span>
+                <h3 class="text-lg font-bold text-slate-100">Anglais Général</h3>
+                <p id="quiz-progress" class="text-xs text-slate-400 mt-1"></p>
+            </div>
+            <div id="quiz-container" class="space-y-4"></div>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 3 : MODULE ANGLAIS WOLOF INTERACTIF (WIKIDATA) -->
+        <!-- ======================================================== -->
+        <div id="screen-wolof" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">Souveraineté Économique</span>
+                <h3 class="text-lg font-bold text-slate-100">Anglais Wolof</h3>
+                <p class="text-xs text-slate-400 mt-1">Écoutez le mot, puis entraînez-vous au micro. La voix wolof est une synthèse approximative, en attendant de vrais enregistrements.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+                <button id="tab-general" onclick="setWolofCat('general')" class="py-2.5 rounded-xl text-xs font-bold transition">Général</button>
+                <button id="tab-business" onclick="setWolofCat('business')" class="py-2.5 rounded-xl text-xs font-bold transition">Business</button>
+                <button id="tab-wikidata" onclick="setWolofCat('wikidata')" class="py-2.5 rounded-xl text-xs font-bold transition">Wikidata</button>
+            </div>
+            <div id="lexicon-container" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1">
+                <!-- Les cartes de vocabulaire sont injectées ici via JS -->
+            </div>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 4 : SIMULATEUR DE TEST (VOICE-FIRST AUTOMATIQUE) -->
+        <!-- ======================================================== -->
+        <div id="screen-test-simulation" class="hidden flex flex-col justify-between h-full min-h-[85vh]">
+            <div class="flex justify-between items-center border-b border-slate-900 pb-4">
+                <div><span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Phase 1b · Questioning</span><h3 class="text-base font-bold text-slate-200">Topic: Neighbours</h3></div>
+                <div id="test-timer" class="text-2xl font-mono font-black text-slate-600">--</div>
+            </div>
+
+            <div class="flex-1 flex flex-col justify-center py-6 space-y-6">
+                <!-- Introduction -->
+                <div id="test-intro" class="space-y-3 text-center">
+                    <p class="text-sm text-slate-300">5 questions en anglais sur le thème des voisins.</p>
+                    <p class="text-xs text-slate-400 leading-relaxed">Vous écoutez la question, puis vous avez 15 secondes pour répondre à voix haute. Utilisez Chrome et autorisez le micro.</p>
+                    <p id="test-warning" class="hidden text-xs text-amber-400">La reconnaissance vocale n'est pas disponible sur ce navigateur. Ouvrez Diisoo dans Chrome pour passer le test.</p>
+                </div>
+
+                <!-- Test en cours -->
+                <div id="test-live" class="hidden space-y-5 text-center">
+                    <p id="test-progress" class="text-xs text-slate-500 font-medium"></p>
+                    <p id="test-question" class="text-2xl font-bold text-slate-100 leading-snug"></p>
+                    <div id="test-bars" class="hidden flex justify-center items-end space-x-1.5 h-12">
+                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:0s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.12s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.24s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.36s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.18s"></div>
+                    </div>
+                    <p id="test-status" class="text-xs text-slate-400"></p>
+                    <p id="test-transcript" class="text-sm text-slate-300 italic min-h-[2.5rem]"></p>
+                </div>
+
+                <!-- Résultats -->
+                <div id="test-result" class="hidden space-y-4"></div>
+            </div>
+
+            <div class="space-y-2">
+                <button id="btn-test-main" onclick="testMainAction()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 font-bold rounded-2xl text-sm transition shadow-lg shadow-blue-600/20">Commencer le test</button>
+                <button onclick="quitTest()" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Quitter le simulateur</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+/* ==========================================================
+   CONFIGURATION SUPABASE
+   Colle ici l'URL du projet et la clé "anon public".
+   Ne mets jamais la clé "service_role" dans ce fichier.
+   Tant que ces valeurs ne sont pas remplies, l'app fonctionne
+   en mode local (profil gardé sur l'appareil).
+   ========================================================== */
+const SUPABASE_URL = "https://jkwtyoefqvafnlqkhium.supabase.co";
+const SUPABASE_KEY = "sb_publishable__lzrlmMaJdFC_kav6DkfEA_UbH6DiTC";
+
+let db = null;
+try {
+    if (SUPABASE_URL.startsWith("https://") && !SUPABASE_KEY.startsWith("COLLE") && window.supabase) {
+        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+} catch (e) { db = null; }
+
+/* ---------- Utilitaires ---------- */
+const $ = (id) => document.getElementById(id);
+const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+function showStatus(msg, type) {
+    const el = $("db-status");
+    el.textContent = msg;
+    el.className = "text-center text-[10px] py-1 rounded-md mb-2 " +
+        (type === "ok" ? "bg-emerald-500/10 text-emerald-400" :
+         type === "error" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400");
+    if (type === "ok") setTimeout(() => el.classList.add("hidden"), 3000);
+}
+
+let testRun = 0;
+let currentStop = null;
+let countdownId = null;
+
+function changeScreen(id) {
+    testRun++;                                   // annule un test en cours
+    if (currentStop) { try { currentStop(); } catch (e) {} currentStop = null; }
+    clearInterval(countdownId);
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    document.querySelectorAll("[id^='screen-']").forEach(s => s.classList.add("hidden"));
+    $(id).classList.remove("hidden");
+    window.scrollTo(0, 0);
+}
+
+/* ---------- Voix : synthèse et reconnaissance ---------- */
+function speak(text, lang, rate) {
+    return new Promise(resolve => {
+        if (!("speechSynthesis" in window)) return resolve();
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang; u.rate = rate || 0.9;
+        u.onend = resolve; u.onerror = resolve;
+        speechSynthesis.speak(u);
+    });
+}
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+/* Retourne { promise, stop }. La promesse donne { text, error, unsupported } */
+function startListening(lang, ms, continuous, onText) {
+    let stopFn = () => {};
+    const promise = new Promise(resolve => {
+        if (!SR) {
+            const t = setTimeout(() => resolve({ text: "", unsupported: true }), ms);
+            stopFn = () => { clearTimeout(t); resolve({ text: "", unsupported: true }); };
+            return;
+        }
+        const rec = new SR();
+        rec.lang = lang; rec.continuous = !!continuous; rec.interimResults = true;
+        let finalText = "", interim = "", error = null;
+        const timer = setTimeout(() => { try { rec.stop(); } catch (e) {} }, ms);
+        rec.onresult = (e) => {
+            interim = "";
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                const t = e.results[i][0].transcript;
+                if (e.results[i].isFinal) finalText += t + " "; else interim += t;
+            }
+            if (onText) onText((finalText + interim).trim());
+        };
+        rec.onerror = (e) => { error = e.error; };
+        rec.onend = () => { clearTimeout(timer); resolve({ text: (finalText + interim).trim(), error }); };
+        stopFn = () => { try { rec.stop(); } catch (e) {} };
+        try { rec.start(); } catch (e) { clearTimeout(timer); resolve({ text: "", error: "start-failed" }); }
+    });
+    return { promise, stop: () => stopFn() };
+}
+
+/* ==========================================================
+   ÉCRAN 1 : INSCRIPTION
+   ========================================================== */
+function getProfile() { return store.get("diisoo_profile"); }
+
+async function handleOnboarding(e) {
+    e.preventDefault();
+    const btn = $("btn-submit-onboarding");
+    const err = $("phone-error");
+    err.classList.add("hidden");
+
+    const first = $("user-firstname").value.trim();
+    const last = $("user-lastname").value.trim();
+    const digits = $("user-phone").value.replace(/\D/g, "").replace(/^221/, "");
+
+    if (!/^7[05-8]\d{7}$/.test(digits)) {
+        err.textContent = "Numéro invalide. Exemple : 77 288 21 09 (9 chiffres).";
+        err.classList.remove("hidden");
+        return;
+    }
+
+    const profile = {
+        first_name: first,
+        last_name: last,
+        phone: "+221" + digits,
+        whatsapp_optin: $("whatsapp-optin").checked
+    };
+
+    btn.disabled = true;
+    btn.textContent = "Inscription en cours...";
+
+    if (db) {
+        try {
+            const { error } = await db.from("profiles").insert(profile);
+            if (error && error.code !== "23505") {   // 23505 = numéro déjà inscrit, on continue
+                showStatus("Profil gardé sur cet appareil. Synchronisation impossible pour le moment.", "warn");
+            } else {
+                showStatus("Profil enregistré.", "ok");
+            }
+        } catch (ex) {
+            showStatus("Réseau indisponible. Profil gardé sur cet appareil.", "warn");
+        }
+    } else {
+        showStatus("Mode local : le profil reste sur cet appareil.", "warn");
+    }
+
+    store.set("diisoo_profile", profile);
+    btn.disabled = false;
+    btn.textContent = "S'inscrire & Se connecter";
+    openDashboard();
+}
+
+function updateStreak() {
+    const today = new Date().toISOString().slice(0, 10);
+    const s = store.get("diisoo_streak") || { count: 0, last: null };
+    if (s.last !== today) {
+        const y = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        s.count = (s.last === y) ? s.count + 1 : 1;
+        s.last = today;
+        store.set("diisoo_streak", s);
+    }
+    const n = s.count;
+    $("streak-counter").textContent = "🔥 Série active : " + n + (n > 1 ? " jours" : " jour") + " de révision !";
+}
+
+function openDashboard() {
+    const p = getProfile();
+    $("welcome-tag").textContent = p ? "Bonjour " + p.first_name : "";
+    updateStreak();
+    changeScreen("screen-dashboard");
+}
+
+function logout() {
+    store.del("diisoo_profile");
+    $("form-onboarding").reset();
+    $("whatsapp-optin").checked = false;
+    changeScreen("screen-onboarding");
+}
+
+/* ==========================================================
+   PILIER 1 : ANGLAIS GÉNÉRAL (QUIZ)
+   ========================================================== */
+const QUIZ = [
+    { q: "She ___ a teacher.", o: ["am", "is", "are"], a: 1, why: "Avec he, she, it, on utilise « is »." },
+    { q: "I have two ___.", o: ["brother", "brothers", "brotheres"], a: 1, why: "Le pluriel se forme avec -s : brothers." },
+    { q: "___ you speak English?", o: ["Do", "Does", "Is"], a: 0, why: "Avec you, la question se fait avec « Do »." },
+    { q: "What ___ your name?", o: ["am", "are", "is"], a: 2, why: "« What is your name? » est la forme correcte." },
+    { q: "There ___ a market near my house.", o: ["is", "are", "be"], a: 0, why: "Un seul marché : « There is »." },
+    { q: "How much ___ this bag?", o: ["are", "is", "do"], a: 1, why: "Un seul sac : « How much is this bag? »." },
+    { q: "He ___ to work every day.", o: ["go", "goes", "going"], a: 1, why: "Avec he, le verbe prend -es : goes." },
+    { q: "« Ma voisine » se dit en anglais :", o: ["my neighbour", "my brother", "my teacher"], a: 0, why: "Neighbour = voisin ou voisine." }
+];
+let quizIndex = 0, quizScore = 0;
+
+function openGeneralModule() {
+    quizIndex = 0; quizScore = 0;
+    changeScreen("screen-general");
+    renderQuiz();
+}
+
+function renderQuiz() {
+    const box = $("quiz-container");
+    if (quizIndex >= QUIZ.length) {
+        $("quiz-progress").textContent = "Exercice terminé";
+        box.innerHTML = "";
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center space-y-3";
+        const pct = Math.round(quizScore / QUIZ.length * 100);
+        card.innerHTML = '<p class="text-3xl font-black text-blue-400">' + quizScore + " / " + QUIZ.length + "</p>" +
+            '<p class="text-xs text-slate-400">' + (pct >= 70 ? "Très bien, continuez comme ça." : "Refaites l'exercice pour progresser.") + "</p>" +
+            '<button class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold" onclick="openGeneralModule()">Recommencer</button>';
+        box.appendChild(card);
+        return;
+    }
+    const item = QUIZ[quizIndex];
+    $("quiz-progress").textContent = "Question " + (quizIndex + 1) + " sur " + QUIZ.length;
+    box.innerHTML = "";
+    const q = document.createElement("p");
+    q.className = "text-base font-bold text-slate-100 text-center";
+    q.textContent = item.q;
+    box.appendChild(q);
+    item.o.forEach((opt, i) => {
+        const b = document.createElement("button");
+        b.className = "w-full text-left bg-slate-900 border border-slate-800 hover:border-blue-500/40 rounded-xl px-4 py-3 text-sm transition";
+        b.textContent = opt;
+        b.onclick = () => answerQuiz(i, box);
+        box.appendChild(b);
+    });
+}
+
+function answerQuiz(i, box) {
+    const item = QUIZ[quizIndex];
+    const ok = i === item.a;
+    if (ok) quizScore++;
+    box.querySelectorAll("button").forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === item.a) b.className = "w-full text-left bg-emerald-500/10 border border-emerald-500/50 rounded-xl px-4 py-3 text-sm";
+        else if (idx === i) b.className = "w-full text-left bg-rose-500/10 border border-rose-500/50 rounded-xl px-4 py-3 text-sm";
+    });
+    const fb = document.createElement("p");
+    fb.className = "text-xs " + (ok ? "text-emerald-400" : "text-rose-400");
+    fb.textContent = (ok ? "Correct. " : "Pas tout à fait. ") + item.why;
+    box.appendChild(fb);
+    const next = document.createElement("button");
+    next.className = "w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold";
+    next.textContent = quizIndex === QUIZ.length - 1 ? "Voir mon score" : "Question suivante";
+    next.onclick = () => { quizIndex++; renderQuiz(); };
+    box.appendChild(next);
+}
+
+/* ==========================================================
+   PILIER 2 : ANGLAIS WOLOF
+   Vocabulaire pilote. À faire valider par des locuteurs wolof.
+   Pour un vrai audio wolof, renseigner "audio" avec l'URL d'un
+   fichier MP3 (sinon une voix de synthèse lit le texte).
+   ========================================================== */
+const LEXICON = [
+    { cat: "general", en: "Hello", wo: "Salaam aleekum", fr: "Bonjour", audio: null },
+    { cat: "general", en: "How are you?", wo: "Nanga def ?", fr: "Comment vas-tu ?", audio: null },
+    { cat: "general", en: "Thank you", wo: "Jërëjëf", fr: "Merci", audio: null },
+    { cat: "general", en: "Yes", wo: "Waaw", fr: "Oui", audio: null },
+    { cat: "general", en: "No", wo: "Déedéet", fr: "Non", audio: null },
+    { cat: "general", en: "Water", wo: "Ndox", fr: "Eau", audio: null },
+    { cat: "general", en: "Friend", wo: "Xarit", fr: "Ami", audio: null },
+    { cat: "general", en: "House", wo: "Kër", fr: "Maison", audio: null },
+    { cat: "general", en: "Food", wo: "Ñam", fr: "Nourriture", audio: null },
+    { cat: "general", en: "Work", wo: "Liggéey", fr: "Travail", audio: null },
+    { cat: "business", en: "Money", wo: "Xaalis", fr: "Argent", audio: null },
+    { cat: "business", en: "Price", wo: "Njëg", fr: "Prix", audio: null },
+    { cat: "business", en: "How much is it?", wo: "Ñaata la ?", fr: "C'est combien ?", audio: null },
+    { cat: "business", en: "Buy", wo: "Jënd", fr: "Acheter", audio: null },
+    { cat: "business", en: "Sell", wo: "Jaay", fr: "Vendre", audio: null },
+    { cat: "business", en: "Market", wo: "Marse", fr: "Marché", audio: null },
+    { cat: "business", en: "Seller", wo: "Jaaykat", fr: "Vendeur", audio: null },
+    { cat: "business", en: "Buyer", wo: "Jëndkat", fr: "Acheteur", audio: null },
+    { cat: "business", en: "Shop", wo: "Butik", fr: "Boutique", audio: null }
+];
+let wolofCat = "general";
+
+function openWolofModule() {
+    changeScreen("screen-wolof");
+    setWolofCat(wolofCat);
+}
+
+function setWolofCat(cat) {
+    wolofCat = cat;
+    const on = "py-2.5 rounded-xl text-xs font-bold transition bg-emerald-600 text-white";
+    const off = "py-2.5 rounded-xl text-xs font-bold transition bg-slate-900 text-slate-400";
+    ["general", "business", "wikidata"].forEach(c => { $("tab-" + c).className = c === cat ? on : off; });
+    if (cat === "wikidata" && !wikidataLoaded) loadWikidata(); else renderLexicon();
+}
+
+/* ---------- Source Wikidata (lexèmes en wolof, licence CC0) ---------- */
+let wikidataLoaded = false;
+let wdMessage = "";
+const WD_CACHE_DAYS = 7;
+const WD_QUERY = `
+SELECT ?lemma (SAMPLE(?en) AS ?glossEn) (SAMPLE(?fr) AS ?glossFr) WHERE {
+  ?l dct:language wd:Q34257 ; wikibase:lemma ?lemma .
+  OPTIONAL { ?l ontolex:sense ?s .
+    OPTIONAL { ?s skos:definition ?en . FILTER(LANG(?en) = "en") }
+    OPTIONAL { ?s skos:definition ?fr . FILTER(LANG(?fr) = "fr") } }
+} GROUP BY ?lemma LIMIT 400`;
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function applyWikidataItems(items) {
+    for (let i = LEXICON.length - 1; i >= 0; i--) if (LEXICON[i].cat === "wikidata") LEXICON.splice(i, 1);
+    items.forEach(it => LEXICON.push({ cat: "wikidata", wo: it.wo, en: it.en, fr: it.fr, audio: null }));
+    wikidataLoaded = true;
+    wdMessage = items.length
+        ? items.length + " mots wolof issus de Wikidata (licence CC0). Vocabulaire à vérifier avant usage pédagogique."
+        : "Aucun mot avec définition trouvé pour le moment sur Wikidata.";
+}
+
+async function loadWikidata() {
+    const cache = store.get("diisoo_wikidata");
+    const fresh = cache && (Date.now() - cache.time) < WD_CACHE_DAYS * 86400000;
+    if (fresh) { applyWikidataItems(cache.items); renderLexicon(); return; }
+
+    wdMessage = "Chargement depuis Wikidata...";
+    renderLexicon();
+    try {
+        const url = "https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(WD_QUERY);
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const data = await resp.json();
+        const items = data.results.bindings
+            .map(b => ({
+                wo: b.lemma.value,
+                en: b.glossEn ? b.glossEn.value : "",
+                fr: b.glossFr ? b.glossFr.value : ""
+            }))
+            .filter(it => (it.en || it.fr) && it.wo.length <= 30)
+            .sort((a, b) => a.wo.localeCompare(b.wo))
+            .slice(0, 80);
+        store.set("diisoo_wikidata", { time: Date.now(), items });
+        applyWikidataItems(items);
+    } catch (e) {
+        if (cache) {
+            applyWikidataItems(cache.items);
+            wdMessage = "Hors ligne. Affichage de la dernière version enregistrée. " + wdMessage;
+        } else {
+            wikidataLoaded = false;
+            wdMessage = "Wikidata est inaccessible pour le moment. Vérifiez la connexion et rouvrez cet onglet.";
+        }
+    }
+    renderLexicon();
+}
+
+function wikidataCardHTML(w, i) {
+    const meaning = w.fr || w.en;
+    const shortEn = w.en && w.en.split(/\s+/).length <= 3;
+    return '<div class="flex justify-between items-start gap-3">' +
+             '<p class="text-lg font-bold text-emerald-400">' + esc(w.wo) + '</p>' +
+             '<p class="text-xs text-slate-300 text-right">' + esc(meaning) + '</p>' +
+           '</div>' +
+           '<div class="grid ' + (shortEn ? "grid-cols-3" : "grid-cols-1") + ' gap-2">' +
+             '<button onclick="playWolof(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+             (shortEn
+               ? '<button onclick="playEnglish(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+                 '<button onclick="practiceWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Parler</button>'
+               : "") +
+           '</div>' +
+           '<div id="res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>' +
+           '<p class="text-[9px] text-slate-600">Source : Wikidata</p>';
+}
+
+function renderLexicon() {
+    const box = $("lexicon-container");
+    box.innerHTML = "";
+    if (wolofCat === "wikidata") {
+        const note = document.createElement("p");
+        note.className = "text-[11px] text-slate-500 text-center";
+        note.textContent = wdMessage;
+        box.appendChild(note);
+    }
+    LEXICON.forEach((w, i) => {
+        if (w.cat !== wolofCat) return;
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3";
+        if (w.cat === "wikidata") { card.innerHTML = wikidataCardHTML(w, i); box.appendChild(card); return; }
+        card.innerHTML =
+            '<div class="flex justify-between items-start">' +
+              '<div><p class="text-lg font-bold text-emerald-400">' + w.wo + '</p>' +
+              '<p class="text-xs text-slate-500">' + w.fr + '</p></div>' +
+              '<p class="text-base font-bold text-slate-100 text-right">' + w.en + '</p>' +
+            '</div>' +
+            '<div class="grid grid-cols-3 gap-2">' +
+              '<button onclick="playWolof(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+              '<button onclick="playEnglish(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+              '<button onclick="practiceWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Parler</button>' +
+            '</div>' +
+            '<div id="res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>';
+        box.appendChild(card);
+    });
+}
+
+function playWolof(i) {
+    const w = LEXICON[i];
+    if (w.audio) { new Audio(w.audio).play().catch(() => {}); return; }
+    speak(w.wo, "fr-FR", 0.8);
+}
+function playEnglish(i) { speak(LEXICON[i].en, "en-US", 0.85); }
+
+function normalize(s) { return s.toLowerCase().replace(/[^a-z\s']/g, " ").replace(/\s+/g, " ").trim(); }
+
+async function practiceWord(i) {
+    const w = LEXICON[i];
+    const res = $("res-" + i);
+    if (!SR) {
+        res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome.";
+        return;
+    }
+    res.innerHTML = '<span class="text-blue-400">🎤 Parlez maintenant...</span>';
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    const r = await startListening("en-US", 6000, false).promise;
+    if (r.error === "not-allowed" || r.error === "service-not-allowed") {
+        res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
+        return;
+    }
+    if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
+    const heard = normalize(r.text), target = normalize(w.en);
+    if (heard.includes(target)) {
+        res.innerHTML = '<span class="text-emerald-400">✅ Bravo ! J\'ai entendu : « ' + heard + ' »</span>';
+    } else {
+        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + esc(w.en) + ' ». Réessayez.</span>';
+    }
+}
+
+/* ==========================================================
+   PILIER 3 : SIMULATEUR IELTS (Phase 1b, Neighbours)
+   ========================================================== */
+const TEST_QUESTIONS = [
+    "Do you have neighbours?",
+    "What is your neighbour's name?",
+    "Do you talk to your neighbours?",
+    "Where do your neighbours live?",
+    "Do you like your neighbours?"
+];
+const ANSWER_SECONDS = 15;
+let testAnswers = [];
+
+function startTestSimulation() {
+    changeScreen("screen-test-simulation");
+    $("test-intro").classList.remove("hidden");
+    $("test-warning").classList.toggle("hidden", !!SR);
+    $("test-live").classList.add("hidden");
+    $("test-result").classList.add("hidden");
+    $("test-timer").textContent = "--";
+    $("test-timer").className = "text-2xl font-mono font-black text-slate-600";
+    const b = $("btn-test-main");
+    b.textContent = "Commencer le test";
+    b.dataset.mode = "start";
+}
+
+function testMainAction() {
+    const mode = $("btn-test-main").dataset.mode;
+    if (mode === "start") { if (!SR) return; runTest(); }
+    else if (mode === "skip" && currentStop) currentStop();
+}
+
+function quitTest() { changeScreen("screen-dashboard"); }
+
+function setTimer(sec, urgent) {
+    const t = $("test-timer");
+    t.textContent = sec === null ? "--" : sec;
+    t.className = "text-2xl font-mono font-black " + (urgent ? "text-rose-400" : "text-slate-200");
+}
+
+async function runTest() {
+    const run = ++testRun;
+    testAnswers = [];
+    $("test-intro").classList.add("hidden");
+    $("test-result").classList.add("hidden");
+    $("test-live").classList.remove("hidden");
+    const btn = $("btn-test-main");
+    btn.dataset.mode = "skip";
+    btn.textContent = "Passer à la question suivante";
+
+    for (let i = 0; i < TEST_QUESTIONS.length; i++) {
+        if (run !== testRun) return;
+        $("test-progress").textContent = "Question " + (i + 1) + " sur " + TEST_QUESTIONS.length;
+        $("test-question").textContent = TEST_QUESTIONS[i];
+        $("test-transcript").textContent = "";
+        $("test-bars").classList.add("hidden");
+        $("test-status").textContent = "🔊 Écoutez la question";
+        setTimer(null);
+
+        await speak(TEST_QUESTIONS[i], "en-GB", 0.85);
+        if (run !== testRun) return;
+
+        $("test-status").textContent = "🎤 À vous de répondre";
+        $("test-bars").classList.remove("hidden");
+
+        let left = ANSWER_SECONDS;
+        setTimer(left, false);
+        clearInterval(countdownId);
+        countdownId = setInterval(() => {
+            left--;
+            setTimer(Math.max(left, 0), left <= 5);
+        }, 1000);
+
+        const session = startListening("en-GB", ANSWER_SECONDS * 1000, true, (t) => {
+            if (run === testRun) $("test-transcript").textContent = t;
+        });
+        currentStop = session.stop;
+        const r = await session.promise;
+        currentStop = null;
+        clearInterval(countdownId);
+        if (run !== testRun) return;
+
+        if (r.error === "not-allowed" || r.error === "service-not-allowed") {
+            $("test-status").textContent = "Micro bloqué. Autorisez le micro puis recommencez.";
+            $("test-bars").classList.add("hidden");
+            btn.dataset.mode = "start";
+            btn.textContent = "Recommencer le test";
+            return;
+        }
+        testAnswers.push({ q: TEST_QUESTIONS[i], text: r.text || "", unsupported: !!r.unsupported });
+    }
+    finishTest();
+}
+
+function finishTest() {
+    clearInterval(countdownId);
+    setTimer(null);
+    $("test-live").classList.add("hidden");
+    const box = $("test-result");
+    box.classList.remove("hidden");
+    box.innerHTML = "";
+
+    const unsupported = testAnswers.some(a => a.unsupported);
+    const answered = testAnswers.filter(a => a.text.split(/\s+/).filter(Boolean).length >= 2).length;
+
+    const head = document.createElement("div");
+    head.className = "text-center space-y-1";
+    if (unsupported) {
+        head.innerHTML = '<p class="text-lg font-bold text-slate-100">Test terminé</p>' +
+            '<p class="text-xs text-slate-400">La reconnaissance vocale n\'est pas disponible ici. Utilisez Chrome pour obtenir une évaluation.</p>';
+    } else {
+        head.innerHTML = '<p class="text-3xl font-black text-blue-400">' + answered + " / " + TEST_QUESTIONS.length + "</p>" +
+            '<p class="text-xs text-slate-400">questions avec une réponse claire</p>';
+    }
+    box.appendChild(head);
+
+    if (!unsupported) {
+        testAnswers.forEach((a, i) => {
+            const words = a.text.split(/\s+/).filter(Boolean).length;
+            const row = document.createElement("div");
+            row.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1";
+            const q = document.createElement("p");
+            q.className = "text-xs font-semibold text-slate-200";
+            q.textContent = (i + 1) + ". " + a.q;
+            const t = document.createElement("p");
+            t.className = "text-xs italic text-slate-400";
+            t.textContent = a.text ? "« " + a.text + " »" : "Aucune réponse détectée";
+            const f = document.createElement("p");
+            f.className = "text-[11px] " + (words >= 2 ? "text-emerald-400" : "text-amber-400");
+            f.textContent = words >= 2
+                ? "Bien. Vous avez répondu avec " + words + " mots."
+                : "Essayez une phrase complète, par exemple : « I have two neighbours. »";
+            row.append(q, t, f);
+            box.appendChild(row);
+        });
+    }
+
+    const btn = $("btn-test-main");
+    btn.dataset.mode = "start";
+    btn.textContent = "Refaire le test";
+
+    // Historique local + envoi Supabase (si configuré)
+    const p = getProfile();
+    const hist = store.get("diisoo_tests") || [];
+    hist.push({ date: new Date().toISOString(), topic: "Neighbours", score: answered, total: TEST_QUESTIONS.length });
+    store.set("diisoo_tests", hist);
+    if (db && p && !unsupported) {
+        db.from("test_results").insert({
+            phone: p.phone, topic: "Neighbours", score: answered, total: TEST_QUESTIONS.length
+        }).then(() => {}, () => {});
+    }
+}
+
+/* ---------- Démarrage ---------- */
+window.addEventListener("load", () => {
+    if (!db) showStatus("Mode local : Supabase n'est pas encore configuré.", "warn");
+    if (getProfile()) openDashboard();
+});
+</script>
+</body>
+</html>
