@@ -90,7 +90,7 @@
                         <div class="flex items-center space-x-2"><span class="text-lg">📚</span><h3 class="text-sm font-bold text-slate-100">1. Anglais Général (Français)</h3></div>
                         <span class="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-medium">Anglais / Fr</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Bases classiques pour public scolarisé. Exercices écrits, grammaire et vocabulaire de la vie de tous les jours.</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">8 thèmes de la vie courante : se présenter, famille, travail, achats, voyage, santé, nourriture, temps. Vocabulaire, dialogues et grammaire.</p>
                 </button>
                 <!-- PILIER 2 -->
                 <button onclick="openWolofModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-emerald-950/20 p-4 rounded-2xl border border-slate-800 hover:border-emerald-500/30 transition shadow-md">
@@ -98,7 +98,7 @@
                         <div class="flex items-center space-x-2"><span class="text-lg">🇸🇳</span><h3 class="text-sm font-bold text-slate-100">2. Anglais Wolof (Vie & Commerce)</h3></div>
                         <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-medium">Général & Business</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Inclusion 100% orale. Apprenez le vocabulaire quotidien (Général) et des affaires (Commercial) guidé par des audios en Wolof.</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Inclusion 100% orale. Les 8 mêmes thèmes que le pilier 1, en wolof, pour apprendre les deux langues ensemble.</p>
                 </button>
                 <!-- PILIER 3 -->
                 <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-slate-900 to-indigo-950/40 p-4 rounded-2xl border border-indigo-900/20 hover:border-indigo-500/40 transition shadow-md">
@@ -122,9 +122,10 @@
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">Bases classiques</span>
                 <h3 class="text-lg font-bold text-slate-100">Anglais Général</h3>
-                <p id="quiz-progress" class="text-xs text-slate-400 mt-1"></p>
+                <p class="text-xs text-slate-400 mt-1">8 thèmes de la vie courante : écoutez, répétez, puis testez votre grammaire.</p>
             </div>
-            <div id="quiz-container" class="space-y-4"></div>
+            <div id="general-tabs" class="flex space-x-2 overflow-x-auto pb-1"></div>
+            <div id="general-content" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1"></div>
             <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
         </div>
 
@@ -135,13 +136,9 @@
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">Souveraineté Économique</span>
                 <h3 class="text-lg font-bold text-slate-100">Anglais Wolof</h3>
-                <p class="text-xs text-slate-400 mt-1">Écoutez le professeur en Wolof, puis entraînez-vous au micro.</p>
+                <p class="text-xs text-slate-400 mt-1">8 thèmes de la vie courante, 100% oraux. Écoutez le wolof, puis entraînez-vous au micro en anglais.</p>
             </div>
-            <div class="grid grid-cols-3 gap-2">
-                <button id="tab-general" onclick="setWolofCat('general')" class="py-2.5 rounded-xl text-xs font-bold transition">Général</button>
-                <button id="tab-business" onclick="setWolofCat('business')" class="py-2.5 rounded-xl text-xs font-bold transition">Business</button>
-                <button id="tab-wikidata" onclick="setWolofCat('wikidata')" class="py-2.5 rounded-xl text-xs font-bold transition">Wikidata</button>
-            </div>
+            <div id="wolof-tabs" class="flex space-x-2 overflow-x-auto pb-1"></div>
             <div id="lexicon-container" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1">
                 <!-- Les cartes de vocabulaire sont injectées ici via JS -->
             </div>
@@ -172,6 +169,7 @@
                 <!-- Test en cours -->
                 <div id="test-live" class="hidden space-y-5 text-center">
                     <p id="test-progress" class="text-xs text-slate-500 font-medium"></p>
+                    <div id="test-photo" class="hidden rounded-2xl overflow-hidden border border-slate-800 mx-auto max-w-[280px]"></div>
                     <p id="test-question" class="text-2xl font-bold text-slate-100 leading-snug"></p>
                     <div id="test-bars" class="hidden flex justify-center items-end space-x-1.5 h-12">
                         <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:0s"></div>
@@ -238,6 +236,7 @@ const BADGES = {
     "premier-pas": { icon: "🌱", label: "Premier pas", desc: "Première activité terminée" },
     "grammairien": { icon: "📖", label: "Grammairien", desc: "70% ou plus au quiz d'anglais général" },
     "bilingue": { icon: "🇸🇳", label: "Bilingue", desc: "10 mots wolof prononcés avec succès" },
+    "orateur": { icon: "🗣️", label: "Orateur", desc: "10 mots d'anglais général prononcés avec succès" },
     "serie-3": { icon: "🔥", label: "Série de 3", desc: "3 jours de révision d'affilée" },
     "pret-visa": { icon: "🛂", label: "Prêt pour le visa", desc: "Simulateur IELTS terminé" }
 };
@@ -337,10 +336,30 @@ function isDue(stats, key) {
     const s = stats[key];
     return !!(s && s.wrong > s.correct);
 }
+/* ---------- Révision espacée simple : vocabulaire wolof et anglais général ---------- */
+function getStats(storeKey) { return store.get(storeKey) || {}; }
+function bumpStat(storeKey, itemKey, field) {
+    const s = getStats(storeKey);
+    if (!s[itemKey]) s[itemKey] = { correct: 0, wrong: 0 };
+    s[itemKey][field]++;
+    store.set(storeKey, s);
+    return s;
+}
+function isDue(stats, key) {
+    const s = stats[key];
+    return !!(s && s.wrong > s.correct);
+}
+function getWordStats() { return getStats("diisoo_word_stats"); }
+function bumpWordStat(key, field) { return bumpStat("diisoo_word_stats", "wo:" + key, field); }
 function checkBilingueBadge() {
     const s = getWordStats();
-    const mastered = Object.values(s).filter(v => v.correct >= 1).length;
+    const mastered = Object.keys(s).filter(k => k.startsWith("wo:") && s[k].correct >= 1).length;
     if (mastered >= 10) awardBadge("bilingue");
+}
+function checkOrateurBadge() {
+    const s = getWordStats();
+    const mastered = Object.keys(s).filter(k => k.startsWith("gen:") && s[k].correct >= 1).length;
+    if (mastered >= 10) awardBadge("orateur");
 }
 
 let testRun = 0;
@@ -484,61 +503,317 @@ function logout() {
 }
 
 /* ==========================================================
-   PILIER 1 : ANGLAIS GÉNÉRAL (QUIZ)
+   PILIER 1 : ANGLAIS GÉNÉRAL — 8 thèmes de la vie courante
+   Chaque thème : vocabulaire à écouter/répéter, un dialogue, de la grammaire.
    ========================================================== */
-const QUIZ = [
-    { q: "She ___ a teacher.", o: ["am", "is", "are"], a: 1, why: "Avec he, she, it, on utilise « is »." },
-    { q: "I have two ___.", o: ["brother", "brothers", "brotheres"], a: 1, why: "Le pluriel se forme avec -s : brothers." },
-    { q: "___ you speak English?", o: ["Do", "Does", "Is"], a: 0, why: "Avec you, la question se fait avec « Do »." },
-    { q: "What ___ your name?", o: ["am", "are", "is"], a: 2, why: "« What is your name? » est la forme correcte." },
-    { q: "There ___ a market near my house.", o: ["is", "are", "be"], a: 0, why: "Un seul marché : « There is »." },
-    { q: "How much ___ this bag?", o: ["are", "is", "do"], a: 1, why: "Un seul sac : « How much is this bag? »." },
-    { q: "He ___ to work every day.", o: ["go", "goes", "going"], a: 1, why: "Avec he, le verbe prend -es : goes." },
-    { q: "« Ma voisine » se dit en anglais :", o: ["my neighbour", "my brother", "my teacher"], a: 0, why: "Neighbour = voisin ou voisine." }
+const GENERAL_THEMES = [
+    { id: "intro", title: "Se présenter",
+      vocab: [
+        { en: "My name is...", fr: "Je m'appelle..." },
+        { en: "I am from Senegal", fr: "Je viens du Sénégal" },
+        { en: "Nice to meet you", fr: "Enchanté(e)" },
+        { en: "I am a student", fr: "Je suis étudiant(e)" },
+        { en: "How old are you?", fr: "Quel âge as-tu ?" }
+      ],
+      dialogue: [
+        { who: "A", en: "Hello, what is your name?" },
+        { who: "B", en: "My name is Fatou. Nice to meet you." }
+      ],
+      quiz: [
+        { q: "My name ___ Fatou.", o: ["is", "am", "are"], a: 0, why: "My name is + nom : toujours « is »." },
+        { q: "I ___ from Senegal.", o: ["is", "am", "are"], a: 1, why: "Avec I, on utilise toujours « am »." },
+        { q: "« Enchanté » se dit :", o: ["Nice to meet you", "Good night", "See you"], a: 0, why: "Expression de politesse à la rencontre." }
+      ]
+    },
+    { id: "family", title: "Famille",
+      vocab: [
+        { en: "Family", fr: "Famille" },
+        { en: "Father", fr: "Père" },
+        { en: "Mother", fr: "Mère" },
+        { en: "Brother", fr: "Frère" },
+        { en: "Sister", fr: "Sœur" }
+      ],
+      dialogue: [
+        { who: "A", en: "Do you have a big family?" },
+        { who: "B", en: "Yes, I have two brothers and one sister." }
+      ],
+      quiz: [
+        { q: "She ___ a teacher.", o: ["am", "is", "are"], a: 1, why: "Avec he, she, it, on utilise « is »." },
+        { q: "I have two ___.", o: ["brother", "brothers", "brotheres"], a: 1, why: "Le pluriel se forme avec -s : brothers." },
+        { q: "« Ma voisine » se dit en anglais :", o: ["my neighbour", "my brother", "my teacher"], a: 0, why: "Neighbour = voisin ou voisine." }
+      ]
+    },
+    { id: "work", title: "Travail & routine",
+      vocab: [
+        { en: "Work", fr: "Travail" },
+        { en: "Job", fr: "Emploi" },
+        { en: "Every day", fr: "Chaque jour" },
+        { en: "Busy", fr: "Occupé(e)" },
+        { en: "Colleague", fr: "Collègue" }
+      ],
+      dialogue: [
+        { who: "A", en: "What do you do?" },
+        { who: "B", en: "I work in a shop every day." }
+      ],
+      quiz: [
+        { q: "He ___ to work every day.", o: ["go", "goes", "going"], a: 1, why: "Avec he, le verbe prend -es : goes." },
+        { q: "I ___ a taxi driver.", o: ["am", "is", "are"], a: 0, why: "Avec I, on utilise toujours « am »." },
+        { q: "She works ___ a hospital.", o: ["in", "at", "on"], a: 1, why: "« Work at + lieu » pour un lieu de travail précis." }
+      ]
+    },
+    { id: "market", title: "Achats & argent",
+      vocab: [
+        { en: "Market", fr: "Marché" },
+        { en: "Price", fr: "Prix" },
+        { en: "Money", fr: "Argent" },
+        { en: "Buy", fr: "Acheter" },
+        { en: "Cheap", fr: "Bon marché" }
+      ],
+      dialogue: [
+        { who: "A", en: "How much is this bag?" },
+        { who: "B", en: "It's five thousand francs." }
+      ],
+      quiz: [
+        { q: "How much ___ this bag?", o: ["are", "is", "do"], a: 1, why: "Un seul sac : « How much is this bag? »." },
+        { q: "There ___ a market near my house.", o: ["is", "are", "be"], a: 0, why: "Un seul marché : « There is »." },
+        { q: "This shop is very ___.", o: ["cheap", "cheep", "cheaply"], a: 0, why: "Adjectif : cheap (pas d'adverbe ici)." }
+      ]
+    },
+    { id: "travel", title: "Voyage & transport",
+      vocab: [
+        { en: "Airport", fr: "Aéroport" },
+        { en: "Ticket", fr: "Billet" },
+        { en: "Passport", fr: "Passeport" },
+        { en: "Flight", fr: "Vol" },
+        { en: "Bus", fr: "Bus" }
+      ],
+      dialogue: [
+        { who: "A", en: "Where is the airport?" },
+        { who: "B", en: "It's ten minutes from here by taxi." }
+      ],
+      quiz: [
+        { q: "I need a ___ to travel.", o: ["passport", "password", "passeport"], a: 0, why: "Orthographe correcte en anglais : passport." },
+        { q: "The flight ___ at 8am.", o: ["leaves", "leave", "leaving"], a: 0, why: "Avec it, le verbe prend -s : leaves." },
+        { q: "Is this bus ___ to the airport?", o: ["going", "go", "goes"], a: 0, why: "Présent continu : is + going." }
+      ]
+    },
+    { id: "health", title: "Santé & urgences",
+      vocab: [
+        { en: "Doctor", fr: "Médecin" },
+        { en: "Hospital", fr: "Hôpital" },
+        { en: "Sick", fr: "Malade" },
+        { en: "Medicine", fr: "Médicament" },
+        { en: "Help", fr: "Aide" }
+      ],
+      dialogue: [
+        { who: "A", en: "Are you okay?" },
+        { who: "B", en: "No, I feel sick. I need a doctor." }
+      ],
+      quiz: [
+        { q: "I ___ sick today.", o: ["feel", "feels", "feeling"], a: 0, why: "Avec I, le verbe reste à la base : feel." },
+        { q: "Call a doctor, please! It's an ___.", o: ["emergency", "emergent", "emergently"], a: 0, why: "Nom : emergency (une urgence)." },
+        { q: "Where is the ___?", o: ["hospital", "hospitel", "hopital"], a: 0, why: "Orthographe correcte : hospital." }
+      ]
+    },
+    { id: "food", title: "Nourriture & restaurant",
+      vocab: [
+        { en: "Restaurant", fr: "Restaurant" },
+        { en: "Menu", fr: "Menu" },
+        { en: "Water", fr: "Eau" },
+        { en: "Delicious", fr: "Délicieux" },
+        { en: "Bill", fr: "Addition" }
+      ],
+      dialogue: [
+        { who: "A", en: "Can I have the menu, please?" },
+        { who: "B", en: "Of course, here you are." }
+      ],
+      quiz: [
+        { q: "I would like ___ water, please.", o: ["some", "a", "an"], a: 0, why: "Indénombrable : some water." },
+        { q: "This food is very ___.", o: ["delicious", "deliciously", "delicous"], a: 0, why: "Adjectif : delicious." },
+        { q: "Can I have the bill, ___?", o: ["please", "plz", "pls"], a: 0, why: "Anglais écrit correct : please." }
+      ]
+    },
+    { id: "time", title: "Temps & nombres",
+      vocab: [
+        { en: "Today", fr: "Aujourd'hui" },
+        { en: "Tomorrow", fr: "Demain" },
+        { en: "Yesterday", fr: "Hier" },
+        { en: "Number", fr: "Nombre" },
+        { en: "Time", fr: "Heure / temps" }
+      ],
+      dialogue: [
+        { who: "A", en: "What time is it?" },
+        { who: "B", en: "It's three o'clock." }
+      ],
+      quiz: [
+        { q: "What ___ is it?", o: ["time", "times", "timing"], a: 0, why: "Demander l'heure : What time is it?" },
+        { q: "See you ___!", o: ["tomorrow", "tomorow", "tomorrows"], a: 0, why: "Orthographe correcte : tomorrow." },
+        { q: "There ___ five people in my class.", o: ["are", "is", "be"], a: 0, why: "Pluriel : there are." }
+      ]
+    }
 ];
-let quizIndex = 0, quizScore = 0;
+let generalThemeId = GENERAL_THEMES[0].id;
+let generalQuizIndex = 0, generalQuizScore = 0;
+
+function currentGeneralTheme() { return GENERAL_THEMES.find(t => t.id === generalThemeId); }
 
 function openGeneralModule() {
-    quizIndex = 0; quizScore = 0;
     changeScreen("screen-general");
-    renderQuiz();
+    renderGeneralTabs();
+    setGeneralTheme(generalThemeId);
 }
 
-function renderQuiz() {
-    const box = $("quiz-container");
-    if (quizIndex >= QUIZ.length) {
-        $("quiz-progress").textContent = "Exercice terminé";
+function renderGeneralTabs() {
+    const box = $("general-tabs");
+    box.innerHTML = "";
+    GENERAL_THEMES.forEach(t => {
+        const active = t.id === generalThemeId;
+        const b = document.createElement("button");
+        b.className = "px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition " +
+            (active ? "bg-blue-600 text-white" : "bg-slate-900 text-slate-400");
+        b.textContent = t.title;
+        b.onclick = () => setGeneralTheme(t.id);
+        box.appendChild(b);
+    });
+}
+
+function setGeneralTheme(id) {
+    generalThemeId = id;
+    generalQuizIndex = 0; generalQuizScore = 0;
+    renderGeneralTabs();
+    renderGeneralContent();
+}
+
+function renderGeneralContent() {
+    const theme = currentGeneralTheme();
+    const box = $("general-content");
+    box.innerHTML = "";
+    const stats = getWordStats();
+
+    const vocTitle = document.createElement("p");
+    vocTitle.className = "text-[10px] font-bold text-slate-500 uppercase tracking-wider";
+    vocTitle.textContent = "Vocabulaire à écouter et répéter";
+    box.appendChild(vocTitle);
+
+    theme.vocab.forEach((w, i) => {
+        const key = "gen:" + theme.id + ":" + w.en;
+        const due = isDue(stats, key);
+        const card = document.createElement("div");
+        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3";
+        card.innerHTML =
+            '<div class="flex justify-between items-start">' +
+              '<p class="text-base font-bold text-slate-100">' + w.en + '</p>' +
+              '<div class="text-right">' +
+                '<p class="text-xs text-slate-500">' + w.fr + '</p>' +
+                (due ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">🔁 À revoir</span>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-2">' +
+              '<button onclick="speakGeneralWord(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Écouter</button>' +
+              '<button onclick="practiceGeneralWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Répéter</button>' +
+            '</div>' +
+            '<div id="gen-res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>';
+        box.appendChild(card);
+    });
+
+    const dlgTitle = document.createElement("p");
+    dlgTitle.className = "text-[10px] font-bold text-slate-500 uppercase tracking-wider pt-2";
+    dlgTitle.textContent = "Petit dialogue";
+    box.appendChild(dlgTitle);
+    const dlgCard = document.createElement("div");
+    dlgCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2";
+    theme.dialogue.forEach((line, i) => {
+        const p = document.createElement("p");
+        p.className = "text-sm text-slate-200";
+        p.innerHTML = "<b>" + line.who + ":</b> " + esc(line.en) +
+            ' <button onclick="speakDialogueLine(' + i + ')" class="text-blue-400 text-xs align-middle">🔊</button>';
+        dlgCard.appendChild(p);
+    });
+    const playAll = document.createElement("button");
+    playAll.className = "w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold mt-2";
+    playAll.textContent = "🔊 Écouter tout le dialogue";
+    playAll.onclick = playFullDialogue;
+    dlgCard.appendChild(playAll);
+    box.appendChild(dlgCard);
+
+    const quizTitle = document.createElement("p");
+    quizTitle.className = "text-[10px] font-bold text-slate-500 uppercase tracking-wider pt-2";
+    quizTitle.textContent = "Grammaire";
+    box.appendChild(quizTitle);
+    const quizBox = document.createElement("div");
+    quizBox.id = "general-quiz-box";
+    quizBox.className = "space-y-3";
+    box.appendChild(quizBox);
+    renderGeneralQuiz();
+}
+
+function speakGeneralWord(i) { speak(currentGeneralTheme().vocab[i].en, "en-US", 0.85); }
+
+async function practiceGeneralWord(i) {
+    const theme = currentGeneralTheme();
+    const w = theme.vocab[i];
+    const key = "gen:" + theme.id + ":" + w.en;
+    const res = $("gen-res-" + i);
+    if (!SR) { res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome."; return; }
+    res.innerHTML = '<span class="text-blue-400">🎤 Parlez maintenant...</span>';
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    const r = await startListening("en-US", 6000, false).promise;
+    if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur."; return; }
+    if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
+    const heard = normalize(r.text), target = normalize(w.en);
+    if (heard.includes(target) || target.includes(heard)) {
+        res.innerHTML = '<span class="text-emerald-400">✅ Bravo ! J\'ai entendu : « ' + heard + ' »</span>';
+        bumpStat("diisoo_word_stats", key, "correct");
+        addXP(3); bumpDailyGoal(1); checkOrateurBadge();
+    } else {
+        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessayez.</span>';
+        bumpStat("diisoo_word_stats", key, "wrong");
+    }
+}
+
+function speakDialogueLine(i) { speak(currentGeneralTheme().dialogue[i].en, "en-GB", 0.85); }
+async function playFullDialogue() {
+    for (const line of currentGeneralTheme().dialogue) { await speak(line.en, "en-GB", 0.85); }
+}
+
+function renderGeneralQuiz() {
+    const theme = currentGeneralTheme();
+    const quiz = theme.quiz;
+    const box = $("general-quiz-box");
+    if (generalQuizIndex >= quiz.length) {
         box.innerHTML = "";
         const card = document.createElement("div");
         card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center space-y-3";
-        const pct = Math.round(quizScore / QUIZ.length * 100);
+        const pct = Math.round(generalQuizScore / quiz.length * 100);
         if (pct >= 70) awardBadge("grammairien");
-        card.innerHTML = '<p class="text-3xl font-black text-blue-400">' + quizScore + " / " + QUIZ.length + "</p>" +
+        card.innerHTML = '<p class="text-2xl font-black text-blue-400">' + generalQuizScore + " / " + quiz.length + "</p>" +
             '<p class="text-xs text-slate-400">' + (pct >= 70 ? "Très bien, continuez comme ça." : "Refaites l'exercice pour progresser.") + "</p>" +
-            '<button class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold" onclick="openGeneralModule()">Recommencer</button>';
+            '<button class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold" onclick="setGeneralTheme(generalThemeId)">Recommencer ce thème</button>';
         box.appendChild(card);
         return;
     }
-    const item = QUIZ[quizIndex];
-    $("quiz-progress").textContent = "Question " + (quizIndex + 1) + " sur " + QUIZ.length;
+    const item = quiz[generalQuizIndex];
     box.innerHTML = "";
+    const prog = document.createElement("p");
+    prog.className = "text-[11px] text-slate-500 text-center";
+    prog.textContent = "Question " + (generalQuizIndex + 1) + " sur " + quiz.length;
+    box.appendChild(prog);
     const q = document.createElement("p");
-    q.className = "text-base font-bold text-slate-100 text-center";
+    q.className = "text-sm font-bold text-slate-100 text-center";
     q.textContent = item.q;
     box.appendChild(q);
     item.o.forEach((opt, i) => {
         const b = document.createElement("button");
         b.className = "w-full text-left bg-slate-900 border border-slate-800 hover:border-blue-500/40 rounded-xl px-4 py-3 text-sm transition";
         b.textContent = opt;
-        b.onclick = () => answerQuiz(i, box);
+        b.onclick = () => answerGeneralQuiz(i, box, item);
         box.appendChild(b);
     });
 }
 
-function answerQuiz(i, box) {
-    const item = QUIZ[quizIndex];
+function answerGeneralQuiz(i, box, item) {
     const ok = i === item.a;
-    if (ok) { quizScore++; addXP(5); bumpDailyGoal(1); }
+    if (ok) { generalQuizScore++; addXP(5); bumpDailyGoal(1); }
     box.querySelectorAll("button").forEach((b, idx) => {
         b.disabled = true;
         if (idx === item.a) b.className = "w-full text-left bg-emerald-500/10 border border-emerald-500/50 rounded-xl px-4 py-3 text-sm";
@@ -550,50 +825,112 @@ function answerQuiz(i, box) {
     box.appendChild(fb);
     const next = document.createElement("button");
     next.className = "w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold";
-    next.textContent = quizIndex === QUIZ.length - 1 ? "Voir mon score" : "Question suivante";
-    next.onclick = () => { quizIndex++; renderQuiz(); };
+    next.textContent = generalQuizIndex === currentGeneralTheme().quiz.length - 1 ? "Voir mon score" : "Question suivante";
+    next.onclick = () => { generalQuizIndex++; renderGeneralQuiz(); };
     box.appendChild(next);
 }
 
 /* ==========================================================
-   PILIER 2 : ANGLAIS WOLOF
+   PILIER 2 : ANGLAIS WOLOF — 8 thèmes miroir de l'anglais général
    Vocabulaire pilote. À faire valider par des locuteurs wolof.
    Pour un vrai audio wolof, renseigner "audio" avec l'URL d'un
    fichier MP3 (sinon une voix de synthèse lit le texte).
    ========================================================== */
-const LEXICON = [
-    { cat: "general", en: "Hello", wo: "Salaam aleekum", fr: "Bonjour", audio: null },
-    { cat: "general", en: "How are you?", wo: "Nanga def ?", fr: "Comment vas-tu ?", audio: null },
-    { cat: "general", en: "Thank you", wo: "Jërëjëf", fr: "Merci", audio: null },
-    { cat: "general", en: "Yes", wo: "Waaw", fr: "Oui", audio: null },
-    { cat: "general", en: "No", wo: "Déedéet", fr: "Non", audio: null },
-    { cat: "general", en: "Water", wo: "Ndox", fr: "Eau", audio: null },
-    { cat: "general", en: "Friend", wo: "Xarit", fr: "Ami", audio: null },
-    { cat: "general", en: "House", wo: "Kër", fr: "Maison", audio: null },
-    { cat: "general", en: "Food", wo: "Ñam", fr: "Nourriture", audio: null },
-    { cat: "general", en: "Work", wo: "Liggéey", fr: "Travail", audio: null },
-    { cat: "business", en: "Money", wo: "Xaalis", fr: "Argent", audio: null },
-    { cat: "business", en: "Price", wo: "Njëg", fr: "Prix", audio: null },
-    { cat: "business", en: "How much is it?", wo: "Ñaata la ?", fr: "C'est combien ?", audio: null },
-    { cat: "business", en: "Buy", wo: "Jënd", fr: "Acheter", audio: null },
-    { cat: "business", en: "Sell", wo: "Jaay", fr: "Vendre", audio: null },
-    { cat: "business", en: "Market", wo: "Marse", fr: "Marché", audio: null },
-    { cat: "business", en: "Seller", wo: "Jaaykat", fr: "Vendeur", audio: null },
-    { cat: "business", en: "Buyer", wo: "Jëndkat", fr: "Acheteur", audio: null },
-    { cat: "business", en: "Shop", wo: "Butik", fr: "Boutique", audio: null }
+const WOLOF_THEMES = [
+    { id: "salutations", title: "Salutations", words: [
+        { en: "Hello", wo: "Salaam aleekum", fr: "Bonjour" },
+        { en: "How are you?", wo: "Nanga def ?", fr: "Comment vas-tu ?" },
+        { en: "I'm fine", wo: "Maa ngi fi", fr: "Je vais bien" },
+        { en: "Thank you", wo: "Jërëjëf", fr: "Merci" },
+        { en: "Yes", wo: "Waaw", fr: "Oui" },
+        { en: "No", wo: "Déedéet", fr: "Non" }
+    ]},
+    { id: "famille", title: "Famille", words: [
+        { en: "Family", wo: "Njaboot", fr: "Famille" },
+        { en: "Father", wo: "Baay", fr: "Père" },
+        { en: "Mother", wo: "Yaay", fr: "Mère" },
+        { en: "Older sibling", wo: "Mag", fr: "Frère/sœur aîné(e)" },
+        { en: "Younger sibling", wo: "Rakk", fr: "Frère/sœur cadet(te)" },
+        { en: "Child", wo: "Doom", fr: "Enfant" }
+    ]},
+    { id: "maison", title: "Maison & vie quotidienne", words: [
+        { en: "House", wo: "Kër", fr: "Maison" },
+        { en: "Water", wo: "Ndox", fr: "Eau" },
+        { en: "Work", wo: "Liggéey", fr: "Travail" },
+        { en: "Friend", wo: "Xarit", fr: "Ami" },
+        { en: "Now", wo: "Léegi", fr: "Maintenant" },
+        { en: "Food", wo: "Ñam", fr: "Nourriture" }
+    ]},
+    { id: "marche", title: "Marché & argent", words: [
+        { en: "Money", wo: "Xaalis", fr: "Argent" },
+        { en: "Price", wo: "Njëg", fr: "Prix" },
+        { en: "How much is it?", wo: "Ñaata la ?", fr: "C'est combien ?" },
+        { en: "Buy", wo: "Jënd", fr: "Acheter" },
+        { en: "Sell", wo: "Jaay", fr: "Vendre" },
+        { en: "Shop", wo: "Butik", fr: "Boutique" }
+    ]},
+    { id: "voyage", title: "Déplacements", words: [
+        { en: "Go", wo: "Dem", fr: "Aller" },
+        { en: "Come", wo: "Ñëw", fr: "Venir" },
+        { en: "Road / way", wo: "Yoon", fr: "Route / chemin" },
+        { en: "Car", wo: "Oto", fr: "Voiture" },
+        { en: "Near", wo: "Jege", fr: "Près" },
+        { en: "Far", wo: "Sore", fr: "Loin" }
+    ]},
+    { id: "corps", title: "Corps & santé", words: [
+        { en: "Body", wo: "Yaram", fr: "Corps" },
+        { en: "Head", wo: "Bopp", fr: "Tête" },
+        { en: "Hand", wo: "Loxo", fr: "Main" },
+        { en: "Foot", wo: "Tank", fr: "Pied" },
+        { en: "Illness", wo: "Feebar", fr: "Maladie" },
+        { en: "To heal", wo: "Faju", fr: "Se soigner" }
+    ]},
+    { id: "nourriture", title: "Nourriture", words: [
+        { en: "Rice", wo: "Ceeb", fr: "Riz" },
+        { en: "Fish", wo: "Jën", fr: "Poisson" },
+        { en: "Meat", wo: "Yàpp", fr: "Viande" },
+        { en: "Bread", wo: "Mburu", fr: "Pain" },
+        { en: "Milk", wo: "Meew", fr: "Lait" },
+        { en: "Tasty", wo: "Neex", fr: "Délicieux" }
+    ]},
+    { id: "temps", title: "Temps & nombres", words: [
+        { en: "One", wo: "Benn", fr: "Un" },
+        { en: "Two", wo: "Ñaar", fr: "Deux" },
+        { en: "Three", wo: "Ñett", fr: "Trois" },
+        { en: "Tomorrow", wo: "Suba", fr: "Demain" },
+        { en: "Yesterday", wo: "Démb", fr: "Hier" },
+        { en: "Where?", wo: "Fan ?", fr: "Où ?" }
+    ]}
 ];
-let wolofCat = "general";
+const LEXICON = [];
+WOLOF_THEMES.forEach(t => t.words.forEach(w => LEXICON.push({ cat: t.id, en: w.en, wo: w.wo, fr: w.fr, audio: null })));
+
+let wolofCat = WOLOF_THEMES[0].id;
 
 function openWolofModule() {
     changeScreen("screen-wolof");
+    renderWolofTabs();
     setWolofCat(wolofCat);
+}
+
+function renderWolofTabs() {
+    const box = $("wolof-tabs");
+    box.innerHTML = "";
+    const items = WOLOF_THEMES.map(t => ({ id: t.id, title: t.title })).concat([{ id: "wikidata", title: "Wikidata" }]);
+    items.forEach(it => {
+        const active = it.id === wolofCat;
+        const b = document.createElement("button");
+        b.className = "px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition " +
+            (active ? "bg-emerald-600 text-white" : "bg-slate-900 text-slate-400");
+        b.textContent = it.title;
+        b.onclick = () => setWolofCat(it.id);
+        box.appendChild(b);
+    });
 }
 
 function setWolofCat(cat) {
     wolofCat = cat;
-    const on = "py-2.5 rounded-xl text-xs font-bold transition bg-emerald-600 text-white";
-    const off = "py-2.5 rounded-xl text-xs font-bold transition bg-slate-900 text-slate-400";
-    ["general", "business", "wikidata"].forEach(c => { $("tab-" + c).className = c === cat ? on : off; });
+    renderWolofTabs();
     if (cat === "wikidata" && !wikidataLoaded) loadWikidata(); else renderLexicon();
 }
 
@@ -660,7 +997,7 @@ async function loadWikidata() {
 function wikidataCardHTML(w, i, stats) {
     const meaning = w.fr || w.en;
     const shortEn = w.en && w.en.split(/\s+/).length <= 3;
-    const due = stats && isDue(stats, w.en);
+    const due = stats && isDue(stats, "wo:" + w.en);
     return '<div class="flex justify-between items-start gap-3">' +
              '<p class="text-lg font-bold text-emerald-400">' + esc(w.wo) + '</p>' +
              '<div class="text-right">' +
@@ -691,13 +1028,13 @@ function renderLexicon() {
     const stats = getWordStats();
     const indices = [];
     LEXICON.forEach((w, i) => { if (w.cat === wolofCat) indices.push(i); });
-    indices.sort((a, b) => (isDue(stats, LEXICON[a].en) ? 0 : 1) - (isDue(stats, LEXICON[b].en) ? 0 : 1));
+    indices.sort((a, b) => (isDue(stats, "wo:" + LEXICON[a].en) ? 0 : 1) - (isDue(stats, "wo:" + LEXICON[b].en) ? 0 : 1));
     indices.forEach(i => {
         const w = LEXICON[i];
         const card = document.createElement("div");
         card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3";
         if (w.cat === "wikidata") { card.innerHTML = wikidataCardHTML(w, i, stats); box.appendChild(card); return; }
-        const due = isDue(stats, w.en);
+        const due = isDue(stats, "wo:" + w.en);
         card.innerHTML =
             '<div class="flex justify-between items-start">' +
               '<div><p class="text-lg font-bold text-emerald-400">' + w.wo + '</p>' +
@@ -819,6 +1156,11 @@ const TEST_BANK = [
         ]}
     ]}
 ];
+const TEST_PHOTOS = {
+    neighbours: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="150" width="400" height="110" fill="#8fc97a"/><rect x="20" y="80" width="110" height="90" fill="#e0b98a"/><polygon points="15,80 75,35 135,80" fill="#a9583a"/><rect x="60" y="120" width="30" height="50" fill="#7a4a2b"/><rect x="250" y="70" width="110" height="100" fill="#d8cdb5"/><polygon points="245,70 305,25 365,70" fill="#6b6152"/><rect x="290" y="115" width="28" height="55" fill="#4a4232"/><rect x="0" y="200" width="400" height="14" fill="#9a9a9a"/><circle cx="150" cy="205" r="20" fill="#f2c39c"/><rect x="132" y="222" width="36" height="34" fill="#3b6ea5"/><circle cx="205" cy="205" r="20" fill="#e8a97a"/><rect x="187" y="222" width="36" height="34" fill="#c0442f"/></svg>',
+    family: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f4e9d8"/><rect x="40" y="150" width="320" height="18" fill="#8a5a34"/><ellipse cx="200" cy="150" rx="140" ry="22" fill="#c99a5b"/><circle cx="150" cy="120" r="10" fill="#e0b98a"/><circle cx="200" cy="115" r="10" fill="#f2c39c"/><circle cx="250" cy="120" r="10" fill="#e8a97a"/><rect x="130" y="130" width="40" height="24" fill="#3b6ea5"/><rect x="180" y="125" width="40" height="24" fill="#c0442f"/><rect x="230" y="130" width="40" height="24" fill="#4a8f5c"/><circle cx="185" cy="145" r="8" fill="#eee"/><circle cx="215" cy="145" r="8" fill="#eee"/></svg>',
+    'free-time': '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="120" width="400" height="140" fill="#6fb15c"/><circle cx="330" cy="60" r="24" fill="#f2d24b"/><circle cx="150" cy="180" r="10" fill="#e0b98a"/><rect x="140" y="190" width="20" height="26" fill="#c0442f"/><circle cx="220" cy="170" r="10" fill="#f2c39c"/><rect x="210" y="180" width="20" height="26" fill="#3b6ea5"/><circle cx="200" cy="210" r="8" fill="#fff"/></svg>'
+};
 const TEST_MODES = {
     entrainement: { seconds: 25, retry: true, label: "Entraînement" },
     examen: { seconds: 15, retry: false, label: "Examen" }
@@ -904,6 +1246,7 @@ async function runTest() {
     $("test-picker").classList.add("hidden");
     $("test-result").classList.add("hidden");
     $("test-live").classList.remove("hidden");
+    startAudioCapture();
     $("test-topic-label").textContent = "Topic: " + currentTest.topic + " · " + modeCfg.label;
     const btn = $("btn-test-main");
     btn.dataset.mode = "skip";
@@ -918,11 +1261,15 @@ async function runTest() {
         $("btn-test-retry").classList.add("hidden");
 
         if (q.introFR) {
-            $("test-question").textContent = "🖼️ " + q.introFR;
-            $("test-status").textContent = "Regardez la scène imaginée, puis écoutez la question.";
-            await speak(q.introFR, "fr-FR", 0.9);
+            $("test-photo").innerHTML = TEST_PHOTOS[currentTest.id] || "";
+            $("test-photo").classList.remove("hidden");
+            $("test-question").textContent = "🖼️ Regardez la photo";
+            $("test-status").textContent = "Observez l'image, puis écoutez la question.";
+            await speak("Look at the picture.", "en-GB", 0.9);
             if (run !== testRun) return;
             await new Promise(r => setTimeout(r, 500));
+        } else if (q.phaseId !== "2a") {
+            $("test-photo").classList.add("hidden");
         }
 
         let answered = false;
@@ -975,7 +1322,67 @@ async function runTest() {
     finishTest();
 }
 
-function finishTest() {
+const COMMON_VERBS = new Set(["is","am","are","was","were","be","been","have","has","had","do","does","did",
+    "will","would","can","could","should","like","likes","liked","live","lives","lived","go","goes","went",
+    "work","works","worked","see","sees","saw","play","plays","played","eat","eats","ate","think","thinks","thought",
+    "feel","feels","felt","want","wants","wanted","need","needs","needed","love","loves","loved","enjoy","enjoys","enjoyed",
+    "visit","visits","visited","watch","watches","watched","spend","spends","spent","help","helps","helped","cook","cooks","cooked",
+    "drive","drives","drove","study","studies","studied","walk","walks","walked","run","runs","ran","talk","talks","talked",
+    "speak","speaks","spoke","hear","hears","heard","listen","listens","listened","buy","buys","bought","sell","sells","sold",
+    "find","finds","found","give","gives","gave","take","takes","took","make","makes","made","wear","wears","wore",
+    "know","knows","knew","meet","meets","met","stay","stays","stayed","come","comes","came","call","calls","called",
+    "get","gets","got","read","reads","use","uses","used","look","looks","looked","sing","sings","sang","dance","dances","danced"]);
+
+function analyzeAnswer(text) {
+    const clean = (text || "").trim();
+    if (!clean) return { ok: false, message: "Aucune réponse. Essayez de répondre même avec une phrase simple." };
+    const words = clean.split(/\s+/).filter(Boolean);
+    if (words.length < 3) return { ok: false, message: "Réponse trop courte (" + words.length + " mot" + (words.length > 1 ? "s" : "") + "). Essayez une phrase complète, pas juste un mot." };
+    const hasVerb = words.some(w => COMMON_VERBS.has(w.toLowerCase().replace(/[.,!?]/g, "")));
+    if (!hasVerb) return { ok: false, message: "Aucun verbe repéré. Vérifiez que votre phrase a bien un sujet et un verbe (ex: \"I live in...\")." };
+    return { ok: true, message: "Bien. Phrase complète avec " + words.length + " mots et un verbe repéré." };
+}
+
+/* ---------- Enregistrement audio du test (pour le coach) ---------- */
+let mediaRecorder = null;
+let audioChunks = [];
+let micStream = null;
+
+async function startAudioCapture() {
+    try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(micStream);
+        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.start();
+    } catch (e) {
+        mediaRecorder = null;
+    }
+}
+
+function stopAudioCapture() {
+    return new Promise((resolve) => {
+        if (!mediaRecorder) { resolve(null); return; }
+        mediaRecorder.onstop = () => {
+            if (micStream) micStream.getTracks().forEach(t => t.stop());
+            resolve(new Blob(audioChunks, { type: "audio/webm" }));
+        };
+        mediaRecorder.stop();
+    });
+}
+
+async function uploadTestAudio(blob, phone) {
+    if (!db || !blob || blob.size === 0) return null;
+    try {
+        const path = (phone || "anonyme").replace(/\s+/g, "") + "/" + Date.now() + ".webm";
+        const { error } = await db.storage.from("recordings").upload(path, blob, { contentType: "audio/webm" });
+        if (error) return null;
+        const { data } = db.storage.from("recordings").getPublicUrl(path);
+        return data ? data.publicUrl : null;
+    } catch (e) { return null; }
+}
+
+async function finishTest() {
     clearInterval(countdownId);
     setTimer(null);
     $("test-live").classList.add("hidden");
@@ -984,7 +1391,7 @@ function finishTest() {
     box.innerHTML = "";
 
     const unsupported = testAnswers.some(a => a.unsupported);
-    const answered = testAnswers.filter(a => a.text.split(/\s+/).filter(Boolean).length >= 2).length;
+    const answered = testAnswers.filter(a => analyzeAnswer(a.text).ok).length;
     const total = questionList.length;
 
     const head = document.createElement("div");
@@ -1013,7 +1420,7 @@ function finishTest() {
                 ph.textContent = "Phase " + a.phaseId + " · " + a.phaseLabel;
                 box.appendChild(ph);
             }
-            const words = a.text.split(/\s+/).filter(Boolean).length;
+            const fb = analyzeAnswer(a.text);
             const row = document.createElement("div");
             row.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1";
             const q = document.createElement("p");
@@ -1023,10 +1430,8 @@ function finishTest() {
             t.className = "text-xs italic text-slate-400";
             t.textContent = a.text ? "« " + a.text + " »" : "Aucune réponse détectée";
             const f = document.createElement("p");
-            f.className = "text-[11px] " + (words >= 2 ? "text-emerald-400" : "text-amber-400");
-            f.textContent = words >= 2
-                ? "Bien. Vous avez répondu avec " + words + " mots."
-                : "Essayez une phrase complète, avec sujet et verbe.";
+            f.className = "text-[11px] " + (fb.ok ? "text-emerald-400" : "text-amber-400");
+            f.textContent = fb.message;
             row.append(q, t, f);
             box.appendChild(row);
         });
@@ -1045,9 +1450,12 @@ function finishTest() {
         addXP(20); bumpDailyGoal(3); awardBadge("pret-visa");
     }
     if (db && p && !unsupported) {
+        const audioUrl = await uploadTestAudio(await stopAudioCapture(), p.phone);
         db.from("test_results").insert({
-            phone: p.phone, topic: currentTest.topic, score: answered, total
+            phone: p.phone, topic: currentTest.topic, score: answered, total, audio_url: audioUrl
         }).then(() => {}, () => {});
+    } else {
+        stopAudioCapture();
     }
 }
 
