@@ -513,11 +513,18 @@ const GENERAL_THEMES = [
         { en: "I am from Senegal", fr: "Je viens du Sénégal" },
         { en: "Nice to meet you", fr: "Enchanté(e)" },
         { en: "I am a student", fr: "Je suis étudiant(e)" },
-        { en: "How old are you?", fr: "Quel âge as-tu ?" }
+        { en: "How old are you?", fr: "Quel âge as-tu ?" },
+        { en: "I am thirty years old", fr: "J'ai trente ans" },
+        { en: "Where do you live?", fr: "Où habites-tu ?" },
+        { en: "I live in Thiès", fr: "J'habite à Thiès" },
+        { en: "What do you do for a living?", fr: "Que fais-tu dans la vie ?" },
+        { en: "I speak English and French", fr: "Je parle anglais et français" }
       ],
       dialogue: [
         { who: "A", en: "Hello, what is your name?" },
-        { who: "B", en: "My name is Fatou. Nice to meet you." }
+        { who: "B", en: "My name is Fatou. Nice to meet you." },
+        { who: "A", en: "Nice to meet you too. Where are you from?" },
+        { who: "B", en: "I am from Thiès, in Senegal." }
       ],
       quiz: [
         { q: "My name ___ Fatou.", o: ["is", "am", "are"], a: 0, why: "My name is + nom : toujours « is »." },
@@ -531,11 +538,18 @@ const GENERAL_THEMES = [
         { en: "Father", fr: "Père" },
         { en: "Mother", fr: "Mère" },
         { en: "Brother", fr: "Frère" },
-        { en: "Sister", fr: "Sœur" }
+        { en: "Sister", fr: "Sœur" },
+        { en: "I have three children", fr: "J'ai trois enfants" },
+        { en: "My mother lives with us", fr: "Ma mère habite avec nous" },
+        { en: "We eat together every evening", fr: "Nous mangeons ensemble chaque soir" },
+        { en: "My father is a driver", fr: "Mon père est chauffeur" },
+        { en: "I love my family very much", fr: "J'aime beaucoup ma famille" }
       ],
       dialogue: [
         { who: "A", en: "Do you have a big family?" },
-        { who: "B", en: "Yes, I have two brothers and one sister." }
+        { who: "B", en: "Yes, I have two brothers and one sister." },
+        { who: "A", en: "Do you all live together?" },
+        { who: "B", en: "Yes, we live in the same house with our parents." }
       ],
       quiz: [
         { q: "She ___ a teacher.", o: ["am", "is", "are"], a: 1, why: "Avec he, she, it, on utilise « is »." },
@@ -549,11 +563,18 @@ const GENERAL_THEMES = [
         { en: "Job", fr: "Emploi" },
         { en: "Every day", fr: "Chaque jour" },
         { en: "Busy", fr: "Occupé(e)" },
-        { en: "Colleague", fr: "Collègue" }
+        { en: "Colleague", fr: "Collègue" },
+        { en: "I start work at eight o'clock", fr: "Je commence le travail à huit heures" },
+        { en: "I finish work at five o'clock", fr: "Je termine le travail à dix-sept heures" },
+        { en: "I work in an office", fr: "Je travaille dans un bureau" },
+        { en: "My job is difficult but interesting", fr: "Mon travail est difficile mais intéressant" },
+        { en: "I am looking for a new job", fr: "Je cherche un nouvel emploi" }
       ],
       dialogue: [
         { who: "A", en: "What do you do?" },
-        { who: "B", en: "I work in a shop every day." }
+        { who: "B", en: "I work in a shop every day." },
+        { who: "A", en: "What time do you start work?" },
+        { who: "B", en: "I start at eight and finish at six." }
       ],
       quiz: [
         { q: "He ___ to work every day.", o: ["go", "goes", "going"], a: 1, why: "Avec he, le verbe prend -es : goes." },
@@ -567,11 +588,18 @@ const GENERAL_THEMES = [
         { en: "Price", fr: "Prix" },
         { en: "Money", fr: "Argent" },
         { en: "Buy", fr: "Acheter" },
-        { en: "Cheap", fr: "Bon marché" }
+        { en: "Cheap", fr: "Bon marché" },
+        { en: "How much does it cost?", fr: "Combien ça coûte ?" },
+        { en: "That is too expensive", fr: "C'est trop cher" },
+        { en: "Can you make it cheaper?", fr: "Peux-tu baisser le prix ?" },
+        { en: "I would like to buy some rice", fr: "Je voudrais acheter du riz" },
+        { en: "Do you accept mobile money?", fr: "Acceptez-vous le paiement mobile ?" }
       ],
       dialogue: [
         { who: "A", en: "How much is this bag?" },
-        { who: "B", en: "It's five thousand francs." }
+        { who: "B", en: "It's five thousand francs." },
+        { who: "A", en: "That is too expensive. Can you make it cheaper?" },
+        { who: "B", en: "Okay, four thousand francs for you." }
       ],
       quiz: [
         { q: "How much ___ this bag?", o: ["are", "is", "do"], a: 1, why: "Un seul sac : « How much is this bag? »." },
@@ -585,11 +613,18 @@ const GENERAL_THEMES = [
         { en: "Ticket", fr: "Billet" },
         { en: "Passport", fr: "Passeport" },
         { en: "Flight", fr: "Vol" },
-        { en: "Bus", fr: "Bus" }
+        { en: "Bus", fr: "Bus" },
+        { en: "I would like to book a ticket", fr: "Je voudrais réserver un billet" },
+        { en: "What time does the bus leave?", fr: "À quelle heure part le bus ?" },
+        { en: "Where is the nearest bus stop?", fr: "Où est l'arrêt de bus le plus proche ?" },
+        { en: "I am traveling to visit my family", fr: "Je voyage pour rendre visite à ma famille" },
+        { en: "Do I need a visa for this country?", fr: "Ai-je besoin d'un visa pour ce pays ?" }
       ],
       dialogue: [
         { who: "A", en: "Where is the airport?" },
-        { who: "B", en: "It's ten minutes from here by taxi." }
+        { who: "B", en: "It's ten minutes from here by taxi." },
+        { who: "A", en: "What time does my flight leave?" },
+        { who: "B", en: "Your flight leaves at eight in the morning." }
       ],
       quiz: [
         { q: "I need a ___ to travel.", o: ["passport", "password", "passeport"], a: 0, why: "Orthographe correcte en anglais : passport." },
@@ -603,11 +638,18 @@ const GENERAL_THEMES = [
         { en: "Hospital", fr: "Hôpital" },
         { en: "Sick", fr: "Malade" },
         { en: "Medicine", fr: "Médicament" },
-        { en: "Help", fr: "Aide" }
+        { en: "Help", fr: "Aide" },
+        { en: "I have a headache", fr: "J'ai mal à la tête" },
+        { en: "I need to see a doctor", fr: "J'ai besoin de voir un médecin" },
+        { en: "Where is the nearest hospital?", fr: "Où est l'hôpital le plus proche ?" },
+        { en: "I feel better today", fr: "Je me sens mieux aujourd'hui" },
+        { en: "Please call an ambulance", fr: "Appelez une ambulance s'il vous plaît" }
       ],
       dialogue: [
         { who: "A", en: "Are you okay?" },
-        { who: "B", en: "No, I feel sick. I need a doctor." }
+        { who: "B", en: "No, I feel sick. I need a doctor." },
+        { who: "A", en: "What is wrong?" },
+        { who: "B", en: "I have a headache and a fever." }
       ],
       quiz: [
         { q: "I ___ sick today.", o: ["feel", "feels", "feeling"], a: 0, why: "Avec I, le verbe reste à la base : feel." },
@@ -621,11 +663,18 @@ const GENERAL_THEMES = [
         { en: "Menu", fr: "Menu" },
         { en: "Water", fr: "Eau" },
         { en: "Delicious", fr: "Délicieux" },
-        { en: "Bill", fr: "Addition" }
+        { en: "Bill", fr: "Addition" },
+        { en: "I am hungry", fr: "J'ai faim" },
+        { en: "What do you recommend?", fr: "Que recommandez-vous ?" },
+        { en: "I would like some rice and fish", fr: "Je voudrais du riz et du poisson" },
+        { en: "This meal is very tasty", fr: "Ce repas est très savoureux" },
+        { en: "Can I have the bill, please?", fr: "Puis-je avoir l'addition, s'il vous plaît ?" }
       ],
       dialogue: [
         { who: "A", en: "Can I have the menu, please?" },
-        { who: "B", en: "Of course, here you are." }
+        { who: "B", en: "Of course, here you are." },
+        { who: "A", en: "What do you recommend today?" },
+        { who: "B", en: "The fish with rice is delicious today." }
       ],
       quiz: [
         { q: "I would like ___ water, please.", o: ["some", "a", "an"], a: 0, why: "Indénombrable : some water." },
@@ -639,11 +688,18 @@ const GENERAL_THEMES = [
         { en: "Tomorrow", fr: "Demain" },
         { en: "Yesterday", fr: "Hier" },
         { en: "Number", fr: "Nombre" },
-        { en: "Time", fr: "Heure / temps" }
+        { en: "Time", fr: "Heure / temps" },
+        { en: "What time is it now?", fr: "Quelle heure est-il maintenant ?" },
+        { en: "I will see you tomorrow morning", fr: "Je te verrai demain matin" },
+        { en: "The meeting starts at ten o'clock", fr: "La réunion commence à dix heures" },
+        { en: "I was busy yesterday", fr: "J'étais occupé(e) hier" },
+        { en: "How many people are coming?", fr: "Combien de personnes viennent ?" }
       ],
       dialogue: [
         { who: "A", en: "What time is it?" },
-        { who: "B", en: "It's three o'clock." }
+        { who: "B", en: "It's three o'clock." },
+        { who: "A", en: "What time does the meeting start?" },
+        { who: "B", en: "It starts tomorrow at ten o'clock." }
       ],
       quiz: [
         { q: "What ___ is it?", o: ["time", "times", "timing"], a: 0, why: "Demander l'heure : What time is it?" },
@@ -843,7 +899,11 @@ const WOLOF_THEMES = [
         { en: "I'm fine", wo: "Maa ngi fi", fr: "Je vais bien" },
         { en: "Thank you", wo: "Jërëjëf", fr: "Merci" },
         { en: "Yes", wo: "Waaw", fr: "Oui" },
-        { en: "No", wo: "Déedéet", fr: "Non" }
+        { en: "No", wo: "Déedéet", fr: "Non" },
+        { en: "See you tomorrow", wo: "Ba suba", fr: "À demain" },
+        { en: "What is your name?", wo: "Naka la tudd ?", fr: "Comment t'appelles-tu ?" },
+        { en: "My name is Fatou", wo: "Fatou laa tudd", fr: "Je m'appelle Fatou" },
+        { en: "Good night", wo: "Fanaanal jamm", fr: "Bonne nuit" }
     ]},
     { id: "famille", title: "Famille", words: [
         { en: "Family", wo: "Njaboot", fr: "Famille" },
@@ -851,7 +911,11 @@ const WOLOF_THEMES = [
         { en: "Mother", wo: "Yaay", fr: "Mère" },
         { en: "Older sibling", wo: "Mag", fr: "Frère/sœur aîné(e)" },
         { en: "Younger sibling", wo: "Rakk", fr: "Frère/sœur cadet(te)" },
-        { en: "Child", wo: "Doom", fr: "Enfant" }
+        { en: "Child", wo: "Doom", fr: "Enfant" },
+        { en: "I have a big family", wo: "Am naa njaboot bu réy", fr: "J'ai une grande famille" },
+        { en: "My mother is at home", wo: "Sama yaay nekk na kër", fr: "Ma mère est à la maison" },
+        { en: "I love my children", wo: "Bëgg naa sama doom yi", fr: "J'aime mes enfants" },
+        { en: "How many children do you have?", wo: "Ñaata doom nga am ?", fr: "Combien d'enfants as-tu ?" }
     ]},
     { id: "maison", title: "Maison & vie quotidienne", words: [
         { en: "House", wo: "Kër", fr: "Maison" },
@@ -859,7 +923,11 @@ const WOLOF_THEMES = [
         { en: "Work", wo: "Liggéey", fr: "Travail" },
         { en: "Friend", wo: "Xarit", fr: "Ami" },
         { en: "Now", wo: "Léegi", fr: "Maintenant" },
-        { en: "Food", wo: "Ñam", fr: "Nourriture" }
+        { en: "Food", wo: "Ñam", fr: "Nourriture" },
+        { en: "I am going home", wo: "Maa ngi dem kër", fr: "Je rentre à la maison" },
+        { en: "I need water", wo: "Soxla naa ndox", fr: "J'ai besoin d'eau" },
+        { en: "I am tired today", wo: "Sonn naa tay", fr: "Je suis fatigué(e) aujourd'hui" },
+        { en: "Where is your house?", wo: "Foo dëkk ?", fr: "Où habites-tu ?" }
     ]},
     { id: "marche", title: "Marché & argent", words: [
         { en: "Money", wo: "Xaalis", fr: "Argent" },
@@ -867,7 +935,11 @@ const WOLOF_THEMES = [
         { en: "How much is it?", wo: "Ñaata la ?", fr: "C'est combien ?" },
         { en: "Buy", wo: "Jënd", fr: "Acheter" },
         { en: "Sell", wo: "Jaay", fr: "Vendre" },
-        { en: "Shop", wo: "Butik", fr: "Boutique" }
+        { en: "Shop", wo: "Butik", fr: "Boutique" },
+        { en: "That is expensive", wo: "Dafa jafe", fr: "C'est cher" },
+        { en: "Lower the price, please", wo: "Wàññi njëg bi, su la neexee", fr: "Baisse le prix, s'il te plaît" },
+        { en: "I want to buy rice", wo: "Bëgg naa jënd ceeb", fr: "Je veux acheter du riz" },
+        { en: "I don't have money now", wo: "Amuma xaalis léegi", fr: "Je n'ai pas d'argent maintenant" }
     ]},
     { id: "voyage", title: "Déplacements", words: [
         { en: "Go", wo: "Dem", fr: "Aller" },
@@ -875,7 +947,11 @@ const WOLOF_THEMES = [
         { en: "Road / way", wo: "Yoon", fr: "Route / chemin" },
         { en: "Car", wo: "Oto", fr: "Voiture" },
         { en: "Near", wo: "Jege", fr: "Près" },
-        { en: "Far", wo: "Sore", fr: "Loin" }
+        { en: "Far", wo: "Sore", fr: "Loin" },
+        { en: "I am going to Dakar", wo: "Maa ngi dem Dakar", fr: "Je vais à Dakar" },
+        { en: "Where are you going?", wo: "Foo jëm ?", fr: "Où vas-tu ?" },
+        { en: "The market is near here", wo: "Marse bi jege na fi", fr: "Le marché est près d'ici" },
+        { en: "Come here, please", wo: "Kaay fi, su la neexee", fr: "Viens ici, s'il te plaît" }
     ]},
     { id: "corps", title: "Corps & santé", words: [
         { en: "Body", wo: "Yaram", fr: "Corps" },
@@ -883,7 +959,11 @@ const WOLOF_THEMES = [
         { en: "Hand", wo: "Loxo", fr: "Main" },
         { en: "Foot", wo: "Tank", fr: "Pied" },
         { en: "Illness", wo: "Feebar", fr: "Maladie" },
-        { en: "To heal", wo: "Faju", fr: "Se soigner" }
+        { en: "To heal", wo: "Faju", fr: "Se soigner" },
+        { en: "I am sick", wo: "Feebar naa", fr: "Je suis malade" },
+        { en: "My head hurts", wo: "Sama bopp a metti", fr: "J'ai mal à la tête" },
+        { en: "I need to see a doctor", wo: "Soxla naa gis doktoor", fr: "J'ai besoin de voir un médecin" },
+        { en: "I feel better now", wo: "Baax na léegi", fr: "Je me sens mieux maintenant" }
     ]},
     { id: "nourriture", title: "Nourriture", words: [
         { en: "Rice", wo: "Ceeb", fr: "Riz" },
@@ -891,7 +971,11 @@ const WOLOF_THEMES = [
         { en: "Meat", wo: "Yàpp", fr: "Viande" },
         { en: "Bread", wo: "Mburu", fr: "Pain" },
         { en: "Milk", wo: "Meew", fr: "Lait" },
-        { en: "Tasty", wo: "Neex", fr: "Délicieux" }
+        { en: "Tasty", wo: "Neex", fr: "Délicieux" },
+        { en: "I am hungry", wo: "Xiif naa", fr: "J'ai faim" },
+        { en: "This food is delicious", wo: "Ñam bi neex na", fr: "Ce repas est délicieux" },
+        { en: "I want to eat rice and fish", wo: "Bëgg naa lekk ceeb ak jën", fr: "Je veux manger du riz et du poisson" },
+        { en: "Let's eat together", wo: "Nu lekk ñoom", fr: "Mangeons ensemble" }
     ]},
     { id: "temps", title: "Temps & nombres", words: [
         { en: "One", wo: "Benn", fr: "Un" },
@@ -899,7 +983,11 @@ const WOLOF_THEMES = [
         { en: "Three", wo: "Ñett", fr: "Trois" },
         { en: "Tomorrow", wo: "Suba", fr: "Demain" },
         { en: "Yesterday", wo: "Démb", fr: "Hier" },
-        { en: "Where?", wo: "Fan ?", fr: "Où ?" }
+        { en: "Where?", wo: "Fan ?", fr: "Où ?" },
+        { en: "What time is it?", wo: "Ban waxtu la ?", fr: "Quelle heure est-il ?" },
+        { en: "I will come tomorrow", wo: "Dinaa ñëw suba", fr: "Je viendrai demain" },
+        { en: "I was busy yesterday", wo: "Démb, sonn naa ci liggéey", fr: "Hier, j'étais occupé(e)" },
+        { en: "How many people are there?", wo: "Ñaata nit ñoo fi nekk ?", fr: "Combien de personnes y a-t-il ?" }
     ]}
 ];
 const LEXICON = [];
@@ -1154,12 +1242,102 @@ const TEST_BANK = [
             "Why do you think free time is important?",
             "What would you like to try in your free time?"
         ]}
+    ]},
+    { id: "work", topic: "Work", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "What is your name?", "What do you do?", "Where do you work?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "Do you like your job?", "What time do you start work?",
+            "Do you work with other people?", "Is your job difficult?",
+            "How do you go to work?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo de personnes qui travaillent ensemble dans un bureau.", questions: [
+            "What can you see in this picture?", "What are the people doing?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Why is work important to you?",
+            "What would you like to change about your job?"
+        ]}
+    ]},
+    { id: "shopping", topic: "Shopping", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "What is your name?", "Where are you from?", "What do you do?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "Do you like shopping?", "Where do you usually shop?",
+            "What do you usually buy?", "Do you shop with friends or alone?",
+            "Do you like markets?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo d'une femme qui achète des légumes au marché.", questions: [
+            "What can you see in this picture?", "What is the woman doing?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Why do people like markets?",
+            "What do you think about the prices at the market?"
+        ]}
+    ]},
+    { id: "travel", topic: "Travel", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "What is your name?", "Where do you live?", "What is your job?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "Do you like to travel?", "Have you traveled by bus or by plane?",
+            "Where would you like to go?", "Do you travel with family?",
+            "What do you take with you when you travel?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo de personnes qui attendent un bus dans la rue.", questions: [
+            "What can you see in this picture?", "What are the people doing?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Why do people travel?",
+            "What is important when you travel?"
+        ]}
+    ]},
+    { id: "health", topic: "Health", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "What is your name?", "How old are you?", "Where do you live?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "Do you feel well today?", "Do you go to the doctor?",
+            "What do you do to stay healthy?", "Do you eat healthy food?",
+            "Do you exercise?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo d'une infirmière qui aide un patient.", questions: [
+            "What can you see in this picture?", "How does the patient feel?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Why is it important to stay healthy?",
+            "What do you do when you are sick?"
+        ]}
+    ]},
+    { id: "food", topic: "Food", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "What is your name?", "Where are you from?", "What do you do?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "What is your favourite food?", "Do you cook at home?",
+            "What do you eat for breakfast?", "Do you like Senegalese food?",
+            "Do you eat with your family?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo d'une famille qui prépare le repas ensemble.", questions: [
+            "What can you see in this picture?", "What are they cooking?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Why is food important in your culture?",
+            "What is your favourite meal?"
+        ]}
     ]}
 ];
 const TEST_PHOTOS = {
     neighbours: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="150" width="400" height="110" fill="#8fc97a"/><rect x="20" y="80" width="110" height="90" fill="#e0b98a"/><polygon points="15,80 75,35 135,80" fill="#a9583a"/><rect x="60" y="120" width="30" height="50" fill="#7a4a2b"/><rect x="250" y="70" width="110" height="100" fill="#d8cdb5"/><polygon points="245,70 305,25 365,70" fill="#6b6152"/><rect x="290" y="115" width="28" height="55" fill="#4a4232"/><rect x="0" y="200" width="400" height="14" fill="#9a9a9a"/><circle cx="150" cy="205" r="20" fill="#f2c39c"/><rect x="132" y="222" width="36" height="34" fill="#3b6ea5"/><circle cx="205" cy="205" r="20" fill="#e8a97a"/><rect x="187" y="222" width="36" height="34" fill="#c0442f"/></svg>',
     family: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f4e9d8"/><rect x="40" y="150" width="320" height="18" fill="#8a5a34"/><ellipse cx="200" cy="150" rx="140" ry="22" fill="#c99a5b"/><circle cx="150" cy="120" r="10" fill="#e0b98a"/><circle cx="200" cy="115" r="10" fill="#f2c39c"/><circle cx="250" cy="120" r="10" fill="#e8a97a"/><rect x="130" y="130" width="40" height="24" fill="#3b6ea5"/><rect x="180" y="125" width="40" height="24" fill="#c0442f"/><rect x="230" y="130" width="40" height="24" fill="#4a8f5c"/><circle cx="185" cy="145" r="8" fill="#eee"/><circle cx="215" cy="145" r="8" fill="#eee"/></svg>',
-    'free-time': '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="120" width="400" height="140" fill="#6fb15c"/><circle cx="330" cy="60" r="24" fill="#f2d24b"/><circle cx="150" cy="180" r="10" fill="#e0b98a"/><rect x="140" y="190" width="20" height="26" fill="#c0442f"/><circle cx="220" cy="170" r="10" fill="#f2c39c"/><rect x="210" y="180" width="20" height="26" fill="#3b6ea5"/><circle cx="200" cy="210" r="8" fill="#fff"/></svg>'
+    'free-time': '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="120" width="400" height="140" fill="#6fb15c"/><circle cx="330" cy="60" r="24" fill="#f2d24b"/><circle cx="150" cy="180" r="10" fill="#e0b98a"/><rect x="140" y="190" width="20" height="26" fill="#c0442f"/><circle cx="220" cy="170" r="10" fill="#f2c39c"/><rect x="210" y="180" width="20" height="26" fill="#3b6ea5"/><circle cx="200" cy="210" r="8" fill="#fff"/></svg>',
+    work: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#e6e2d8"/><rect x="30" y="150" width="150" height="12" fill="#7a5a3a"/><rect x="220" y="150" width="150" height="12" fill="#7a5a3a"/><rect x="60" y="100" width="70" height="50" fill="#3b6ea5"/><rect x="250" y="100" width="70" height="50" fill="#4a8f5c"/><circle cx="95" cy="180" r="16" fill="#e0b98a"/><rect x="79" y="196" width="32" height="30" fill="#c0442f"/><circle cx="285" cy="180" r="16" fill="#f2c39c"/><rect x="269" y="196" width="32" height="30" fill="#3b6ea5"/></svg>',
+    shopping: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f4e9d8"/><rect x="40" y="120" width="320" height="16" fill="#a9583a"/><rect x="60" y="80" width="280" height="40" fill="#e8c96b"/><circle cx="100" cy="105" r="10" fill="#c0442f"/><circle cx="140" cy="105" r="10" fill="#4a8f5c"/><circle cx="180" cy="105" r="10" fill="#f2a93b"/><circle cx="220" cy="105" r="10" fill="#c0442f"/><circle cx="200" cy="180" r="18" fill="#e0b98a"/><rect x="180" y="198" width="40" height="40" fill="#3b6ea5"/></svg>',
+    travel: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="180" width="400" height="60" fill="#8a8a8a"/><rect x="120" y="110" width="160" height="70" rx="10" fill="#c0442f"/><circle cx="150" cy="190" r="16" fill="#333"/><circle cx="250" cy="190" r="16" fill="#333"/><circle cx="60" cy="200" r="14" fill="#e0b98a"/><rect x="46" y="216" width="28" height="26" fill="#4a8f5c"/><circle cx="340" cy="200" r="14" fill="#f2c39c"/><rect x="326" y="216" width="28" height="26" fill="#3b6ea5"/></svg>',
+    health: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#eef6f5"/><rect x="60" y="140" width="180" height="60" fill="#ffffff" stroke="#c9c9c9" stroke-width="2"/><rect x="90" y="150" width="120" height="14" fill="#dfe9e8"/><circle cx="280" cy="150" r="16" fill="#f2c39c"/><rect x="264" y="166" width="32" height="40" fill="#ffffff" stroke="#3b6ea5" stroke-width="2"/><rect x="272" y="120" width="16" height="4" fill="#c0442f"/><rect x="278" y="114" width="4" height="16" fill="#c0442f"/></svg>',
+    food: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f4e9d8"/><ellipse cx="200" cy="180" rx="110" ry="22" fill="#3b3b3b"/><ellipse cx="200" cy="170" rx="100" ry="18" fill="#c0442f"/><circle cx="170" cy="165" r="8" fill="#e8c96b"/><circle cx="220" cy="160" r="8" fill="#4a8f5c"/><circle cx="120" cy="110" r="10" fill="#e0b98a"/><rect x="104" y="126" width="32" height="30" fill="#3b6ea5"/><circle cx="280" cy="110" r="10" fill="#f2c39c"/><rect x="264" y="126" width="32" height="30" fill="#4a8f5c"/></svg>'
 };
 const TEST_MODES = {
     entrainement: { seconds: 25, retry: true, label: "Entraînement" },
@@ -1246,7 +1424,8 @@ async function runTest() {
     $("test-picker").classList.add("hidden");
     $("test-result").classList.add("hidden");
     $("test-live").classList.remove("hidden");
-    startAudioCapture();
+    await startAudioCapture();
+    if (run !== testRun) return;
     $("test-topic-label").textContent = "Topic: " + currentTest.topic + " · " + modeCfg.label;
     const btn = $("btn-test-main");
     btn.dataset.mode = "skip";
