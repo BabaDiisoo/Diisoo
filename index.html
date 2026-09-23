@@ -108,6 +108,22 @@
                     </div>
                     <p class="text-[11px] text-slate-400 leading-relaxed">Simulateur officiel chronométré, 100% en anglais pour s'habituer au rythme et au stress réel de l'examen de visa.</p>
                 </button>
+                <!-- PILIER 4 : ÉCOUTE -->
+                <button onclick="openListeningModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-amber-950/20 p-4 rounded-2xl border border-slate-800 hover:border-amber-500/30 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">👂</span><h3 class="text-sm font-bold text-slate-100">4. Exercices d'écoute</h3></div>
+                        <span class="text-[9px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full font-medium">Listening</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Écoutez une annonce ou une question, puis choisissez la bonne réponse.</p>
+                </button>
+                <!-- PILIER 5 : BINÔME -->
+                <button onclick="openPairsModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-rose-950/20 p-4 rounded-2xl border border-slate-800 hover:border-rose-500/30 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">🤝</span><h3 class="text-sm font-bold text-slate-100">5. Discussion en binôme</h3></div>
+                        <span class="text-[9px] bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded-full font-medium">Échange vocal</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Répondez au sujet du jour à voix haute, puis écoutez la réponse des autres apprenantes.</p>
+                </button>
             </div>
             <div class="space-y-2">
                 <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
@@ -146,6 +162,42 @@
         </div>
 
         <!-- ======================================================== -->
+        <!-- ÉCRAN 5 : EXERCICES D'ÉCOUTE (LISTENING) -->
+        <!-- ======================================================== -->
+        <div id="screen-listening" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Compréhension orale</span>
+                <h3 class="text-lg font-bold text-slate-100">Exercices d'écoute</h3>
+                <p id="listening-progress" class="text-xs text-slate-400 mt-1"></p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <button onclick="playListeningAudio()" class="w-full py-3 bg-amber-500/10 text-amber-400 rounded-xl text-sm font-bold">🔊 Écouter l'annonce</button>
+                <p id="listening-question" class="text-sm font-semibold text-slate-200 text-center"></p>
+                <div id="listening-options" class="space-y-2"></div>
+                <p id="listening-feedback" class="text-xs text-center"></p>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Quitter</button>
+                <button id="btn-listening-next" onclick="nextListeningExercise()" class="flex-1 py-3 bg-amber-500 text-slate-950 rounded-xl text-xs font-bold hidden">Suivant</button>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN 6 : DISCUSSION EN BINÔME -->
+        <!-- ======================================================== -->
+        <div id="screen-pairs" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-rose-400 uppercase">Échange vocal</span>
+                <h3 class="text-lg font-bold text-slate-100">Discussion en binôme</h3>
+                <p id="pairs-prompt" class="text-xs text-slate-300 mt-2 bg-slate-900 border border-slate-800 rounded-xl p-3"></p>
+            </div>
+            <button id="btn-pairs-record" onclick="recordPairAnswer()" class="w-full py-3 bg-rose-500/10 text-rose-400 rounded-xl text-sm font-bold">🎤 Enregistrer ma réponse (30s)</button>
+            <p id="pairs-status" class="text-xs text-center text-slate-500"></p>
+            <div id="pairs-list" class="space-y-2 overflow-y-auto max-h-[35vh] pr-1"></div>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+        </div>
+
+        <!-- ======================================================== -->
         <!-- ÉCRAN 4 : SIMULATEUR DE TEST (VOICE-FIRST AUTOMATIQUE) -->
         <!-- ======================================================== -->
         <div id="screen-test-simulation" class="hidden flex flex-col justify-between h-full min-h-[85vh]">
@@ -160,15 +212,16 @@
                     <p class="text-xs text-slate-400 text-center leading-relaxed">Comme le vrai test : informations personnelles, questions sur un thème, une photo à décrire, puis une discussion.</p>
                     <div id="test-topic-buttons" class="grid grid-cols-1 gap-2"></div>
                     <div class="grid grid-cols-2 gap-2 pt-2">
-                        <button id="mode-entrainement" onclick="setTestMode('entrainement')" class="py-2.5 rounded-xl text-xs font-bold transition">Entraînement</button>
-                        <button id="mode-examen" onclick="setTestMode('examen')" class="py-2.5 rounded-xl text-xs font-bold transition">Examen</button>
+                        <button id="mode-entrainement" type="button" onclick="setTestMode('entrainement')" class="py-2.5 rounded-xl text-xs font-bold border-2 transition">Entraînement</button>
+                        <button id="mode-examen" type="button" onclick="setTestMode('examen')" class="py-2.5 rounded-xl text-xs font-bold border-2 transition">Examen</button>
                     </div>
-                    <p class="text-[11px] text-slate-500 text-center leading-relaxed">Entraînement : plus de temps, vous pouvez réessayer chaque question. Examen : chronométré, comme le jour du test, sans retour en arrière.</p>
+                    <p class="text-[11px] text-slate-500 text-center leading-relaxed">Entraînement : plus de temps, vous pouvez réessayer chaque question. Examen : chronométré, comme le jour du test.</p>
                 </div>
 
                 <!-- Test en cours -->
-                <div id="test-live" class="hidden space-y-5 text-center">
+                <div id="test-live" class="hidden space-y-4 text-center">
                     <p id="test-progress" class="text-xs text-slate-500 font-medium"></p>
+                    <div id="test-dots" class="flex flex-wrap justify-center gap-1.5"></div>
                     <div id="test-photo" class="hidden rounded-2xl overflow-hidden border border-slate-800 mx-auto max-w-[280px]"></div>
                     <p id="test-question" class="text-2xl font-bold text-slate-100 leading-snug"></p>
                     <div id="test-bars" class="hidden flex justify-center items-end space-x-1.5 h-12">
@@ -189,6 +242,11 @@
 
             <div class="space-y-2">
                 <button id="btn-test-main" onclick="testMainAction()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 font-bold rounded-2xl text-sm transition shadow-lg shadow-blue-600/20">Commencer le test</button>
+                <div id="test-nav" class="hidden grid grid-cols-3 gap-2">
+                    <button id="btn-test-prev" onclick="prevQuestion()" class="py-3 bg-slate-900 text-slate-300 rounded-xl text-xs font-bold">◀ Précédente</button>
+                    <button id="btn-test-pause" onclick="togglePause()" class="py-3 bg-slate-900 text-slate-300 rounded-xl text-xs font-bold">⏸️ Pause</button>
+                    <button id="btn-test-next" onclick="nextQuestion()" class="py-3 bg-slate-900 text-slate-300 rounded-xl text-xs font-bold">Suivante ▶</button>
+                </div>
                 <button onclick="quitTest()" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Quitter le simulateur</button>
             </div>
         </div>
@@ -370,6 +428,8 @@ function changeScreen(id) {
     testRun++;                                   // annule un test en cours
     if (currentStop) { try { currentStop(); } catch (e) {} currentStop = null; }
     clearInterval(countdownId);
+    if (typeof navTarget !== "undefined") navTarget = null;
+    if (typeof isPaused !== "undefined") isPaused = false;
     if ("speechSynthesis" in window) speechSynthesis.cancel();
     document.querySelectorAll("[id^='screen-']").forEach(s => s.classList.add("hidden"));
     $(id).classList.remove("hidden");
@@ -393,28 +453,45 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 /* Retourne { promise, stop }. La promesse donne { text, error, unsupported } */
 function startListening(lang, ms, continuous, onText) {
     let stopFn = () => {};
+    let stopped = false;
     const promise = new Promise(resolve => {
         if (!SR) {
             const t = setTimeout(() => resolve({ text: "", unsupported: true }), ms);
             stopFn = () => { clearTimeout(t); resolve({ text: "", unsupported: true }); };
             return;
         }
-        const rec = new SR();
-        rec.lang = lang; rec.continuous = !!continuous; rec.interimResults = true;
-        let finalText = "", interim = "", error = null;
-        const timer = setTimeout(() => { try { rec.stop(); } catch (e) {} }, ms);
-        rec.onresult = (e) => {
-            interim = "";
-            for (let i = e.resultIndex; i < e.results.length; i++) {
-                const t = e.results[i][0].transcript;
-                if (e.results[i].isFinal) finalText += t + " "; else interim += t;
-            }
-            if (onText) onText((finalText + interim).trim());
-        };
-        rec.onerror = (e) => { error = e.error; };
-        rec.onend = () => { clearTimeout(timer); resolve({ text: (finalText + interim).trim(), error }); };
-        stopFn = () => { try { rec.stop(); } catch (e) {} };
-        try { rec.start(); } catch (e) { clearTimeout(timer); resolve({ text: "", error: "start-failed" }); }
+        const deadline = Date.now() + ms;
+        let finalText = "", interim = "", error = null, rec = null;
+        const timer = setTimeout(() => { stopped = true; try { rec && rec.stop(); } catch (e) {} }, ms);
+
+        function startOnce() {
+            rec = new SR();
+            rec.lang = lang; rec.continuous = !!continuous; rec.interimResults = true;
+            rec.onresult = (e) => {
+                interim = "";
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    const t = e.results[i][0].transcript;
+                    if (e.results[i].isFinal) finalText += t + " "; else interim += t;
+                }
+                if (onText) onText((finalText + interim).trim());
+            };
+            rec.onerror = (e) => {
+                error = e.error;
+                if (e.error === "not-allowed" || e.error === "service-not-allowed" || e.error === "aborted") stopped = true;
+            };
+            rec.onend = () => {
+                if (stopped || Date.now() >= deadline) {
+                    clearTimeout(timer);
+                    resolve({ text: (finalText + interim).trim(), error });
+                } else {
+                    /* La reconnaissance s'arrête parfois seule sur mobile avant la fin du temps imparti : on la relance. */
+                    try { rec.start(); } catch (e2) { clearTimeout(timer); resolve({ text: (finalText + interim).trim(), error }); }
+                }
+            };
+            try { rec.start(); } catch (e) { clearTimeout(timer); resolve({ text: "", error: "start-failed" }); }
+        }
+        startOnce();
+        stopFn = () => { stopped = true; try { rec && rec.stop(); } catch (e) {} };
     });
     return { promise, stop: () => stopFn() };
 }
@@ -468,6 +545,7 @@ async function handleOnboarding(e) {
     store.set("diisoo_profile", profile);
     btn.disabled = false;
     btn.textContent = "S'inscrire & Se connecter";
+    await new Promise(r => setTimeout(r, 1500));
     openDashboard();
 }
 
@@ -1350,6 +1428,69 @@ let questionList = [];
 let currentQIndex = 0;
 let testAnswers = [];
 let retryRequested = false;
+let navTarget = null;      // null | index à rejoindre | "end" pour terminer le test
+let isPaused = false;
+
+function renderQuestionDots() {
+    const box = $("test-dots");
+    if (!box) return;
+    box.innerHTML = "";
+    questionList.forEach((q, i) => {
+        const d = document.createElement("button");
+        d.type = "button";
+        d.textContent = i + 1;
+        d.title = "Aller à la question " + (i + 1);
+        d.className = "w-7 h-7 rounded-full text-[11px] font-bold flex items-center justify-center transition " +
+            (i === currentQIndex ? "bg-blue-600 text-white" : "bg-slate-900 text-slate-500 border border-slate-800");
+        d.onclick = () => jumpToQuestion(i);
+        box.appendChild(d);
+    });
+}
+
+function interruptCurrentStep() {
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    if (currentStop) { try { currentStop(); } catch (e) {} }
+    clearInterval(countdownId);
+}
+
+function jumpToQuestion(i) {
+    if (i < 0 || i >= questionList.length || i === currentQIndex) return;
+    isPaused = false;
+    navTarget = i;
+    interruptCurrentStep();
+}
+
+function prevQuestion() {
+    if (currentQIndex === 0) return;
+    jumpToQuestionForce(currentQIndex - 1);
+}
+function nextQuestion() {
+    if (currentQIndex >= questionList.length - 1) { navTarget = "end"; interruptCurrentStep(); return; }
+    jumpToQuestionForce(currentQIndex + 1);
+}
+function jumpToQuestionForce(i) {
+    isPaused = false;
+    navTarget = i;
+    interruptCurrentStep();
+}
+
+function togglePause() {
+    isPaused = !isPaused;
+    if (isPaused) {
+        interruptCurrentStep();
+        $("test-status").textContent = "⏸️ En pause";
+        $("test-bars").classList.add("hidden");
+    } else {
+        navTarget = currentQIndex; // reprend la question en cours depuis le début
+        interruptCurrentStep();
+    }
+    $("btn-test-pause").textContent = isPaused ? "▶️ Reprendre" : "⏸️ Pause";
+}
+async function waitWhilePaused(run) {
+    while (isPaused && run === testRun) {
+        await new Promise(r => setTimeout(r, 200));
+    }
+}
 
 function buildQuestionList(test) {
     const list = [];
@@ -1373,24 +1514,159 @@ function renderTestPicker() {
         b.onclick = () => { currentTest = t; renderTestPicker(); };
         box.appendChild(b);
     });
-    const onM = "py-2.5 rounded-xl text-xs font-bold transition bg-emerald-600 text-white";
-    const offM = "py-2.5 rounded-xl text-xs font-bold transition bg-slate-900 text-slate-400";
+    const onM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-emerald-600 border-emerald-400 text-white";
+    const offM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-slate-900 border-slate-800 text-slate-400";
     $("mode-entrainement").className = currentMode === "entrainement" ? onM : offM;
+    $("mode-entrainement").textContent = currentMode === "entrainement" ? "✓ Entraînement" : "Entraînement";
     $("mode-examen").className = currentMode === "examen" ? onM : offM;
+    $("mode-examen").textContent = currentMode === "examen" ? "✓ Examen" : "Examen";
 }
-function setTestMode(m) { currentMode = m; renderTestPicker(); }
+function setTestMode(m) {
+    currentMode = m;
+    renderTestPicker();
+}
+
+/* ==========================================================
+   PILIER 4 : EXERCICES D'ÉCOUTE (LISTENING)
+   ========================================================== */
+const LISTENING_BANK = [
+    { audio: "Attention please. The bus to Thiès will leave from platform two in ten minutes.", question: "Where does the bus leave from?", options: ["Platform one", "Platform two", "Platform three"], answer: 1 },
+    { audio: "Good morning. The doctor is ready to see you now. Please come to room five.", question: "Where should you go?", options: ["Room two", "Room five", "Room seven"], answer: 1 },
+    { audio: "The market closes at six o'clock today because of the holiday.", question: "What time does the market close today?", options: ["Five o'clock", "Six o'clock", "Seven o'clock"], answer: 1 },
+    { audio: "Excuse me, your flight to Paris is delayed. It will now leave at three thirty.", question: "What happened to the flight?", options: ["It is cancelled", "It is delayed", "It left early"], answer: 1 },
+    { audio: "Welcome to the class. Please sit down and open your books to page ten.", question: "What page should you open?", options: ["Page ten", "Page eleven", "Page twenty"], answer: 0 },
+    { audio: "We are sorry, the restaurant is full right now. Please wait fifteen minutes for a table.", question: "How long must you wait?", options: ["Five minutes", "Fifteen minutes", "Fifty minutes"], answer: 1 }
+];
+let listeningIndex = 0;
+let listeningScore = 0;
+
+function openListeningModule() {
+    changeScreen("screen-listening");
+    listeningIndex = 0;
+    listeningScore = 0;
+    renderListeningExercise();
+}
+
+function renderListeningExercise() {
+    const ex = LISTENING_BANK[listeningIndex];
+    $("listening-progress").textContent = "Question " + (listeningIndex + 1) + " sur " + LISTENING_BANK.length + " · Score : " + listeningScore;
+    $("listening-question").textContent = ex.question;
+    $("listening-feedback").textContent = "";
+    $("btn-listening-next").classList.add("hidden");
+    const box = $("listening-options");
+    box.innerHTML = "";
+    ex.options.forEach((opt, i) => {
+        const b = document.createElement("button");
+        b.className = "w-full py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-200";
+        b.textContent = opt;
+        b.onclick = () => checkListeningAnswer(i);
+        box.appendChild(b);
+    });
+    playListeningAudio();
+}
+
+function playListeningAudio() {
+    speak(LISTENING_BANK[listeningIndex].audio, "en-GB", 0.85);
+}
+
+function checkListeningAnswer(i) {
+    const ex = LISTENING_BANK[listeningIndex];
+    const ok = i === ex.answer;
+    if (ok) { listeningScore++; addXP(3); }
+    $("listening-feedback").className = "text-xs text-center " + (ok ? "text-emerald-400" : "text-amber-400");
+    $("listening-feedback").textContent = ok ? "✅ Bonne réponse !" : "❌ La bonne réponse était : " + ex.options[ex.answer];
+    Array.from($("listening-options").children).forEach(b => b.disabled = true);
+    $("btn-listening-next").classList.remove("hidden");
+    bumpDailyGoal(1);
+}
+
+function nextListeningExercise() {
+    listeningIndex = (listeningIndex + 1) % LISTENING_BANK.length;
+    renderListeningExercise();
+}
+
+/* ==========================================================
+   PILIER 5 : DISCUSSION EN BINÔME
+   ========================================================== */
+const PAIR_PROMPTS = [
+    "Talk about your family and where you live.",
+    "Describe your typical day, from morning to evening.",
+    "Talk about a place you would like to visit and why.",
+    "Describe your favourite food and how it is prepared.",
+    "Talk about your work or what you do every day."
+];
+
+function pairsPromptOfToday() {
+    const day = Math.floor(Date.now() / 86400000);
+    return PAIR_PROMPTS[day % PAIR_PROMPTS.length];
+}
+
+function openPairsModule() {
+    changeScreen("screen-pairs");
+    $("pairs-prompt").textContent = "🗣️ " + pairsPromptOfToday();
+    $("pairs-status").textContent = "";
+    loadPairsList();
+}
+
+async function recordPairAnswer() {
+    const p = getProfile();
+    const btn = $("btn-pairs-record");
+    btn.disabled = true;
+    $("pairs-status").textContent = "🔴 Enregistrement en cours (30 secondes)...";
+    await startAudioCapture();
+    await new Promise(r => setTimeout(r, 30000));
+    const blob = await stopAudioCapture();
+    $("pairs-status").textContent = "Envoi en cours...";
+    const audioUrl = await uploadTestAudio(blob, p ? p.phone : null);
+    if (db && p && audioUrl) {
+        await db.from("discussions").insert({
+            phone: p.phone, first_name: p.first_name, prompt: pairsPromptOfToday(), audio_url: audioUrl
+        });
+        $("pairs-status").textContent = "✅ Réponse envoyée. Les autres apprenantes peuvent l'écouter.";
+    } else {
+        $("pairs-status").textContent = "Envoi impossible pour le moment (réseau ou stockage indisponible).";
+    }
+    btn.disabled = false;
+    loadPairsList();
+}
+
+async function loadPairsList() {
+    const box = $("pairs-list");
+    if (!db) { box.innerHTML = "<p class=\"text-xs text-slate-600 text-center\">Mode local : les réponses des autres ne sont pas visibles.</p>"; return; }
+    try {
+        const { data, error } = await db.from("discussions").select("*").eq("prompt", pairsPromptOfToday()).order("created_at", { ascending: false }).limit(20);
+        if (error || !data || data.length === 0) {
+            box.innerHTML = "<p class=\"text-xs text-slate-600 text-center\">Aucune réponse pour l'instant. Sois la première !</p>";
+            return;
+        }
+        box.innerHTML = "";
+        data.forEach(row => {
+            const card = document.createElement("div");
+            card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex items-center justify-between";
+            card.innerHTML = "<span class=\"text-xs font-semibold text-slate-300\">" + (row.first_name || "Apprenante") + "</span>" +
+                (row.audio_url ? "<a href=\"" + row.audio_url + "\" target=\"_blank\" class=\"text-[11px] text-rose-400 font-semibold\">▶️ Écouter</a>" : "");
+            box.appendChild(card);
+        });
+    } catch (e) {
+        box.innerHTML = "<p class=\"text-xs text-slate-600 text-center\">Impossible de charger les réponses pour le moment.</p>";
+    }
+}
 
 function startTestSimulation() {
     changeScreen("screen-test-simulation");
     $("test-picker").classList.remove("hidden");
     $("test-live").classList.add("hidden");
     $("test-result").classList.add("hidden");
+    $("test-nav").classList.add("hidden");
     $("test-timer").textContent = "--";
     $("test-timer").className = "text-2xl font-mono font-black text-slate-600";
     $("test-phase-label").textContent = "3 tests complets";
     $("test-topic-label").textContent = "Simulateur IELTS Life Skills A1";
+    navTarget = null;
+    isPaused = false;
     renderTestPicker();
     const b = $("btn-test-main");
+    b.classList.remove("hidden");
     b.textContent = "Commencer le test";
     b.dataset.mode = "start";
 }
@@ -1398,7 +1674,6 @@ function startTestSimulation() {
 function testMainAction() {
     const mode = $("btn-test-main").dataset.mode;
     if (mode === "start") runTest();
-    else if (mode === "skip" && currentStop) currentStop();
 }
 
 function retryCurrentQuestion() {
@@ -1419,22 +1694,31 @@ async function runTest() {
     testAnswers = [];
     questionList = buildQuestionList(currentTest);
     currentQIndex = 0;
+    navTarget = null;
+    isPaused = false;
     const modeCfg = TEST_MODES[currentMode];
 
     $("test-picker").classList.add("hidden");
     $("test-result").classList.add("hidden");
     $("test-live").classList.remove("hidden");
+    $("btn-test-main").classList.add("hidden");
+    $("test-nav").classList.remove("hidden");
     await startAudioCapture();
     if (run !== testRun) return;
     $("test-topic-label").textContent = "Topic: " + currentTest.topic + " · " + modeCfg.label;
-    const btn = $("btn-test-main");
-    btn.dataset.mode = "skip";
-    btn.textContent = "Passer à la question suivante";
 
-    for (let i = 0; i < questionList.length; i++) {
+    outer: while (currentQIndex < questionList.length) {
         if (run !== testRun) return;
-        currentQIndex = i;
+        await waitWhilePaused(run);
+        if (run !== testRun) return;
+        if (navTarget !== null) {
+            currentQIndex = navTarget === "end" ? questionList.length : navTarget;
+            navTarget = null;
+            continue outer;
+        }
+        const i = currentQIndex;
         const q = questionList[i];
+        renderQuestionDots();
         $("test-phase-label").textContent = "Phase " + q.phaseId + " · " + q.phaseLabel;
         $("test-progress").textContent = "Question " + (i + 1) + " sur " + questionList.length;
         $("btn-test-retry").classList.add("hidden");
@@ -1446,6 +1730,7 @@ async function runTest() {
             $("test-status").textContent = "Observez l'image, puis écoutez la question.";
             await speak("Look at the picture.", "en-GB", 0.9);
             if (run !== testRun) return;
+            if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
             await new Promise(r => setTimeout(r, 500));
         } else if (q.phaseId !== "2a") {
             $("test-photo").classList.add("hidden");
@@ -1453,6 +1738,10 @@ async function runTest() {
 
         let answered = false;
         while (!answered) {
+            await waitWhilePaused(run);
+            if (run !== testRun) return;
+            if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
+
             retryRequested = false;
             $("test-question").textContent = q.text;
             $("test-transcript").textContent = "";
@@ -1462,6 +1751,7 @@ async function runTest() {
 
             await speak(q.text, "en-GB", 0.85);
             if (run !== testRun) return;
+            if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
 
             $("test-status").textContent = "🎤 À vous de répondre";
             $("test-bars").classList.remove("hidden");
@@ -1483,21 +1773,75 @@ async function runTest() {
             currentStop = null;
             clearInterval(countdownId);
             if (run !== testRun) return;
+            if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
 
             if (r.error === "not-allowed" || r.error === "service-not-allowed") {
                 $("test-status").textContent = "Micro bloqué. Autorisez le micro puis recommencez.";
                 $("test-bars").classList.add("hidden");
-                btn.dataset.mode = "start";
-                btn.textContent = "Recommencer le test";
+                $("test-nav").classList.add("hidden");
+                $("btn-test-main").classList.remove("hidden");
+                $("btn-test-main").dataset.mode = "start";
+                $("btn-test-main").textContent = "Recommencer le test";
                 return;
             }
 
             if (retryRequested && modeCfg.retry) { continue; }
+
+            const fb = analyzeAnswer(r.text || "");
+            $("test-bars").classList.add("hidden");
+            $("test-status").innerHTML = (r.text ? "Vous avez dit : « " + r.text + " »" : "Aucune réponse captée.") +
+                "<br><span class=\"" + (fb.ok ? "text-emerald-400" : "text-amber-400") + "\">" + fb.message + "</span>";
+            await new Promise(res => setTimeout(res, 2800));
+            if (run !== testRun) return;
+            if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
+
             testAnswers.push({ q: q.text, phaseId: q.phaseId, phaseLabel: q.phaseLabel, text: r.text || "", unsupported: !!r.unsupported });
             answered = true;
+
+            if (q.phaseId === "2b" && !r.unsupported) {
+                const followUp = pickFollowUp(r.text || "");
+                $("test-phase-label").textContent = "Phase 2b · Relance";
+                $("test-question").textContent = followUp;
+                $("test-transcript").textContent = "";
+                $("test-bars").classList.add("hidden");
+                $("test-status").textContent = "🔊 Écoutez la relance";
+                setTimer(null);
+                await speak(followUp, "en-GB", 0.85);
+                if (run !== testRun) return;
+                if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
+
+                $("test-status").textContent = "🎤 À vous de répondre";
+                $("test-bars").classList.remove("hidden");
+                let leftF = modeCfg.seconds;
+                setTimer(leftF, false);
+                clearInterval(countdownId);
+                countdownId = setInterval(() => { leftF--; setTimer(Math.max(leftF, 0), leftF <= 5); }, 1000);
+
+                const sessionF = startListening("en-GB", modeCfg.seconds * 1000, true, (t) => {
+                    if (run === testRun) $("test-transcript").textContent = t;
+                });
+                currentStop = sessionF.stop;
+                const rf = await sessionF.promise;
+                currentStop = null;
+                clearInterval(countdownId);
+                if (run !== testRun) return;
+                if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
+
+                const fbF = analyzeAnswer(rf.text || "");
+                $("test-bars").classList.add("hidden");
+                $("test-status").innerHTML = (rf.text ? "Vous avez dit : « " + rf.text + " »" : "Aucune réponse captée.") +
+                    "<br><span class=\"" + (fbF.ok ? "text-emerald-400" : "text-amber-400") + "\">" + fbF.message + "</span>";
+                await new Promise(res => setTimeout(res, 2800));
+                if (run !== testRun) return;
+                if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
+
+                testAnswers.push({ q: followUp, phaseId: "2b-relance", phaseLabel: "Relance", text: rf.text || "", unsupported: !!rf.unsupported });
+            }
         }
+        currentQIndex = i + 1;
     }
     $("btn-test-retry").classList.add("hidden");
+    $("test-nav").classList.add("hidden");
     finishTest();
 }
 
@@ -1511,6 +1855,17 @@ const COMMON_VERBS = new Set(["is","am","are","was","were","be","been","have","h
     "find","finds","found","give","gives","gave","take","takes","took","make","makes","made","wear","wears","wore",
     "know","knows","knew","meet","meets","met","stay","stays","stayed","come","comes","came","call","calls","called",
     "get","gets","got","read","reads","use","uses","used","look","looks","looked","sing","sings","sang","dance","dances","danced"]);
+
+function pickFollowUp(text) {
+    const t = (text || "").toLowerCase();
+    const words = t.trim().split(/\s+/).filter(Boolean).length;
+    if (words < 4) return "Can you tell me a little more about that?";
+    if (/family|children|mother|father|sister|brother|parents/.test(t)) return "Who do you usually share that with?";
+    if (/like|love|enjoy|happy|favourite|favorite/.test(t)) return "Why do you enjoy that so much?";
+    if (/work|job|money|busy/.test(t)) return "How does that affect your daily life?";
+    if (/friend|neighbour|neighbor/.test(t)) return "How often do you see them?";
+    return "Why is that important to you?";
+}
 
 function analyzeAnswer(text) {
     const clean = (text || "").trim();
@@ -1617,6 +1972,7 @@ async function finishTest() {
     }
 
     const btn = $("btn-test-main");
+    btn.classList.remove("hidden");
     btn.dataset.mode = "start";
     btn.textContent = "Choisir un autre test";
 
