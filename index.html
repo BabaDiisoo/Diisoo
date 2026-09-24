@@ -115,6 +115,32 @@
         </div>
 
         <!-- ======================================================== -->
+        <!-- AVIS DE SATISFACTION -->
+        <!-- ======================================================== -->
+        <div id="screen-feedback" class="hidden fixed inset-0 z-50 bg-[#0B0F1C]/95 flex items-center justify-center p-6">
+            <div class="w-full max-w-md bg-[#141A2B] border border-[#1E2740] rounded-3xl p-5 space-y-4 pop-in">
+                <div id="feedback-form" class="space-y-4">
+                    <div class="text-center space-y-1">
+                        <span class="text-3xl">⭐</span>
+                        <h2 class="text-lg font-black text-[#F6F1E7]">Votre avis compte</h2>
+                        <p class="text-xs text-[#A69C86]">Comment trouvez-vous l'application ?</p>
+                    </div>
+                    <div id="feedback-stars" class="flex items-center justify-center space-x-2 text-3xl"></div>
+                    <textarea id="feedback-comment" rows="3" placeholder="Un commentaire (facultatif)" class="w-full bg-[#0B0F1C]/60 border border-[#1E2740] rounded-xl p-3 text-xs text-[#E4DCC9] placeholder-[#6B604A]"></textarea>
+                    <div class="flex space-x-2">
+                        <button onclick="closeFeedback()" class="flex-1 py-3 bg-[#0B0F1C]/60 text-[#A69C86] rounded-xl text-xs font-semibold">Plus tard</button>
+                        <button onclick="submitFeedback()" class="flex-1 py-3 btn-primary rounded-2xl text-sm font-bold">Envoyer</button>
+                    </div>
+                </div>
+                <div id="feedback-thanks" class="hidden text-center space-y-3 py-4">
+                    <span class="text-4xl">🙏</span>
+                    <p class="text-sm font-bold text-[#F6F1E7]">Merci pour votre retour !</p>
+                    <button onclick="closeFeedback()" class="w-full py-3 btn-primary rounded-2xl text-sm font-bold">Fermer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
         <!-- ÉCRAN 1 : ONBOARDING & CAPTURE DU COMPTE WHATSAPP -->
         <!-- ======================================================== -->
         <div id="screen-onboarding" class="flex flex-col justify-between h-full space-y-6 my-auto">
@@ -214,28 +240,14 @@
                     </div>
                     <p class="text-[11px] text-[#A69C86] leading-relaxed">Simulateur officiel chronométré, 100% en anglais pour s'habituer au rythme et au stress réel de l'examen de visa.</p>
                 </button>
-                <!-- PILIER 4 : ÉCOUTE -->
-                <button onclick="openListeningModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-amber-950/20 p-4 rounded-2xl border border-[#1E2740] hover:border-amber-500/30 transition shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">👂</span><h3 class="text-sm font-bold text-[#F6F1E7]">4. Exercices d'écoute</h3></div>
-                        <span class="text-[9px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full font-medium">Listening</span>
-                    </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Écoutez une annonce ou une question, puis choisissez la bonne réponse.</p>
-                </button>
-                <!-- PILIER 5 : BINÔME -->
-                <button onclick="openPairsModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#220F16]/20 p-4 rounded-2xl border border-[#1E2740] hover:border-[#E5628A]/30 transition shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">🤝</span><h3 class="text-sm font-bold text-[#F6F1E7]">5. Discussion en binôme</h3></div>
-                        <span class="text-[9px] bg-[#E5628A]/10 text-[#EE85A3] px-2 py-0.5 rounded-full font-medium">Échange vocal</span>
-                    </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Répondez au sujet du jour à voix haute, puis écoutez la réponse des autres apprenantes.</p>
-                </button>
             </div>
             <div class="space-y-2">
                 <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
-                <p class="text-center text-[10px] text-[#6B604A]">Un produit développé par ABC-GLOBAL</p>
+                <p class="text-center text-xs font-bold tracking-wide text-[#C2542D]">🏢 Un produit ABC-GLOBAL</p>
                 <div class="flex items-center justify-center space-x-3">
                     <button onclick="showTutorial()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">❓ Comment ça marche</button>
+                    <span class="text-[#1E2740]">·</span>
+                    <button onclick="openFeedback()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">⭐ Donner mon avis</button>
                     <span class="text-[#1E2740]">·</span>
                     <button onclick="logout()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">Changer de profil</button>
                 </div>
@@ -277,8 +289,8 @@
         <!-- ======================================================== -->
         <div id="screen-listening" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
-                <span class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Compréhension orale</span>
-                <h3 class="text-lg font-bold text-[#F6F1E7]">Exercices d'écoute</h3>
+                <span class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Test IELTS · Compréhension orale</span>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Entraînement à l'écoute</h3>
                 <p id="listening-progress" class="text-xs text-[#A69C86] mt-1"></p>
             </div>
             <div class="bg-[#141A2B] border border-[#1E2740] rounded-2xl p-5 space-y-4">
@@ -288,7 +300,7 @@
                 <p id="listening-feedback" class="text-xs text-center"></p>
             </div>
             <div class="flex space-x-2">
-                <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Quitter</button>
+                <button onclick="changeScreen('screen-test-simulation')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Quitter</button>
                 <button id="btn-listening-next" onclick="nextListeningExercise()" class="flex-1 py-3 bg-amber-500 text-[#0B0F1C] rounded-xl text-xs font-bold hidden">Suivant</button>
             </div>
         </div>
@@ -298,14 +310,18 @@
         <!-- ======================================================== -->
         <div id="screen-pairs" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
-                <span class="text-[10px] font-bold tracking-widest text-[#EE85A3] uppercase">Échange vocal</span>
-                <h3 class="text-lg font-bold text-[#F6F1E7]">Discussion en binôme</h3>
+                <span class="text-[10px] font-bold tracking-widest text-[#EE85A3] uppercase">Test IELTS · Expression orale</span>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Entraînement à l'oral</h3>
                 <p id="pairs-prompt" class="text-xs text-[#C9BFA8] mt-2 bg-[#141A2B] border border-[#1E2740] rounded-xl p-3"></p>
             </div>
             <button id="btn-pairs-record" onclick="recordPairAnswer()" class="w-full py-3 bg-[#E5628A]/10 text-[#EE85A3] rounded-xl text-sm font-bold">🎤 Enregistrer ma réponse (30s)</button>
+            <div id="pairs-controls" class="hidden grid grid-cols-2 gap-2">
+                <button id="btn-pairs-pause" onclick="togglePairsPause()" class="py-3 bg-[#141A2B] text-[#C9BFA8] rounded-xl text-xs font-bold">⏸️ Pause</button>
+                <button onclick="sendPairsNow()" class="py-3 bg-[#3FAE74]/10 text-[#5FC98F] rounded-xl text-xs font-bold">📤 Envoyer maintenant</button>
+            </div>
             <p id="pairs-status" class="text-xs text-center text-[#8C8064]"></p>
             <div id="pairs-list" class="space-y-2 overflow-y-auto max-h-[35vh] pr-1"></div>
-            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+            <button onclick="changeScreen('screen-test-simulation')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Revenir au Test IELTS</button>
         </div>
 
         <!-- ======================================================== -->
@@ -331,8 +347,8 @@
                     <div class="pt-3 border-t border-[#141A2B] space-y-2">
                         <p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider text-center">Complétez votre préparation</p>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="openListeningModule()" class="py-3 bg-amber-500/10 text-amber-400 rounded-xl text-[11px] font-bold border border-amber-500/20">👂 Écoute IELTS</button>
-                            <button onclick="openPairsModule()" class="py-3 bg-[#E5628A]/10 text-[#EE85A3] rounded-xl text-[11px] font-bold border border-[#E5628A]/20">🤝 Discussion binôme</button>
+                            <button onclick="openPairsModule()" class="py-3 bg-[#E5628A]/10 text-[#EE85A3] rounded-xl text-[11px] font-bold border border-[#E5628A]/20">🤝 Entraînement à l'oral</button>
+                            <button onclick="openListeningModule()" class="py-3 bg-amber-500/10 text-amber-400 rounded-xl text-[11px] font-bold border border-amber-500/20">👂 Entraînement à l'écoute</button>
                         </div>
                         <p class="text-[10px] text-[#6B604A] text-center leading-relaxed">Comme le vrai test IELTS : compréhension orale puis expression orale à deux.</p>
                     </div>
@@ -353,6 +369,10 @@
                     </div>
                     <p id="test-status" class="text-xs text-[#A69C86]"></p>
                     <p id="test-transcript" class="text-sm text-[#C9BFA8] italic min-h-[2.5rem]"></p>
+                    <div id="test-continue-hint" class="hidden flex flex-col items-center space-y-1.5">
+                        <p class="text-[10px] text-[#8C8064]">Silence détecté…</p>
+                        <button onclick="confirmTestContinue()" class="px-5 py-2 bg-[#2FC2AC]/20 text-[#55D2BE] rounded-xl text-xs font-bold">Continuer ▶</button>
+                    </div>
                     <button id="btn-test-retry" onclick="retryCurrentQuestion()" class="hidden text-xs text-[#F0906B] font-semibold underline">Réessayer cette question</button>
                 </div>
 
@@ -728,6 +748,53 @@ function showTutorial() { $("screen-tutorial").classList.remove("hidden"); }
 function closeTutorial() {
     $("screen-tutorial").classList.add("hidden");
     store.set("diisoo_tuto_seen", true);
+}
+
+/* ---------- Avis de satisfaction ---------- */
+let feedbackRating = 0;
+
+function renderFeedbackStars() {
+    const box = $("feedback-stars");
+    box.innerHTML = "";
+    for (let i = 1; i <= 5; i++) {
+        const s = document.createElement("span");
+        s.textContent = i <= feedbackRating ? "★" : "☆";
+        s.className = "cursor-pointer " + (i <= feedbackRating ? "text-amber-400" : "text-[#3A3220]");
+        s.onclick = () => { feedbackRating = i; renderFeedbackStars(); };
+        box.appendChild(s);
+    }
+}
+
+function openFeedback() {
+    feedbackRating = 0;
+    $("feedback-comment").value = "";
+    $("feedback-form").classList.remove("hidden");
+    $("feedback-thanks").classList.add("hidden");
+    renderFeedbackStars();
+    $("screen-feedback").classList.remove("hidden");
+}
+
+function closeFeedback() { $("screen-feedback").classList.add("hidden"); }
+
+async function submitFeedback() {
+    if (feedbackRating === 0) { toast("Choisissez d'abord une note ⭐"); return; }
+    const p = getProfile();
+    const entry = {
+        phone: p ? p.phone : null,
+        first_name: p ? p.first_name : null,
+        rating: feedbackRating,
+        comment: $("feedback-comment").value.trim(),
+        created_at: new Date().toISOString()
+    };
+    if (db) {
+        try { await db.from("avis").insert(entry); } catch (e) {}
+    } else {
+        const list = store.get("diisoo_feedback") || [];
+        list.push(entry);
+        store.set("diisoo_feedback", list);
+    }
+    $("feedback-form").classList.add("hidden");
+    $("feedback-thanks").classList.remove("hidden");
 }
 
 function openDashboard() {
@@ -1789,13 +1856,33 @@ function openPairsModule() {
     loadPairsList();
 }
 
+let pairsRecordState = null;
+
 async function recordPairAnswer() {
     const p = getProfile();
     const btn = $("btn-pairs-record");
-    btn.disabled = true;
-    $("pairs-status").textContent = "🔴 Enregistrement en cours (30 secondes)...";
+    btn.classList.add("hidden");
+    $("pairs-controls").classList.remove("hidden");
+    $("btn-pairs-pause").textContent = "⏸️ Pause";
     await startAudioCapture();
-    await new Promise(r => setTimeout(r, 30000));
+
+    pairsRecordState = { remaining: 30, paused: false, stopRequested: false, timeoutId: null };
+    $("pairs-status").textContent = "🔴 Enregistrement en cours (30s restantes)...";
+
+    await new Promise(resolve => {
+        function tick() {
+            if (pairsRecordState.stopRequested || pairsRecordState.remaining <= 0) { resolve(); return; }
+            if (!pairsRecordState.paused) {
+                pairsRecordState.remaining--;
+                $("pairs-status").textContent = "🔴 Enregistrement en cours (" + pairsRecordState.remaining + "s restantes)...";
+            }
+            pairsRecordState.timeoutId = setTimeout(tick, 1000);
+        }
+        tick();
+    });
+    clearTimeout(pairsRecordState.timeoutId);
+
+    $("pairs-controls").classList.add("hidden");
     const blob = await stopAudioCapture();
     $("pairs-status").textContent = "Envoi en cours...";
     const audioUrl = await uploadTestAudio(blob, p ? p.phone : null);
@@ -1807,8 +1894,24 @@ async function recordPairAnswer() {
     } else {
         $("pairs-status").textContent = "Envoi impossible pour le moment (réseau ou stockage indisponible).";
     }
-    btn.disabled = false;
+    btn.classList.remove("hidden");
+    pairsRecordState = null;
     loadPairsList();
+}
+
+function togglePairsPause() {
+    if (!pairsRecordState) return;
+    pairsRecordState.paused = !pairsRecordState.paused;
+    if (mediaRecorder && mediaRecorder.state === "recording" && pairsRecordState.paused) mediaRecorder.pause();
+    else if (mediaRecorder && mediaRecorder.state === "paused" && !pairsRecordState.paused) mediaRecorder.resume();
+    $("btn-pairs-pause").textContent = pairsRecordState.paused ? "▶️ Reprendre" : "⏸️ Pause";
+    if (pairsRecordState.paused) $("pairs-status").textContent = "⏸️ En pause (" + pairsRecordState.remaining + "s restantes)";
+}
+
+function sendPairsNow() {
+    if (!pairsRecordState) return;
+    pairsRecordState.paused = false;
+    pairsRecordState.stopRequested = true;
 }
 
 async function loadPairsList() {
@@ -1833,6 +1936,68 @@ async function loadPairsList() {
     } catch (e) {
         box.innerHTML = "<p class=\"text-xs text-[#6B604A] text-center\">Impossible de charger les réponses pour le moment.</p>";
     }
+}
+
+/* ---------- Capteur de silence (auto-avance sur les réponses du simulateur) ---------- */
+const SILENCE_MS = 5000;   // silence détecté après 5s sans nouveau mot
+const GRACE_MS = 2500;     // fenêtre d'annulation avant l'enchaînement automatique
+let currentConfirmEarly = null;
+
+function confirmTestContinue() {
+    if (currentConfirmEarly) currentConfirmEarly();
+}
+
+function listenWithSilenceAutoAdvance(lang, ms, onText) {
+    let lastText = "";
+    let lastChangeAt = Date.now();
+    let graceActive = false;
+    let graceTimeout = null;
+
+    const session = startListening(lang, ms, true, (t) => {
+        if (t !== lastText) {
+            lastText = t;
+            lastChangeAt = Date.now();
+            if (graceActive) cancelGrace();
+        }
+        if (onText) onText(t);
+    });
+
+    function showHint() { $("test-continue-hint").classList.remove("hidden"); }
+    function hideHint() { $("test-continue-hint").classList.add("hidden"); }
+
+    function cancelGrace() {
+        graceActive = false;
+        clearTimeout(graceTimeout);
+        currentConfirmEarly = null;
+        hideHint();
+    }
+
+    function confirmEarlyStop() {
+        clearTimeout(graceTimeout);
+        graceActive = false;
+        currentConfirmEarly = null;
+        hideHint();
+        session.stop();
+    }
+
+    const checkInterval = setInterval(() => {
+        if (!lastText.trim() || graceActive) return;
+        if (Date.now() - lastChangeAt >= SILENCE_MS) {
+            graceActive = true;
+            currentConfirmEarly = confirmEarlyStop;
+            showHint();
+            graceTimeout = setTimeout(confirmEarlyStop, GRACE_MS);
+        }
+    }, 400);
+
+    session.promise.then(() => {
+        clearInterval(checkInterval);
+        clearTimeout(graceTimeout);
+        currentConfirmEarly = null;
+        hideHint();
+    });
+
+    return session;
 }
 
 function startTestSimulation() {
@@ -1948,7 +2113,7 @@ async function runTest() {
                 setTimer(Math.max(left, 0), left <= 5);
             }, 1000);
 
-            const session = startListening("en-GB", modeCfg.seconds * 1000, true, (t) => {
+            const session = listenWithSilenceAutoAdvance("en-GB", modeCfg.seconds * 1000, (t) => {
                 if (run === testRun) $("test-transcript").textContent = t;
             });
             currentStop = session.stop;
@@ -2000,7 +2165,7 @@ async function runTest() {
                 clearInterval(countdownId);
                 countdownId = setInterval(() => { leftF--; setTimer(Math.max(leftF, 0), leftF <= 5); }, 1000);
 
-                const sessionF = startListening("en-GB", modeCfg.seconds * 1000, true, (t) => {
+                const sessionF = listenWithSilenceAutoAdvance("en-GB", modeCfg.seconds * 1000, (t) => {
                     if (run === testRun) $("test-transcript").textContent = t;
                 });
                 currentStop = sessionF.stop;
