@@ -3,23 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#020617">
+    <meta name="theme-color" content="#0B0F1C">
     <title>Diisoo - Application Trilingue Officielle</title>
     <!-- Tailwind CSS (lien corrigé) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- SDK Supabase (lien corrigé) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Typographie : Fredoka pour les titres (rond, chaleureux, lisible par des enfants),
+         Plus Jakarta Sans pour le texte courant (clair, moderne, très lisible sur mobile) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F3A94E'/%3E%3Cstop offset='1' stop-color='%23E1693F'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='18' fill='%230B0F1C'/%3E%3Cpath d='M14 22a10 10 0 0 1 10-10h16a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H26l-8 7v-7a10 10 0 0 1-4-8Z' fill='url(%23g)'/%3E%3C/svg%3E">
     <style>
+        :root{
+            /* ================================================
+               PALETTE "CRÉPUSCULE SÉNÉGALAIS" — pensée avec la
+               psychologie des couleurs : bleu-nuit profond pour la
+               confiance et la concentration (idéal avant un examen),
+               or/terracotta chauds pour l'énergie et l'envie d'agir
+               (couleur des boutons et de la récompense), vert pour
+               la croissance et l'ancrage culturel wolof, sarcelle
+               pour le calme et la compétence (IELTS), rose pour la
+               chaleur sociale du binôme.
+               ================================================ */
+            --ink:#0B0F1C; --surface:#141A2B; --raised:#1E2740;
+            --gold:#F3A94E; --gold-deep:#D9832A;
+            --terracotta:#E1693F; --terracotta-deep:#C2542D;
+        }
+        body{ font-family:'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; }
+        h1,h2,h3,.font-display{ font-family:'Fredoka', ui-rounded, sans-serif; letter-spacing:-0.01em; }
+
+        /* Fond de page : nuit profonde avec une lueur chaude en haut, comme un
+           ciel de Thiès juste après le coucher du soleil — un seul geste de
+           couleur, pas de dégradé décoratif ailleurs. */
+        body{
+            background:
+                radial-gradient(ellipse 120% 60% at 50% -10%, rgba(243,169,78,0.16), transparent 60%),
+                radial-gradient(ellipse 90% 50% at 85% 0%, rgba(225,105,63,0.10), transparent 55%),
+                var(--ink);
+            background-attachment: fixed;
+        }
+
         @keyframes custom-bounce {
             0%, 100% { transform: scaleY(0.2); }
             50% { transform: scaleY(1); }
         }
         .bar-animate { animation: custom-bounce 0.5s ease-in-out infinite alternate; transform-origin: bottom; }
-        button:focus-visible, input:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        button:focus-visible, input:focus-visible { outline: 2px solid #E1693F; outline-offset: 2px; }
         @media (prefers-reduced-motion: reduce) { .bar-animate, .animate-pulse { animation: none; } }
+
+        /* Confort d'usage / "friendly" : retour tactile visible sur chaque bouton, utile pour les enfants */
+        button { transition: transform .12s ease, filter .12s ease; }
+        button:active { transform: scale(0.96); filter: brightness(0.95); }
+
+        /* Barre d'action "collante" : le bouton principal (Suivant / Continuer) reste toujours visible
+           en bas de la zone qui défile, pour qu'on ne clique jamais par erreur sur un autre bouton. */
+        .sticky-action { position: sticky; bottom: 0; padding-top: 0.75rem; padding-bottom: 0.25rem;
+            background: linear-gradient(to top, rgba(11,15,28,1) 65%, rgba(11,15,28,0)); }
+
+        @keyframes pop-in { 0% { transform: scale(0.7); opacity: 0; } 60% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+        .pop-in { animation: pop-in .35s ease-out; }
+        @keyframes confetti-fall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(120px) rotate(300deg); opacity: 0; } }
+        .confetti-piece { position: fixed; top: 12%; font-size: 20px; animation: confetti-fall 1.1s ease-in forwards; z-index: 60; pointer-events: none; }
+
+        /* ---------- Logo animé "Diisoo" ---------- */
+        /* Diisoo = "dialogue/conversation" en wolof : une bulle de parole qui
+           respire doucement, avec de petites barres vocales qui dansent —
+           un seul geste d'animation, réutilisé pour incarner la marque. */
+        @keyframes logo-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+        .diisoo-logo { animation: logo-breathe 3.2s ease-in-out infinite; }
+        .diisoo-logo .diisoo-bar { animation: custom-bounce 0.9s ease-in-out infinite alternate; transform-origin: center; transform-box: fill-box; }
+        .diisoo-logo .diisoo-bar:nth-child(2) { animation-delay: .15s; }
+        .diisoo-logo .diisoo-bar:nth-child(3) { animation-delay: .3s; }
+        @media (prefers-reduced-motion: reduce) { .pop-in, .confetti-piece, .diisoo-logo, .diisoo-logo .diisoo-bar { animation: none; } }
+
+        /* Boutons d'action principaux : or → terracotta avec texte foncé, le contraste
+           le plus "invitant à agir" selon les études sur les CTA (fond chaud + texte sombre). */
+        .btn-primary{
+            background-image: linear-gradient(135deg, var(--gold), var(--terracotta));
+            color:#241505; text-shadow:none;
+        }
+        .btn-primary:hover{ filter:brightness(1.06); }
     </style>
 </head>
-<body class="bg-slate-950 font-sans antialiased text-white">
+<body class="bg-[#0B0F1C] font-sans antialiased text-white">
 
     <div class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-6 relative overflow-hidden">
 
@@ -27,44 +95,73 @@
         <div id="db-status" class="hidden text-center text-[10px] bg-amber-500/10 text-amber-400 py-1 rounded-md mb-2"></div>
 
         <!-- ======================================================== -->
+        <!-- GUIDE DE PREMIÈRE UTILISATION (affiché une seule fois) -->
+        <!-- ======================================================== -->
+        <div id="screen-tutorial" class="hidden fixed inset-0 z-50 bg-[#0B0F1C]/95 flex items-center justify-center p-6">
+            <div class="w-full max-w-md bg-[#141A2B] border border-[#1E2740] rounded-3xl p-5 space-y-4 pop-in max-h-[90vh] overflow-y-auto">
+                <div class="text-center space-y-1">
+                    <span class="text-4xl">👋</span>
+                    <h2 class="text-lg font-black text-[#F6F1E7]">Bienvenue sur Diisoo !</h2>
+                    <p class="text-xs text-[#A69C86]">Voici comment progresser, étape par étape.</p>
+                </div>
+                <div class="space-y-2.5">
+                    <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">📚</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Anglais Général :</b> écoutez un mot, répétez-le au micro, puis testez votre grammaire.</p></div>
+                    <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">🇸🇳</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Anglais Wolof :</b> apprenez les deux langues ensemble, 100% à l'oral.</p></div>
+                    <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">⏱️</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Simulateur IELTS :</b> entraînez-vous dans les conditions réelles du test de visa, avec écoute et discussion en binôme intégrées.</p></div>
+                    <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">🔥</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Série & badges :</b> revenez chaque jour pour garder votre série active et débloquer des badges.</p></div>
+                </div>
+                <button onclick="closeTutorial()" class="w-full py-3.5 btn-primary rounded-2xl text-sm font-bold shadow-lg shadow-[#C2542D]/30">C'est parti ! 🚀</button>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
         <!-- ÉCRAN 1 : ONBOARDING & CAPTURE DU COMPTE WHATSAPP -->
         <!-- ======================================================== -->
         <div id="screen-onboarding" class="flex flex-col justify-between h-full space-y-6 my-auto">
-            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-2"><div class="bg-blue-500 h-full w-1/3"></div></div>
+            <div class="w-full bg-[#141A2B] h-1.5 rounded-full overflow-hidden mt-2"><div class="bg-[#E1693F] h-full w-1/3"></div></div>
             <div class="space-y-4">
-                <div class="flex items-center space-x-2"><span class="text-4xl">🎙️</span><h1 class="text-3xl font-black tracking-tight">Diisoo</h1></div>
-                <h2 class="text-xl font-bold text-slate-200">Créer votre profil en ligne</h2>
-                <p class="text-xs text-slate-400">Votre profil sera sauvegardé de façon sécurisée pour activer vos bilans et relances WhatsApp.</p>
+                <div class="flex items-center space-x-2.5">
+                    <svg class="diisoo-logo shrink-0" width="44" height="44" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs><linearGradient id="diisooGrad1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3A94E"/><stop offset="1" stop-color="#E1693F"/></linearGradient></defs>
+                        <path d="M14 22a10 10 0 0 1 10-10h16a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H26l-8 7v-7a10 10 0 0 1-4-8Z" fill="url(#diisooGrad1)"/>
+                        <rect class="diisoo-bar" x="24" y="20" width="4" height="12" rx="2" fill="#0B0F1C"/>
+                        <rect class="diisoo-bar" x="30" y="16" width="4" height="20" rx="2" fill="#0B0F1C"/>
+                        <rect class="diisoo-bar" x="36" y="20" width="4" height="12" rx="2" fill="#0B0F1C"/>
+                    </svg>
+                    <h1 class="text-3xl font-black tracking-tight font-display">Diisoo</h1>
+                </div>
+                <h2 class="text-xl font-bold text-[#E4DCC9]">Créer votre profil en ligne</h2>
+                <p class="text-xs text-[#A69C86]">Votre profil sera sauvegardé de façon sécurisée pour activer vos bilans et relances WhatsApp.</p>
             </div>
 
             <form id="form-onboarding" class="space-y-4" onsubmit="handleOnboarding(event)">
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1.5">
-                        <label for="user-firstname" class="text-xs font-semibold text-slate-400 uppercase">Prénom</label>
-                        <input type="text" id="user-firstname" required placeholder="Fatou" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <label for="user-firstname" class="text-xs font-semibold text-[#A69C86] uppercase">Prénom</label>
+                        <input type="text" id="user-firstname" required placeholder="Fatou" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
                     </div>
                     <div class="space-y-1.5">
-                        <label for="user-lastname" class="text-xs font-semibold text-slate-400 uppercase">Nom</label>
-                        <input type="text" id="user-lastname" required placeholder="Ndiaye" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500">
+                        <label for="user-lastname" class="text-xs font-semibold text-[#A69C86] uppercase">Nom</label>
+                        <input type="text" id="user-lastname" required placeholder="Ndiaye" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
                     </div>
                 </div>
                 <div class="space-y-1.5">
-                    <label for="user-phone" class="text-xs font-semibold text-slate-400 uppercase">Numéro WhatsApp</label>
+                    <label for="user-phone" class="text-xs font-semibold text-[#A69C86] uppercase">Numéro WhatsApp</label>
                     <div class="relative">
-                        <span class="absolute left-4 top-3.5 text-sm text-slate-500 font-medium">🇸🇳 +221</span>
-                        <input type="tel" id="user-phone" required inputmode="numeric" autocomplete="tel-national" placeholder="70 123 45 67" class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-20 pr-4 py-3 text-sm font-mono text-white focus:outline-none focus:border-blue-500">
+                        <span class="absolute left-4 top-3.5 text-sm text-[#8C8064] font-medium">🇸🇳 +221</span>
+                        <input type="tel" id="user-phone" required inputmode="numeric" autocomplete="tel-national" placeholder="70 123 45 67" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl pl-20 pr-4 py-3 text-sm font-mono text-white focus:outline-none focus:border-[#E1693F]">
                     </div>
-                    <p id="phone-error" class="hidden text-[11px] text-rose-400"></p>
+                    <p id="phone-error" class="hidden text-[11px] text-[#EE85A3]"></p>
                 </div>
                 <div class="flex items-start space-x-3 pt-2">
-                    <input type="checkbox" id="whatsapp-optin" checked required class="mt-1 accent-emerald-500 h-4 w-4 rounded border-slate-800 bg-slate-900 text-emerald-500">
-                    <label for="whatsapp-optin" class="text-[11px] text-slate-400 leading-relaxed cursor-pointer select-none">
+                    <input type="checkbox" id="whatsapp-optin" checked required class="mt-1 accent-[#3FAE74] h-4 w-4 rounded border-[#1E2740] bg-[#141A2B] text-[#3FAE74]">
+                    <label for="whatsapp-optin" class="text-[11px] text-[#A69C86] leading-relaxed cursor-pointer select-none">
                         J'autorise Diisoo à sauvegarder mon profil et m'envoyer mes alertes de révision quotidiennes sur WhatsApp.
                     </label>
                 </div>
-                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 bg-blue-600 hover:bg-blue-500 font-bold rounded-2xl text-sm transition mt-4 shadow-lg shadow-blue-600/20">S'inscrire & Se connecter</button>
+                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 btn-primary font-bold rounded-2xl text-sm transition mt-4 shadow-lg shadow-[#C2542D]/20">S'inscrire & Se connecter</button>
             </form>
-            <div class="text-center text-[10px] text-slate-600">Sénégal 🇸🇳 · Souveraineté & Inclusion par la voix</div>
+            <div class="text-center text-[10px] text-[#6B604A]">Sénégal 🇸🇳 · Souveraineté & Inclusion par la voix</div>
         </div>
 
         <!-- ======================================================== -->
@@ -72,63 +169,76 @@
         <!-- ======================================================== -->
         <div id="screen-dashboard" class="hidden flex flex-col justify-between h-full space-y-6 my-auto">
             <div class="pt-2 flex justify-between items-center">
-                <h1 class="text-xl font-black">Diisoo <span class="text-blue-500 text-xs px-2 py-0.5 bg-blue-500/10 rounded ml-1 uppercase">Dashboard</span></h1>
-                <span id="welcome-tag" class="text-xs text-slate-400 font-medium"></span>
+                <h1 class="text-xl font-black flex items-center space-x-2 font-display">
+                    <svg class="diisoo-logo shrink-0" width="28" height="28" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs><linearGradient id="diisooGrad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3A94E"/><stop offset="1" stop-color="#E1693F"/></linearGradient></defs>
+                        <path d="M14 22a10 10 0 0 1 10-10h16a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H26l-8 7v-7a10 10 0 0 1-4-8Z" fill="url(#diisooGrad2)"/>
+                        <rect class="diisoo-bar" x="24" y="20" width="4" height="12" rx="2" fill="#0B0F1C"/>
+                        <rect class="diisoo-bar" x="30" y="16" width="4" height="20" rx="2" fill="#0B0F1C"/>
+                        <rect class="diisoo-bar" x="36" y="20" width="4" height="12" rx="2" fill="#0B0F1C"/>
+                    </svg>
+                    <span>Diisoo <span class="text-[#E1693F] text-xs px-2 py-0.5 bg-[#E1693F]/10 rounded ml-1 uppercase font-sans font-bold">Dashboard</span></span>
+                </h1>
+                <span id="welcome-tag" class="text-xs text-[#A69C86] font-medium"></span>
             </div>
 
-            <div id="daily-goal" class="bg-slate-900/60 rounded-xl p-3 border border-slate-800"></div>
+            <div id="daily-goal" class="bg-[#141A2B]/60 rounded-xl p-3 border border-[#1E2740]"></div>
             <div class="space-y-1.5">
-                <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden"><div id="xp-bar" class="bg-blue-500 h-full transition-all" style="width:0%"></div></div>
-                <p id="xp-label" class="text-[10px] text-slate-500 text-center"></p>
+                <div class="w-full bg-[#141A2B] h-2 rounded-full overflow-hidden"><div id="xp-bar" class="bg-[#E1693F] h-full transition-all" style="width:0%"></div></div>
+                <p id="xp-label" class="text-[10px] text-[#8C8064] text-center"></p>
             </div>
             <div id="badges-row" class="flex space-x-3 overflow-x-auto pb-1"></div>
 
             <div class="space-y-4 my-auto">
                 <!-- PILIER 1 -->
-                <button onclick="openGeneralModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-slate-800 p-4 rounded-2xl border border-slate-800 hover:border-blue-500/30 transition shadow-md">
+                <button onclick="openGeneralModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#1E2740] p-4 rounded-2xl border border-[#1E2740] hover:border-[#E1693F]/30 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">📚</span><h3 class="text-sm font-bold text-slate-100">1. Anglais Général (Français)</h3></div>
-                        <span class="text-[9px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full font-medium">Anglais / Fr</span>
+                        <div class="flex items-center space-x-2"><span class="text-lg">📚</span><h3 class="text-sm font-bold text-[#F6F1E7]">1. Anglais Général (Français)</h3></div>
+                        <span class="text-[9px] bg-[#E1693F]/10 text-[#F0906B] px-2 py-0.5 rounded-full font-medium">Anglais / Fr</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">8 thèmes de la vie courante : se présenter, famille, travail, achats, voyage, santé, nourriture, temps. Vocabulaire, dialogues et grammaire.</p>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">8 thèmes de la vie courante : se présenter, famille, travail, achats, voyage, santé, nourriture, temps. Vocabulaire, dialogues et grammaire.</p>
                 </button>
                 <!-- PILIER 2 -->
-                <button onclick="openWolofModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-emerald-950/20 p-4 rounded-2xl border border-slate-800 hover:border-emerald-500/30 transition shadow-md">
+                <button onclick="openWolofModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#10251A]/20 p-4 rounded-2xl border border-[#1E2740] hover:border-[#3FAE74]/30 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">🇸🇳</span><h3 class="text-sm font-bold text-slate-100">2. Anglais Wolof (Vie & Commerce)</h3></div>
-                        <span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-medium">Général & Business</span>
+                        <div class="flex items-center space-x-2"><span class="text-lg">🇸🇳</span><h3 class="text-sm font-bold text-[#F6F1E7]">2. Anglais Wolof (Vie & Commerce)</h3></div>
+                        <span class="text-[9px] bg-[#3FAE74]/10 text-[#5FC98F] px-2 py-0.5 rounded-full font-medium">Général & Business</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Inclusion 100% orale. Les 8 mêmes thèmes que le pilier 1, en wolof, pour apprendre les deux langues ensemble.</p>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Inclusion 100% orale. Les 8 mêmes thèmes que le pilier 1, en wolof, pour apprendre les deux langues ensemble.</p>
                 </button>
                 <!-- PILIER 3 -->
-                <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-slate-900 to-indigo-950/40 p-4 rounded-2xl border border-indigo-900/20 hover:border-indigo-500/40 transition shadow-md">
+                <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#0B2320]/40 p-4 rounded-2xl border border-[#0E2B28]/20 hover:border-[#2FC2AC]/40 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-slate-100">3. Simulateur de Test IELTS</h3></div>
-                        <span class="text-[9px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
+                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-[#F6F1E7]">3. Simulateur de Test IELTS</h3></div>
+                        <span class="text-[9px] bg-[#2FC2AC]/20 text-[#55D2BE] px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Simulateur officiel chronométré, 100% en anglais pour s'habituer au rythme et au stress réel de l'examen de visa.</p>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Simulateur officiel chronométré, 100% en anglais pour s'habituer au rythme et au stress réel de l'examen de visa.</p>
                 </button>
                 <!-- PILIER 4 : ÉCOUTE -->
-                <button onclick="openListeningModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-amber-950/20 p-4 rounded-2xl border border-slate-800 hover:border-amber-500/30 transition shadow-md">
+                <button onclick="openListeningModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-amber-950/20 p-4 rounded-2xl border border-[#1E2740] hover:border-amber-500/30 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">👂</span><h3 class="text-sm font-bold text-slate-100">4. Exercices d'écoute</h3></div>
+                        <div class="flex items-center space-x-2"><span class="text-lg">👂</span><h3 class="text-sm font-bold text-[#F6F1E7]">4. Exercices d'écoute</h3></div>
                         <span class="text-[9px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full font-medium">Listening</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Écoutez une annonce ou une question, puis choisissez la bonne réponse.</p>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Écoutez une annonce ou une question, puis choisissez la bonne réponse.</p>
                 </button>
                 <!-- PILIER 5 : BINÔME -->
-                <button onclick="openPairsModule()" class="w-full text-left bg-gradient-to-br from-slate-900 to-rose-950/20 p-4 rounded-2xl border border-slate-800 hover:border-rose-500/30 transition shadow-md">
+                <button onclick="openPairsModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#220F16]/20 p-4 rounded-2xl border border-[#1E2740] hover:border-[#E5628A]/30 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">🤝</span><h3 class="text-sm font-bold text-slate-100">5. Discussion en binôme</h3></div>
-                        <span class="text-[9px] bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded-full font-medium">Échange vocal</span>
+                        <div class="flex items-center space-x-2"><span class="text-lg">🤝</span><h3 class="text-sm font-bold text-[#F6F1E7]">5. Discussion en binôme</h3></div>
+                        <span class="text-[9px] bg-[#E5628A]/10 text-[#EE85A3] px-2 py-0.5 rounded-full font-medium">Échange vocal</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed">Répondez au sujet du jour à voix haute, puis écoutez la réponse des autres apprenantes.</p>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Répondez au sujet du jour à voix haute, puis écoutez la réponse des autres apprenantes.</p>
                 </button>
             </div>
             <div class="space-y-2">
                 <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
-                <p class="text-center text-[10px] text-slate-600">Un produit développé par ABC-GLOBAL</p>
-                <button onclick="logout()" class="w-full text-center text-[10px] text-slate-600 hover:text-slate-400 py-1">Changer de profil</button>
+                <p class="text-center text-[10px] text-[#6B604A]">Un produit développé par ABC-GLOBAL</p>
+                <div class="flex items-center justify-center space-x-3">
+                    <button onclick="showTutorial()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">❓ Comment ça marche</button>
+                    <span class="text-[#1E2740]">·</span>
+                    <button onclick="logout()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">Changer de profil</button>
+                </div>
             </div>
         </div>
 
@@ -137,13 +247,13 @@
         <!-- ======================================================== -->
         <div id="screen-general" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
-                <span class="text-[10px] font-bold tracking-widest text-blue-400 uppercase">Bases classiques</span>
-                <h3 class="text-lg font-bold text-slate-100">Anglais Général</h3>
-                <p class="text-xs text-slate-400 mt-1">8 thèmes de la vie courante : écoutez, répétez, puis testez votre grammaire.</p>
+                <span class="text-[10px] font-bold tracking-widest text-[#F0906B] uppercase">Bases classiques</span>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Anglais Général</h3>
+                <p class="text-xs text-[#A69C86] mt-1">8 thèmes de la vie courante : écoutez, répétez, puis testez votre grammaire.</p>
             </div>
             <div id="general-tabs" class="flex space-x-2 overflow-x-auto pb-1"></div>
-            <div id="general-content" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1"></div>
-            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+            <div id="general-content" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1 pb-2"></div>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold border-2 border-transparent">⬅️ Revenir au tableau de bord</button>
         </div>
 
         <!-- ======================================================== -->
@@ -151,15 +261,15 @@
         <!-- ======================================================== -->
         <div id="screen-wolof" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
-                <span class="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">Souveraineté Économique</span>
-                <h3 class="text-lg font-bold text-slate-100">Anglais Wolof</h3>
-                <p class="text-xs text-slate-400 mt-1">8 thèmes de la vie courante, 100% oraux. Écoutez le wolof, puis entraînez-vous au micro en anglais.</p>
+                <span class="text-[10px] font-bold tracking-widest text-[#5FC98F] uppercase">Souveraineté Économique</span>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Anglais Wolof</h3>
+                <p class="text-xs text-[#A69C86] mt-1">8 thèmes de la vie courante, 100% oraux. Écoutez le wolof, puis entraînez-vous au micro en anglais.</p>
             </div>
             <div id="wolof-tabs" class="flex space-x-2 overflow-x-auto pb-1"></div>
             <div id="lexicon-container" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1">
                 <!-- Les cartes de vocabulaire sont injectées ici via JS -->
             </div>
-            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
         </div>
 
         <!-- ======================================================== -->
@@ -168,18 +278,18 @@
         <div id="screen-listening" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Compréhension orale</span>
-                <h3 class="text-lg font-bold text-slate-100">Exercices d'écoute</h3>
-                <p id="listening-progress" class="text-xs text-slate-400 mt-1"></p>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Exercices d'écoute</h3>
+                <p id="listening-progress" class="text-xs text-[#A69C86] mt-1"></p>
             </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+            <div class="bg-[#141A2B] border border-[#1E2740] rounded-2xl p-5 space-y-4">
                 <button onclick="playListeningAudio()" class="w-full py-3 bg-amber-500/10 text-amber-400 rounded-xl text-sm font-bold">🔊 Écouter l'annonce</button>
-                <p id="listening-question" class="text-sm font-semibold text-slate-200 text-center"></p>
+                <p id="listening-question" class="text-sm font-semibold text-[#E4DCC9] text-center"></p>
                 <div id="listening-options" class="space-y-2"></div>
                 <p id="listening-feedback" class="text-xs text-center"></p>
             </div>
             <div class="flex space-x-2">
-                <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Quitter</button>
-                <button id="btn-listening-next" onclick="nextListeningExercise()" class="flex-1 py-3 bg-amber-500 text-slate-950 rounded-xl text-xs font-bold hidden">Suivant</button>
+                <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Quitter</button>
+                <button id="btn-listening-next" onclick="nextListeningExercise()" class="flex-1 py-3 bg-amber-500 text-[#0B0F1C] rounded-xl text-xs font-bold hidden">Suivant</button>
             </div>
         </div>
 
@@ -188,53 +298,62 @@
         <!-- ======================================================== -->
         <div id="screen-pairs" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
-                <span class="text-[10px] font-bold tracking-widest text-rose-400 uppercase">Échange vocal</span>
-                <h3 class="text-lg font-bold text-slate-100">Discussion en binôme</h3>
-                <p id="pairs-prompt" class="text-xs text-slate-300 mt-2 bg-slate-900 border border-slate-800 rounded-xl p-3"></p>
+                <span class="text-[10px] font-bold tracking-widest text-[#EE85A3] uppercase">Échange vocal</span>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Discussion en binôme</h3>
+                <p id="pairs-prompt" class="text-xs text-[#C9BFA8] mt-2 bg-[#141A2B] border border-[#1E2740] rounded-xl p-3"></p>
             </div>
-            <button id="btn-pairs-record" onclick="recordPairAnswer()" class="w-full py-3 bg-rose-500/10 text-rose-400 rounded-xl text-sm font-bold">🎤 Enregistrer ma réponse (30s)</button>
-            <p id="pairs-status" class="text-xs text-center text-slate-500"></p>
+            <button id="btn-pairs-record" onclick="recordPairAnswer()" class="w-full py-3 bg-[#E5628A]/10 text-[#EE85A3] rounded-xl text-sm font-bold">🎤 Enregistrer ma réponse (30s)</button>
+            <p id="pairs-status" class="text-xs text-center text-[#8C8064]"></p>
             <div id="pairs-list" class="space-y-2 overflow-y-auto max-h-[35vh] pr-1"></div>
-            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
         </div>
 
         <!-- ======================================================== -->
         <!-- ÉCRAN 4 : SIMULATEUR DE TEST (VOICE-FIRST AUTOMATIQUE) -->
         <!-- ======================================================== -->
         <div id="screen-test-simulation" class="hidden flex flex-col justify-between h-full min-h-[85vh]">
-            <div class="flex justify-between items-center border-b border-slate-900 pb-4">
-                <div><span id="test-phase-label" class="text-[10px] font-bold text-blue-400 uppercase tracking-wider">3 tests complets</span><h3 id="test-topic-label" class="text-base font-bold text-slate-200">Simulateur IELTS Life Skills A1</h3></div>
-                <div id="test-timer" class="text-2xl font-mono font-black text-slate-600">--</div>
+            <div class="flex justify-between items-center border-b border-[#141A2B] pb-4">
+                <div><span id="test-phase-label" class="text-[10px] font-bold text-[#F0906B] uppercase tracking-wider">3 tests complets</span><h3 id="test-topic-label" class="text-base font-bold text-[#E4DCC9]">Simulateur IELTS Life Skills A1</h3></div>
+                <div id="test-timer" class="text-2xl font-mono font-black text-[#6B604A]">--</div>
             </div>
 
             <div class="flex-1 flex flex-col justify-center py-6 space-y-6">
                 <!-- Choix du test et du mode -->
                 <div id="test-picker" class="space-y-4">
-                    <p class="text-xs text-slate-400 text-center leading-relaxed">Comme le vrai test : informations personnelles, questions sur un thème, une photo à décrire, puis une discussion.</p>
+                    <p class="text-xs text-[#A69C86] text-center leading-relaxed">Comme le vrai test : informations personnelles, questions sur un thème, une photo à décrire, puis une discussion.</p>
                     <div id="test-topic-buttons" class="grid grid-cols-1 gap-2"></div>
                     <div class="grid grid-cols-2 gap-2 pt-2">
                         <button id="mode-entrainement" type="button" onclick="setTestMode('entrainement')" class="py-2.5 rounded-xl text-xs font-bold border-2 transition">Entraînement</button>
                         <button id="mode-examen" type="button" onclick="setTestMode('examen')" class="py-2.5 rounded-xl text-xs font-bold border-2 transition">Examen</button>
                     </div>
-                    <p class="text-[11px] text-slate-500 text-center leading-relaxed">Entraînement : plus de temps, vous pouvez réessayer chaque question. Examen : chronométré, comme le jour du test.</p>
+                    <p class="text-[11px] text-[#8C8064] text-center leading-relaxed">Entraînement : plus de temps, vous pouvez réessayer chaque question. Examen : chronométré, comme le jour du test.</p>
+
+                    <div class="pt-3 border-t border-[#141A2B] space-y-2">
+                        <p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider text-center">Complétez votre préparation</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="openListeningModule()" class="py-3 bg-amber-500/10 text-amber-400 rounded-xl text-[11px] font-bold border border-amber-500/20">👂 Écoute IELTS</button>
+                            <button onclick="openPairsModule()" class="py-3 bg-[#E5628A]/10 text-[#EE85A3] rounded-xl text-[11px] font-bold border border-[#E5628A]/20">🤝 Discussion binôme</button>
+                        </div>
+                        <p class="text-[10px] text-[#6B604A] text-center leading-relaxed">Comme le vrai test IELTS : compréhension orale puis expression orale à deux.</p>
+                    </div>
                 </div>
 
                 <!-- Test en cours -->
                 <div id="test-live" class="hidden space-y-4 text-center">
-                    <p id="test-progress" class="text-xs text-slate-500 font-medium"></p>
+                    <p id="test-progress" class="text-xs text-[#8C8064] font-medium"></p>
                     <div id="test-dots" class="flex flex-wrap justify-center gap-1.5"></div>
-                    <div id="test-photo" class="hidden rounded-2xl overflow-hidden border border-slate-800 mx-auto max-w-[280px]"></div>
-                    <p id="test-question" class="text-2xl font-bold text-slate-100 leading-snug"></p>
+                    <div id="test-photo" class="hidden rounded-2xl overflow-hidden border border-[#1E2740] mx-auto max-w-[280px]"></div>
+                    <p id="test-question" class="text-2xl font-bold text-[#F6F1E7] leading-snug"></p>
                     <div id="test-bars" class="hidden flex justify-center items-end space-x-1.5 h-12">
-                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:0s"></div>
-                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.12s"></div>
-                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.24s"></div>
-                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.36s"></div>
-                        <div class="bar-animate w-1.5 h-12 bg-blue-500 rounded-full" style="animation-delay:.18s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-[#E1693F] rounded-full" style="animation-delay:0s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-[#E1693F] rounded-full" style="animation-delay:.12s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-[#E1693F] rounded-full" style="animation-delay:.24s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-[#E1693F] rounded-full" style="animation-delay:.36s"></div>
+                        <div class="bar-animate w-1.5 h-12 bg-[#E1693F] rounded-full" style="animation-delay:.18s"></div>
                     </div>
-                    <p id="test-status" class="text-xs text-slate-400"></p>
-                    <p id="test-transcript" class="text-sm text-slate-300 italic min-h-[2.5rem]"></p>
-                    <button id="btn-test-retry" onclick="retryCurrentQuestion()" class="hidden text-xs text-blue-400 font-semibold underline">Réessayer cette question</button>
+                    <p id="test-status" class="text-xs text-[#A69C86]"></p>
+                    <p id="test-transcript" class="text-sm text-[#C9BFA8] italic min-h-[2.5rem]"></p>
+                    <button id="btn-test-retry" onclick="retryCurrentQuestion()" class="hidden text-xs text-[#F0906B] font-semibold underline">Réessayer cette question</button>
                 </div>
 
                 <!-- Résultats -->
@@ -242,13 +361,13 @@
             </div>
 
             <div class="space-y-2">
-                <button id="btn-test-main" onclick="testMainAction()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 font-bold rounded-2xl text-sm transition shadow-lg shadow-blue-600/20">Commencer le test</button>
+                <button id="btn-test-main" onclick="testMainAction()" class="w-full py-4 btn-primary font-bold rounded-2xl text-sm transition shadow-lg shadow-[#C2542D]/20">Commencer le test</button>
                 <div id="test-nav" class="hidden grid grid-cols-3 gap-2">
-                    <button id="btn-test-prev" onclick="prevQuestion()" class="py-3 bg-slate-900 text-slate-300 rounded-xl text-xs font-bold">◀ Précédente</button>
-                    <button id="btn-test-pause" onclick="togglePause()" class="py-3 bg-slate-900 text-slate-300 rounded-xl text-xs font-bold">⏸️ Pause</button>
-                    <button id="btn-test-next" onclick="nextQuestion()" class="py-3 bg-slate-900 text-slate-300 rounded-xl text-xs font-bold">Suivante ▶</button>
+                    <button id="btn-test-prev" onclick="prevQuestion()" class="py-3 bg-[#141A2B] text-[#C9BFA8] rounded-xl text-xs font-bold">◀ Précédente</button>
+                    <button id="btn-test-pause" onclick="togglePause()" class="py-3 bg-[#141A2B] text-[#C9BFA8] rounded-xl text-xs font-bold">⏸️ Pause</button>
+                    <button id="btn-test-next" onclick="nextQuestion()" class="py-3 bg-[#141A2B] text-[#C9BFA8] rounded-xl text-xs font-bold">Suivante ▶</button>
                 </div>
-                <button onclick="quitTest()" class="w-full py-3 bg-slate-900 text-slate-400 rounded-xl text-xs font-semibold">Quitter le simulateur</button>
+                <button onclick="quitTest()" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Quitter le simulateur</button>
             </div>
         </div>
     </div>
@@ -283,8 +402,8 @@ function showStatus(msg, type) {
     const el = $("db-status");
     el.textContent = msg;
     el.className = "text-center text-[10px] py-1 rounded-md mb-2 " +
-        (type === "ok" ? "bg-emerald-500/10 text-emerald-400" :
-         type === "error" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400");
+        (type === "ok" ? "bg-[#3FAE74]/10 text-[#5FC98F]" :
+         type === "error" ? "bg-[#E5628A]/10 text-[#EE85A3]" : "bg-amber-500/10 text-amber-400");
     if (type === "ok") setTimeout(() => el.classList.add("hidden"), 3000);
 }
 
@@ -297,15 +416,54 @@ const BADGES = {
     "bilingue": { icon: "🇸🇳", label: "Bilingue", desc: "10 mots wolof prononcés avec succès" },
     "orateur": { icon: "🗣️", label: "Orateur", desc: "10 mots d'anglais général prononcés avec succès" },
     "serie-3": { icon: "🔥", label: "Série de 3", desc: "3 jours de révision d'affilée" },
+    "serie-7": { icon: "🔥", label: "Série de 7", desc: "7 jours de révision d'affilée" },
+    "serie-30": { icon: "🏆", label: "Série de 30", desc: "30 jours de révision d'affilée" },
     "pret-visa": { icon: "🛂", label: "Prêt pour le visa", desc: "Simulateur IELTS terminé" }
 };
 
 function toast(msg) {
     const el = document.createElement("div");
-    el.className = "fixed left-1/2 -translate-x-1/2 bottom-6 bg-slate-900 border border-slate-700 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg z-50 max-w-[90vw] text-center";
+    el.className = "fixed left-1/2 -translate-x-1/2 bottom-6 bg-[#141A2B] border border-[#2A3454] text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg z-50 max-w-[90vw] text-center pop-in";
     el.textContent = msg;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2800);
+}
+
+/* ==========================================================
+   4 PRINCIPES PSYCHOLOGIQUES DE RÉTENTION (inspirés des apps
+   de langues les plus efficaces : Duolingo, Babbel...) :
+   1) Feedback immédiat et chaleureux à chaque réponse (encourageMsg, ci-dessous)
+   2) Progression toujours visible (barre XP, niveaux, objectif du jour)
+   3) Récompense variable et petite célébration (celebrate(), messages aléatoires,
+      combo de bonnes réponses) : on ne sait jamais exactement quand vient le "bonus",
+      ce qui donne envie de continuer
+   4) Engagement social / série à ne pas casser (streak, badges de série)
+   ========================================================== */
+const ENCOURAGEMENTS = ["Bravo !", "Excellent !", "Super !", "Bien joué !", "Parfait !", "Continue comme ça !", "Génial !"];
+function encourageMsg() { return ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]; }
+
+let comboCount = 0;
+function bumpCombo() {
+    comboCount++;
+    if (comboCount === 3) toast("🔥 3 bonnes réponses de suite !");
+    if (comboCount === 5) { toast("⚡ 5 de suite, en feu !"); celebrate(); }
+    if (comboCount > 0 && comboCount % 10 === 0) { toast("🚀 " + comboCount + " bonnes réponses d'affilée !"); celebrate(); }
+}
+function resetCombo() { comboCount = 0; }
+
+/* Petite pluie de confettis (emoji) pour marquer un moment fort, sans dépendance externe */
+function celebrate() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const pieces = ["🎉", "⭐", "✨", "🎊", "🥳"];
+    for (let i = 0; i < 10; i++) {
+        const el = document.createElement("div");
+        el.className = "confetti-piece";
+        el.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+        el.style.left = (Math.random() * 90 + 5) + "vw";
+        el.style.animationDelay = (Math.random() * 0.3) + "s";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1500);
+    }
 }
 
 function getXP() { return store.get("diisoo_xp") || { total: 0 }; }
@@ -319,7 +477,7 @@ function addXP(n) {
     const after = getLevel(xp.total);
     awardBadge("premier-pas");
     renderXPBar();
-    if (after > before) toast("⭐ Niveau " + after + " atteint !");
+    if (after > before) { toast("⭐ Niveau " + after + " atteint !"); celebrate(); }
 }
 
 function getBadges() { return store.get("diisoo_badges") || []; }
@@ -329,7 +487,7 @@ function awardBadge(id) {
     list.push(id);
     store.set("diisoo_badges", list);
     renderBadges();
-    if (BADGES[id]) toast(BADGES[id].icon + " Badge débloqué : " + BADGES[id].label);
+    if (BADGES[id]) { toast(BADGES[id].icon + " Badge débloqué : " + BADGES[id].label); celebrate(); }
 }
 
 function renderXPBar() {
@@ -353,7 +511,7 @@ function renderBadges() {
         const span = document.createElement("div");
         span.className = "flex flex-col items-center w-14 shrink-0" + (has ? "" : " opacity-25");
         span.title = b.desc;
-        span.innerHTML = '<div class="text-xl">' + b.icon + '</div><p class="text-[9px] text-slate-400 text-center leading-tight mt-1">' + b.label + '</p>';
+        span.innerHTML = '<div class="text-xl">' + b.icon + '</div><p class="text-[9px] text-[#A69C86] text-center leading-tight mt-1">' + b.label + '</p>';
         box.appendChild(span);
     });
 }
@@ -378,8 +536,8 @@ function renderDailyGoal() {
     if (!el) return;
     const g = getDailyGoal();
     const done = Math.min(g.done, DAILY_TARGET);
-    el.innerHTML = '<div class="flex justify-between items-center text-[11px] text-slate-400 mb-1"><span>🎯 Objectif du jour</span><span>' + done + '/' + DAILY_TARGET + '</span></div>' +
-        '<div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full transition-all" style="width:' + (done / DAILY_TARGET * 100) + '%"></div></div>';
+    el.innerHTML = '<div class="flex justify-between items-center text-[11px] text-[#A69C86] mb-1"><span>🎯 Objectif du jour</span><span>' + done + '/' + DAILY_TARGET + '</span></div>' +
+        '<div class="w-full bg-[#141A2B] h-1.5 rounded-full overflow-hidden"><div class="bg-[#3FAE74] h-full transition-all" style="width:' + (done / DAILY_TARGET * 100) + '%"></div></div>';
 }
 
 /* ---------- Révision espacée simple pour le vocabulaire wolof ---------- */
@@ -561,7 +719,15 @@ function updateStreak() {
     }
     const n = s.count;
     if (n >= 3) awardBadge("serie-3");
-    $("streak-counter").textContent = "🔥 Série active : " + n + (n > 1 ? " jours" : " jour") + " de révision !";
+    if (n >= 7) awardBadge("serie-7");
+    if (n >= 30) awardBadge("serie-30");
+    $("streak-counter").textContent = "🔥 Série active : " + n + (n > 1 ? " jours" : " jour") + " de révision ! Reviens demain pour ne pas la perdre.";
+}
+
+function showTutorial() { $("screen-tutorial").classList.remove("hidden"); }
+function closeTutorial() {
+    $("screen-tutorial").classList.add("hidden");
+    store.set("diisoo_tuto_seen", true);
 }
 
 function openDashboard() {
@@ -572,6 +738,7 @@ function openDashboard() {
     renderBadges();
     renderDailyGoal();
     changeScreen("screen-dashboard");
+    if (!store.get("diisoo_tuto_seen")) showTutorial();
 }
 
 function logout() {
@@ -805,7 +972,7 @@ function renderGeneralTabs() {
         const active = t.id === generalThemeId;
         const b = document.createElement("button");
         b.className = "px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition " +
-            (active ? "bg-blue-600 text-white" : "bg-slate-900 text-slate-400");
+            (active ? "bg-[#C2542D] text-white" : "bg-[#141A2B] text-[#A69C86]");
         b.textContent = t.title;
         b.onclick = () => setGeneralTheme(t.id);
         box.appendChild(b);
@@ -826,7 +993,7 @@ function renderGeneralContent() {
     const stats = getWordStats();
 
     const vocTitle = document.createElement("p");
-    vocTitle.className = "text-[10px] font-bold text-slate-500 uppercase tracking-wider";
+    vocTitle.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider";
     vocTitle.textContent = "Vocabulaire à écouter et répéter";
     box.appendChild(vocTitle);
 
@@ -834,45 +1001,45 @@ function renderGeneralContent() {
         const key = "gen:" + theme.id + ":" + w.en;
         const due = isDue(stats, key);
         const card = document.createElement("div");
-        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3";
+        card.className = "bg-[#141A2B] border border-[#1E2740] rounded-2xl p-4 space-y-3";
         card.innerHTML =
             '<div class="flex justify-between items-start">' +
-              '<p class="text-base font-bold text-slate-100">' + w.en + '</p>' +
+              '<p class="text-base font-bold text-[#F6F1E7]">' + w.en + '</p>' +
               '<div class="text-right">' +
-                '<p class="text-xs text-slate-500">' + w.fr + '</p>' +
+                '<p class="text-xs text-[#8C8064]">' + w.fr + '</p>' +
                 (due ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">🔁 À revoir</span>' : '') +
               '</div>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-2">' +
-              '<button onclick="speakGeneralWord(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Écouter</button>' +
-              '<button onclick="practiceGeneralWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Répéter</button>' +
+              '<button onclick="speakGeneralWord(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter</button>' +
+              '<button onclick="practiceGeneralWord(' + i + ')" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Répéter</button>' +
             '</div>' +
-            '<div id="gen-res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>';
+            '<div id="gen-res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]"></div>';
         box.appendChild(card);
     });
 
     const dlgTitle = document.createElement("p");
-    dlgTitle.className = "text-[10px] font-bold text-slate-500 uppercase tracking-wider pt-2";
+    dlgTitle.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider pt-2";
     dlgTitle.textContent = "Petit dialogue";
     box.appendChild(dlgTitle);
     const dlgCard = document.createElement("div");
-    dlgCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2";
+    dlgCard.className = "bg-[#141A2B] border border-[#1E2740] rounded-2xl p-4 space-y-2";
     theme.dialogue.forEach((line, i) => {
         const p = document.createElement("p");
-        p.className = "text-sm text-slate-200";
+        p.className = "text-sm text-[#E4DCC9]";
         p.innerHTML = "<b>" + line.who + ":</b> " + esc(line.en) +
-            ' <button onclick="speakDialogueLine(' + i + ')" class="text-blue-400 text-xs align-middle">🔊</button>';
+            ' <button onclick="speakDialogueLine(' + i + ')" class="text-[#F0906B] text-xs align-middle">🔊</button>';
         dlgCard.appendChild(p);
     });
     const playAll = document.createElement("button");
-    playAll.className = "w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold mt-2";
+    playAll.className = "w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold mt-2";
     playAll.textContent = "🔊 Écouter tout le dialogue";
     playAll.onclick = playFullDialogue;
     dlgCard.appendChild(playAll);
     box.appendChild(dlgCard);
 
     const quizTitle = document.createElement("p");
-    quizTitle.className = "text-[10px] font-bold text-slate-500 uppercase tracking-wider pt-2";
+    quizTitle.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider pt-2";
     quizTitle.textContent = "Grammaire";
     box.appendChild(quizTitle);
     const quizBox = document.createElement("div");
@@ -890,14 +1057,14 @@ async function practiceGeneralWord(i) {
     const key = "gen:" + theme.id + ":" + w.en;
     const res = $("gen-res-" + i);
     if (!SR) { res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome."; return; }
-    res.innerHTML = '<span class="text-blue-400">🎤 Parlez maintenant...</span>';
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
     if ("speechSynthesis" in window) speechSynthesis.cancel();
     const r = await startListening("en-US", 6000, false).promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur."; return; }
     if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
     const heard = normalize(r.text), target = normalize(w.en);
     if (heard.includes(target) || target.includes(heard)) {
-        res.innerHTML = '<span class="text-emerald-400">✅ Bravo ! J\'ai entendu : « ' + heard + ' »</span>';
+        res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
         bumpStat("diisoo_word_stats", key, "correct");
         addXP(3); bumpDailyGoal(1); checkOrateurBadge();
     } else {
@@ -918,28 +1085,33 @@ function renderGeneralQuiz() {
     if (generalQuizIndex >= quiz.length) {
         box.innerHTML = "";
         const card = document.createElement("div");
-        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-5 text-center space-y-3";
+        card.className = "bg-[#141A2B] border border-[#1E2740] rounded-2xl p-5 text-center space-y-3";
         const pct = Math.round(generalQuizScore / quiz.length * 100);
         if (pct >= 70) awardBadge("grammairien");
-        card.innerHTML = '<p class="text-2xl font-black text-blue-400">' + generalQuizScore + " / " + quiz.length + "</p>" +
-            '<p class="text-xs text-slate-400">' + (pct >= 70 ? "Très bien, continuez comme ça." : "Refaites l'exercice pour progresser.") + "</p>" +
-            '<button class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold" onclick="setGeneralTheme(generalThemeId)">Recommencer ce thème</button>';
+        card.innerHTML = '<p class="text-2xl font-black text-[#F0906B]">' + generalQuizScore + " / " + quiz.length + "</p>" +
+            '<p class="text-xs text-[#A69C86]">' + (pct >= 70 ? "Très bien, continuez comme ça." : "Refaites l'exercice pour progresser.") + "</p>";
         box.appendChild(card);
+        const restartWrap = document.createElement("div");
+        restartWrap.className = "sticky-action";
+        restartWrap.innerHTML = '<button class="w-full py-3 btn-primary rounded-xl text-xs font-bold shadow-lg shadow-[#C2542D]/30" onclick="setGeneralTheme(generalThemeId)">🔁 Recommencer ce thème</button>';
+        box.appendChild(restartWrap);
+        if (pct >= 70) celebrate();
+        restartWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
         return;
     }
     const item = quiz[generalQuizIndex];
     box.innerHTML = "";
     const prog = document.createElement("p");
-    prog.className = "text-[11px] text-slate-500 text-center";
+    prog.className = "text-[11px] text-[#8C8064] text-center";
     prog.textContent = "Question " + (generalQuizIndex + 1) + " sur " + quiz.length;
     box.appendChild(prog);
     const q = document.createElement("p");
-    q.className = "text-sm font-bold text-slate-100 text-center";
+    q.className = "text-sm font-bold text-[#F6F1E7] text-center";
     q.textContent = item.q;
     box.appendChild(q);
     item.o.forEach((opt, i) => {
         const b = document.createElement("button");
-        b.className = "w-full text-left bg-slate-900 border border-slate-800 hover:border-blue-500/40 rounded-xl px-4 py-3 text-sm transition";
+        b.className = "w-full text-left bg-[#141A2B] border border-[#1E2740] hover:border-[#E1693F]/40 rounded-xl px-4 py-3 text-sm transition";
         b.textContent = opt;
         b.onclick = () => answerGeneralQuiz(i, box, item);
         box.appendChild(b);
@@ -951,18 +1123,26 @@ function answerGeneralQuiz(i, box, item) {
     if (ok) { generalQuizScore++; addXP(5); bumpDailyGoal(1); }
     box.querySelectorAll("button").forEach((b, idx) => {
         b.disabled = true;
-        if (idx === item.a) b.className = "w-full text-left bg-emerald-500/10 border border-emerald-500/50 rounded-xl px-4 py-3 text-sm";
-        else if (idx === i) b.className = "w-full text-left bg-rose-500/10 border border-rose-500/50 rounded-xl px-4 py-3 text-sm";
+        if (idx === item.a) b.className = "w-full text-left bg-[#3FAE74]/10 border border-[#3FAE74]/50 rounded-xl px-4 py-3 text-sm";
+        else if (idx === i) b.className = "w-full text-left bg-[#E5628A]/10 border border-[#E5628A]/50 rounded-xl px-4 py-3 text-sm";
     });
     const fb = document.createElement("p");
-    fb.className = "text-xs " + (ok ? "text-emerald-400" : "text-rose-400");
-    fb.textContent = (ok ? "Correct. " : "Pas tout à fait. ") + item.why;
+    fb.className = "text-xs pop-in " + (ok ? "text-[#5FC98F]" : "text-[#EE85A3]");
+    fb.textContent = (ok ? encourageMsg() + " " : "Pas tout à fait. ") + item.why;
     box.appendChild(fb);
+    if (ok) bumpCombo(); else resetCombo();
+    // Le bouton "Suivant" est mis dans une barre collante en bas de la zone qui défile,
+    // et on scrolle automatiquement dessus : il reste toujours visible et ne se confond
+    // plus avec le bouton "Revenir au tableau de bord" en dessous.
+    const nextWrap = document.createElement("div");
+    nextWrap.className = "sticky-action";
     const next = document.createElement("button");
-    next.className = "w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold";
-    next.textContent = generalQuizIndex === currentGeneralTheme().quiz.length - 1 ? "Voir mon score" : "Question suivante";
+    next.className = "w-full py-3 btn-primary rounded-xl text-xs font-bold shadow-lg shadow-[#C2542D]/30";
+    next.textContent = generalQuizIndex === currentGeneralTheme().quiz.length - 1 ? "Voir mon score ➡️" : "Question suivante ➡️";
     next.onclick = () => { generalQuizIndex++; renderGeneralQuiz(); };
-    box.appendChild(next);
+    nextWrap.appendChild(next);
+    box.appendChild(nextWrap);
+    next.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 /* ==========================================================
@@ -1088,7 +1268,7 @@ function renderWolofTabs() {
         const active = it.id === wolofCat;
         const b = document.createElement("button");
         b.className = "px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition " +
-            (active ? "bg-emerald-600 text-white" : "bg-slate-900 text-slate-400");
+            (active ? "bg-[#2C8F5C] text-white" : "bg-[#141A2B] text-[#A69C86]");
         b.textContent = it.title;
         b.onclick = () => setWolofCat(it.id);
         box.appendChild(b);
@@ -1166,21 +1346,21 @@ function wikidataCardHTML(w, i, stats) {
     const shortEn = w.en && w.en.split(/\s+/).length <= 3;
     const due = stats && isDue(stats, "wo:" + w.en);
     return '<div class="flex justify-between items-start gap-3">' +
-             '<p class="text-lg font-bold text-emerald-400">' + esc(w.wo) + '</p>' +
+             '<p class="text-lg font-bold text-[#5FC98F]">' + esc(w.wo) + '</p>' +
              '<div class="text-right">' +
-             '<p class="text-xs text-slate-300">' + esc(meaning) + '</p>' +
+             '<p class="text-xs text-[#C9BFA8]">' + esc(meaning) + '</p>' +
              (due ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">🔁 À revoir</span>' : '') +
              '</div>' +
            '</div>' +
            '<div class="grid ' + (shortEn ? "grid-cols-3" : "grid-cols-1") + ' gap-2">' +
-             '<button onclick="playWolof(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+             '<button onclick="playWolof(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
              (shortEn
-               ? '<button onclick="playEnglish(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 English</button>' +
-                 '<button onclick="practiceWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Parler</button>'
+               ? '<button onclick="playEnglish(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+                 '<button onclick="practiceWord(' + i + ')" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Parler</button>'
                : "") +
            '</div>' +
-           '<div id="res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>' +
-           '<p class="text-[9px] text-slate-600">Source : Wikidata</p>';
+           '<div id="res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]"></div>' +
+           '<p class="text-[9px] text-[#6B604A]">Source : Wikidata</p>';
 }
 
 function renderLexicon() {
@@ -1188,7 +1368,7 @@ function renderLexicon() {
     box.innerHTML = "";
     if (wolofCat === "wikidata") {
         const note = document.createElement("p");
-        note.className = "text-[11px] text-slate-500 text-center";
+        note.className = "text-[11px] text-[#8C8064] text-center";
         note.textContent = wdMessage;
         box.appendChild(note);
     }
@@ -1199,24 +1379,24 @@ function renderLexicon() {
     indices.forEach(i => {
         const w = LEXICON[i];
         const card = document.createElement("div");
-        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3";
+        card.className = "bg-[#141A2B] border border-[#1E2740] rounded-2xl p-4 space-y-3";
         if (w.cat === "wikidata") { card.innerHTML = wikidataCardHTML(w, i, stats); box.appendChild(card); return; }
         const due = isDue(stats, "wo:" + w.en);
         card.innerHTML =
             '<div class="flex justify-between items-start">' +
-              '<div><p class="text-lg font-bold text-emerald-400">' + w.wo + '</p>' +
-              '<p class="text-xs text-slate-500">' + w.fr + '</p></div>' +
+              '<div><p class="text-lg font-bold text-[#5FC98F]">' + w.wo + '</p>' +
+              '<p class="text-xs text-[#8C8064]">' + w.fr + '</p></div>' +
               '<div class="text-right">' +
-              '<p class="text-base font-bold text-slate-100">' + w.en + '</p>' +
+              '<p class="text-base font-bold text-[#F6F1E7]">' + w.en + '</p>' +
               (due ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">🔁 À revoir</span>' : '') +
               '</div>' +
             '</div>' +
             '<div class="grid grid-cols-3 gap-2">' +
-              '<button onclick="playWolof(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
-              '<button onclick="playEnglish(' + i + ')" class="py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-semibold">🔊 English</button>' +
-              '<button onclick="practiceWord(' + i + ')" class="py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-[11px] font-bold">🎤 Parler</button>' +
+              '<button onclick="playWolof(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+              '<button onclick="playEnglish(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+              '<button onclick="practiceWord(' + i + ')" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Parler</button>' +
             '</div>' +
-            '<div id="res-' + i + '" class="text-xs text-slate-400 min-h-[1rem]"></div>';
+            '<div id="res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]"></div>';
         box.appendChild(card);
     });
 }
@@ -1245,7 +1425,7 @@ async function practiceWord(i) {
         res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome.";
         return;
     }
-    res.innerHTML = '<span class="text-blue-400">🎤 Parlez maintenant...</span>';
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
     if ("speechSynthesis" in window) speechSynthesis.cancel();
     const r = await startListening("en-US", 6000, false).promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") {
@@ -1255,7 +1435,7 @@ async function practiceWord(i) {
     if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
     const heard = normalize(r.text), target = normalize(w.en);
     if (heard.includes(target)) {
-        res.innerHTML = '<span class="text-emerald-400">✅ Bravo ! J\'ai entendu : « ' + heard + ' »</span>';
+        res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
         bumpWordStat(w.en, "correct");
         addXP(3); bumpDailyGoal(1); checkBilingueBadge();
     } else {
@@ -1442,7 +1622,7 @@ function renderQuestionDots() {
         d.textContent = i + 1;
         d.title = "Aller à la question " + (i + 1);
         d.className = "w-7 h-7 rounded-full text-[11px] font-bold flex items-center justify-center transition " +
-            (i === currentQIndex ? "bg-blue-600 text-white" : "bg-slate-900 text-slate-500 border border-slate-800");
+            (i === currentQIndex ? "bg-[#C2542D] text-white" : "bg-[#141A2B] text-[#8C8064] border border-[#1E2740]");
         d.onclick = () => jumpToQuestion(i);
         box.appendChild(d);
     });
@@ -1510,13 +1690,13 @@ function renderTestPicker() {
         const active = currentTest && currentTest.id === t.id;
         const b = document.createElement("button");
         b.className = "w-full text-left px-4 py-3 rounded-xl text-sm font-semibold border transition " +
-            (active ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-900 border-slate-800 text-slate-300");
+            (active ? "bg-[#C2542D] border-[#E1693F] text-white" : "bg-[#141A2B] border-[#1E2740] text-[#C9BFA8]");
         b.textContent = "Test : " + t.topic;
         b.onclick = () => { currentTest = t; renderTestPicker(); };
         box.appendChild(b);
     });
-    const onM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-emerald-600 border-emerald-400 text-white";
-    const offM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-slate-900 border-slate-800 text-slate-400";
+    const onM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-[#2C8F5C] border-[#5FC98F] text-white";
+    const offM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-[#141A2B] border-[#1E2740] text-[#A69C86]";
     $("mode-entrainement").className = currentMode === "entrainement" ? onM : offM;
     $("mode-entrainement").textContent = currentMode === "entrainement" ? "✓ Entraînement" : "Entraînement";
     $("mode-examen").className = currentMode === "examen" ? onM : offM;
@@ -1558,7 +1738,7 @@ function renderListeningExercise() {
     box.innerHTML = "";
     ex.options.forEach((opt, i) => {
         const b = document.createElement("button");
-        b.className = "w-full py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-200";
+        b.className = "w-full py-2.5 bg-[#1E2740] hover:bg-[#2A3454] rounded-xl text-xs font-semibold text-[#E4DCC9]";
         b.textContent = opt;
         b.onclick = () => checkListeningAnswer(i);
         box.appendChild(b);
@@ -1574,7 +1754,7 @@ function checkListeningAnswer(i) {
     const ex = LISTENING_BANK[listeningIndex];
     const ok = i === ex.answer;
     if (ok) { listeningScore++; addXP(3); }
-    $("listening-feedback").className = "text-xs text-center " + (ok ? "text-emerald-400" : "text-amber-400");
+    $("listening-feedback").className = "text-xs text-center " + (ok ? "text-[#5FC98F]" : "text-amber-400");
     $("listening-feedback").textContent = ok ? "✅ Bonne réponse !" : "❌ La bonne réponse était : " + ex.options[ex.answer];
     Array.from($("listening-options").children).forEach(b => b.disabled = true);
     $("btn-listening-next").classList.remove("hidden");
@@ -1633,23 +1813,25 @@ async function recordPairAnswer() {
 
 async function loadPairsList() {
     const box = $("pairs-list");
-    if (!db) { box.innerHTML = "<p class=\"text-xs text-slate-600 text-center\">Mode local : les réponses des autres ne sont pas visibles.</p>"; return; }
+    if (!db) { box.innerHTML = "<p class=\"text-xs text-[#6B604A] text-center\">Mode local : les réponses des autres ne sont pas visibles.</p>"; return; }
     try {
-        const { data, error } = await db.from("discussions").select("*").eq("prompt", pairsPromptOfToday()).order("created_at", { ascending: false }).limit(20);
+        // On ne demande que les colonnes réellement affichées : le numéro de téléphone
+        // (stocké pour usage interne uniquement) ne doit jamais être envoyé au client.
+        const { data, error } = await db.from("discussions").select("first_name, audio_url, created_at").eq("prompt", pairsPromptOfToday()).order("created_at", { ascending: false }).limit(20);
         if (error || !data || data.length === 0) {
-            box.innerHTML = "<p class=\"text-xs text-slate-600 text-center\">Aucune réponse pour l'instant. Sois la première !</p>";
+            box.innerHTML = "<p class=\"text-xs text-[#6B604A] text-center\">Aucune réponse pour l'instant. Sois la première !</p>";
             return;
         }
         box.innerHTML = "";
         data.forEach(row => {
             const card = document.createElement("div");
-            card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex items-center justify-between";
-            card.innerHTML = "<span class=\"text-xs font-semibold text-slate-300\">" + (row.first_name || "Apprenante") + "</span>" +
-                (row.audio_url ? "<a href=\"" + row.audio_url + "\" target=\"_blank\" class=\"text-[11px] text-rose-400 font-semibold\">▶️ Écouter</a>" : "");
+            card.className = "bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 flex items-center justify-between";
+            card.innerHTML = "<span class=\"text-xs font-semibold text-[#C9BFA8]\">" + (row.first_name || "Apprenante") + "</span>" +
+                (row.audio_url ? "<a href=\"" + row.audio_url + "\" target=\"_blank\" class=\"text-[11px] text-[#EE85A3] font-semibold\">▶️ Écouter</a>" : "");
             box.appendChild(card);
         });
     } catch (e) {
-        box.innerHTML = "<p class=\"text-xs text-slate-600 text-center\">Impossible de charger les réponses pour le moment.</p>";
+        box.innerHTML = "<p class=\"text-xs text-[#6B604A] text-center\">Impossible de charger les réponses pour le moment.</p>";
     }
 }
 
@@ -1660,7 +1842,7 @@ function startTestSimulation() {
     $("test-result").classList.add("hidden");
     $("test-nav").classList.add("hidden");
     $("test-timer").textContent = "--";
-    $("test-timer").className = "text-2xl font-mono font-black text-slate-600";
+    $("test-timer").className = "text-2xl font-mono font-black text-[#6B604A]";
     $("test-phase-label").textContent = "3 tests complets";
     $("test-topic-label").textContent = "Simulateur IELTS Life Skills A1";
     navTarget = null;
@@ -1687,7 +1869,7 @@ function quitTest() { changeScreen("screen-dashboard"); }
 function setTimer(sec, urgent) {
     const t = $("test-timer");
     t.textContent = sec === null ? "--" : sec;
-    t.className = "text-2xl font-mono font-black " + (urgent ? "text-rose-400" : "text-slate-200");
+    t.className = "text-2xl font-mono font-black " + (urgent ? "text-[#EE85A3]" : "text-[#E4DCC9]");
 }
 
 async function runTest() {
@@ -1791,7 +1973,7 @@ async function runTest() {
             const fb = analyzeAnswer(r.text || "");
             $("test-bars").classList.add("hidden");
             $("test-status").innerHTML = (r.text ? "Vous avez dit : « " + r.text + " »" : "Aucune réponse captée.") +
-                "<br><span class=\"" + (fb.ok ? "text-emerald-400" : "text-amber-400") + "\">" + fb.message + "</span>";
+                "<br><span class=\"" + (fb.ok ? "text-[#5FC98F]" : "text-amber-400") + "\">" + fb.message + "</span>";
             await new Promise(res => setTimeout(res, 2800));
             if (run !== testRun) return;
             if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
@@ -1831,7 +2013,7 @@ async function runTest() {
                 const fbF = analyzeAnswer(rf.text || "");
                 $("test-bars").classList.add("hidden");
                 $("test-status").innerHTML = (rf.text ? "Vous avez dit : « " + rf.text + " »" : "Aucune réponse captée.") +
-                    "<br><span class=\"" + (fbF.ok ? "text-emerald-400" : "text-amber-400") + "\">" + fbF.message + "</span>";
+                    "<br><span class=\"" + (fbF.ok ? "text-[#5FC98F]" : "text-amber-400") + "\">" + fbF.message + "</span>";
                 await new Promise(res => setTimeout(res, 2800));
                 if (run !== testRun) return;
                 if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
@@ -1932,16 +2114,16 @@ async function finishTest() {
     const head = document.createElement("div");
     head.className = "text-center space-y-1";
     if (unsupported) {
-        head.innerHTML = '<p class="text-lg font-bold text-slate-100">Test terminé</p>' +
-            '<p class="text-xs text-slate-400">La reconnaissance vocale n\'est pas disponible ici. Utilisez Chrome pour obtenir une évaluation.</p>';
+        head.innerHTML = '<p class="text-lg font-bold text-[#F6F1E7]">Test terminé</p>' +
+            '<p class="text-xs text-[#A69C86]">La reconnaissance vocale n\'est pas disponible ici. Utilisez Chrome pour obtenir une évaluation.</p>';
     } else {
         const pct = Math.round(answered / total * 100);
         const verdict = pct >= 80 ? "Excellent, vous êtes prêt·e pour le vrai test." :
                         pct >= 50 ? "Bon niveau, continuez à vous entraîner." :
                         "Encore un peu d'entraînement avant l'examen.";
-        head.innerHTML = '<p class="text-3xl font-black text-blue-400">' + answered + " / " + total + "</p>" +
-            '<p class="text-xs text-slate-400">questions avec une réponse claire</p>' +
-            '<p class="text-xs text-emerald-400 font-semibold mt-1">' + verdict + '</p>';
+        head.innerHTML = '<p class="text-3xl font-black text-[#F0906B]">' + answered + " / " + total + "</p>" +
+            '<p class="text-xs text-[#A69C86]">questions avec une réponse claire</p>' +
+            '<p class="text-xs text-[#5FC98F] font-semibold mt-1">' + verdict + '</p>';
     }
     box.appendChild(head);
 
@@ -1951,21 +2133,21 @@ async function finishTest() {
             if (a.phaseId !== lastPhase) {
                 lastPhase = a.phaseId;
                 const ph = document.createElement("p");
-                ph.className = "text-[10px] font-bold text-blue-400 uppercase tracking-wider pt-2";
+                ph.className = "text-[10px] font-bold text-[#F0906B] uppercase tracking-wider pt-2";
                 ph.textContent = "Phase " + a.phaseId + " · " + a.phaseLabel;
                 box.appendChild(ph);
             }
             const fb = analyzeAnswer(a.text);
             const row = document.createElement("div");
-            row.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 space-y-1";
+            row.className = "bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 space-y-1";
             const q = document.createElement("p");
-            q.className = "text-xs font-semibold text-slate-200";
+            q.className = "text-xs font-semibold text-[#E4DCC9]";
             q.textContent = a.q;
             const t = document.createElement("p");
-            t.className = "text-xs italic text-slate-400";
+            t.className = "text-xs italic text-[#A69C86]";
             t.textContent = a.text ? "« " + a.text + " »" : "Aucune réponse détectée";
             const f = document.createElement("p");
-            f.className = "text-[11px] " + (fb.ok ? "text-emerald-400" : "text-amber-400");
+            f.className = "text-[11px] " + (fb.ok ? "text-[#5FC98F]" : "text-amber-400");
             f.textContent = fb.message;
             row.append(q, t, f);
             box.appendChild(row);
