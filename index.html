@@ -264,6 +264,15 @@
                     <span>Diisoo <span class="text-[#E1693F] text-xs px-2 py-0.5 bg-[#E1693F]/10 rounded ml-1 uppercase font-sans font-bold">Dashboard</span></span>
                 </h1>
                 <span id="welcome-tag" class="text-xs text-[#A69C86] font-medium"></span>
+                <div class="relative">
+                    <button onclick="toggleBurgerMenu()" class="text-xl px-2 text-[#A69C86]">☰</button>
+                    <div id="burger-menu" class="hidden absolute right-0 mt-2 w-52 bg-[#141A2B] border border-[#1E2740] rounded-2xl shadow-xl z-50 overflow-hidden">
+                        <button onclick="toggleBurgerMenu();showTutorial()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">❓ Comment ça marche</button>
+                        <button onclick="toggleBurgerMenu();openFeedback()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Donner mon avis</button>
+                        <button onclick="toggleBurgerMenu();openProgress()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📈 Ma progression</button>
+                        <button onclick="toggleBurgerMenu();logout()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">👤 Changer de profil</button>
+                    </div>
+                </div>
             </div>
 
             <div id="daily-goal" class="bg-[#141A2B]/60 rounded-xl p-3 border border-[#1E2740]"></div>
@@ -302,15 +311,6 @@
             <div class="space-y-2">
                 <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
                 <p class="text-center text-xs font-bold tracking-wide text-[#C2542D]">🏢 Un produit ABC-GLOBAL</p>
-                <div class="flex items-center justify-center space-x-3">
-                    <button onclick="showTutorial()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">❓ Comment ça marche</button>
-                    <span class="text-[#1E2740]">·</span>
-                    <button onclick="openFeedback()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">⭐ Donner mon avis</button>
-                    <span class="text-[#1E2740]">·</span>
-                    <button onclick="openProgress()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">📈 Ma progression</button>
-                    <span class="text-[#1E2740]">·</span>
-                    <button onclick="logout()" class="text-center text-[10px] text-[#6B604A] hover:text-[#A69C86] py-1">Changer de profil</button>
-                </div>
             </div>
         </div>
 
@@ -398,20 +398,20 @@
                 <div id="test-picker" class="space-y-4">
                     <p class="text-xs text-[#A69C86] text-center leading-relaxed">Comme le vrai test : informations personnelles, questions sur un thème, une photo à décrire, puis une discussion.</p>
                     <div id="test-topic-buttons" class="grid grid-cols-1 gap-2"></div>
-                    <div class="grid grid-cols-2 gap-2 pt-2">
+
+                    <div class="pt-2 space-y-2">
+                        <p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider text-center">Complétez votre préparation</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="openPairsModule()" class="py-3 bg-[#E5628A]/10 text-[#EE85A3] rounded-xl text-[11px] font-bold border-2 border-[#E5628A]/40 flex flex-col items-center gap-1"><span class="text-lg">🤝</span>Entraînement à l'oral</button>
+                            <button onclick="openListeningModule()" class="py-3 bg-amber-500/10 text-amber-400 rounded-xl text-[11px] font-bold border-2 border-amber-500/40 flex flex-col items-center gap-1"><span class="text-lg">👂</span>Entraînement à l'écoute</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-[#141A2B]">
                         <button id="mode-entrainement" type="button" onclick="setTestMode('entrainement')" class="py-2.5 rounded-xl text-xs font-bold border-2 transition">Entraînement</button>
                         <button id="mode-examen" type="button" onclick="setTestMode('examen')" class="py-2.5 rounded-xl text-xs font-bold border-2 transition">Examen</button>
                     </div>
                     <p class="text-[11px] text-[#8C8064] text-center leading-relaxed">Entraînement : plus de temps, vous pouvez réessayer chaque question. Examen : chronométré, comme le jour du test.</p>
-
-                    <div class="pt-3 border-t border-[#141A2B] space-y-2">
-                        <p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider text-center">Complétez votre préparation</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="openPairsModule()" class="py-3 bg-[#E5628A]/10 text-[#EE85A3] rounded-xl text-[11px] font-bold border border-[#E5628A]/20">🤝 Entraînement à l'oral</button>
-                            <button onclick="openListeningModule()" class="py-3 bg-amber-500/10 text-amber-400 rounded-xl text-[11px] font-bold border border-amber-500/20">👂 Entraînement à l'écoute</button>
-                        </div>
-                        <p class="text-[10px] text-[#6B604A] text-center leading-relaxed">Comme le vrai test IELTS : compréhension orale puis expression orale à deux.</p>
-                    </div>
                 </div>
 
                 <!-- Test en cours -->
@@ -429,6 +429,9 @@
                     </div>
                     <p id="test-status" class="text-xs text-[#A69C86]"></p>
                     <p id="test-transcript" class="text-sm text-[#C9BFA8] italic min-h-[2.5rem]"></p>
+                    <div id="test-correction" class="hidden text-xs font-semibold rounded-xl px-3 py-2"></div>
+                    <button id="test-suggestions-btn" onclick="toggleSuggestions()" class="hidden text-[11px] text-[#8C8064] underline">Afficher des suggestions de réponses</button>
+                    <div id="test-suggestions-list" class="hidden space-y-1.5 text-left bg-[#0B0F1C]/60 rounded-xl p-3"></div>
                     <div id="test-continue-hint" class="hidden flex flex-col items-center space-y-1.5">
                         <p class="text-[10px] text-[#8C8064]">Silence détecté…</p>
                         <button onclick="confirmTestContinue()" class="px-5 py-2 bg-[#2FC2AC]/20 text-[#55D2BE] rounded-xl text-xs font-bold">Continuer ▶</button>
@@ -441,7 +444,7 @@
             </div>
 
             <div class="space-y-2">
-                <button id="btn-test-main" onclick="testMainAction()" class="w-full py-4 btn-primary font-bold rounded-2xl text-sm transition shadow-lg shadow-[#C2542D]/20">Commencer le test</button>
+                <button id="btn-test-main" onclick="testMainAction()" class="hidden w-full py-4 btn-primary font-bold rounded-2xl text-sm transition shadow-lg shadow-[#C2542D]/20">Commencer le test</button>
                 <div id="test-nav" class="hidden grid grid-cols-3 gap-2">
                     <button id="btn-test-prev" onclick="prevQuestion()" class="py-3 bg-[#141A2B] text-[#C9BFA8] rounded-xl text-xs font-bold">◀ Précédente</button>
                     <button id="btn-test-pause" onclick="togglePause()" class="py-3 bg-[#141A2B] text-[#C9BFA8] rounded-xl text-xs font-bold">⏸️ Pause</button>
@@ -818,6 +821,8 @@ function updateStreak() {
     $("streak-counter").textContent = "🔥 Série active : " + n + (n > 1 ? " jours" : " jour") + " de révision ! Reviens demain pour ne pas la perdre.";
 }
 
+function toggleBurgerMenu() { $("burger-menu").classList.toggle("hidden"); }
+
 function showTutorial() { $("screen-tutorial").classList.remove("hidden"); }
 function closeTutorial() {
     $("screen-tutorial").classList.add("hidden");
@@ -924,7 +929,14 @@ function openProgress() {
 function closeProgress() { $("screen-progress").classList.add("hidden"); }
 
 /* ---------- Espace coach ---------- */
-const COACH_PASSCODE = "diisoo2026";
+const COACH_CODE_HASH = "fa5f36d1e25d0277ea985bc12d7b8ab0972a1951c1ff3c29de778e1abfd3bf0e";
+let coachAttempts = 0;
+let coachLockUntil = 0;
+
+async function sha256Hex(str) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
 
 function openCoachGate() {
     $("coach-code").value = "";
@@ -933,12 +945,22 @@ function openCoachGate() {
 }
 function closeCoachGate() { $("screen-coach-gate").classList.add("hidden"); }
 
-function checkCoachCode() {
-    if ($("coach-code").value === COACH_PASSCODE) {
+async function checkCoachCode() {
+    if (Date.now() < coachLockUntil) {
+        $("coach-code-error").textContent = "Trop d'essais. Réessayez dans une minute.";
+        $("coach-code-error").classList.remove("hidden");
+        return;
+    }
+    const hash = await sha256Hex($("coach-code").value);
+    if (hash === COACH_CODE_HASH) {
+        coachAttempts = 0;
         closeCoachGate();
         openCoachDashboard();
     } else {
+        coachAttempts++;
+        $("coach-code-error").textContent = "Code incorrect.";
         $("coach-code-error").classList.remove("hidden");
+        if (coachAttempts >= 5) { coachLockUntil = Date.now() + 60000; coachAttempts = 0; }
     }
 }
 
@@ -1327,6 +1349,7 @@ function renderGeneralTabs() {
 
 function setGeneralTheme(id) {
     generalThemeId = id;
+    window.scrollTo({ top: 0, behavior: "smooth" });
     generalQuizIndex = 0; generalQuizScore = 0;
     renderGeneralTabs();
     renderGeneralContent();
@@ -1623,6 +1646,7 @@ function renderWolofTabs() {
 
 function setWolofCat(cat) {
     wolofCat = cat;
+    window.scrollTo({ top: 0, behavior: "smooth" });
     renderWolofTabs();
     if (cat === "wikidata" && !wikidataLoaded) loadWikidata(); else renderLexicon();
 }
@@ -2038,7 +2062,7 @@ function renderTestPicker() {
         b.className = "w-full text-left px-4 py-3 rounded-xl text-sm font-semibold border transition " +
             (active ? "bg-[#C2542D] border-[#E1693F] text-white" : "bg-[#141A2B] border-[#1E2740] text-[#C9BFA8]");
         b.textContent = "Test : " + t.topic;
-        b.onclick = () => { currentTest = t; renderTestPicker(); };
+        b.onclick = () => { currentTest = t; renderTestPicker(); runTest(); };
         box.appendChild(b);
     });
     const onM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-[#2C8F5C] border-[#5FC98F] text-white";
@@ -2051,6 +2075,7 @@ function renderTestPicker() {
 function setTestMode(m) {
     currentMode = m;
     renderTestPicker();
+    runTest();
 }
 
 /* ==========================================================
@@ -2372,6 +2397,9 @@ async function runTest() {
             retryRequested = false;
             $("test-question").textContent = q.text;
             $("test-transcript").textContent = "";
+            $("test-correction").classList.add("hidden");
+            $("test-suggestions-btn").classList.add("hidden");
+            $("test-suggestions-list").classList.add("hidden");
             $("test-bars").classList.add("hidden");
             $("test-status").textContent = "🔊 Écoutez la question";
             setTimer(null);
@@ -2414,11 +2442,12 @@ async function runTest() {
 
             if (retryRequested && modeCfg.retry) { continue; }
 
-            const fb = analyzeAnswer(r.text || "");
+            const fb = analyzeAnswer(r.text || "", q.text);
             $("test-bars").classList.add("hidden");
-            $("test-status").innerHTML = (r.text ? "Vous avez dit : « " + r.text + " »" : "Aucune réponse captée.") +
-                "<br><span class=\"" + (fb.ok ? "text-[#5FC98F]" : "text-amber-400") + "\">" + fb.message + "</span>";
-            await new Promise(res => setTimeout(res, 2800));
+            $("test-status").textContent = r.text ? "Vous avez dit : « " + r.text + " »" : "Aucune réponse captée.";
+            renderCorrection(fb);
+            if (r.text) showSuggestionsFor(q.phaseId);
+            await new Promise(res => setTimeout(res, 1400));
             if (run !== testRun) return;
             if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
 
@@ -2454,11 +2483,12 @@ async function runTest() {
                 if (run !== testRun) return;
                 if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
 
-                const fbF = analyzeAnswer(rf.text || "");
+                const fbF = analyzeAnswer(rf.text || "", followUp);
                 $("test-bars").classList.add("hidden");
-                $("test-status").innerHTML = (rf.text ? "Vous avez dit : « " + rf.text + " »" : "Aucune réponse captée.") +
-                    "<br><span class=\"" + (fbF.ok ? "text-[#5FC98F]" : "text-amber-400") + "\">" + fbF.message + "</span>";
-                await new Promise(res => setTimeout(res, 2800));
+                $("test-status").textContent = rf.text ? "Vous avez dit : « " + rf.text + " »" : "Aucune réponse captée.";
+                renderCorrection(fbF);
+                if (rf.text) showSuggestionsFor("2b-relance");
+                await new Promise(res => setTimeout(res, 1400));
                 if (run !== testRun) return;
                 if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
 
@@ -2494,14 +2524,74 @@ function pickFollowUp(text) {
     return "Why is that important to you?";
 }
 
-function analyzeAnswer(text) {
+const STOPWORDS = new Set(["a","an","the","is","are","was","were","do","does","did","i","you","he","she","it","we","they","to","of","in","on","at","for","and","or","what","where","when","how","why","your","my","his","her","this","that"]);
+
+function analyzeAnswer(text, questionText) {
     const clean = (text || "").trim();
-    if (!clean) return { ok: false, message: "Aucune réponse. Essayez de répondre même avec une phrase simple." };
+    if (!clean) return { level: "bad", ok: false, message: "⚠️ Aucune réponse captée. Essayez de répondre, même simplement." };
     const words = clean.split(/\s+/).filter(Boolean);
-    if (words.length < 3) return { ok: false, message: "Réponse trop courte (" + words.length + " mot" + (words.length > 1 ? "s" : "") + "). Essayez une phrase complète, pas juste un mot." };
-    const hasVerb = words.some(w => COMMON_VERBS.has(w.toLowerCase().replace(/[.,!?]/g, "")));
-    if (!hasVerb) return { ok: false, message: "Aucun verbe repéré. Vérifiez que votre phrase a bien un sujet et un verbe (ex: \"I live in...\")." };
-    return { ok: true, message: "Bien. Phrase complète avec " + words.length + " mots et un verbe repéré." };
+    const lower = words.map(w => w.toLowerCase().replace(/[.,!?]/g, ""));
+    const hasVerb = lower.some(w => COMMON_VERBS.has(w));
+    if (!hasVerb) return { level: "bad", ok: false, message: "⚠️ Aucun verbe repéré. Vérifiez sujet + verbe (ex : \"I live in...\")." };
+    if (words.length < 3) return { level: "bad", ok: false, message: "⚠️ Réponse trop courte (" + words.length + " mot" + (words.length > 1 ? "s" : "") + "). Faites une phrase complète." };
+
+    if (/\bi\s+(is|has|was)\b/i.test(clean) || /\byou\s+is\b/i.test(clean)) {
+        return { level: "medium", ok: true, message: "Structure repérée, mais attention à l'accord (ex : \"I am\", pas \"I is\")." };
+    }
+
+    if (questionText) {
+        const qWords = questionText.toLowerCase().replace(/[?.,!]/g, "").split(/\s+/).filter(w => w && !STOPWORDS.has(w));
+        const aWords = new Set(lower.filter(w => !STOPWORDS.has(w)));
+        const overlap = qWords.some(w => aWords.has(w));
+        if (!overlap && words.length < 8) {
+            return { level: "medium", ok: true, message: "Phrase correcte, mais vérifiez qu'elle répond bien à la question posée." };
+        }
+    }
+
+    if (words.length < 6) return { level: "medium", ok: true, message: "Correct, mais un peu court (" + words.length + " mots). Ajoutez un détail." };
+    return { level: "good", ok: true, message: "Très bien : phrase complète avec " + words.length + " mots." };
+}
+
+const CORRECTION_STYLE = {
+    good: "bg-[#2C8F5C]/15 text-[#5FC98F] border border-[#2C8F5C]/30",
+    medium: "bg-amber-500/15 text-amber-400 border border-amber-500/30",
+    bad: "bg-[#E5628A]/15 text-[#EE85A3] border border-[#E5628A]/30"
+};
+
+const MODEL_ANSWERS = {
+    "1": ["My name is [nom] and I am from Thiès, Senegal.", "I am [âge] years old and I work as a [métier].", "I live with my family near the market."],
+    "2a": ["In the picture, I can see people at a market buying fruits and vegetables.", "There are several people standing near a bus station.", "The photo shows a family sitting together at home."],
+    "2b": ["I think it is important because it helps people communicate better.", "In my opinion, this is useful for everyday life.", "I believe this can improve the way we live."],
+    "2b-relance": ["Yes, because it saves time and makes things easier.", "I agree, but it also has some disadvantages.", "Not always, it depends on the situation."]
+};
+function getModelAnswers(phaseId) { return MODEL_ANSWERS[phaseId] || MODEL_ANSWERS["2b"]; }
+
+function renderCorrection(fb) {
+    const box = $("test-correction");
+    box.className = "rounded-xl px-3 py-2 " + CORRECTION_STYLE[fb.level];
+    box.textContent = fb.message;
+    box.classList.remove("hidden");
+}
+
+let suggestionsPhase = null;
+function showSuggestionsFor(phaseId) {
+    suggestionsPhase = phaseId;
+    $("test-suggestions-list").classList.add("hidden");
+    $("test-suggestions-btn").classList.remove("hidden");
+    $("test-suggestions-btn").textContent = "Afficher des suggestions de réponses";
+}
+function toggleSuggestions() {
+    const list = $("test-suggestions-list");
+    const hidden = list.classList.contains("hidden");
+    if (hidden) {
+        list.innerHTML = '<p class="text-[10px] text-[#8C8064] italic">⚠️ Exemples à adapter avec vos propres mots — ne pas réciter tel quel.</p>' +
+            getModelAnswers(suggestionsPhase).map(s => '<p class="text-[11px] text-[#C9BFA8]">💬 ' + s + '</p>').join("");
+        list.classList.remove("hidden");
+        $("test-suggestions-btn").textContent = "Masquer les suggestions";
+    } else {
+        list.classList.add("hidden");
+        $("test-suggestions-btn").textContent = "Afficher des suggestions de réponses";
+    }
 }
 
 /* ---------- Enregistrement audio du test (pour le coach) ---------- */
