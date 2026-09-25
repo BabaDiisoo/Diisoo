@@ -299,10 +299,18 @@
                     </div>
                     <p class="text-[11px] text-[#A69C86] leading-relaxed">Inclusion 100% orale. Les 8 mêmes thèmes que le pilier 1, en wolof, pour apprendre les deux langues ensemble.</p>
                 </button>
-                <!-- PILIER 3 -->
+                <!-- PILIER 3 : OUTILS BUSINESS -->
+                <button onclick="openBusinessModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#241238]/30 p-4 rounded-2xl border border-[#1E2740] hover:border-[#B26FE0]/30 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">🧰</span><h3 class="text-sm font-bold text-[#F6F1E7]">3. Outils Business</h3></div>
+                        <span class="text-[9px] bg-[#B26FE0]/10 text-[#C99CEA] px-2 py-0.5 rounded-full font-medium">Métiers</span>
+                    </div>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Vocabulaire pratique par métier : pièces détachées, mode & beauté, logistique Chine.</p>
+                </button>
+                <!-- PILIER 4 -->
                 <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#0B2320]/40 p-4 rounded-2xl border border-[#0E2B28]/20 hover:border-[#2FC2AC]/40 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-[#F6F1E7]">3. Simulateur de Test IELTS</h3></div>
+                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-[#F6F1E7]">4. Simulateur de Test IELTS</h3></div>
                         <span class="text-[9px] bg-[#2FC2AC]/20 text-[#55D2BE] px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
                     </div>
                     <p class="text-[11px] text-[#A69C86] leading-relaxed">Simulateur officiel chronométré, 100% en anglais pour s'habituer au rythme et au stress réel de l'examen de visa.</p>
@@ -345,8 +353,37 @@
         </div>
 
         <!-- ======================================================== -->
-        <!-- ÉCRAN 5 : EXERCICES D'ÉCOUTE (LISTENING) -->
+        <!-- ÉCRAN 4 : OUTILS BUSINESS (métiers de spécialisation) -->
         <!-- ======================================================== -->
+        <div id="screen-business" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-[#C99CEA] uppercase">Outils Business</span>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Vocabulaire par métier</h3>
+                <p class="text-xs text-[#A69C86] mt-1">Choisissez votre secteur pour des phrases prêtes à l'emploi.</p>
+            </div>
+            <div id="business-picker" class="grid grid-cols-1 gap-3">
+                <button onclick="selectBusinessModule('colobane')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A1810,#141A2B);border:1px solid #3A2A1E;">
+                    <span class="text-3xl">🚗</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Pièces Détachées de Colobane</h4>
+                    <p class="text-[11px] text-[#A69C86]">Négociation, désignation des pièces, marques.</p>
+                </button>
+                <button onclick="selectBusinessModule('sandaga')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A1024,#141A2B);border:1px solid #3A1E33;">
+                    <span class="text-3xl">👗</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Mode & Beauté de Sandaga</h4>
+                    <p class="text-[11px] text-[#A69C86]">Tailles, tissus, prix de gros, tendances.</p>
+                </button>
+                <button onclick="selectBusinessModule('chine')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#0F2A24,#141A2B);border:1px solid #1E3A33;">
+                    <span class="text-3xl">📦</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Logistique & Voyage Axe Chine</h4>
+                    <p class="text-[11px] text-[#A69C86]">Import, conteneurs, douane, fournisseurs.</p>
+                </button>
+            </div>
+            <div id="business-content" class="hidden space-y-3 overflow-y-auto max-h-[55vh] pr-1"></div>
+            <div class="flex space-x-2">
+                <button id="btn-business-back" onclick="closeBusinessDetail()" class="hidden flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Changer de métier</button>
+                <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Tableau de bord</button>
+            </div>
+        </div>
         <div id="screen-listening" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Test IELTS · Compréhension orale</span>
@@ -1107,13 +1144,17 @@ const GENERAL_THEMES = [
         { en: "Where do you live?", fr: "Où habites-tu ?" },
         { en: "I live in Thiès", fr: "J'habite à Thiès" },
         { en: "What do you do for a living?", fr: "Que fais-tu dans la vie ?" },
-        { en: "I speak English and French", fr: "Je parle anglais et français" }
+        { en: "I speak English and French", fr: "Je parle anglais et français" },
+        { en: "Can you spell your name?", fr: "Peux-tu épeler ton nom ?" },
+        { en: "F-A-T-O-U", fr: "F-A-T-O-U (épellation)" }
       ],
       dialogue: [
         { who: "A", en: "Hello, what is your name?" },
         { who: "B", en: "My name is Fatou. Nice to meet you." },
         { who: "A", en: "Nice to meet you too. Where are you from?" },
-        { who: "B", en: "I am from Thiès, in Senegal." }
+        { who: "B", en: "I am from Thiès, in Senegal." },
+        { who: "A", en: "Can you spell your name, please?" },
+        { who: "B", en: "Yes: F-A-T-O-U." }
       ],
       quiz: [
         { q: "My name ___ Fatou.", o: ["is", "am", "are"], a: 0, why: "My name is + nom : toujours « is »." },
@@ -1132,13 +1173,17 @@ const GENERAL_THEMES = [
         { en: "My mother lives with us", fr: "Ma mère habite avec nous" },
         { en: "We eat together every evening", fr: "Nous mangeons ensemble chaque soir" },
         { en: "My father is a driver", fr: "Mon père est chauffeur" },
-        { en: "I love my family very much", fr: "J'aime beaucoup ma famille" }
+        { en: "I love my family very much", fr: "J'aime beaucoup ma famille" },
+        { en: "Who is the oldest in your family?", fr: "Qui est le/la plus âgé(e) de ta famille ?" },
+        { en: "My grandmother is the oldest", fr: "Ma grand-mère est la plus âgée" }
       ],
       dialogue: [
         { who: "A", en: "Do you have a big family?" },
         { who: "B", en: "Yes, I have two brothers and one sister." },
         { who: "A", en: "Do you all live together?" },
-        { who: "B", en: "Yes, we live in the same house with our parents." }
+        { who: "B", en: "Yes, we live in the same house with our parents." },
+        { who: "A", en: "Who is the oldest in your family?" },
+        { who: "B", en: "My grandmother; she is 78 years old." }
       ],
       quiz: [
         { q: "She ___ a teacher.", o: ["am", "is", "are"], a: 1, why: "Avec he, she, it, on utilise « is »." },
@@ -1157,13 +1202,17 @@ const GENERAL_THEMES = [
         { en: "I finish work at five o'clock", fr: "Je termine le travail à dix-sept heures" },
         { en: "I work in an office", fr: "Je travaille dans un bureau" },
         { en: "My job is difficult but interesting", fr: "Mon travail est difficile mais intéressant" },
-        { en: "I am looking for a new job", fr: "Je cherche un nouvel emploi" }
+        { en: "I am looking for a new job", fr: "Je cherche un nouvel emploi" },
+        { en: "I like helping customers", fr: "J'aime aider les clients" },
+        { en: "I take a short break at noon", fr: "Je fais une courte pause à midi" }
       ],
       dialogue: [
         { who: "A", en: "What do you do?" },
         { who: "B", en: "I work in a shop every day." },
         { who: "A", en: "What time do you start work?" },
-        { who: "B", en: "I start at eight and finish at six." }
+        { who: "B", en: "I start at eight and finish at six." },
+        { who: "A", en: "What do you like about your job?" },
+        { who: "B", en: "I like helping customers every day." }
       ],
       quiz: [
         { q: "He ___ to work every day.", o: ["go", "goes", "going"], a: 1, why: "Avec he, le verbe prend -es : goes." },
@@ -1182,13 +1231,16 @@ const GENERAL_THEMES = [
         { en: "That is too expensive", fr: "C'est trop cher" },
         { en: "Can you make it cheaper?", fr: "Peux-tu baisser le prix ?" },
         { en: "I would like to buy some rice", fr: "Je voudrais acheter du riz" },
-        { en: "Do you accept mobile money?", fr: "Acceptez-vous le paiement mobile ?" }
+        { en: "Do you accept mobile money?", fr: "Acceptez-vous le paiement mobile ?" },
+        { en: "How much are the tomatoes?", fr: "Combien coûtent les tomates ?" },
+        { en: "Could you give me a discount?", fr: "Pourriez-vous me faire une réduction ?" }
       ],
       dialogue: [
         { who: "A", en: "How much is this bag?" },
         { who: "B", en: "It's five thousand francs." },
         { who: "A", en: "That is too expensive. Can you make it cheaper?" },
-        { who: "B", en: "Okay, four thousand francs for you." }
+        { who: "B", en: "Okay, four thousand francs for you." },
+        { who: "A", en: "Thank you, I'll take two." }
       ],
       quiz: [
         { q: "How much ___ this bag?", o: ["are", "is", "do"], a: 1, why: "Un seul sac : « How much is this bag? »." },
@@ -1207,13 +1259,17 @@ const GENERAL_THEMES = [
         { en: "What time does the bus leave?", fr: "À quelle heure part le bus ?" },
         { en: "Where is the nearest bus stop?", fr: "Où est l'arrêt de bus le plus proche ?" },
         { en: "I am traveling to visit my family", fr: "Je voyage pour rendre visite à ma famille" },
-        { en: "Do I need a visa for this country?", fr: "Ai-je besoin d'un visa pour ce pays ?" }
+        { en: "Do I need a visa for this country?", fr: "Ai-je besoin d'un visa pour ce pays ?" },
+        { en: "How do you get to work?", fr: "Comment vas-tu au travail ?" },
+        { en: "I take the bus every morning", fr: "Je prends le bus chaque matin" }
       ],
       dialogue: [
         { who: "A", en: "Where is the airport?" },
         { who: "B", en: "It's ten minutes from here by taxi." },
         { who: "A", en: "What time does my flight leave?" },
-        { who: "B", en: "Your flight leaves at eight in the morning." }
+        { who: "B", en: "Your flight leaves at eight in the morning." },
+        { who: "A", en: "How do you usually travel to work?" },
+        { who: "B", en: "I take the bus every morning." }
       ],
       quiz: [
         { q: "I need a ___ to travel.", o: ["passport", "password", "passeport"], a: 0, why: "Orthographe correcte en anglais : passport." },
@@ -1232,13 +1288,17 @@ const GENERAL_THEMES = [
         { en: "I need to see a doctor", fr: "J'ai besoin de voir un médecin" },
         { en: "Where is the nearest hospital?", fr: "Où est l'hôpital le plus proche ?" },
         { en: "I feel better today", fr: "Je me sens mieux aujourd'hui" },
-        { en: "Please call an ambulance", fr: "Appelez une ambulance s'il vous plaît" }
+        { en: "Please call an ambulance", fr: "Appelez une ambulance s'il vous plaît" },
+        { en: "Take one tablet twice a day", fr: "Prenez un comprimé deux fois par jour" },
+        { en: "Since when do you feel sick?", fr: "Depuis quand te sens-tu malade ?" }
       ],
       dialogue: [
         { who: "A", en: "Are you okay?" },
         { who: "B", en: "No, I feel sick. I need a doctor." },
         { who: "A", en: "What is wrong?" },
-        { who: "B", en: "I have a headache and a fever." }
+        { who: "B", en: "I have a headache and a fever." },
+        { who: "A", en: "Since when do you feel like this?" },
+        { who: "B", en: "Since yesterday evening." }
       ],
       quiz: [
         { q: "I ___ sick today.", o: ["feel", "feels", "feeling"], a: 0, why: "Avec I, le verbe reste à la base : feel." },
@@ -1257,13 +1317,17 @@ const GENERAL_THEMES = [
         { en: "What do you recommend?", fr: "Que recommandez-vous ?" },
         { en: "I would like some rice and fish", fr: "Je voudrais du riz et du poisson" },
         { en: "This meal is very tasty", fr: "Ce repas est très savoureux" },
-        { en: "Can I have the bill, please?", fr: "Puis-je avoir l'addition, s'il vous plaît ?" }
+        { en: "Can I have the bill, please?", fr: "Puis-je avoir l'addition, s'il vous plaît ?" },
+        { en: "What is your favourite dish?", fr: "Quel est ton plat préféré ?" },
+        { en: "I like thieboudienne", fr: "J'aime le thiéboudienne" }
       ],
       dialogue: [
         { who: "A", en: "Can I have the menu, please?" },
         { who: "B", en: "Of course, here you are." },
         { who: "A", en: "What do you recommend today?" },
-        { who: "B", en: "The fish with rice is delicious today." }
+        { who: "B", en: "The fish with rice is delicious today." },
+        { who: "A", en: "What would you like to drink?" },
+        { who: "B", en: "Just water, please." }
       ],
       quiz: [
         { q: "I would like ___ water, please.", o: ["some", "a", "an"], a: 0, why: "Indénombrable : some water." },
@@ -1282,13 +1346,17 @@ const GENERAL_THEMES = [
         { en: "I will see you tomorrow morning", fr: "Je te verrai demain matin" },
         { en: "The meeting starts at ten o'clock", fr: "La réunion commence à dix heures" },
         { en: "I was busy yesterday", fr: "J'étais occupé(e) hier" },
-        { en: "How many people are coming?", fr: "Combien de personnes viennent ?" }
+        { en: "How many people are coming?", fr: "Combien de personnes viennent ?" },
+        { en: "What time do you wake up?", fr: "À quelle heure te réveilles-tu ?" },
+        { en: "I wake up at six every morning", fr: "Je me réveille à six heures chaque matin" }
       ],
       dialogue: [
         { who: "A", en: "What time is it?" },
         { who: "B", en: "It's three o'clock." },
         { who: "A", en: "What time does the meeting start?" },
-        { who: "B", en: "It starts tomorrow at ten o'clock." }
+        { who: "B", en: "It starts tomorrow at ten o'clock." },
+        { who: "A", en: "What time do you usually wake up?" },
+        { who: "B", en: "I wake up at six every morning." }
       ],
       quiz: [
         { q: "What ___ is it?", o: ["time", "times", "timing"], a: 0, why: "Demander l'heure : What time is it?" },
@@ -1531,7 +1599,10 @@ const WOLOF_THEMES = [
         { en: "See you tomorrow", wo: "Ba suba", fr: "À demain" },
         { en: "What is your name?", wo: "Naka la tudd ?", fr: "Comment t'appelles-tu ?" },
         { en: "My name is Fatou", wo: "Fatou laa tudd", fr: "Je m'appelle Fatou" },
-        { en: "Good night", wo: "Fanaanal jamm", fr: "Bonne nuit" }
+        { en: "Good night", wo: "Fanaanal jamm", fr: "Bonne nuit" },
+        { en: "How are you?", wo: "Naka nga def ?", fr: "Comment vas-tu ?", audio: "audio/wolof/intro_naka_nga_def.mp3" },
+        { en: "I'm fine", wo: "Maa ngi fi rekk", fr: "Je vais bien", audio: "audio/wolof/intro_maangi_fi_rekk.mp3" },
+        { en: "What's your name?", wo: "Noo tudd ?", fr: "Comment tu t'appelles ?", audio: "audio/wolof/intro_noo_tudd.mp3" }
     ]},
     { id: "famille", title: "Famille", words: [
         { en: "Family", wo: "Njaboot", fr: "Famille" },
@@ -1543,7 +1614,10 @@ const WOLOF_THEMES = [
         { en: "I have a big family", wo: "Am naa njaboot bu réy", fr: "J'ai une grande famille" },
         { en: "My mother is at home", wo: "Sama yaay nekk na kër", fr: "Ma mère est à la maison" },
         { en: "I love my children", wo: "Bëgg naa sama doom yi", fr: "J'aime mes enfants" },
-        { en: "How many children do you have?", wo: "Ñaata doom nga am ?", fr: "Combien d'enfants as-tu ?" }
+        { en: "How many children do you have?", wo: "Ñaata doom nga am ?", fr: "Combien d'enfants as-tu ?" },
+        { en: "Do you have a sibling?", wo: "Ndax am nga rakk ?", fr: "As-tu un frère/une sœur ?", audio: "audio/wolof/family_ndax_am_rakk.mp3" },
+        { en: "My mother", wo: "Sama yaay", fr: "Ma mère", audio: "audio/wolof/family_sama_yaay.mp3" },
+        { en: "My father", wo: "Sama baay", fr: "Mon père", audio: "audio/wolof/family_sama_baay.mp3" }
     ]},
     { id: "maison", title: "Maison & vie quotidienne", words: [
         { en: "House", wo: "Kër", fr: "Maison" },
@@ -1555,7 +1629,9 @@ const WOLOF_THEMES = [
         { en: "I am going home", wo: "Maa ngi dem kër", fr: "Je rentre à la maison" },
         { en: "I need water", wo: "Soxla naa ndox", fr: "J'ai besoin d'eau" },
         { en: "I am tired today", wo: "Sonn naa tay", fr: "Je suis fatigué(e) aujourd'hui" },
-        { en: "Where is your house?", wo: "Foo dëkk ?", fr: "Où habites-tu ?" }
+        { en: "Where is your house?", wo: "Foo dëkk ?", fr: "Où habites-tu ?" },
+        { en: "Where do you work?", wo: "Fan nga liggéey ?", fr: "Où travailles-tu ?", audio: "audio/wolof/work_fan_liggeey.mp3" },
+        { en: "I work in a shop", wo: "Maa ngi liggéey ci butig", fr: "Je travaille dans une boutique", audio: "audio/wolof/work_maangi_liggeey_butig.mp3" }
     ]},
     { id: "marche", title: "Marché & argent", words: [
         { en: "Money", wo: "Xaalis", fr: "Argent" },
@@ -1567,7 +1643,9 @@ const WOLOF_THEMES = [
         { en: "That is expensive", wo: "Dafa jafe", fr: "C'est cher" },
         { en: "Lower the price, please", wo: "Wàññi njëg bi, su la neexee", fr: "Baisse le prix, s'il te plaît" },
         { en: "I want to buy rice", wo: "Bëgg naa jënd ceeb", fr: "Je veux acheter du riz" },
-        { en: "I don't have money now", wo: "Amuma xaalis léegi", fr: "Je n'ai pas d'argent maintenant" }
+        { en: "I don't have money now", wo: "Amuma xaalis léegi", fr: "Je n'ai pas d'argent maintenant" },
+        { en: "Lower it a bit", wo: "Wàññi ko tuuti", fr: "Baisse un peu le prix", audio: "audio/wolof/market_wanni_ko_tuuti.mp3" },
+        { en: "Thank you", wo: "Jërëjëf", fr: "Merci", audio: "audio/wolof/market_jerejef.mp3" }
     ]},
     { id: "voyage", title: "Déplacements", words: [
         { en: "Go", wo: "Dem", fr: "Aller" },
@@ -1579,7 +1657,9 @@ const WOLOF_THEMES = [
         { en: "I am going to Dakar", wo: "Maa ngi dem Dakar", fr: "Je vais à Dakar" },
         { en: "Where are you going?", wo: "Foo jëm ?", fr: "Où vas-tu ?" },
         { en: "The market is near here", wo: "Marse bi jege na fi", fr: "Le marché est près d'ici" },
-        { en: "Come here, please", wo: "Kaay fi, su la neexee", fr: "Viens ici, s'il te plaît" }
+        { en: "Come here, please", wo: "Kaay fi, su la neexee", fr: "Viens ici, s'il te plaît" },
+        { en: "The bus", wo: "Kaar bi", fr: "Le bus", audio: "audio/wolof/travel_kaar_bi.mp3" },
+        { en: "Where does the bus leave from?", wo: "Fan la kaar bi jóge ?", fr: "D'où part le bus ?", audio: "audio/wolof/travel_fan_kaar_joge.mp3" }
     ]},
     { id: "corps", title: "Corps & santé", words: [
         { en: "Body", wo: "Yaram", fr: "Corps" },
@@ -1591,7 +1671,9 @@ const WOLOF_THEMES = [
         { en: "I am sick", wo: "Feebar naa", fr: "Je suis malade" },
         { en: "My head hurts", wo: "Sama bopp a metti", fr: "J'ai mal à la tête" },
         { en: "I need to see a doctor", wo: "Soxla naa gis doktoor", fr: "J'ai besoin de voir un médecin" },
-        { en: "I feel better now", wo: "Baax na léegi", fr: "Je me sens mieux maintenant" }
+        { en: "I feel better now", wo: "Baax na léegi", fr: "Je me sens mieux maintenant" },
+        { en: "What hurts?", wo: "Lu la metti ?", fr: "Qu'est-ce qui te fait mal ?", audio: "audio/wolof/health_lu_la_metti.mp3" },
+        { en: "Where is the doctor?", wo: "Fan la doktoor bi ?", fr: "Où est le médecin ?", audio: "audio/wolof/health_fan_doktoor.mp3" }
     ]},
     { id: "nourriture", title: "Nourriture", words: [
         { en: "Rice", wo: "Ceeb", fr: "Riz" },
@@ -1603,7 +1685,9 @@ const WOLOF_THEMES = [
         { en: "I am hungry", wo: "Xiif naa", fr: "J'ai faim" },
         { en: "This food is delicious", wo: "Ñam bi neex na", fr: "Ce repas est délicieux" },
         { en: "I want to eat rice and fish", wo: "Bëgg naa lekk ceeb ak jën", fr: "Je veux manger du riz et du poisson" },
-        { en: "Let's eat together", wo: "Nu lekk ñoom", fr: "Mangeons ensemble" }
+        { en: "Let's eat together", wo: "Nu lekk ñoom", fr: "Mangeons ensemble" },
+        { en: "I'm hungry", wo: "Dama xiif", fr: "J'ai faim", audio: "audio/wolof/food_dama_xiif.mp3" },
+        { en: "The water", wo: "Ndox mi", fr: "L'eau", audio: "audio/wolof/food_ndox_mi.mp3" }
     ]},
     { id: "temps", title: "Temps & nombres", words: [
         { en: "One", wo: "Benn", fr: "Un" },
@@ -1615,11 +1699,13 @@ const WOLOF_THEMES = [
         { en: "What time is it?", wo: "Ban waxtu la ?", fr: "Quelle heure est-il ?" },
         { en: "I will come tomorrow", wo: "Dinaa ñëw suba", fr: "Je viendrai demain" },
         { en: "I was busy yesterday", wo: "Démb, sonn naa ci liggéey", fr: "Hier, j'étais occupé(e)" },
-        { en: "How many people are there?", wo: "Ñaata nit ñoo fi nekk ?", fr: "Combien de personnes y a-t-il ?" }
+        { en: "How many people are there?", wo: "Ñaata nit ñoo fi nekk ?", fr: "Combien de personnes y a-t-il ?" },
+        { en: "Morning", wo: "Njël", fr: "Matin", audio: "audio/wolof/time_njel.mp3" },
+        { en: "Night", wo: "Guddi", fr: "Nuit", audio: "audio/wolof/time_guddi.mp3" }
     ]}
 ];
 const LEXICON = [];
-WOLOF_THEMES.forEach(t => t.words.forEach(w => LEXICON.push({ cat: t.id, en: w.en, wo: w.wo, fr: w.fr, audio: null })));
+WOLOF_THEMES.forEach(t => t.words.forEach(w => LEXICON.push({ cat: t.id, en: w.en, wo: w.wo, fr: w.fr, audio: w.audio || null })));
 
 let wolofCat = WOLOF_THEMES[0].id;
 
@@ -1627,6 +1713,75 @@ function openWolofModule() {
     changeScreen("screen-wolof");
     renderWolofTabs();
     setWolofCat(wolofCat);
+}
+
+/* ---------- Outils Business (vocabulaire par métier) ---------- */
+const CHINA_TRADE_WOLOF = {
+    colobane: {
+        title: "Pièces Détachées de Colobane",
+        vocab: [
+            { fr: "Quelle est la référence de cette pièce ?", en: "What is the reference of this part?", wo: "Ban yoon bii ?" },
+            { fr: "Frein / plaquettes", en: "Brakes / brake pads", wo: "Fren" },
+            { fr: "Amortisseur", en: "Shock absorber", wo: "Amortisör" },
+            { fr: "Est-ce une pièce d'origine ou une copie ?", en: "Is this an original part or a copy?", wo: "Ndax pièce bii daf ko bokk ci fabrik bi ?" },
+            { fr: "Combien coûte cette pièce ?", en: "How much does this part cost?", wo: "Ñaata la pièce bii ?" },
+            { fr: "Avez-vous la garantie ?", en: "Do you have a warranty?", wo: "Ndax am nga garanti ?" }
+        ]
+    },
+    sandaga: {
+        title: "Mode & Beauté de Sandaga",
+        vocab: [
+            { fr: "Quelle taille avez-vous ?", en: "What size do you have?", wo: "Ban taille nga am ?" },
+            { fr: "Prix de gros / prix de détail", en: "Wholesale price / retail price", wo: "Prix gros / prix détail" },
+            { fr: "Ce tissu est-il de bonne qualité ?", en: "Is this fabric good quality?", wo: "Ndax tissu bii baax na ?" },
+            { fr: "Avez-vous d'autres couleurs ?", en: "Do you have other colours?", wo: "Am nga yeneen couleur ?" },
+            { fr: "Je voudrais acheter en gros", en: "I would like to buy in bulk", wo: "Bëgg naa jënd ci gros" },
+            { fr: "Combien pour dix pièces ?", en: "How much for ten pieces?", wo: "Ñaata ngir fukk pièces ?" }
+        ]
+    },
+    chine: {
+        title: "Logistique & Voyage Axe Chine",
+        vocab: [
+            { fr: "Combien coûte le transport par conteneur ?", en: "How much does transport by container cost?", wo: "Ñaata la transport bu conteneur ?" },
+            { fr: "Quel est le délai de livraison ?", en: "What is the delivery time?", wo: "Ñaata fan ngir livraison bi ?" },
+            { fr: "Avez-vous besoin d'un visa d'affaires ?", en: "Do you need a business visa?", wo: "Ndax soxla nga visa d'affaires ?" },
+            { fr: "Où est le bureau de douane ?", en: "Where is the customs office?", wo: "Fan la bureau douane bi ?" },
+            { fr: "Je cherche un fournisseur fiable", en: "I'm looking for a reliable supplier", wo: "Maa ngi wut fournisseur bu wóor" },
+            { fr: "Quel est le prix FOB ?", en: "What is the FOB price?", wo: "Ñaata la prix FOB bi ?" }
+        ]
+    }
+};
+
+let businessModule = null;
+
+function openBusinessModule() {
+    changeScreen("screen-business");
+    closeBusinessDetail();
+}
+
+function selectBusinessModule(sectionKey) {
+    businessModule = sectionKey;
+    const mod = CHINA_TRADE_WOLOF[sectionKey];
+    $("business-picker").classList.add("hidden");
+    $("btn-business-back").classList.remove("hidden");
+    const box = $("business-content");
+    box.classList.remove("hidden");
+    box.innerHTML = '<h4 class="text-sm font-bold text-[#F6F1E7] text-center">' + mod.title + '</h4>' +
+        mod.vocab.map(v =>
+            '<div class="bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 space-y-1">' +
+                '<p class="text-sm font-semibold text-[#F6F1E7]">' + v.en + '</p>' +
+                '<p class="text-xs text-[#A69C86]">' + v.fr + '</p>' +
+                (v.wo ? '<p class="text-xs text-[#5FC98F] italic">🗣️ ' + v.wo + '</p>' : '') +
+            '</div>'
+        ).join("");
+}
+
+function closeBusinessDetail() {
+    businessModule = null;
+    $("business-picker").classList.remove("hidden");
+    $("btn-business-back").classList.add("hidden");
+    $("business-content").classList.add("hidden");
+    $("business-content").innerHTML = "";
 }
 
 function renderWolofTabs() {
@@ -1955,6 +2110,40 @@ const TEST_BANK = [
         { id: "2b", label: "Further Discussion", questions: [
             "Why is food important in your culture?",
             "What is your favourite meal?"
+        ]}
+    ]},
+    { id: "shopping_food", topic: "Shopping & Food", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "Can you spell your last name, please?", "Where are you from?", "What do you do?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "Where do you usually do your shopping?", "What food do you like to buy?",
+            "Do you prefer shopping at a market or a supermarket?",
+            "Who does the shopping in your family?", "Do you cook the food you buy?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo d'une femme qui achète des légumes à un étal de marché.", questions: [
+            "What can you see in this picture?", "What is the woman doing?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Do you think prices at the market have increased recently?",
+            "Why do some people prefer supermarkets to markets?"
+        ]}
+    ]},
+    { id: "transport_travel", topic: "Transport & Travelling", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "Where are you from originally?", "Can you spell the name of your city?", "What do you do?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "How do you usually travel to work?", "Have you ever travelled outside Senegal?",
+            "Do you prefer the bus, a taxi, or walking?", "How long is your journey to work?",
+            "Do you travel often to visit family?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo de personnes qui attendent le bus à une station.", questions: [
+            "What can you see in this picture?", "What are the people doing?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Do you think public transport is good in your city?",
+            "What would you improve about transport in your area?"
         ]}
     ]}
 ];
