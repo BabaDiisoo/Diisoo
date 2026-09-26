@@ -372,6 +372,16 @@
                     <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Mode & Beauté de Sandaga</h4>
                     <p class="text-[11px] text-[#A69C86]">Tailles, tissus, prix de gros, tendances.</p>
                 </button>
+                <button onclick="selectBusinessModule('electronique')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#102A2A,#141A2B);border:1px solid #1E3A3A;">
+                    <span class="text-3xl">🔌</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Électronique du Centenaire</h4>
+                    <p class="text-[11px] text-[#A69C86]">Voltage, garantie, test avant achat.</p>
+                </button>
+                <button onclick="selectBusinessModule('bazar')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A2410,#141A2B);border:1px solid #3A331E;">
+                    <span class="text-3xl">🛋️</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Bazar & Meubles</h4>
+                    <p class="text-[11px] text-[#A69C86]">Livraison, matière, paiement échelonné.</p>
+                </button>
                 <button onclick="selectBusinessModule('chine')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#0F2A24,#141A2B);border:1px solid #1E3A33;">
                     <span class="text-3xl">📦</span>
                     <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Logistique & Voyage Axe Chine</h4>
@@ -1600,9 +1610,9 @@ const WOLOF_THEMES = [
         { en: "What is your name?", wo: "Naka la tudd ?", fr: "Comment t'appelles-tu ?" },
         { en: "My name is Fatou", wo: "Fatou laa tudd", fr: "Je m'appelle Fatou" },
         { en: "Good night", wo: "Fanaanal jamm", fr: "Bonne nuit" },
-        { en: "How are you?", wo: "Naka nga def ?", fr: "Comment vas-tu ?", audio: "audio/wolof/intro_naka_nga_def.mp3" },
-        { en: "I'm fine", wo: "Maa ngi fi rekk", fr: "Je vais bien", audio: "audio/wolof/intro_maangi_fi_rekk.mp3" },
-        { en: "What's your name?", wo: "Noo tudd ?", fr: "Comment tu t'appelles ?", audio: "audio/wolof/intro_noo_tudd.mp3" }
+        { en: "How are you?", wo: "Naka nga def ?", fr: "Comment vas-tu ?" },
+        { en: "I'm fine", wo: "Maa ngi fi rekk", fr: "Je vais bien" },
+        { en: "What's your name?", wo: "Noo tudd ?", fr: "Comment tu t'appelles ?" }
     ]},
     { id: "famille", title: "Famille", words: [
         { en: "Family", wo: "Njaboot", fr: "Famille" },
@@ -1615,9 +1625,9 @@ const WOLOF_THEMES = [
         { en: "My mother is at home", wo: "Sama yaay nekk na kër", fr: "Ma mère est à la maison" },
         { en: "I love my children", wo: "Bëgg naa sama doom yi", fr: "J'aime mes enfants" },
         { en: "How many children do you have?", wo: "Ñaata doom nga am ?", fr: "Combien d'enfants as-tu ?" },
-        { en: "Do you have a sibling?", wo: "Ndax am nga rakk ?", fr: "As-tu un frère/une sœur ?", audio: "audio/wolof/family_ndax_am_rakk.mp3" },
-        { en: "My mother", wo: "Sama yaay", fr: "Ma mère", audio: "audio/wolof/family_sama_yaay.mp3" },
-        { en: "My father", wo: "Sama baay", fr: "Mon père", audio: "audio/wolof/family_sama_baay.mp3" }
+        { en: "Do you have a sibling?", wo: "Ndax am nga rakk ?", fr: "As-tu un frère/une sœur ?" },
+        { en: "My mother", wo: "Sama yaay", fr: "Ma mère" },
+        { en: "My father", wo: "Sama baay", fr: "Mon père" }
     ]},
     { id: "maison", title: "Maison & vie quotidienne", words: [
         { en: "House", wo: "Kër", fr: "Maison" },
@@ -1630,8 +1640,8 @@ const WOLOF_THEMES = [
         { en: "I need water", wo: "Soxla naa ndox", fr: "J'ai besoin d'eau" },
         { en: "I am tired today", wo: "Sonn naa tay", fr: "Je suis fatigué(e) aujourd'hui" },
         { en: "Where is your house?", wo: "Foo dëkk ?", fr: "Où habites-tu ?" },
-        { en: "Where do you work?", wo: "Fan nga liggéey ?", fr: "Où travailles-tu ?", audio: "audio/wolof/work_fan_liggeey.mp3" },
-        { en: "I work in a shop", wo: "Maa ngi liggéey ci butig", fr: "Je travaille dans une boutique", audio: "audio/wolof/work_maangi_liggeey_butig.mp3" }
+        { en: "Where do you work?", wo: "Fan nga liggéey ?", fr: "Où travailles-tu ?" },
+        { en: "I work in a shop", wo: "Maa ngi liggéey ci butig", fr: "Je travaille dans une boutique" }
     ]},
     { id: "marche", title: "Marché & argent", words: [
         { en: "Money", wo: "Xaalis", fr: "Argent" },
@@ -1644,8 +1654,8 @@ const WOLOF_THEMES = [
         { en: "Lower the price, please", wo: "Wàññi njëg bi, su la neexee", fr: "Baisse le prix, s'il te plaît" },
         { en: "I want to buy rice", wo: "Bëgg naa jënd ceeb", fr: "Je veux acheter du riz" },
         { en: "I don't have money now", wo: "Amuma xaalis léegi", fr: "Je n'ai pas d'argent maintenant" },
-        { en: "Lower it a bit", wo: "Wàññi ko tuuti", fr: "Baisse un peu le prix", audio: "audio/wolof/market_wanni_ko_tuuti.mp3" },
-        { en: "Thank you", wo: "Jërëjëf", fr: "Merci", audio: "audio/wolof/market_jerejef.mp3" }
+        { en: "Lower it a bit", wo: "Wàññi ko tuuti", fr: "Baisse un peu le prix" },
+        { en: "Thank you", wo: "Jërëjëf", fr: "Merci" }
     ]},
     { id: "voyage", title: "Déplacements", words: [
         { en: "Go", wo: "Dem", fr: "Aller" },
@@ -1658,8 +1668,8 @@ const WOLOF_THEMES = [
         { en: "Where are you going?", wo: "Foo jëm ?", fr: "Où vas-tu ?" },
         { en: "The market is near here", wo: "Marse bi jege na fi", fr: "Le marché est près d'ici" },
         { en: "Come here, please", wo: "Kaay fi, su la neexee", fr: "Viens ici, s'il te plaît" },
-        { en: "The bus", wo: "Kaar bi", fr: "Le bus", audio: "audio/wolof/travel_kaar_bi.mp3" },
-        { en: "Where does the bus leave from?", wo: "Fan la kaar bi jóge ?", fr: "D'où part le bus ?", audio: "audio/wolof/travel_fan_kaar_joge.mp3" }
+        { en: "The bus", wo: "Kaar bi", fr: "Le bus" },
+        { en: "Where does the bus leave from?", wo: "Fan la kaar bi jóge ?", fr: "D'où part le bus ?" }
     ]},
     { id: "corps", title: "Corps & santé", words: [
         { en: "Body", wo: "Yaram", fr: "Corps" },
@@ -1672,8 +1682,8 @@ const WOLOF_THEMES = [
         { en: "My head hurts", wo: "Sama bopp a metti", fr: "J'ai mal à la tête" },
         { en: "I need to see a doctor", wo: "Soxla naa gis doktoor", fr: "J'ai besoin de voir un médecin" },
         { en: "I feel better now", wo: "Baax na léegi", fr: "Je me sens mieux maintenant" },
-        { en: "What hurts?", wo: "Lu la metti ?", fr: "Qu'est-ce qui te fait mal ?", audio: "audio/wolof/health_lu_la_metti.mp3" },
-        { en: "Where is the doctor?", wo: "Fan la doktoor bi ?", fr: "Où est le médecin ?", audio: "audio/wolof/health_fan_doktoor.mp3" }
+        { en: "What hurts?", wo: "Lu la metti ?", fr: "Qu'est-ce qui te fait mal ?" },
+        { en: "Where is the doctor?", wo: "Fan la doktoor bi ?", fr: "Où est le médecin ?" }
     ]},
     { id: "nourriture", title: "Nourriture", words: [
         { en: "Rice", wo: "Ceeb", fr: "Riz" },
@@ -1686,8 +1696,8 @@ const WOLOF_THEMES = [
         { en: "This food is delicious", wo: "Ñam bi neex na", fr: "Ce repas est délicieux" },
         { en: "I want to eat rice and fish", wo: "Bëgg naa lekk ceeb ak jën", fr: "Je veux manger du riz et du poisson" },
         { en: "Let's eat together", wo: "Nu lekk ñoom", fr: "Mangeons ensemble" },
-        { en: "I'm hungry", wo: "Dama xiif", fr: "J'ai faim", audio: "audio/wolof/food_dama_xiif.mp3" },
-        { en: "The water", wo: "Ndox mi", fr: "L'eau", audio: "audio/wolof/food_ndox_mi.mp3" }
+        { en: "I'm hungry", wo: "Dama xiif", fr: "J'ai faim" },
+        { en: "The water", wo: "Ndox mi", fr: "L'eau" }
     ]},
     { id: "temps", title: "Temps & nombres", words: [
         { en: "One", wo: "Benn", fr: "Un" },
@@ -1700,8 +1710,8 @@ const WOLOF_THEMES = [
         { en: "I will come tomorrow", wo: "Dinaa ñëw suba", fr: "Je viendrai demain" },
         { en: "I was busy yesterday", wo: "Démb, sonn naa ci liggéey", fr: "Hier, j'étais occupé(e)" },
         { en: "How many people are there?", wo: "Ñaata nit ñoo fi nekk ?", fr: "Combien de personnes y a-t-il ?" },
-        { en: "Morning", wo: "Njël", fr: "Matin", audio: "audio/wolof/time_njel.mp3" },
-        { en: "Night", wo: "Guddi", fr: "Nuit", audio: "audio/wolof/time_guddi.mp3" }
+        { en: "Morning", wo: "Njël", fr: "Matin" },
+        { en: "Night", wo: "Guddi", fr: "Nuit" }
     ]}
 ];
 const LEXICON = [];
@@ -1725,7 +1735,12 @@ const CHINA_TRADE_WOLOF = {
             { fr: "Amortisseur", en: "Shock absorber", wo: "Amortisör" },
             { fr: "Est-ce une pièce d'origine ou une copie ?", en: "Is this an original part or a copy?", wo: "Ndax pièce bii daf ko bokk ci fabrik bi ?" },
             { fr: "Combien coûte cette pièce ?", en: "How much does this part cost?", wo: "Ñaata la pièce bii ?" },
-            { fr: "Avez-vous la garantie ?", en: "Do you have a warranty?", wo: "Ndax am nga garanti ?" }
+            { fr: "Avez-vous la garantie ?", en: "Do you have a warranty?", wo: "Ndax am nga garanti ?" },
+            { fr: "C'est une pièce OEM ou aftermarket ?", en: "Is this an OEM or an aftermarket part?", wo: "Ndax pièce bii OEM la walla aftermarket ?" },
+            { fr: "Je cherche un fournisseur direct usine", en: "I'm looking for a direct factory supplier", wo: "Maa ngi wut fournisseur bu jóge fabrik bi" },
+            { fr: "Combien pour une commande de gros ?", en: "How much for a bulk order?", wo: "Ñaata ngir commande gros ?" },
+            { fr: "Je verse un acompte de combien ?", en: "How much deposit do I pay?", wo: "Ñaata acompte laa war a fey ?" },
+            { fr: "Payez-vous en Yuan ou en dollars ?", en: "Do you pay in Yuan or dollars ?", wo: "Ndax fey nga ci Yuan walla dollar ?" }
         ]
     },
     sandaga: {
@@ -1736,7 +1751,31 @@ const CHINA_TRADE_WOLOF = {
             { fr: "Ce tissu est-il de bonne qualité ?", en: "Is this fabric good quality?", wo: "Ndax tissu bii baax na ?" },
             { fr: "Avez-vous d'autres couleurs ?", en: "Do you have other colours?", wo: "Am nga yeneen couleur ?" },
             { fr: "Je voudrais acheter en gros", en: "I would like to buy in bulk", wo: "Bëgg naa jënd ci gros" },
-            { fr: "Combien pour dix pièces ?", en: "How much for ten pieces?", wo: "Ñaata ngir fukk pièces ?" }
+            { fr: "Combien pour dix pièces ?", en: "How much for ten pieces?", wo: "Ñaata ngir fukk pièces ?" },
+            { fr: "Est-ce que ce tissu déteint au lavage ?", en: "Does this fabric bleed when washed?", wo: "Ndax tissu bii dafay soppi couleur bu ñu ko raxasee ?" },
+            { fr: "Quel est le minimum de commande ?", en: "What is the minimum order quantity?", wo: "Ñaata la minimum commande bi ?" },
+            { fr: "Pouvez-vous m'envoyer un échantillon ?", en: "Can you send me a sample?", wo: "Ndax mën nga ma yónnee un échantillon ?" }
+        ]
+    },
+    electronique: {
+        title: "Électronique du Centenaire",
+        vocab: [
+            { fr: "Cet appareil fonctionne en 220V ?", en: "Does this device work on 220V?", wo: "Ndax jumtukaay bii dafay dox ci 220V ?" },
+            { fr: "Y a-t-il une garantie constructeur ?", en: "Is there a manufacturer's warranty?", wo: "Ndax am na garanti bu fabrikaan bi ?" },
+            { fr: "Pouvez-vous tester l'appareil devant moi ?", en: "Can you test the device in front of me?", wo: "Ndax mën nga ma ko testeel ci sama kanam ?" },
+            { fr: "Est-ce compatible avec le voltage sénégalais ?", en: "Is it compatible with Senegalese voltage?", wo: "Ndax dafa yem ak voltage bu Senegaal ?" },
+            { fr: "Avez-vous la facture d'origine ?", en: "Do you have the original invoice?", wo: "Ndax am nga facture bu njëkk bi ?" },
+            { fr: "Quel est le prix pour un carton entier ?", en: "What is the price for a full carton?", wo: "Ñaata la ngir un carton bu mat ?" }
+        ]
+    },
+    bazar: {
+        title: "Bazar & Meubles",
+        vocab: [
+            { fr: "Ce meuble est-il démontable ?", en: "Is this furniture disassemblable?", wo: "Ndax meuble bii mën nañ ko wàcce ?" },
+            { fr: "Quelle matière est utilisée ?", en: "What material is used?", wo: "Lan matière lañu jëfandikoo ?" },
+            { fr: "Livrez-vous à domicile ?", en: "Do you deliver to home?", wo: "Ndax dinañ ko yónnee ci kër gi ?" },
+            { fr: "Combien pour l'ensemble du salon ?", en: "How much for the whole living room set?", wo: "Ñaata la ngir ensemble bi bépp ?" },
+            { fr: "Puis-je payer en plusieurs fois ?", en: "Can I pay in instalments?", wo: "Ndax mën naa fey ci plusieurs fois ?" }
         ]
     },
     chine: {
@@ -1747,7 +1786,12 @@ const CHINA_TRADE_WOLOF = {
             { fr: "Avez-vous besoin d'un visa d'affaires ?", en: "Do you need a business visa?", wo: "Ndax soxla nga visa d'affaires ?" },
             { fr: "Où est le bureau de douane ?", en: "Where is the customs office?", wo: "Fan la bureau douane bi ?" },
             { fr: "Je cherche un fournisseur fiable", en: "I'm looking for a reliable supplier", wo: "Maa ngi wut fournisseur bu wóor" },
-            { fr: "Quel est le prix FOB ?", en: "What is the FOB price?", wo: "Ñaata la prix FOB bi ?" }
+            { fr: "Quel est le prix FOB ?", en: "What is the FOB price?", wo: "Ñaata la prix FOB bi ?" },
+            { fr: "Je préfère un envoi groupé", en: "I prefer a groupage shipment", wo: "Bëgg naa envoi bu bokk ak yeneen" },
+            { fr: "Combien de CBM fait ma marchandise ?", en: "How many CBM is my cargo?", wo: "Ñaata CBM la sama marsandiz am ?" },
+            { fr: "J'ai besoin du connaissement (Bill of Lading)", en: "I need the Bill of Lading", wo: "Soxla naa Bill of Lading bi" },
+            { fr: "Où est la liste de colisage (packing list) ?", en: "Where is the packing list?", wo: "Fan la packing list bi ?" },
+            { fr: "Combien de jours pour dédouaner au Port de Dakar ?", en: "How many days to clear customs at the Port of Dakar?", wo: "Ñaata fan ngir dédouaner ci Port Dakar ?" }
         ]
     }
 };
@@ -2145,6 +2189,23 @@ const TEST_BANK = [
             "Do you think public transport is good in your city?",
             "What would you improve about transport in your area?"
         ]}
+    ]},
+    { id: "health_emergencies", topic: "Health & Emergencies", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "What is your name?", "Can you spell your first name, please?", "Where do you live?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "What do you do to stay healthy?", "Do you exercise regularly?",
+            "Have you ever been to hospital?", "Who do you call when someone is sick at home?",
+            "Do you know the emergency number in Senegal?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo d'une infirmière qui aide un patient dans une salle d'urgence.", questions: [
+            "What can you see in this picture?", "How do you think the patient feels?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Why is it important to know basic first aid?",
+            "What would you do if a family member had a high fever at night?"
+        ]}
     ]}
 ];
 const TEST_PHOTOS = {
@@ -2216,13 +2277,11 @@ function jumpToQuestionForce(i) {
 
 function togglePause() {
     isPaused = !isPaused;
+    navTarget = currentQIndex;
+    interruptCurrentStep();
     if (isPaused) {
-        interruptCurrentStep();
         $("test-status").textContent = "⏸️ En pause";
         $("test-bars").classList.add("hidden");
-    } else {
-        navTarget = currentQIndex; // reprend la question en cours depuis le début
-        interruptCurrentStep();
     }
     $("btn-test-pause").textContent = isPaused ? "▶️ Reprendre" : "⏸️ Pause";
 }
