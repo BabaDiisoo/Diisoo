@@ -1398,6 +1398,31 @@ const GENERAL_THEMES = [
         { q: "I ___ stay for two weeks.", o: ["will", "am", "do"], a: 0, why: "Futur simple avec « will »." },
         { q: "« Billet retour » se dit :", o: ["return ticket", "back ticket", "tour ticket"], a: 0, why: "L'expression correcte est return ticket." }
       ]
+    },
+    { id: "housing", title: "Logement",
+      vocab: [
+        { en: "I am looking for an apartment", fr: "Je cherche un appartement" },
+        { en: "How much is the rent?", fr: "Quel est le montant du loyer ?" },
+        { en: "Is the deposit included?", fr: "La caution est-elle incluse ?" },
+        { en: "Landlord", fr: "Propriétaire" },
+        { en: "Tenant", fr: "Locataire" },
+        { en: "The electricity is not working", fr: "L'électricité ne fonctionne pas" },
+        { en: "Can I visit the house?", fr: "Puis-je visiter la maison ?" },
+        { en: "How many rooms are there?", fr: "Combien de pièces y a-t-il ?" },
+        { en: "I need to sign the lease", fr: "Je dois signer le bail" },
+        { en: "The neighbourhood is quiet", fr: "Le quartier est calme" }
+      ],
+      dialogue: [
+        { who: "A", en: "How much is the rent for this apartment?" },
+        { who: "B", en: "It is fifty thousand francs, deposit included." },
+        { who: "A", en: "Can I visit before I decide?" },
+        { who: "B", en: "Yes, of course, come tomorrow morning." }
+      ],
+      quiz: [
+        { q: "« Loyer » se dit :", o: ["rent", "rain", "rank"], a: 0, why: "Rent = loyer." },
+        { q: "The ___ owns the house and rents it out.", o: ["landlord", "tenant", "neighbour"], a: 0, why: "Landlord = propriétaire." },
+        { q: "« Puis-je visiter la maison ? » se dit :", o: ["Can I visit the house?", "Can I visited the house?", "Can I visit at house?"], a: 0, why: "Forme correcte avec l'auxiliaire can + verbe à l'infinitif." }
+      ]
     }
 ];
 let generalThemeId = GENERAL_THEMES[0].id;
@@ -1712,6 +1737,18 @@ const WOLOF_THEMES = [
         { en: "How many people are there?", wo: "Ñaata nit ñoo fi nekk ?", fr: "Combien de personnes y a-t-il ?" },
         { en: "Morning", wo: "Njël", fr: "Matin" },
         { en: "Night", wo: "Guddi", fr: "Nuit" }
+    ]},
+    { id: "logement", title: "Logement", words: [
+        { en: "House", wo: "Kër", fr: "Maison" },
+        { en: "I am looking for a house", wo: "Maa ngi wut kër", fr: "Je cherche une maison" },
+        { en: "How much is the rent?", wo: "Ñaata la loyer bi ?", fr: "Quel est le montant du loyer ?" },
+        { en: "Landlord", wo: "Boroom kër", fr: "Propriétaire" },
+        { en: "Room", wo: "Néeg", fr: "Chambre" },
+        { en: "Kitchen", wo: "Kitchen", fr: "Cuisine" },
+        { en: "Can I visit the house?", wo: "Ndax mën naa xool kër gi ?", fr: "Puis-je visiter la maison ?" },
+        { en: "The electricity is not working", wo: "Kuran gi dafa taxaw", fr: "L'électricité ne fonctionne pas" },
+        { en: "The neighbourhood is quiet", wo: "Kow gi dafa noflaay", fr: "Le quartier est calme" },
+        { en: "I need to sign the lease", wo: "War naa signé bail bi", fr: "Je dois signer le bail" }
     ]}
 ];
 const LEXICON = [];
@@ -1796,12 +1833,55 @@ const CHINA_TRADE_WOLOF = {
     }
 };
 
-let businessModule = null;
+const BUSINESS_DIALOGUES = {
+    colobane: [
+        { role: "client", wo: "Boy, ñaata la pièce bii ?", fr: "Dis, combien coûte cette pièce ?" },
+        { role: "marchand", wo: "Junni ak juróom-ñeent fukk yépp, waar.", fr: "Dix-neuf mille francs, mon frère." },
+        { role: "client", wo: "Waaw waaw, ndax mën nga wàññi tuuti ?", fr: "D'accord, mais tu peux baisser un peu ?" },
+        { role: "marchand", wo: "Ci sa ndigël, dinaa la ko jox ci junni ak juróom-ñaar fukk.", fr: "Pour toi, je te la fais à dix-sept mille." },
+        { role: "client", wo: "Ndax pièce bii bokk na ci fabrik bi, walla dafa ëpp copie ?", fr: "Cette pièce est d'origine ou c'est une copie ?" },
+        { role: "marchand", wo: "Dafa bokk ci fabrik bi, amul benn wérélu.", fr: "Elle est d'origine, il n'y a aucun doute." }
+    ],
+    sandaga: [
+        { role: "client", wo: "Ban taille nga am ci tissu bii ?", fr: "Quelle taille avez-vous pour ce tissu ?" },
+        { role: "marchand", wo: "Am naa L ak XL, walla mën naa la ko def ci sa mesure.", fr: "J'ai du L et du XL, ou je peux le faire sur mesure." },
+        { role: "client", wo: "Ñaata la ngir fukk pièces, bu ma jëndee ci gros ?", fr: "Combien pour dix pièces, si j'achète en gros ?" },
+        { role: "marchand", wo: "Ci gros, dinaa la ko wàññi, ñaata-fukk junni rekk.", fr: "En gros, je te fais une remise, seulement quarante mille." },
+        { role: "client", wo: "Ndax mën nga ma yónnee échantillon bu njëkk ?", fr: "Peux-tu d'abord m'envoyer un échantillon ?" },
+        { role: "marchand", wo: "Waaw, dinaa la ko yónnee léegi léegi.", fr: "Oui, je te l'envoie tout de suite." }
+    ],
+    electronique: [
+        { role: "client", wo: "Ndax jumtukaay bii dafay dox ci 220V ?", fr: "Cet appareil fonctionne-t-il en 220V ?" },
+        { role: "marchand", wo: "Waaw, dafa yem ak voltage bu Senegaal.", fr: "Oui, il est compatible avec le voltage sénégalais." },
+        { role: "client", wo: "Ndax mën nga ma ko testeel ci sama kanam ?", fr: "Peux-tu le tester devant moi ?" },
+        { role: "marchand", wo: "Waaw, léegi léegi, dinaa ko branché ci kontak bi.", fr: "Oui, tout de suite, je vais le brancher sur la prise." },
+        { role: "client", wo: "Ndax am na garanti bu fabrikaan bi ?", fr: "Y a-t-il une garantie du fabricant ?" },
+        { role: "marchand", wo: "Waaw, benn at garanti, ak facture bu njëkk.", fr: "Oui, une garantie d'un an, avec la facture d'origine." }
+    ],
+    bazar: [
+        { role: "client", wo: "Ndax meuble bii mën nañ ko wàcce ?", fr: "Ce meuble est-il démontable ?" },
+        { role: "marchand", wo: "Waaw, mën nañ ko wàcce ngir livraison bi yomb.", fr: "Oui, on peut le démonter pour faciliter la livraison." },
+        { role: "client", wo: "Ndax dinañ ko yónnee ci kër gi ?", fr: "Est-ce que vous livrez à domicile ?" },
+        { role: "marchand", wo: "Waaw, livraison bi dafa ci kanam, ñaata-fukk junni la.", fr: "Oui, la livraison est en plus, ça fait vingt mille." },
+        { role: "client", wo: "Ndax mën naa fey ci plusieurs fois ?", fr: "Puis-je payer en plusieurs fois ?" },
+        { role: "marchand", wo: "Waaw, mën nga fey ñetti yoon, ci ñetti weer.", fr: "Oui, tu peux payer en trois fois, sur trois mois." }
+    ],
+    chine: [
+        { role: "client", wo: "Ñaata la transport bu conteneur bi ?", fr: "Combien coûte le transport par conteneur ?" },
+        { role: "marchand", wo: "Dafa ci wattu ñaata CBM sa marsandiz am.", fr: "Ça dépend du nombre de CBM de ta marchandise." },
+        { role: "client", wo: "Ñaata fan ngir livraison bi ci Port Dakar ?", fr: "Combien de jours pour la livraison au Port de Dakar ?" },
+        { role: "marchand", wo: "Ci diggante ñatt-fukk fan, bu dédouanement bi yomb.", fr: "Environ trente jours, si le dédouanement se passe bien." },
+        { role: "client", wo: "Soxla naa Bill of Lading bi ak packing list bi.", fr: "J'ai besoin du connaissement et de la liste de colisage." },
+        { role: "marchand", wo: "Waaw, dinaa la ko yónnee bu ñu jëlee marsandiz bi.", fr: "Oui, je te les envoie dès que la marchandise est prise en charge." }
+    ]
+};
 
 function openBusinessModule() {
     changeScreen("screen-business");
     closeBusinessDetail();
 }
+
+let businessModule = null;
 
 function selectBusinessModule(sectionKey) {
     businessModule = sectionKey;
@@ -1811,13 +1891,55 @@ function selectBusinessModule(sectionKey) {
     const box = $("business-content");
     box.classList.remove("hidden");
     box.innerHTML = '<h4 class="text-sm font-bold text-[#F6F1E7] text-center">' + mod.title + '</h4>' +
-        mod.vocab.map(v =>
+        mod.vocab.map((v, i) =>
             '<div class="bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 space-y-1">' +
                 '<p class="text-sm font-semibold text-[#F6F1E7]">' + v.en + '</p>' +
                 '<p class="text-xs text-[#A69C86]">' + v.fr + '</p>' +
                 (v.wo ? '<p class="text-xs text-[#5FC98F] italic">🗣️ ' + v.wo + '</p>' : '') +
+                '<button onclick="practiceBusinessPhrase(\'' + sectionKey + '\',' + i + ')" class="mt-1 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🎤 M\'entraîner</button>' +
+                '<p id="biz-res-' + sectionKey + '-' + i + '" class="text-[11px]"></p>' +
             '</div>'
-        ).join("");
+        ).join("") +
+        (BUSINESS_DIALOGUES[sectionKey] ? renderBusinessDialogue(sectionKey) : "");
+}
+
+function renderBusinessDialogue(sectionKey) {
+    const d = BUSINESS_DIALOGUES[sectionKey];
+    return '<div class="mt-4 bg-[#141A2B] border border-[#1E2740] rounded-xl p-3">' +
+        '<h5 class="text-xs font-bold text-[#F0906B] mb-2">💬 Dialogue authentique</h5>' +
+        d.map(l =>
+            '<p class="text-xs mb-1"><span class="font-semibold text-[#5FC98F]">' + (l.role === "client" ? "Client" : "Marchand") + ' :</span> ' + l.wo + ' <span class="text-[#6B604A]">(' + l.fr + ')</span></p>'
+        ).join("") +
+        '<button onclick="playBusinessDialogue(\'' + sectionKey + '\')" class="mt-2 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter le dialogue</button>' +
+        '</div>';
+}
+
+async function playBusinessDialogue(sectionKey) {
+    for (const l of BUSINESS_DIALOGUES[sectionKey]) {
+        speak(toFrenchPhonetic(l.wo), "fr-FR", 0.8);
+        await new Promise(r => setTimeout(r, 2200));
+    }
+}
+
+async function practiceBusinessPhrase(sectionKey, idx) {
+    const v = CHINA_TRADE_WOLOF[sectionKey].vocab[idx];
+    const res = $("biz-res-" + sectionKey + "-" + idx);
+    if (!SR) { res.textContent = "Reconnaissance vocale indisponible sur ce navigateur. Utilisez Chrome."; return; }
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    const r = await startListening("en-US", 6000, false).promise;
+    if (r.error === "not-allowed" || r.error === "service-not-allowed") {
+        res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
+        return;
+    }
+    if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
+    const heard = normalize(r.text), target = normalize(v.en);
+    if (heard.includes(target)) {
+        res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + '</span>';
+        addXP(3); bumpDailyGoal(1);
+    } else {
+        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + v.en + ' ». Réessayez.</span>';
+    }
 }
 
 function closeBusinessDetail() {
@@ -2007,6 +2129,9 @@ async function practiceWord(i) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
         bumpWordStat(w.en, "correct");
         addXP(3); bumpDailyGoal(1); checkBilingueBadge();
+        const fu = pickFollowUp(heard);
+        res.innerHTML += '<p class="text-[11px] text-[#A69C86] mt-1">💬 ' + fu + '</p>';
+        if ("speechSynthesis" in window) speak(fu, "en-US", 0.85);
     } else {
         res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessayez.</span>';
         bumpWordStat(w.en, "wrong");
@@ -2492,7 +2617,7 @@ async function loadPairsList() {
 
 /* ---------- Capteur de silence (auto-avance sur les réponses du simulateur) ---------- */
 const SILENCE_MS = 5000;   // silence détecté après 5s sans nouveau mot
-const GRACE_MS = 2500;     // fenêtre d'annulation avant l'enchaînement automatique
+const GRACE_MS = 0;        // avance immédiatement 5s après la dernière réponse
 let currentConfirmEarly = null;
 
 function confirmTestContinue() {
