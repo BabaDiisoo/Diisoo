@@ -85,6 +85,9 @@
             color:#241505; text-shadow:none;
         }
         .btn-primary:hover{ filter:brightness(1.06); }
+        /* État "gelé" : boutons désactivés pendant l'écoute (effet de modalité) ou le silence de consolidation */
+        button:disabled{ opacity:.45; cursor:not-allowed; filter:grayscale(.35); }
+        button:disabled:active{ transform:none; filter:grayscale(.35); }
     </style>
 </head>
 <body class="bg-[#0B0F1C] font-sans antialiased text-white">
@@ -730,21 +733,197 @@ function changeScreen(id) {
     clearInterval(countdownId);
     if (typeof navTarget !== "undefined") navTarget = null;
     if (typeof isPaused !== "undefined") isPaused = false;
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    stopAllAudio();
+    clearSilence();
+    setNavLocked(false);
     document.querySelectorAll("[id^='screen-']").forEach(s => s.classList.add("hidden"));
     $(id).classList.remove("hidden");
     window.scrollTo(0, 0);
 }
 
 /* ---------- Voix : synthèse et reconnaissance ---------- */
-function speak(text, lang, rate) {
+/* ==========================================================
+   MOTEUR AUDIO CENTRAL (zéro son bloqué)
+   - UNE seule source de lecture : currentAudio (fichiers) + synthèse vocale,
+     toujours coupées ensemble avant tout nouveau son ou changement d'écran.
+   - Effet de modalité (Sweller) : pendant la lecture, les boutons marqués
+     data-practice sont gelés ; ils se rouvrent à la fin exacte de l'audio.
+     Par défaut (data-gate absent) un bouton "Répéter" reste gelé tant que
+     l'audio de SON item n'a pas été écouté en entier.
+   ========================================================== */
+let currentAudio = null;
+let audioToken = 0;            // invalide toute lecture interrompue
+let audioBusy = false;
+let sequenceActive = false;    // verrou maintenu entre les répliques d'un dialogue
+let seqToken = 0;
+let pendingResolve = null;
+let activeUtterance = null;    // référence gardée : évite le bug Chrome "onend jamais appelé"
+const heardKeys = new Set();
+
+function refreshPracticeButtons() {
+    const frozen = audioBusy || sequenceActive;
+    document.querySelectorAll("[data-practice]").forEach(b => {
+        if (b.dataset.locked === "1") { b.disabled = true; return; }
+        const gated = b.dataset.gate !== "0" && !heardKeys.has(b.dataset.practice);
+        b.disabled = frozen || gated;
+    });
+}
+
+function stopAllAudio(keepSeq) {
+    audioToken++;
+    if (!keepSeq) { seqToken++; sequenceActive = false; }
+    if (currentAudio) {
+        try { currentAudio.onended = null; currentAudio.onerror = null; currentAudio.pause(); currentAudio.currentTime = 0; } catch (e) {}
+        currentAudio = null;
+    }
+    if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch (e) {} }
+    activeUtterance = null;
+    audioBusy = false;
+    const r = pendingResolve; pendingResolve = null;
+    if (r) r();
+    refreshPracticeButtons();
+}
+
+function pickVoice(lang) {
+    try {
+        const vs = speechSynthesis.getVoices();
+        if (!vs || !vs.length) return null;
+        const l = lang.replace("_", "-");
+        return vs.find(v => v.lang.replace("_", "-") === l) || vs.find(v => v.lang.slice(0, 2) === l.slice(0, 2)) || null;
+    } catch (e) { return null; }
+}
+
+/* Résout true (fini), false (interrompu). Ne reste jamais bloquée : minuterie de sécurité. */
+function _speak(text, lang, rate, key, keepSeq) {
     return new Promise(resolve => {
-        if (!("speechSynthesis" in window)) return resolve();
-        speechSynthesis.cancel();
+        const wasBusy = ("speechSynthesis" in window) && (speechSynthesis.speaking || speechSynthesis.pending);
+        stopAllAudio(keepSeq);
+        if (!text || !("speechSynthesis" in window)) {
+            if (key) heardKeys.add(key);
+            refreshPracticeButtons();
+            resolve(true);
+            return;
+        }
+        const myToken = audioToken;
+        let done = false, safety = null, blockTimer = null, started = false;
+        const finish = (natural) => {
+            if (done) return;
+            done = true; clearTimeout(safety); clearTimeout(blockTimer);
+            if (myToken !== audioToken) { resolve(false); return; }   // interrompu
+            activeUtterance = null; pendingResolve = null; audioBusy = false;
+            if (key) heardKeys.add(key);
+            refreshPracticeButtons();
+            resolve(natural);
+        };
+        pendingResolve = () => finish(false);
+        audioBusy = true;
+        refreshPracticeButtons();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = lang; u.rate = rate || 0.9;
-        u.onend = resolve; u.onerror = resolve;
-        speechSynthesis.speak(u);
+        u.lang = lang || "en-US"; u.rate = rate || 0.9;
+        const v = pickVoice(u.lang); if (v) u.voice = v;
+        activeUtterance = u;
+        u.onstart = () => { started = true; clearTimeout(blockTimer); };
+        u.onend = () => finish(true);
+        u.onerror = () => finish(true);
+        /* iPhone/Safari : si le son est refusé (lecture hors geste tactile), on dégèle les boutons
+           au lieu de rester bloqué, et on invite à toucher 🔊. */
+        blockTimer = setTimeout(() => {
+            if (started || done) return;
+            try { if (speechSynthesis.speaking) return; speechSynthesis.cancel(); } catch (e) {}
+            if (myToken === audioToken) {
+                if (typeof toast === "function") toast("🔊 Touchez « Écouter » pour lancer le son");
+                finish(true);
+            }
+        }, 2500);
+        safety = setTimeout(() => {
+            try { speechSynthesis.cancel(); } catch (e) {}
+            finish(true);
+        }, Math.max(4000, text.length * 140 / (u.rate || 0.9)) + 2000);
+        const go = () => {
+            if (myToken !== audioToken) return;
+            try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch (e) { finish(true); }
+        };
+        // Lecture immédiate (indispensable sur iPhone : elle doit rester dans le geste tactile).
+        // Petit délai uniquement si une voix venait d'être coupée (fiabilise Chrome/Android).
+        if (wasBusy) setTimeout(go, 80); else go();
+    });
+}
+function speak(text, lang, rate, key) { return _speak(text, lang, rate, key, false); }
+
+/* Fichier audio (ex. MP3 wolof). Résout true (fini), false (interrompu), null (erreur de lecture). */
+function playAudioFile(url, key) {
+    return new Promise(resolve => {
+        stopAllAudio();
+        const myToken = audioToken;
+        const a = new Audio(url);
+        a.setAttribute("playsinline", ""); a.preload = "auto";
+        currentAudio = a;
+        let done = false;
+        const finish = (result) => {
+            if (done) return;
+            done = true; a.onended = null; a.onerror = null;
+            if (myToken !== audioToken) { resolve(false); return; }
+            currentAudio = null; pendingResolve = null; audioBusy = false;
+            if (key) heardKeys.add(key);
+            refreshPracticeButtons();
+            resolve(result);
+        };
+        pendingResolve = () => finish(false);
+        audioBusy = true;
+        refreshPracticeButtons();
+        a.onended = () => finish(true);
+        a.onerror = () => finish(null);
+        const p = a.play();
+        if (p && p.catch) p.catch(() => finish(null));
+    });
+}
+
+/* Dialogue : répliques enchaînées, boutons gelés sur toute la séquence. items = [{text, lang, rate, key}] */
+async function playSequence(items) {
+    stopAllAudio();
+    const my = ++seqToken;
+    sequenceActive = true;
+    refreshPracticeButtons();
+    for (const it of items) {
+        if (my !== seqToken) return;
+        await _speak(it.text, it.lang, it.rate, it.key, true);
+        if (my !== seqToken) return;
+        await new Promise(r => setTimeout(r, 300));
+    }
+    if (my === seqToken) { sequenceActive = false; refreshPracticeButtons(); }
+}
+
+/* ==========================================================
+   LOI DU SILENCE (Rowe, Wait Time II) : 5 s exactes après un résultat.
+   Silence total (aucun audio), compte à rebours visible, puis avance auto.
+   ========================================================== */
+const SILENCE_WAIT_MS = 5000;
+let silenceTimer = null, silenceTick = null;
+function clearSilence() { clearTimeout(silenceTimer); clearInterval(silenceTick); silenceTimer = null; silenceTick = null; }
+function silenceCountdown(onTick, onDone) {
+    clearSilence();
+    stopAllAudio();
+    const end = Date.now() + SILENCE_WAIT_MS;
+    onTick(Math.ceil(SILENCE_WAIT_MS / 1000));
+    silenceTick = setInterval(() => onTick(Math.max(0, Math.ceil((end - Date.now()) / 1000))), 250);
+    silenceTimer = setTimeout(() => { clearSilence(); onDone(); }, SILENCE_WAIT_MS);
+}
+function setNavLocked(lock) {
+    ["btn-test-prev", "btn-test-next", "btn-test-pause"].forEach(id => { const b = $(id); if (b) b.disabled = lock; });
+    document.querySelectorAll("#test-dots button").forEach(b => { b.disabled = lock; });
+}
+function testSilence(run) {
+    return new Promise(resolve => {
+        setNavLocked(true);
+        currentStop = () => { clearSilence(); setNavLocked(false); currentStop = null; resolve(); };
+        silenceCountdown(
+            (sec) => {
+                if (run !== testRun) return;
+                setTimer(sec, false);
+                $("test-transcript").textContent = "⏳ Silence de consolidation : " + sec + " s";
+            },
+            () => { currentStop = null; setNavLocked(false); resolve(); }
+        );
     });
 }
 
@@ -1454,6 +1633,7 @@ function renderGeneralTabs() {
 function setGeneralTheme(id) {
     generalThemeId = id;
     window.scrollTo({ top: 0, behavior: "smooth" });
+    clearSilence();
     generalQuizIndex = 0; generalQuizScore = 0;
     renderGeneralTabs();
     renderGeneralContent();
@@ -1480,14 +1660,15 @@ function renderGeneralContent() {
               '<p class="text-base font-bold text-[#F6F1E7]">' + w.en + '</p>' +
               '<div class="text-right">' +
                 '<p class="text-xs text-[#8C8064]">' + w.fr + '</p>' +
+                (w.wo ? '<p class="text-[10px] text-[#5FC98F] italic">🗣️ ' + esc(w.wo) + '</p>' : '') +
                 (due ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">🔁 À revoir</span>' : '') +
               '</div>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-2">' +
-              '<button onclick="speakGeneralWord(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter</button>' +
-              '<button onclick="practiceGeneralWord(' + i + ')" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Répéter</button>' +
+              '<button onclick="speakGeneralWord(' + i + ')" data-practice="gen-l:' + theme.id + ':' + i + '" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter</button>' +
+              '<button onclick="practiceGeneralWord(' + i + ')" data-practice="' + esc(key) + '" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Répéter</button>' +
             '</div>' +
-            '<div id="gen-res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]"></div>';
+            '<div id="gen-res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]">' + (heardKeys.has(key) ? '' : '👂 Écoutez d\'abord, puis répétez.') + '</div>';
         box.appendChild(card);
     });
 
@@ -1501,13 +1682,14 @@ function renderGeneralContent() {
         const p = document.createElement("p");
         p.className = "text-sm text-[#E4DCC9]";
         p.innerHTML = "<b>" + line.who + ":</b> " + esc(line.en) +
-            ' <button onclick="speakDialogueLine(' + i + ')" class="text-[#F0906B] text-xs align-middle">🔊</button>';
+            ' <button onclick="speakDialogueLine(' + i + ')" data-practice="dlg-line" data-gate="0" class="text-[#F0906B] text-xs align-middle">🔊</button>';
         dlgCard.appendChild(p);
     });
     const playAll = document.createElement("button");
     playAll.className = "w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold mt-2";
     playAll.textContent = "🔊 Écouter tout le dialogue";
     playAll.onclick = playFullDialogue;
+    playAll.dataset.practice = "dlg-all"; playAll.dataset.gate = "0";
     dlgCard.appendChild(playAll);
     box.appendChild(dlgCard);
 
@@ -1520,9 +1702,13 @@ function renderGeneralContent() {
     quizBox.className = "space-y-3";
     box.appendChild(quizBox);
     renderGeneralQuiz();
+    refreshPracticeButtons();
 }
 
-function speakGeneralWord(i) { speak(currentGeneralTheme().vocab[i].en, "en-US", 0.85); }
+function speakGeneralWord(i) {
+    const t = currentGeneralTheme(), w = t.vocab[i];
+    speak(w.en, "en-US", 0.85, "gen:" + t.id + ":" + w.en);
+}
 
 async function practiceGeneralWord(i) {
     const theme = currentGeneralTheme();
@@ -1531,7 +1717,7 @@ async function practiceGeneralWord(i) {
     const res = $("gen-res-" + i);
     if (!SR) { res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome."; return; }
     res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    stopAllAudio();
     const r = await startListening("en-US", 6000, false).promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur."; return; }
     if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
@@ -1547,8 +1733,8 @@ async function practiceGeneralWord(i) {
 }
 
 function speakDialogueLine(i) { speak(currentGeneralTheme().dialogue[i].en, "en-GB", 0.85); }
-async function playFullDialogue() {
-    for (const line of currentGeneralTheme().dialogue) { await speak(line.en, "en-GB", 0.85); }
+function playFullDialogue() {
+    return playSequence(currentGeneralTheme().dialogue.map(line => ({ text: line.en, lang: "en-GB", rate: 0.85 })));
 }
 
 function renderGeneralQuiz() {
@@ -1612,10 +1798,15 @@ function answerGeneralQuiz(i, box, item) {
     const next = document.createElement("button");
     next.className = "w-full py-3 btn-primary rounded-xl text-xs font-bold shadow-lg shadow-[#C2542D]/30";
     next.textContent = generalQuizIndex === currentGeneralTheme().quiz.length - 1 ? "Voir mon score ➡️" : "Question suivante ➡️";
-    next.onclick = () => { generalQuizIndex++; renderGeneralQuiz(); };
+    // Loi du silence (Rowe) : 5 s de silence total, puis passage automatique à la suite.
+    next.disabled = true;
     nextWrap.appendChild(next);
     box.appendChild(nextWrap);
     next.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    silenceCountdown(
+        (sec) => { next.textContent = "⏳ Silence de consolidation : " + sec + " s"; },
+        () => { generalQuizIndex++; renderGeneralQuiz(); }
+    );
 }
 
 /* ==========================================================
@@ -1752,6 +1943,196 @@ const WOLOF_THEMES = [
         { en: "I need to sign the lease", wo: "War naa signé bail bi", fr: "Je dois signer le bail" }
     ]}
 ];
+/* ==========================================================
+   ENRICHISSEMENT CONTEXTUEL : Business, Agriculture, Bana-bana.
+   Le wolof (champ "wo") sert de passerelle d'activation ; l'anglais est la langue de pratique.
+   À faire valider par des locuteurs wolof (comme le reste du vocabulaire pilote).
+   ========================================================== */
+const GENERAL_EXTRA = {
+    intro: {
+        vocab: [
+            { en: "I am a street vendor", fr: "Je suis vendeur ambulant", wo: "Baana-baana laa" },
+            { en: "I work in agriculture", fr: "Je travaille dans l'agriculture", wo: "Mbay laa def" },
+            { en: "I run my own small business", fr: "Je dirige ma propre petite entreprise" }
+        ],
+        dialogue: [
+            { who: "A", en: "What do you do for a living?" },
+            { who: "B", en: "I am a farmer, and I also sell my vegetables at the market." },
+            { who: "A", en: "Do you sell them yourself?" },
+            { who: "B", en: "Yes, I am my own boss." }
+        ],
+        quiz: [{ q: "I ___ a farmer and a trader.", o: ["is", "am", "are"], a: 1, why: "Avec I, toujours « am » : I am a farmer." }]
+    },
+    family: {
+        vocab: [
+            { en: "My family works in the fields", fr: "Ma famille travaille aux champs", wo: "Toolu" },
+            { en: "My brother sells fruit at the market", fr: "Mon frère vend des fruits au marché", wo: "Jaay" }
+        ],
+        dialogue: [
+            { who: "A", en: "Does your family have a farm?" },
+            { who: "B", en: "Yes, my parents grow millet and groundnuts." },
+            { who: "A", en: "And your brother?" },
+            { who: "B", en: "He is a street trader in Thiès." }
+        ],
+        quiz: [{ q: "My brother ___ vegetables at the market.", o: ["sell", "sells", "selling"], a: 1, why: "3e personne du singulier : verbe + s (he sells)." }]
+    },
+    work: {
+        vocab: [
+            { en: "I start work at six in the morning", fr: "Je commence à travailler à six heures du matin", wo: "Liggéey" },
+            { en: "I water the plants every day", fr: "J'arrose les plantes chaque jour", wo: "Ndox" },
+            { en: "I sell my goods in the street", fr: "Je vends mes marchandises dans la rue", wo: "Jaay" }
+        ],
+        dialogue: [
+            { who: "A", en: "What time do you start work?" },
+            { who: "B", en: "At six. I water my vegetables first, then I go to the market." },
+            { who: "A", en: "How many hours do you work?" },
+            { who: "B", en: "About ten hours a day." }
+        ],
+        quiz: [{ q: "I ___ my vegetables every morning.", o: ["water", "waters", "watering"], a: 0, why: "Avec I, le verbe reste à la forme de base." }]
+    },
+    market: {
+        vocab: [
+            { en: "How much is this?", fr: "Combien coûte ceci ?", wo: "Ñaata la ?" },
+            { en: "It is too expensive", fr: "C'est trop cher", wo: "Dafa seer" },
+            { en: "Can you lower the price a little?", fr: "Pouvez-vous baisser un peu le prix ?", wo: "Wàññil ma tuuti" },
+            { en: "I want to buy ten kilos of onions", fr: "Je veux acheter dix kilos d'oignons", wo: "Sooble" }
+        ],
+        dialogue: [
+            { who: "A", en: "Good morning. How much are the tomatoes?" },
+            { who: "B", en: "Five hundred francs a kilo." },
+            { who: "A", en: "It is too expensive. Can you lower the price?" },
+            { who: "B", en: "For you, four hundred. They come from the farm this morning." },
+            { who: "A", en: "Okay, I want three kilos." }
+        ],
+        quiz: [{ q: "How ___ are the onions?", o: ["much", "many", "long"], a: 0, why: "Pour demander un prix : « How much »." }]
+    },
+    travel: {
+        vocab: [
+            { en: "I transport goods to Dakar", fr: "Je transporte des marchandises à Dakar", wo: "Kamiyon" },
+            { en: "The truck leaves at seven", fr: "Le camion part à sept heures" },
+            { en: "How much is the ticket to the market?", fr: "Combien coûte le billet pour le marché ?", wo: "Ñaata la ?" }
+        ],
+        dialogue: [
+            { who: "A", en: "Does this truck go to the Thiès market?" },
+            { who: "B", en: "Yes, it leaves at seven with fresh vegetables." },
+            { who: "A", en: "How much for my bags?" },
+            { who: "B", en: "Two thousand francs." }
+        ],
+        quiz: [{ q: "The truck ___ at seven o'clock.", o: ["leave", "leaves", "leaving"], a: 1, why: "The truck = it : verbe + s (leaves)." }]
+    },
+    health: {
+        vocab: [
+            { en: "I need to rest, I worked in the sun all day", fr: "J'ai besoin de me reposer, j'ai travaillé au soleil toute la journée", wo: "Sonn" },
+            { en: "Drink a lot of water when it is hot", fr: "Buvez beaucoup d'eau quand il fait chaud", wo: "Ndox" }
+        ],
+        dialogue: [
+            { who: "A", en: "You look tired." },
+            { who: "B", en: "I worked in the field all day, and I did not drink water." },
+            { who: "A", en: "You must drink water and rest." },
+            { who: "B", en: "You are right, thank you." }
+        ],
+        quiz: [{ q: "You ___ drink water when it is hot.", o: ["must", "are", "does"], a: 0, why: "« must » exprime une obligation ou un conseil fort." }]
+    },
+    food: {
+        vocab: [
+            { en: "Fresh vegetables and fruit", fr: "Légumes et fruits frais" },
+            { en: "I would like rice with chicken, please", fr: "Je voudrais du riz au poulet, s'il vous plaît", wo: "Ceeb" },
+            { en: "An egg", fr: "Un œuf", wo: "Nen" }
+        ],
+        dialogue: [
+            { who: "A", en: "What would you like?" },
+            { who: "B", en: "Rice with chicken, please." },
+            { who: "A", en: "Do you want vegetables?" },
+            { who: "B", en: "Yes, and some water." }
+        ],
+        quiz: [{ q: "I ___ like rice, please.", o: ["would", "am", "is"], a: 0, why: "« I would like » est la façon polie de commander." }]
+    },
+    time: {
+        vocab: [
+            { en: "The rainy season starts in July", fr: "La saison des pluies commence en juillet", wo: "Nawet" },
+            { en: "The market opens at six", fr: "Le marché ouvre à six heures", wo: "Marse" },
+            { en: "Five hundred francs", fr: "Cinq cents francs" }
+        ],
+        dialogue: [
+            { who: "A", en: "When does the rainy season start?" },
+            { who: "B", en: "In July. We plant groundnuts after the first rain." },
+            { who: "A", en: "What time does the market open?" },
+            { who: "B", en: "At six o'clock." }
+        ],
+        quiz: [{ q: "The market opens ___ six o'clock.", o: ["in", "at", "on"], a: 1, why: "Pour une heure précise : « at »." }]
+    },
+    visa: {
+        vocab: [
+            { en: "I own a small business in Senegal", fr: "Je possède une petite entreprise au Sénégal" },
+            { en: "I will return home after my trip", fr: "Je rentrerai chez moi après mon voyage" },
+            { en: "I buy goods to sell in my shop", fr: "J'achète des marchandises à vendre dans ma boutique", wo: "Jënd" }
+        ],
+        dialogue: [
+            { who: "A", en: "Why do you want to travel?" },
+            { who: "B", en: "I want to buy goods for my business." },
+            { who: "A", en: "Will you come back to Senegal?" },
+            { who: "B", en: "Yes, my family and my shop are there." }
+        ],
+        quiz: [{ q: "I ___ come back after two weeks.", o: ["will", "am", "does"], a: 0, why: "Intention future : « will + verbe de base »." }]
+    },
+    housing: {
+        vocab: [
+            { en: "I have a small garden behind the house", fr: "J'ai un petit jardin derrière la maison", wo: "Kër" },
+            { en: "The rent is thirty thousand francs a month", fr: "Le loyer est de trente mille francs par mois" }
+        ],
+        dialogue: [
+            { who: "A", en: "Do you have a garden?" },
+            { who: "B", en: "Yes, I grow tomatoes and onions behind the house." },
+            { who: "A", en: "Is the rent expensive?" },
+            { who: "B", en: "No, it is cheap." }
+        ],
+        quiz: [{ q: "I ___ tomatoes behind the house.", o: ["grow", "grows", "growing"], a: 0, why: "I + verbe de base (I grow)." }]
+    }
+};
+GENERAL_THEMES.forEach(t => {
+    const x = GENERAL_EXTRA[t.id];
+    if (!x) return;
+    x.vocab.forEach(v => { if (!t.vocab.some(o => o.en === v.en)) t.vocab.push(v); });
+    (x.dialogue || []).forEach(d => t.dialogue.push(d));
+    (x.quiz || []).forEach(q => { if (!t.quiz.some(o => o.q === q.q)) t.quiz.push(q); });
+});
+
+const WOLOF_EXTRA = {
+    marche: [
+        { en: "Street trader", wo: "Baana-baana", fr: "Vendeur ambulant" },
+        { en: "Seller", wo: "Jaaykat", fr: "Vendeur" },
+        { en: "Buyer", wo: "Jëndkat", fr: "Acheteur" },
+        { en: "Price", wo: "Njëg", fr: "Prix" },
+        { en: "It is expensive", wo: "Dafa seer", fr: "C'est cher" },
+        { en: "It is cheap", wo: "Dafa yomb", fr: "C'est bon marché" }
+    ],
+    maison: [
+        { en: "Field", wo: "Toolu", fr: "Champ" },
+        { en: "Farming", wo: "Mbay", fr: "Agriculture" },
+        { en: "Cow", wo: "Nag", fr: "Vache" },
+        { en: "Sheep", wo: "Xar", fr: "Mouton" },
+        { en: "Goat", wo: "Bëy", fr: "Chèvre" }
+    ],
+    famille: [{ en: "Farmer", wo: "Baykat", fr: "Agriculteur" }],
+    nourriture: [
+        { en: "Rice", wo: "Ceeb", fr: "Riz" },
+        { en: "Egg", wo: "Nen", fr: "Œuf" },
+        { en: "Onion", wo: "Sooble", fr: "Oignon" },
+        { en: "Groundnut", wo: "Gerte", fr: "Arachide" },
+        { en: "Chicken", wo: "Ganaar", fr: "Poulet" }
+    ],
+    temps: [{ en: "Rainy season", wo: "Nawet", fr: "Saison des pluies" }],
+    voyage: [{ en: "Truck", wo: "Kamiyon", fr: "Camion" }],
+    corps: [
+        { en: "Tired", wo: "Sonn", fr: "Fatigué" },
+        { en: "Hot", wo: "Tang", fr: "Chaud" }
+    ],
+    logement: [{ en: "House", wo: "Kër", fr: "Maison" }]
+};
+WOLOF_THEMES.forEach(t => {
+    (WOLOF_EXTRA[t.id] || []).forEach(w => { if (!t.words.some(o => o.en === w.en && o.wo === w.wo)) t.words.push(w); });
+});
+
 const LEXICON = [];
 WOLOF_THEMES.forEach(t => t.words.forEach(w => LEXICON.push({ cat: t.id, en: w.en, wo: w.wo, fr: w.fr, audio: w.audio || null })));
 
@@ -1899,6 +2280,43 @@ const BUSINESS_DIALOGUES = {
     ]
 };
 
+const BIZ_EXTRA = {
+    colobane: [
+        { en: "Water pump for the field", fr: "Pompe à eau pour le champ", wo: "Toolu" },
+        { en: "Tractor spare parts", fr: "Pièces détachées de tracteur" }
+    ],
+    sandaga: [
+        { en: "Wholesale price for street traders", fr: "Prix de gros pour vendeurs ambulants", wo: "Baana-baana" },
+        { en: "I sell on credit", fr: "Je vends à crédit" }
+    ],
+    electronique: [
+        { en: "Solar panel for the farm", fr: "Panneau solaire pour la ferme" },
+        { en: "Mobile money payment", fr: "Paiement par mobile money", wo: "Xaalis" }
+    ],
+    bazar: [
+        { en: "Storage crates for vegetables", fr: "Caisses de stockage pour légumes" },
+        { en: "Fresh tomatoes and onions", fr: "Tomates et oignons frais", wo: "Tomaat ak sooble" }
+    ],
+    chine: [
+        { en: "Irrigation equipment", fr: "Matériel d'irrigation" },
+        { en: "Shipping container", fr: "Conteneur d'expédition" },
+        { en: "Customs clearance", fr: "Dédouanement" }
+    ]
+};
+Object.keys(BIZ_EXTRA).forEach(k => {
+    if (!CHINA_TRADE_WOLOF[k]) return;
+    BIZ_EXTRA[k].forEach(v => { if (!CHINA_TRADE_WOLOF[k].vocab.some(o => o.en === v.en)) CHINA_TRADE_WOLOF[k].vocab.push(v); });
+});
+if (BUSINESS_DIALOGUES.bazar) {
+    BUSINESS_DIALOGUES.bazar.push(
+        { scene: "🍅 Scène 2 : baana-baana et producteur de légumes", role: "client", wo: "Ñaata la tomaat bi ci kilo ?", fr: "Combien coûte le kilo de tomates ?", en: "How much is a kilo of tomatoes?" },
+        { role: "marchand", wo: "Juróom téeméer la ci kilo bi.", fr: "Cinq cents francs le kilo.", en: "Five hundred francs a kilo." },
+        { role: "client", wo: "Dafa seer. Wàññil ma tuuti.", fr: "C'est cher. Baisse un peu pour moi.", en: "It is too expensive. Lower the price a little." },
+        { role: "marchand", wo: "Baax na, ñeent téeméer la.", fr: "D'accord, quatre cents francs.", en: "Okay, four hundred francs." },
+        { role: "client", wo: "Jërëjëf. Jënd naa ñett kilo.", fr: "Merci. J'achète trois kilos.", en: "Thank you. I will buy three kilos." }
+    );
+}
+
 function openBusinessModule() {
     changeScreen("screen-business");
     closeBusinessDetail();
@@ -1920,14 +2338,15 @@ function selectBusinessModule(sectionKey) {
                 '<p class="text-xs text-[#A69C86]">' + v.fr + '</p>' +
                 (v.wo ? '<p class="text-xs text-[#5FC98F] italic">🗣️ ' + v.wo + '</p>' : '') +
                 '<div class="grid grid-cols-2 gap-2 mt-1">' +
-                    '<button onclick="speak(' + JSON.stringify(v.en) + ',\'en-US\',0.9)" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
-                    (v.wo ? '<button onclick="speak(toFrenchPhonetic(' + JSON.stringify(v.wo) + '),\'fr-FR\',0.85)" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' : '') +
+                    '<button data-biz="en" data-sec="' + sectionKey + '" data-i="' + i + '" data-practice="biz-en:' + sectionKey + ':' + i + '" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+                    (v.wo ? '<button data-biz="wo" data-sec="' + sectionKey + '" data-i="' + i + '" data-practice="biz-wo:' + sectionKey + ':' + i + '" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' : '') +
                 '</div>' +
-                '<button onclick="practiceBusinessPhrase(\'' + sectionKey + '\',' + i + ')" class="mt-1 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🎤 M\'entraîner</button>' +
-                '<p id="biz-res-' + sectionKey + '-' + i + '" class="text-[11px]"></p>' +
+                '<button onclick="practiceBusinessPhrase(\'' + sectionKey + '\',' + i + ')" data-practice="biz:' + sectionKey + ':' + i + '" class="mt-1 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🎤 M\'entraîner</button>' +
+                '<p id="biz-res-' + sectionKey + '-' + i + '" class="text-[11px] text-[#A69C86]">👂 Écoutez d\'abord l\'anglais, puis entraînez-vous.</p>' +
             '</div>'
         ).join("") +
         (BUSINESS_DIALOGUES[sectionKey] ? renderBusinessDialogue(sectionKey) : "");
+    refreshPracticeButtons();
 }
 
 function renderBusinessDialogue(sectionKey) {
@@ -1935,17 +2354,21 @@ function renderBusinessDialogue(sectionKey) {
     return '<div class="mt-4 bg-[#141A2B] border border-[#1E2740] rounded-xl p-3">' +
         '<h5 class="text-xs font-bold text-[#F0906B] mb-2">💬 Dialogue authentique</h5>' +
         d.map(l =>
-            '<p class="text-xs mb-1"><span class="font-semibold text-[#5FC98F]">' + (l.role === "client" ? "Client" : "Marchand") + ' :</span> ' + l.wo + ' <span class="text-[#6B604A]">(' + l.fr + ')</span></p>'
+            (l.scene ? '<p class="text-[11px] font-bold text-[#F0906B] mt-3 mb-1">' + l.scene + '</p>' : '') +
+            '<p class="text-xs mb-1"><span class="font-semibold text-[#5FC98F]">' + (l.role === "client" ? "Client" : "Marchand") + ' :</span> ' + l.wo + ' <span class="text-[#6B604A]">(' + l.fr + ')</span>' +
+            (l.en ? ' <span class="text-[#C9BFA8] italic">' + esc(l.en) + '</span>' : '') + '</p>'
         ).join("") +
-        '<button onclick="playBusinessDialogue(\'' + sectionKey + '\')" class="mt-2 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter le dialogue</button>' +
+        '<button onclick="playBusinessDialogue(\'' + sectionKey + '\')" data-practice="biz-dlg" data-gate="0" class="mt-2 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter le dialogue</button>' +
         '</div>';
 }
 
-async function playBusinessDialogue(sectionKey) {
-    for (const l of BUSINESS_DIALOGUES[sectionKey]) {
-        speak(toFrenchPhonetic(l.wo), "fr-FR", 0.8);
-        await new Promise(r => setTimeout(r, 2200));
-    }
+function playBusinessDialogue(sectionKey) {
+    const items = [];
+    BUSINESS_DIALOGUES[sectionKey].forEach(l => {
+        items.push({ text: toFrenchPhonetic(l.wo), lang: "fr-FR", rate: 0.8 });   // wolof d'abord : activation
+        if (l.en) items.push({ text: l.en, lang: "en-US", rate: 0.85 });         // puis anglais : pratique
+    });
+    return playSequence(items);
 }
 
 async function practiceBusinessPhrase(sectionKey, idx) {
@@ -1953,7 +2376,7 @@ async function practiceBusinessPhrase(sectionKey, idx) {
     const res = $("biz-res-" + sectionKey + "-" + idx);
     if (!SR) { res.textContent = "Reconnaissance vocale indisponible sur ce navigateur. Utilisez Chrome."; return; }
     res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    stopAllAudio();
     const r = await startListening("en-US", 6000, false).promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") {
         res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
@@ -2071,10 +2494,10 @@ function wikidataCardHTML(w, i, stats) {
              '</div>' +
            '</div>' +
            '<div class="grid ' + (shortEn ? "grid-cols-3" : "grid-cols-1") + ' gap-2">' +
-             '<button onclick="playWolof(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+             '<button onclick="playWolof(' + i + ')" data-practice="w-wo" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
              (shortEn
-               ? '<button onclick="playEnglish(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
-                 '<button onclick="practiceWord(' + i + ')" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Parler</button>'
+               ? '<button onclick="playEnglish(' + i + ')" data-practice="w-en" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+                 '<button onclick="practiceWord(' + i + ')" data-practice="lex:' + esc(w.cat) + ':' + esc(w.en) + '" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Parler</button>'
                : "") +
            '</div>' +
            '<div id="res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]"></div>' +
@@ -2110,13 +2533,14 @@ function renderLexicon() {
               '</div>' +
             '</div>' +
             '<div class="grid grid-cols-3 gap-2">' +
-              '<button onclick="playWolof(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
-              '<button onclick="playEnglish(' + i + ')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
-              '<button onclick="practiceWord(' + i + ')" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Parler</button>' +
+              '<button onclick="playWolof(' + i + ')" data-practice="w-wo" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' +
+              '<button onclick="playEnglish(' + i + ')" data-practice="w-en" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+              '<button onclick="practiceWord(' + i + ')" data-practice="lex:' + esc(w.cat) + ':' + esc(w.en) + '" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Parler</button>' +
             '</div>' +
-            '<div id="res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]"></div>';
+            '<div id="res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]">' + (heardKeys.has("lex:" + w.cat + ":" + w.en) ? '' : '👂 Écoutez l\'anglais d\'abord, puis parlez.') + '</div>';
         box.appendChild(card);
     });
+    refreshPracticeButtons();
 }
 
 function toFrenchPhonetic(s) {
@@ -2129,10 +2553,16 @@ function toFrenchPhonetic(s) {
 }
 function playWolof(i) {
     const w = LEXICON[i];
-    if (w.audio) { new Audio(w.audio).play().catch(() => {}); return; }
+    if (w.audio) {
+        playAudioFile(w.audio).then(r => { if (r === null) speak(toFrenchPhonetic(w.wo), "fr-FR", 0.8); });
+        return;
+    }
     speak(toFrenchPhonetic(w.wo), "fr-FR", 0.8);
 }
-function playEnglish(i) { speak(LEXICON[i].en, "en-US", 0.85); }
+function playEnglish(i) {
+    const w = LEXICON[i];
+    speak(w.en, "en-US", 0.85, "lex:" + w.cat + ":" + w.en);
+}
 
 function normalize(s) { return s.toLowerCase().replace(/[^a-z\s']/g, " ").replace(/\s+/g, " ").trim(); }
 
@@ -2144,7 +2574,7 @@ async function practiceWord(i) {
         return;
     }
     res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    stopAllAudio();
     const r = await startListening("en-US", 6000, false).promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") {
         res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
@@ -2401,7 +2831,7 @@ function renderQuestionDots() {
 }
 
 function interruptCurrentStep() {
-    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    stopAllAudio();
     if (currentStop) { try { currentStop(); } catch (e) {} }
     clearInterval(countdownId);
 }
@@ -2489,6 +2919,14 @@ const LISTENING_BANK = [
     { audio: "Welcome to the class. Please sit down and open your books to page ten.", question: "What page should you open?", options: ["Page ten", "Page eleven", "Page twenty"], answer: 0 },
     { audio: "We are sorry, the restaurant is full right now. Please wait fifteen minutes for a table.", question: "How long must you wait?", options: ["Five minutes", "Fifteen minutes", "Fifty minutes"], answer: 1 }
 ];
+LISTENING_BANK.push(
+    { audio: "Good morning. Fresh tomatoes are five hundred francs a kilo today. Onions are four hundred.", question: "How much are the tomatoes?", options: ["Four hundred francs", "Five hundred francs", "Six hundred francs"], answer: 1 },
+    { audio: "The rainy season starts next month. Farmers will plant groundnuts after the first rain.", question: "What will farmers plant?", options: ["Rice", "Millet", "Groundnuts"], answer: 2 },
+    { audio: "Attention please. The truck with vegetables leaves for Dakar at six in the morning.", question: "What time does the truck leave?", options: ["At five", "At six", "At seven"], answer: 1 },
+    { audio: "I sell eggs and chickens. My farm is near Thiès, and I deliver to the market every Saturday.", question: "When does he deliver to the market?", options: ["Every Friday", "Every Saturday", "Every Sunday"], answer: 1 },
+    { audio: "Sorry, I cannot lower the price. But if you buy ten kilos, I can give you one kilo free.", question: "What do you get if you buy ten kilos?", options: ["A lower price", "One kilo free", "A free bag"], answer: 1 },
+    { audio: "Please remember to drink water. It is very hot in the field today.", question: "Why should you drink water?", options: ["It is hot", "It is late", "It is raining"], answer: 0 }
+);
 let listeningIndex = 0;
 let listeningScore = 0;
 
@@ -2505,6 +2943,8 @@ function renderListeningExercise() {
     $("listening-question").textContent = ex.question;
     $("listening-feedback").textContent = "";
     $("btn-listening-next").classList.add("hidden");
+    $("btn-listening-next").disabled = false;
+    $("btn-listening-next").textContent = "Suivant";
     const box = $("listening-options");
     box.innerHTML = "";
     ex.options.forEach((opt, i) => {
@@ -2512,6 +2952,7 @@ function renderListeningExercise() {
         b.className = "w-full py-2.5 bg-[#1E2740] hover:bg-[#2A3454] rounded-xl text-xs font-semibold text-[#E4DCC9]";
         b.textContent = opt;
         b.onclick = () => checkListeningAnswer(i);
+        b.dataset.practice = "lst-opt"; b.dataset.gate = "0";      // gelé pendant l'annonce
         box.appendChild(b);
     });
     playListeningAudio();
@@ -2527,9 +2968,16 @@ function checkListeningAnswer(i) {
     if (ok) { listeningScore++; addXP(3); }
     $("listening-feedback").className = "text-xs text-center " + (ok ? "text-[#5FC98F]" : "text-amber-400");
     $("listening-feedback").textContent = ok ? "✅ Bonne réponse !" : "❌ La bonne réponse était : " + ex.options[ex.answer];
-    Array.from($("listening-options").children).forEach(b => b.disabled = true);
+    Array.from($("listening-options").children).forEach(b => { b.dataset.locked = "1"; b.disabled = true; });
     $("btn-listening-next").classList.remove("hidden");
     bumpDailyGoal(1);
+    // Loi du silence (Rowe) : 5 s de silence total, puis question suivante automatique.
+    const nb = $("btn-listening-next");
+    nb.disabled = true;
+    silenceCountdown(
+        (sec) => { nb.textContent = "⏳ Silence de consolidation : " + sec + " s"; },
+        () => nextListeningExercise()
+    );
 }
 
 function nextListeningExercise() {
@@ -2547,6 +2995,12 @@ const PAIR_PROMPTS = [
     "Describe your favourite food and how it is prepared.",
     "Talk about your work or what you do every day."
 ];
+
+PAIR_PROMPTS.push(
+    "Talk about a business you would like to start, in agriculture or trade.",
+    "Describe a day as a street trader (baana-baana) at the market.",
+    "Explain how you would sell the vegetables from your farm."
+);
 
 function pairsPromptOfToday() {
     const day = Math.floor(Date.now() / 86400000);
@@ -2634,7 +3088,7 @@ async function loadPairsList() {
             const card = document.createElement("div");
             card.className = "bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 flex items-center justify-between";
             card.innerHTML = "<span class=\"text-xs font-semibold text-[#C9BFA8]\">" + (row.first_name || "Apprenante") + "</span>" +
-                (row.audio_url ? "<a href=\"" + row.audio_url + "\" target=\"_blank\" class=\"text-[11px] text-[#EE85A3] font-semibold\">▶️ Écouter</a>" : "");
+                (row.audio_url ? "<button type=\"button\" data-audio=\"" + esc(row.audio_url) + "\" class=\"text-[11px] text-[#EE85A3] font-semibold\">▶️ Écouter</button>" : "");
             box.appendChild(card);
         });
     } catch (e) {
@@ -2847,7 +3301,7 @@ async function runTest() {
             $("test-status").textContent = r.text ? "Vous avez dit : « " + r.text + " »" : "Aucune réponse captée.";
             renderCorrection(fb);
             if (r.text) showSuggestionsFor(q.phaseId);
-            await new Promise(res => setTimeout(res, 1400));
+            await testSilence(run);
             if (run !== testRun) return;
             if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
 
@@ -2888,7 +3342,7 @@ async function runTest() {
                 $("test-status").textContent = rf.text ? "Vous avez dit : « " + rf.text + " »" : "Aucune réponse captée.";
                 renderCorrection(fbF);
                 if (rf.text) showSuggestionsFor("2b-relance");
-                await new Promise(res => setTimeout(res, 1400));
+                await testSilence(run);
                 if (run !== testRun) return;
                 if (navTarget !== null) { currentQIndex = navTarget === "end" ? questionList.length : navTarget; navTarget = null; continue outer; }
 
@@ -2999,11 +3453,17 @@ let mediaRecorder = null;
 let audioChunks = [];
 let micStream = null;
 
+let recMime = "audio/webm";
+function recExt() { return /mp4|aac/.test(recMime) ? "m4a" : "webm"; }
 async function startAudioCapture() {
     try {
         micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         audioChunks = [];
-        mediaRecorder = new MediaRecorder(micStream);
+        const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac"];
+        recMime = "";
+        for (const t of types) { if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) { recMime = t; break; } }
+        mediaRecorder = recMime ? new MediaRecorder(micStream, { mimeType: recMime }) : new MediaRecorder(micStream);
+        if (!recMime) recMime = mediaRecorder.mimeType || "audio/webm";
         mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
         mediaRecorder.start();
     } catch (e) {
@@ -3016,7 +3476,7 @@ function stopAudioCapture() {
         if (!mediaRecorder) { resolve(null); return; }
         mediaRecorder.onstop = () => {
             if (micStream) micStream.getTracks().forEach(t => t.stop());
-            resolve(new Blob(audioChunks, { type: "audio/webm" }));
+            resolve(new Blob(audioChunks, { type: (recMime || "audio/webm").split(";")[0] }));
         };
         mediaRecorder.stop();
     });
@@ -3025,8 +3485,8 @@ function stopAudioCapture() {
 async function uploadTestAudio(blob, phone) {
     if (!db || !blob || blob.size === 0) return null;
     try {
-        const path = (phone || "anonyme").replace(/\s+/g, "") + "/" + Date.now() + ".webm";
-        const { error } = await db.storage.from("recordings").upload(path, blob, { contentType: "audio/webm" });
+        const path = (phone || "anonyme").replace(/\s+/g, "") + "/" + Date.now() + "." + recExt();
+        const { error } = await db.storage.from("recordings").upload(path, blob, { contentType: (recMime || "audio/webm").split(";")[0] });
         if (error) return null;
         const { data } = db.storage.from("recordings").getPublicUrl(path);
         return data ? data.publicUrl : null;
@@ -3110,6 +3570,56 @@ async function finishTest() {
         stopAudioCapture();
     }
 }
+
+/* ---------- Déverrouillage audio (iPhone/Safari) au tout premier toucher ---------- */
+let audioUnlocked = false;
+function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    try {
+        if ("speechSynthesis" in window) {
+            const u = new SpeechSynthesisUtterance(" ");
+            u.volume = 0;
+            speechSynthesis.speak(u);
+        }
+    } catch (e) {}
+    try {
+        const a = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=");
+        a.volume = 0;
+        const p = a.play();
+        if (p && p.catch) p.catch(() => {});
+    } catch (e) {}
+}
+["touchstart", "pointerdown", "click", "keydown"].forEach(ev =>
+    document.addEventListener(ev, unlockAudio, { capture: true, passive: true }));
+
+/* ---------- Écouteurs robustes : boutons Business, binôme, sécurités audio ---------- */
+(function initRobustListeners() {
+    const biz = $("business-content");
+    if (biz) biz.addEventListener("click", (ev) => {
+        const b = ev.target.closest("[data-biz]");
+        if (!b || b.disabled) return;
+        const sec = b.dataset.sec, i = parseInt(b.dataset.i, 10);
+        const mod = CHINA_TRADE_WOLOF[sec];
+        if (!mod || !mod.vocab[i]) return;
+        const v = mod.vocab[i];
+        if (b.dataset.biz === "en") speak(v.en, "en-US", 0.9, "biz:" + sec + ":" + i);   // débloque « M'entraîner »
+        else if (b.dataset.biz === "wo" && v.wo) speak(toFrenchPhonetic(v.wo), "fr-FR", 0.85);
+    });
+    const pairs = $("pairs-list");
+    if (pairs) pairs.addEventListener("click", (ev) => {
+        const b = ev.target.closest("[data-audio]");
+        if (!b) return;
+        playAudioFile(b.dataset.audio);
+    });
+    const replay = document.querySelector('[onclick="playListeningAudio()"]');
+    if (replay) { replay.dataset.practice = "lst-replay"; replay.dataset.gate = "0"; }
+    const retry = $("btn-test-retry");
+    if (retry) { retry.dataset.practice = "test-retry"; retry.dataset.gate = "0"; }
+    document.addEventListener("visibilitychange", () => { if (document.hidden) stopAllAudio(); });
+    window.addEventListener("pagehide", () => stopAllAudio());
+    if ("speechSynthesis" in window) { try { speechSynthesis.onvoiceschanged = () => {}; speechSynthesis.getVoices(); } catch (e) {} }
+})();
 
 /* ---------- Mode hors-ligne partiel ---------- */
 function updateOfflineBanner() {
