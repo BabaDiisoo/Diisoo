@@ -88,7 +88,26 @@
         /* État "gelé" : boutons désactivés pendant l'écoute (effet de modalité) ou le silence de consolidation */
         button:disabled{ opacity:.45; cursor:not-allowed; filter:grayscale(.35); }
         button:disabled:active{ transform:none; filter:grayscale(.35); }
-    </style>
+    
+/* ===== Micro "maintenir pour parler" (style WhatsApp) ===== */
+[data-practice]{ touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+.mic-pulsing-whatsapp {
+    background-color: #25D366 !important;
+    color: #ffffff !important;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+    animation: whatsappPulse 1.5s infinite ease-in-out;
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+}
+@keyframes whatsappPulse {
+    0% { transform: scale(1.1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+    70% { transform: scale(1.15); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { transform: scale(1.1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+.timer-flash{ animation: timerFlash 0.8s steps(2, start) infinite; }
+@keyframes timerFlash { 0%{opacity:1} 100%{opacity:0.2} }
+#test-timer{ text-align:center; }
+</style>
 </head>
 <body class="bg-[#0B0F1C] font-sans antialiased text-white">
 
@@ -919,7 +938,7 @@ function testSilence(run) {
         silenceCountdown(
             (sec) => {
                 if (run !== testRun) return;
-                setTimer(sec, false);
+                setTimer(sec, false, true);
                 $("test-transcript").textContent = "⏳ Silence de consolidation : " + sec + " s";
             },
             () => { currentStop = null; setNavLocked(false); resolve(); }
@@ -1325,26 +1344,26 @@ function logout() {
 const GENERAL_THEMES = [
     { id: "intro", title: "Se présenter",
       vocab: [
-        { en: "My name is...", fr: "Je m'appelle..." },
-        { en: "I am from Senegal", fr: "Je viens du Sénégal" },
-        { en: "Nice to meet you", fr: "Enchanté(e)" },
-        { en: "I am a student", fr: "Je suis étudiant(e)" },
-        { en: "How old are you?", fr: "Quel âge as-tu ?" },
-        { en: "I am thirty years old", fr: "J'ai trente ans" },
-        { en: "Where do you live?", fr: "Où habites-tu ?" },
-        { en: "I live in Thiès", fr: "J'habite à Thiès" },
-        { en: "What do you do for a living?", fr: "Que fais-tu dans la vie ?" },
-        { en: "I speak English and French", fr: "Je parle anglais et français" },
-        { en: "Can you spell your name?", fr: "Peux-tu épeler ton nom ?" },
-        { en: "F-A-T-O-U", fr: "F-A-T-O-U (épellation)" }
+        { en: "My name is...", fr: "Je m'appelle...", wo: "Maa ngi tudd ..." },
+        { en: "I am from Senegal", fr: "Je viens du Sénégal", wo: "Senegaal laa jóge" },
+        { en: "Nice to meet you", fr: "Enchanté(e)", wo: "Neex na ma xam la" },
+        { en: "I am a student", fr: "Je suis étudiant(e)", wo: "Ndongo laa" },
+        { en: "How old are you?", fr: "Quel âge as-tu ?", wo: "Ñaata at nga am ?" },
+        { en: "I am thirty years old", fr: "J'ai trente ans", wo: "Am naa fanweer at" },
+        { en: "Where do you live?", fr: "Où habites-tu ?", wo: "Foo dëkk ?" },
+        { en: "I live in Thiès", fr: "J'habite à Thiès", wo: "Dama dëkk Thiès" },
+        { en: "What do you do for a living?", fr: "Que fais-tu dans la vie ?", wo: "Ban liggéey nga def ?" },
+        { en: "I speak English and French", fr: "Je parle anglais et français", wo: "Damay wax angale ak farañse" },
+        { en: "Can you spell your name?", fr: "Peux-tu épeler ton nom ?", wo: "Mën nga wax sa tur araf ci araf ?" },
+        { en: "F-A-T-O-U", fr: "F-A-T-O-U (épellation)", wo: "F-A-T-O-U (araf ci araf)" }
       ],
       dialogue: [
-        { who: "A", en: "Hello, what is your name?" },
-        { who: "B", en: "My name is Fatou. Nice to meet you." },
-        { who: "A", en: "Nice to meet you too. Where are you from?" },
-        { who: "B", en: "I am from Thiès, in Senegal." },
-        { who: "A", en: "Can you spell your name, please?" },
-        { who: "B", en: "Yes: F-A-T-O-U." }
+        { who: "A", en: "Hello, what is your name?", fr: "Bonjour, comment vous appelez-vous ?", wo: "Salaamaalekum, noo tudd ?" },
+        { who: "B", en: "My name is Fatou. Nice to meet you.", fr: "Je m'appelle Fatou. Enchantée.", wo: "Maa ngi tudd Fatou. Neex na ma xam la." },
+        { who: "A", en: "Nice to meet you too. Where are you from?", fr: "Enchanté aussi. D'où venez-vous ?", wo: "Neex na ma it. Fu nga jóge ?" },
+        { who: "B", en: "I am from Thiès, in Senegal.", fr: "Je viens de Thiès, au Sénégal.", wo: "Thiès laa jóge, ci Senegaal." },
+        { who: "A", en: "Can you spell your name, please?", fr: "Pouvez-vous épeler votre nom, s'il vous plaît ?", wo: "Mën nga wax sa tur araf ci araf ?" },
+        { who: "B", en: "Yes: F-A-T-O-U.", fr: "Oui : F-A-T-O-U.", wo: "Waaw : F-A-T-O-U." }
       ],
       quiz: [
         { q: "My name ___ Fatou.", o: ["is", "am", "are"], a: 0, why: "My name is + nom : toujours « is »." },
@@ -1354,26 +1373,26 @@ const GENERAL_THEMES = [
     },
     { id: "family", title: "Famille",
       vocab: [
-        { en: "Family", fr: "Famille" },
-        { en: "Father", fr: "Père" },
-        { en: "Mother", fr: "Mère" },
-        { en: "Brother", fr: "Frère" },
-        { en: "Sister", fr: "Sœur" },
-        { en: "I have three children", fr: "J'ai trois enfants" },
-        { en: "My mother lives with us", fr: "Ma mère habite avec nous" },
-        { en: "We eat together every evening", fr: "Nous mangeons ensemble chaque soir" },
-        { en: "My father is a driver", fr: "Mon père est chauffeur" },
-        { en: "I love my family very much", fr: "J'aime beaucoup ma famille" },
-        { en: "Who is the oldest in your family?", fr: "Qui est le/la plus âgé(e) de ta famille ?" },
-        { en: "My grandmother is the oldest", fr: "Ma grand-mère est la plus âgée" }
+        { en: "Family", fr: "Famille", wo: "Njabootu" },
+        { en: "Father", fr: "Père", wo: "Baay" },
+        { en: "Mother", fr: "Mère", wo: "Yaay" },
+        { en: "Brother", fr: "Frère", wo: "Mak bu góor (grand frère) / Rak bu góor (petit frère)" },
+        { en: "Sister", fr: "Sœur", wo: "Mak bu jigéen (grande sœur) / Rak bu jigéen (petite sœur)" },
+        { en: "I have three children", fr: "J'ai trois enfants", wo: "Am naa ñett doom" },
+        { en: "My mother lives with us", fr: "Ma mère habite avec nous", wo: "Sama yaay dafay dëkk ak nun" },
+        { en: "We eat together every evening", fr: "Nous mangeons ensemble chaque soir", wo: "Danuy lekk ànd ci ngoon, bés bu nekk" },
+        { en: "My father is a driver", fr: "Mon père est chauffeur", wo: "Sama baay chauffeur la" },
+        { en: "I love my family very much", fr: "J'aime beaucoup ma famille", wo: "Dama bëgg sama njabootu lool" },
+        { en: "Who is the oldest in your family?", fr: "Qui est le/la plus âgé(e) de ta famille ?", wo: "Kan moo gëna mag ci sa njabootu ?" },
+        { en: "My grandmother is the oldest", fr: "Ma grand-mère est la plus âgée", wo: "Sama maam bu jigéen moo gëna mag" }
       ],
       dialogue: [
-        { who: "A", en: "Do you have a big family?" },
-        { who: "B", en: "Yes, I have two brothers and one sister." },
-        { who: "A", en: "Do you all live together?" },
-        { who: "B", en: "Yes, we live in the same house with our parents." },
-        { who: "A", en: "Who is the oldest in your family?" },
-        { who: "B", en: "My grandmother; she is 78 years old." }
+        { who: "A", en: "Do you have a big family?", fr: "Avez-vous une grande famille ?", wo: "Ndax am nga njabootu bu mag ?" },
+        { who: "B", en: "Yes, I have two brothers and one sister.", fr: "Oui, j'ai deux frères et une sœur.", wo: "Waaw, am naa ñaar rak bu góor ak benn rak bu jigéen." },
+        { who: "A", en: "Do you all live together?", fr: "Vivez-vous tous ensemble ?", wo: "Ndax dangeen dëkk ànd ?" },
+        { who: "B", en: "Yes, we live in the same house with our parents.", fr: "Oui, nous vivons dans la même maison avec nos parents.", wo: "Waaw, danuy dëkk ci benn kër ak sunu waajur." },
+        { who: "A", en: "Who is the oldest in your family?", fr: "Qui est le plus âgé de votre famille ?", wo: "Kan moo gëna mag ci sa njabootu ?" },
+        { who: "B", en: "My grandmother; she is 78 years old.", fr: "Ma grand-mère ; elle a 78 ans.", wo: "Sama maam bu jigéen ; am na juróom ñaar fukk ak juróom ñett at." }
       ],
       quiz: [
         { q: "She ___ a teacher.", o: ["am", "is", "are"], a: 1, why: "Avec he, she, it, on utilise « is »." },
@@ -1383,26 +1402,26 @@ const GENERAL_THEMES = [
     },
     { id: "work", title: "Travail & routine",
       vocab: [
-        { en: "Work", fr: "Travail" },
-        { en: "Job", fr: "Emploi" },
-        { en: "Every day", fr: "Chaque jour" },
-        { en: "Busy", fr: "Occupé(e)" },
-        { en: "Colleague", fr: "Collègue" },
-        { en: "I start work at eight o'clock", fr: "Je commence le travail à huit heures" },
-        { en: "I finish work at five o'clock", fr: "Je termine le travail à dix-sept heures" },
-        { en: "I work in an office", fr: "Je travaille dans un bureau" },
-        { en: "My job is difficult but interesting", fr: "Mon travail est difficile mais intéressant" },
-        { en: "I am looking for a new job", fr: "Je cherche un nouvel emploi" },
-        { en: "I like helping customers", fr: "J'aime aider les clients" },
-        { en: "I take a short break at noon", fr: "Je fais une courte pause à midi" }
+        { en: "Work", fr: "Travail", wo: "Liggéey" },
+        { en: "Job", fr: "Emploi", wo: "Liggéey bi" },
+        { en: "Every day", fr: "Chaque jour", wo: "Bés bu nekk" },
+        { en: "Busy", fr: "Occupé(e)", wo: "Dama am liggéey bu bari" },
+        { en: "Colleague", fr: "Collègue", wo: "Xarit ci liggéey" },
+        { en: "I start work at eight o'clock", fr: "Je commence le travail à huit heures", wo: "Damay tàmbali liggéey ci juróom ñett" },
+        { en: "I finish work at five o'clock", fr: "Je termine le travail à dix-sept heures", wo: "Damay noppi liggéey ci juróom" },
+        { en: "I work in an office", fr: "Je travaille dans un bureau", wo: "Damay liggéey ci bureau bi" },
+        { en: "My job is difficult but interesting", fr: "Mon travail est difficile mais intéressant", wo: "Sama liggéey dafa sonn waaye dafay neex ma" },
+        { en: "I am looking for a new job", fr: "Je cherche un nouvel emploi", wo: "Maa ngi seet liggéey bu bees" },
+        { en: "I like helping customers", fr: "J'aime aider les clients", wo: "Dama bëgg dimbali kiliyaan yi" },
+        { en: "I take a short break at noon", fr: "Je fais une courte pause à midi", wo: "Damay noppalu tuuti ci digg-bëccëg" }
       ],
       dialogue: [
-        { who: "A", en: "What do you do?" },
-        { who: "B", en: "I work in a shop every day." },
-        { who: "A", en: "What time do you start work?" },
-        { who: "B", en: "I start at eight and finish at six." },
-        { who: "A", en: "What do you like about your job?" },
-        { who: "B", en: "I like helping customers every day." }
+        { who: "A", en: "What do you do?", fr: "Que faites-vous comme travail ?", wo: "Ban liggéey nga def ?" },
+        { who: "B", en: "I work in a shop every day.", fr: "Je travaille dans une boutique tous les jours.", wo: "Damay liggéey ci boutik bi bés bu nekk." },
+        { who: "A", en: "What time do you start work?", fr: "À quelle heure commencez-vous le travail ?", wo: "Ci ban waxtu nga tàmbali liggéey ?" },
+        { who: "B", en: "I start at eight and finish at six.", fr: "Je commence à huit heures et je finis à six heures.", wo: "Damay tàmbali ci juróom ñett te noppi ci juróom benn." },
+        { who: "A", en: "What do you like about your job?", fr: "Qu'aimez-vous dans votre travail ?", wo: "Lan nga bëgg ci sa liggéey ?" },
+        { who: "B", en: "I like helping customers every day.", fr: "J'aime aider les clients chaque jour.", wo: "Dama bëgg dimbali kiliyaan yi bés bu nekk." }
       ],
       quiz: [
         { q: "He ___ to work every day.", o: ["go", "goes", "going"], a: 1, why: "Avec he, le verbe prend -es : goes." },
@@ -1412,25 +1431,25 @@ const GENERAL_THEMES = [
     },
     { id: "market", title: "Achats & argent",
       vocab: [
-        { en: "Market", fr: "Marché" },
-        { en: "Price", fr: "Prix" },
-        { en: "Money", fr: "Argent" },
-        { en: "Buy", fr: "Acheter" },
-        { en: "Cheap", fr: "Bon marché" },
-        { en: "How much does it cost?", fr: "Combien ça coûte ?" },
-        { en: "That is too expensive", fr: "C'est trop cher" },
-        { en: "Can you make it cheaper?", fr: "Peux-tu baisser le prix ?" },
-        { en: "I would like to buy some rice", fr: "Je voudrais acheter du riz" },
-        { en: "Do you accept mobile money?", fr: "Acceptez-vous le paiement mobile ?" },
-        { en: "How much are the tomatoes?", fr: "Combien coûtent les tomates ?" },
-        { en: "Could you give me a discount?", fr: "Pourriez-vous me faire une réduction ?" }
+        { en: "Market", fr: "Marché", wo: "Marse bi" },
+        { en: "Price", fr: "Prix", wo: "Njëg" },
+        { en: "Money", fr: "Argent", wo: "Xaalis" },
+        { en: "Buy", fr: "Acheter", wo: "Jënd" },
+        { en: "Cheap", fr: "Bon marché", wo: "Dafa yomb" },
+        { en: "How much does it cost?", fr: "Combien ça coûte ?", wo: "Ñaata la ?" },
+        { en: "That is too expensive", fr: "C'est trop cher", wo: "Dafa seer lool" },
+        { en: "Can you make it cheaper?", fr: "Peux-tu baisser le prix ?", wo: "Mën nga wàññi njëg li ?" },
+        { en: "I would like to buy some rice", fr: "Je voudrais acheter du riz", wo: "Dama bëgg jënd ceeb" },
+        { en: "Do you accept mobile money?", fr: "Acceptez-vous le paiement mobile ?", wo: "Ndax nangu ngeen Wave ak Orange Money ?" },
+        { en: "How much are the tomatoes?", fr: "Combien coûtent les tomates ?", wo: "Ñaata la tamaate yi ?" },
+        { en: "Could you give me a discount?", fr: "Pourriez-vous me faire une réduction ?", wo: "Mën nga ma wàññil ci njëg li ?" }
       ],
       dialogue: [
-        { who: "A", en: "How much is this bag?" },
-        { who: "B", en: "It's five thousand francs." },
-        { who: "A", en: "That is too expensive. Can you make it cheaper?" },
-        { who: "B", en: "Okay, four thousand francs for you." },
-        { who: "A", en: "Thank you, I'll take two." }
+        { who: "A", en: "How much is this bag?", fr: "Combien coûte ce sac ?", wo: "Ñaata la sac bi ?" },
+        { who: "B", en: "It's five thousand francs.", fr: "Il coûte cinq mille francs.", wo: "Juróom junni franc la." },
+        { who: "A", en: "That is too expensive. Can you make it cheaper?", fr: "C'est trop cher. Pouvez-vous baisser le prix ?", wo: "Dafa seer lool. Mën nga wàññi njëg li ?" },
+        { who: "B", en: "Okay, four thousand francs for you.", fr: "D'accord, quatre mille francs pour vous.", wo: "Waaw, ñeent junni franc ngir yaw." },
+        { who: "A", en: "Thank you, I'll take two.", fr: "Merci, j'en prends deux.", wo: "Jërëjëf, dinaa jël ñaar." }
       ],
       quiz: [
         { q: "How much ___ this bag?", o: ["are", "is", "do"], a: 1, why: "Un seul sac : « How much is this bag? »." },
@@ -1440,26 +1459,26 @@ const GENERAL_THEMES = [
     },
     { id: "travel", title: "Voyage & transport",
       vocab: [
-        { en: "Airport", fr: "Aéroport" },
-        { en: "Ticket", fr: "Billet" },
-        { en: "Passport", fr: "Passeport" },
-        { en: "Flight", fr: "Vol" },
-        { en: "Bus", fr: "Bus" },
-        { en: "I would like to book a ticket", fr: "Je voudrais réserver un billet" },
-        { en: "What time does the bus leave?", fr: "À quelle heure part le bus ?" },
-        { en: "Where is the nearest bus stop?", fr: "Où est l'arrêt de bus le plus proche ?" },
-        { en: "I am traveling to visit my family", fr: "Je voyage pour rendre visite à ma famille" },
-        { en: "Do I need a visa for this country?", fr: "Ai-je besoin d'un visa pour ce pays ?" },
-        { en: "How do you get to work?", fr: "Comment vas-tu au travail ?" },
-        { en: "I take the bus every morning", fr: "Je prends le bus chaque matin" }
+        { en: "Airport", fr: "Aéroport", wo: "Ayropoor bi" },
+        { en: "Ticket", fr: "Billet", wo: "Bilee bi" },
+        { en: "Passport", fr: "Passeport", wo: "Paspoor bi" },
+        { en: "Flight", fr: "Vol", wo: "Tukki bu avion" },
+        { en: "Bus", fr: "Bus", wo: "Bus bi" },
+        { en: "I would like to book a ticket", fr: "Je voudrais réserver un billet", wo: "Dama bëgg reserve benn bilee" },
+        { en: "What time does the bus leave?", fr: "À quelle heure part le bus ?", wo: "Ci ban waxtu la bus bi di dem ?" },
+        { en: "Where is the nearest bus stop?", fr: "Où est l'arrêt de bus le plus proche ?", wo: "Ana arre bu gëna jege ?" },
+        { en: "I am traveling to visit my family", fr: "Je voyage pour rendre visite à ma famille", wo: "Maa ngi tukki ngir gis sama njabootu" },
+        { en: "Do I need a visa for this country?", fr: "Ai-je besoin d'un visa pour ce pays ?", wo: "Ndax war naa am visa ngir réew mii ?" },
+        { en: "How do you get to work?", fr: "Comment vas-tu au travail ?", wo: "Naka nga di dem liggéey ?" },
+        { en: "I take the bus every morning", fr: "Je prends le bus chaque matin", wo: "Damay jël bus bi suba su nekk" }
       ],
       dialogue: [
-        { who: "A", en: "Where is the airport?" },
-        { who: "B", en: "It's ten minutes from here by taxi." },
-        { who: "A", en: "What time does my flight leave?" },
-        { who: "B", en: "Your flight leaves at eight in the morning." },
-        { who: "A", en: "How do you usually travel to work?" },
-        { who: "B", en: "I take the bus every morning." }
+        { who: "A", en: "Where is the airport?", fr: "Où est l'aéroport ?", wo: "Fan la ayropoor bi nekk ?" },
+        { who: "B", en: "It's ten minutes from here by taxi.", fr: "C'est à dix minutes d'ici en taxi.", wo: "Fukki minut la ci taksi bu jóge fii." },
+        { who: "A", en: "What time does my flight leave?", fr: "À quelle heure part mon vol ?", wo: "Ci ban waxtu la sama tukki avion di dem ?" },
+        { who: "B", en: "Your flight leaves at eight in the morning.", fr: "Votre vol part à huit heures du matin.", wo: "Sa tukki avion bi dafay dem ci juróom ñett ci suba." },
+        { who: "A", en: "How do you usually travel to work?", fr: "Comment allez-vous d'habitude au travail ?", wo: "Naka nga di dem liggéey ?" },
+        { who: "B", en: "I take the bus every morning.", fr: "Je prends le bus tous les matins.", wo: "Damay jël bus bi suba su nekk." }
       ],
       quiz: [
         { q: "I need a ___ to travel.", o: ["passport", "password", "passeport"], a: 0, why: "Orthographe correcte en anglais : passport." },
@@ -1469,26 +1488,26 @@ const GENERAL_THEMES = [
     },
     { id: "health", title: "Santé & urgences",
       vocab: [
-        { en: "Doctor", fr: "Médecin" },
-        { en: "Hospital", fr: "Hôpital" },
-        { en: "Sick", fr: "Malade" },
-        { en: "Medicine", fr: "Médicament" },
-        { en: "Help", fr: "Aide" },
-        { en: "I have a headache", fr: "J'ai mal à la tête" },
-        { en: "I need to see a doctor", fr: "J'ai besoin de voir un médecin" },
-        { en: "Where is the nearest hospital?", fr: "Où est l'hôpital le plus proche ?" },
-        { en: "I feel better today", fr: "Je me sens mieux aujourd'hui" },
-        { en: "Please call an ambulance", fr: "Appelez une ambulance s'il vous plaît" },
-        { en: "Take one tablet twice a day", fr: "Prenez un comprimé deux fois par jour" },
-        { en: "Since when do you feel sick?", fr: "Depuis quand te sens-tu malade ?" }
+        { en: "Doctor", fr: "Médecin", wo: "Doktoor bi" },
+        { en: "Hospital", fr: "Hôpital", wo: "Opitaal bi" },
+        { en: "Sick", fr: "Malade", wo: "Feebar" },
+        { en: "Medicine", fr: "Médicament", wo: "Garab gi" },
+        { en: "Help", fr: "Aide", wo: "Dimbali" },
+        { en: "I have a headache", fr: "J'ai mal à la tête", wo: "Sama bopp dafay metti" },
+        { en: "I need to see a doctor", fr: "J'ai besoin de voir un médecin", wo: "Dama war a gis doktoor" },
+        { en: "Where is the nearest hospital?", fr: "Où est l'hôpital le plus proche ?", wo: "Ana opitaal bu gëna jege ?" },
+        { en: "I feel better today", fr: "Je me sens mieux aujourd'hui", wo: "Dama gën a baax tey" },
+        { en: "Please call an ambulance", fr: "Appelez une ambulance s'il vous plaît", wo: "Wool ambilaas bi, su la neexee" },
+        { en: "Take one tablet twice a day", fr: "Prenez un comprimé deux fois par jour", wo: "Naanal benn comprimé ñaari yoon ci bés bi" },
+        { en: "Since when do you feel sick?", fr: "Depuis quand te sens-tu malade ?", wo: "Kañ nga tàmbali feebar ?" }
       ],
       dialogue: [
-        { who: "A", en: "Are you okay?" },
-        { who: "B", en: "No, I feel sick. I need a doctor." },
-        { who: "A", en: "What is wrong?" },
-        { who: "B", en: "I have a headache and a fever." },
-        { who: "A", en: "Since when do you feel like this?" },
-        { who: "B", en: "Since yesterday evening." }
+        { who: "A", en: "Are you okay?", fr: "Ça va ?", wo: "Yaa ngi ci jàmm ?" },
+        { who: "B", en: "No, I feel sick. I need a doctor.", fr: "Non, je me sens malade. J'ai besoin d'un médecin.", wo: "Déedéet, dama feebar. Dama war a gis doktoor." },
+        { who: "A", en: "What is wrong?", fr: "Qu'est-ce qui ne va pas ?", wo: "Lan la ?" },
+        { who: "B", en: "I have a headache and a fever.", fr: "J'ai mal à la tête et de la fièvre.", wo: "Sama bopp dafay metti te dama am tàngoor." },
+        { who: "A", en: "Since when do you feel like this?", fr: "Depuis quand vous sentez-vous comme ça ?", wo: "Kañ nga tàmbali feebar ?" },
+        { who: "B", en: "Since yesterday evening.", fr: "Depuis hier soir.", wo: "Démb ci ngoon." }
       ],
       quiz: [
         { q: "I ___ sick today.", o: ["feel", "feels", "feeling"], a: 0, why: "Avec I, le verbe reste à la base : feel." },
@@ -1498,26 +1517,26 @@ const GENERAL_THEMES = [
     },
     { id: "food", title: "Nourriture & restaurant",
       vocab: [
-        { en: "Restaurant", fr: "Restaurant" },
-        { en: "Menu", fr: "Menu" },
-        { en: "Water", fr: "Eau" },
-        { en: "Delicious", fr: "Délicieux" },
-        { en: "Bill", fr: "Addition" },
-        { en: "I am hungry", fr: "J'ai faim" },
-        { en: "What do you recommend?", fr: "Que recommandez-vous ?" },
-        { en: "I would like some rice and fish", fr: "Je voudrais du riz et du poisson" },
-        { en: "This meal is very tasty", fr: "Ce repas est très savoureux" },
-        { en: "Can I have the bill, please?", fr: "Puis-je avoir l'addition, s'il vous plaît ?" },
-        { en: "What is your favourite dish?", fr: "Quel est ton plat préféré ?" },
-        { en: "I like thieboudienne", fr: "J'aime le thiéboudienne" }
+        { en: "Restaurant", fr: "Restaurant", wo: "Restoraan bi" },
+        { en: "Menu", fr: "Menu", wo: "Menu bi" },
+        { en: "Water", fr: "Eau", wo: "Ndox mi" },
+        { en: "Delicious", fr: "Délicieux", wo: "Dafa neex lool" },
+        { en: "Bill", fr: "Addition", wo: "Addition bi" },
+        { en: "I am hungry", fr: "J'ai faim", wo: "Xiif na ma" },
+        { en: "What do you recommend?", fr: "Que recommandez-vous ?", wo: "Lan nga ma digal ?" },
+        { en: "I would like some rice and fish", fr: "Je voudrais du riz et du poisson", wo: "Dama bëgg ceeb ak jën" },
+        { en: "This meal is very tasty", fr: "Ce repas est très savoureux", wo: "Lekk bii dafa neex lool" },
+        { en: "Can I have the bill, please?", fr: "Puis-je avoir l'addition, s'il vous plaît ?", wo: "Mën naa am addition bi, su la neexee ?" },
+        { en: "What is your favourite dish?", fr: "Quel est ton plat préféré ?", wo: "Ban lekk nga gëna bëgg ?" },
+        { en: "I like thieboudienne", fr: "J'aime le thiéboudienne", wo: "Dama bëgg ceebu jën" }
       ],
       dialogue: [
-        { who: "A", en: "Can I have the menu, please?" },
-        { who: "B", en: "Of course, here you are." },
-        { who: "A", en: "What do you recommend today?" },
-        { who: "B", en: "The fish with rice is delicious today." },
-        { who: "A", en: "What would you like to drink?" },
-        { who: "B", en: "Just water, please." }
+        { who: "A", en: "Can I have the menu, please?", fr: "Puis-je avoir le menu, s'il vous plaît ?", wo: "Mën naa am menu bi, su la neexee ?" },
+        { who: "B", en: "Of course, here you are.", fr: "Bien sûr, voici.", wo: "Waaw, jël ko." },
+        { who: "A", en: "What do you recommend today?", fr: "Que recommandez-vous aujourd'hui ?", wo: "Lan nga ma digal tey ?" },
+        { who: "B", en: "The fish with rice is delicious today.", fr: "Le poisson avec du riz est délicieux aujourd'hui.", wo: "Jën wu ñu def ak ceeb neex na lool tey." },
+        { who: "A", en: "What would you like to drink?", fr: "Que voulez-vous boire ?", wo: "Lan nga bëgg a naan ?" },
+        { who: "B", en: "Just water, please.", fr: "Juste de l'eau, s'il vous plaît.", wo: "Ndox rekk, su la neexee." }
       ],
       quiz: [
         { q: "I would like ___ water, please.", o: ["some", "a", "an"], a: 0, why: "Indénombrable : some water." },
@@ -1527,26 +1546,26 @@ const GENERAL_THEMES = [
     },
     { id: "time", title: "Temps & nombres",
       vocab: [
-        { en: "Today", fr: "Aujourd'hui" },
-        { en: "Tomorrow", fr: "Demain" },
-        { en: "Yesterday", fr: "Hier" },
-        { en: "Number", fr: "Nombre" },
-        { en: "Time", fr: "Heure / temps" },
-        { en: "What time is it now?", fr: "Quelle heure est-il maintenant ?" },
-        { en: "I will see you tomorrow morning", fr: "Je te verrai demain matin" },
-        { en: "The meeting starts at ten o'clock", fr: "La réunion commence à dix heures" },
-        { en: "I was busy yesterday", fr: "J'étais occupé(e) hier" },
-        { en: "How many people are coming?", fr: "Combien de personnes viennent ?" },
-        { en: "What time do you wake up?", fr: "À quelle heure te réveilles-tu ?" },
-        { en: "I wake up at six every morning", fr: "Je me réveille à six heures chaque matin" }
+        { en: "Today", fr: "Aujourd'hui", wo: "Tey" },
+        { en: "Tomorrow", fr: "Demain", wo: "Ëllëg" },
+        { en: "Yesterday", fr: "Hier", wo: "Démb" },
+        { en: "Number", fr: "Nombre", wo: "Lim" },
+        { en: "Time", fr: "Heure / temps", wo: "Waxtu" },
+        { en: "What time is it now?", fr: "Quelle heure est-il maintenant ?", wo: "Ban waxtu la léegi ?" },
+        { en: "I will see you tomorrow morning", fr: "Je te verrai demain matin", wo: "Dinaa la gis ëllëg ci suba" },
+        { en: "The meeting starts at ten o'clock", fr: "La réunion commence à dix heures", wo: "Ndaje mi dafay tàmbali ci fukk" },
+        { en: "I was busy yesterday", fr: "J'étais occupé(e) hier", wo: "Damaa am liggéey bu bari démb" },
+        { en: "How many people are coming?", fr: "Combien de personnes viennent ?", wo: "Ñaata nit ñu ngi ñëw ?" },
+        { en: "What time do you wake up?", fr: "À quelle heure te réveilles-tu ?", wo: "Ci ban waxtu nga di jóg ?" },
+        { en: "I wake up at six every morning", fr: "Je me réveille à six heures chaque matin", wo: "Damay jóg ci juróom benn suba su nekk" }
       ],
       dialogue: [
-        { who: "A", en: "What time is it?" },
-        { who: "B", en: "It's three o'clock." },
-        { who: "A", en: "What time does the meeting start?" },
-        { who: "B", en: "It starts tomorrow at ten o'clock." },
-        { who: "A", en: "What time do you usually wake up?" },
-        { who: "B", en: "I wake up at six every morning." }
+        { who: "A", en: "What time is it?", fr: "Quelle heure est-il ?", wo: "Ban waxtu la ?" },
+        { who: "B", en: "It's three o'clock.", fr: "Il est trois heures.", wo: "Ñett waxtu la." },
+        { who: "A", en: "What time does the meeting start?", fr: "À quelle heure commence la réunion ?", wo: "Ci ban waxtu la ndaje mi di tàmbali ?" },
+        { who: "B", en: "It starts tomorrow at ten o'clock.", fr: "Elle commence demain à dix heures.", wo: "Dafay tàmbali ëllëg ci fukk." },
+        { who: "A", en: "What time do you usually wake up?", fr: "À quelle heure vous réveillez-vous d'habitude ?", wo: "Ci ban waxtu nga di jóg ?" },
+        { who: "B", en: "I wake up at six every morning.", fr: "Je me réveille à six heures tous les matins.", wo: "Damay jóg ci juróom benn suba su nekk." }
       ],
       quiz: [
         { q: "What ___ is it?", o: ["time", "times", "timing"], a: 0, why: "Demander l'heure : What time is it?" },
@@ -1556,22 +1575,22 @@ const GENERAL_THEMES = [
     },
     { id: "visa", title: "Visa & Entretien consulaire",
       vocab: [
-        { en: "Visa application", fr: "Demande de visa" },
-        { en: "Passport", fr: "Passeport" },
-        { en: "Purpose of visit", fr: "Motif du séjour" },
-        { en: "I am visiting my family", fr: "Je rends visite à ma famille" },
-        { en: "Return ticket", fr: "Billet retour" },
-        { en: "How long will you stay?", fr: "Combien de temps allez-vous rester ?" },
-        { en: "I will stay for two weeks", fr: "Je vais rester deux semaines" },
-        { en: "Who is paying for your trip?", fr: "Qui finance votre voyage ?" },
-        { en: "I am paying for myself", fr: "Je finance moi-même mon voyage" },
-        { en: "Do you have accommodation booked?", fr: "Avez-vous un hébergement réservé ?" }
+        { en: "Visa application", fr: "Demande de visa", wo: "Ñaan visa" },
+        { en: "Passport", fr: "Passeport", wo: "Paspoor bi" },
+        { en: "Purpose of visit", fr: "Motif du séjour", wo: "Sabab bu tukki bi" },
+        { en: "I am visiting my family", fr: "Je rends visite à ma famille", wo: "Maa ngi dem gis sama njabootu" },
+        { en: "Return ticket", fr: "Billet retour", wo: "Bilee bu délsi" },
+        { en: "How long will you stay?", fr: "Combien de temps allez-vous rester ?", wo: "Ñaata bés ngay toog ?" },
+        { en: "I will stay for two weeks", fr: "Je vais rester deux semaines", wo: "Dinaa toog ñaari ayubés" },
+        { en: "Who is paying for your trip?", fr: "Qui finance votre voyage ?", wo: "Kan moo di fay sa tukki ?" },
+        { en: "I am paying for myself", fr: "Je finance moi-même mon voyage", wo: "Man laa koy fay sama bopp" },
+        { en: "Do you have accommodation booked?", fr: "Avez-vous un hébergement réservé ?", wo: "Ndax am nga bérab bu nga di nelaw bu nga reserve ?" }
       ],
       dialogue: [
-        { who: "A", en: "What is the purpose of your visit?" },
-        { who: "B", en: "I am visiting my family for two weeks." },
-        { who: "A", en: "Do you have a return ticket?" },
-        { who: "B", en: "Yes, I have my return ticket and my hotel booking." }
+        { who: "A", en: "What is the purpose of your visit?", fr: "Quel est le motif de votre visite ?", wo: "Lan moo tax nga di tukki ?" },
+        { who: "B", en: "I am visiting my family for two weeks.", fr: "Je rends visite à ma famille pendant deux semaines.", wo: "Maa ngi dem gis sama njabootu ñaari ayubés." },
+        { who: "A", en: "Do you have a return ticket?", fr: "Avez-vous un billet retour ?", wo: "Ndax am nga bilee bu délsi ?" },
+        { who: "B", en: "Yes, I have my return ticket and my hotel booking.", fr: "Oui, j'ai mon billet retour et ma réservation d'hôtel.", wo: "Waaw, am naa sama bilee bu délsi ak sama reservation bu otel." }
       ],
       quiz: [
         { q: "What is the ___ of your visit?", o: ["purpose", "propose", "purposal"], a: 0, why: "« Purpose of visit » = motif du séjour." },
@@ -1581,27 +1600,60 @@ const GENERAL_THEMES = [
     },
     { id: "housing", title: "Logement",
       vocab: [
-        { en: "I am looking for an apartment", fr: "Je cherche un appartement" },
-        { en: "How much is the rent?", fr: "Quel est le montant du loyer ?" },
-        { en: "Is the deposit included?", fr: "La caution est-elle incluse ?" },
-        { en: "Landlord", fr: "Propriétaire" },
-        { en: "Tenant", fr: "Locataire" },
-        { en: "The electricity is not working", fr: "L'électricité ne fonctionne pas" },
-        { en: "Can I visit the house?", fr: "Puis-je visiter la maison ?" },
-        { en: "How many rooms are there?", fr: "Combien de pièces y a-t-il ?" },
-        { en: "I need to sign the lease", fr: "Je dois signer le bail" },
-        { en: "The neighbourhood is quiet", fr: "Le quartier est calme" }
+        { en: "I am looking for an apartment", fr: "Je cherche un appartement", wo: "Maa ngi seet apartema" },
+        { en: "How much is the rent?", fr: "Quel est le montant du loyer ?", wo: "Ñaata la loyer bi ?" },
+        { en: "Is the deposit included?", fr: "La caution est-elle incluse ?", wo: "Ndax caution bi mu ngi ci ?" },
+        { en: "Landlord", fr: "Propriétaire", wo: "Boroom kër gi" },
+        { en: "Tenant", fr: "Locataire", wo: "Kiraayekat" },
+        { en: "The electricity is not working", fr: "L'électricité ne fonctionne pas", wo: "Kuraŋ bi du liggéey" },
+        { en: "Can I visit the house?", fr: "Puis-je visiter la maison ?", wo: "Mën naa gis kër gi ?" },
+        { en: "How many rooms are there?", fr: "Combien de pièces y a-t-il ?", wo: "Ñaata pièce la am ?" },
+        { en: "I need to sign the lease", fr: "Je dois signer le bail", wo: "Dama war a sinye kontra kër gi" },
+        { en: "The neighbourhood is quiet", fr: "Le quartier est calme", wo: "Quartier bi dafa dal" }
       ],
       dialogue: [
-        { who: "A", en: "How much is the rent for this apartment?" },
-        { who: "B", en: "It is fifty thousand francs, deposit included." },
-        { who: "A", en: "Can I visit before I decide?" },
-        { who: "B", en: "Yes, of course, come tomorrow morning." }
+        { who: "A", en: "How much is the rent for this apartment?", fr: "Combien coûte le loyer de cet appartement ?", wo: "Ñaata la loyer apartema bii ?" },
+        { who: "B", en: "It is fifty thousand francs, deposit included.", fr: "C'est cinquante mille francs, caution comprise.", wo: "Juróom fukk junni franc la, ak caution bi." },
+        { who: "A", en: "Can I visit before I decide?", fr: "Puis-je visiter avant de décider ?", wo: "Mën naa gis balaa may tànn ?" },
+        { who: "B", en: "Yes, of course, come tomorrow morning.", fr: "Oui, bien sûr, venez demain matin.", wo: "Waaw, dëgg la, ñëwal ëllëg ci suba." }
       ],
       quiz: [
         { q: "« Loyer » se dit :", o: ["rent", "rain", "rank"], a: 0, why: "Rent = loyer." },
         { q: "The ___ owns the house and rents it out.", o: ["landlord", "tenant", "neighbour"], a: 0, why: "Landlord = propriétaire." },
         { q: "« Puis-je visiter la maison ? » se dit :", o: ["Can I visit the house?", "Can I visited the house?", "Can I visit at house?"], a: 0, why: "Forme correcte avec l'auxiliaire can + verbe à l'infinitif." }
+      ]
+    },
+    { id: "agri", title: "Agriculture",
+      vocab: [
+        { en: "Seeds", fr: "Semences", wo: "Semences yi" },
+        { en: "Fertilizer", fr: "Engrais", wo: "Engrais bi" },
+        { en: "Field", fr: "Champ", wo: "Tool bi" },
+        { en: "Harvest", fr: "Récolte", wo: "Ngóob mi" },
+        { en: "Farmer", fr: "Agriculteur", wo: "Beykat bi" },
+        { en: "I need seeds for my field", fr: "J'ai besoin de semences pour mon champ", wo: "Damaa soxla semences ngir sama tool" },
+        { en: "How much is a bag of fertilizer?", fr: "Combien coûte un sac d'engrais ?", wo: "Ñaata la benn saaku engrais ?" },
+        { en: "Do these seeds grow well in the rainy season?", fr: "Ces semences poussent-elles bien pendant la saison des pluies ?", wo: "Ndax semences yii dañuy sax bu baax ci nawet ?" },
+        { en: "I water my crops every morning", fr: "J'arrose mes cultures chaque matin", wo: "Damay sotti ndox ci sama gàncax yi suba su nekk" },
+        { en: "The harvest was good this year", fr: "La récolte a été bonne cette année", wo: "Ngóob mi baax na at mii" },
+        { en: "I sell my vegetables at the Thiès market", fr: "Je vends mes légumes au marché de Thiès", wo: "Damay jaay sama légumes ci marse bu Thiès" },
+        { en: "Can you deliver to my farm?", fr: "Pouvez-vous livrer à ma ferme ?", wo: "Mën nga ko yóbbu ci sama tool ?" }
+      ],
+      dialogue: [
+        { who: "A", en: "Good morning. I need seeds for my field.", fr: "Bonjour. J'ai besoin de semences pour mon champ.", wo: "Salaamaalekum. Damaa soxla semences ngir sama tool." },
+        { who: "B", en: "What do you want to grow?", fr: "Que voulez-vous cultiver ?", wo: "Lan nga bëgg a ji ?" },
+        { who: "A", en: "Tomatoes and onions.", fr: "Des tomates et des oignons.", wo: "Tamaate ak sooble." },
+        { who: "B", en: "These seeds are good for the rainy season.", fr: "Ces semences sont bonnes pour la saison des pluies.", wo: "Semences yii baax nañu ci nawet." },
+        { who: "A", en: "How much is a small bag?", fr: "Combien coûte un petit sac ?", wo: "Ñaata la saaku bu ndaw ?" },
+        { who: "B", en: "Two thousand five hundred francs.", fr: "Deux mille cinq cents francs.", wo: "Ñaari junni ak juróom téeméer franc." },
+        { who: "A", en: "Do you also have fertilizer?", fr: "Avez-vous aussi de l'engrais ?", wo: "Ndax am ngeen engrais itam ?" },
+        { who: "B", en: "Yes, ten thousand francs for a big bag.", fr: "Oui, dix mille francs pour un grand sac.", wo: "Waaw, fukki junni franc ngir saaku bu mag." },
+        { who: "A", en: "Can you deliver to my farm in Thiès?", fr: "Pouvez-vous livrer à ma ferme à Thiès ?", wo: "Mën nga ko yóbbu ci sama tool ci Thiès ?" },
+        { who: "B", en: "Yes, tomorrow morning.", fr: "Oui, demain matin.", wo: "Waaw, ëllëg ci suba." }
+      ],
+      quiz: [
+        { q: "« Semences » se dit :", o: ["seeds", "seats", "seeks"], a: 0, why: "Seeds = semences." },
+        { q: "I ___ my crops every morning.", o: ["water", "wet", "drink"], a: 0, why: "Water peut être un verbe : arroser." },
+        { q: "« Combien coûte un sac d'engrais ? » se dit :", o: ["How much is a bag of fertilizer?", "How many is a bag of fertilizer?", "How much are a bag of fertilizer?"], a: 0, why: "How much pour un prix, avec is au singulier." }
       ]
     }
 ];
@@ -1682,7 +1734,9 @@ function renderGeneralContent() {
         const p = document.createElement("p");
         p.className = "text-sm text-[#E4DCC9]";
         p.innerHTML = "<b>" + line.who + ":</b> " + esc(line.en) +
-            ' <button onclick="speakDialogueLine(' + i + ')" data-practice="dlg-line" data-gate="0" class="text-[#F0906B] text-xs align-middle">🔊</button>';
+            ' <button onclick="speakDialogueLine(' + i + ')" data-practice="dlg-line" data-gate="0" class="text-[#F0906B] text-xs align-middle">🔊</button>' +
+            (line.fr ? '<span class="block text-[11px] text-[#A69C86] italic">🇫🇷 ' + esc(line.fr) + '</span>' : '') +
+            (line.wo ? '<span class="block text-[11px] text-[#5FC98F] italic">🗣️ ' + esc(line.wo) + '</span>' : '');
         dlgCard.appendChild(p);
     });
     const playAll = document.createElement("button");
@@ -1716,11 +1770,12 @@ async function practiceGeneralWord(i) {
     const key = "gen:" + theme.id + ":" + w.en;
     const res = $("gen-res-" + i);
     if (!SR) { res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome."; return; }
-    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez... relâchez pour valider</span>';
     stopAllAudio();
-    const r = await startListening("en-US", 6000, false).promise;
+    const h = startListening("en-US", 15000, true); window.__micHandle = h; if (window.__micReleased) h.stop();
+    const r = await h.promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur."; return; }
-    if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
+    if (!r.text) { res.textContent = "Rien entendu. Maintenez le bouton enfoncé pendant que vous parlez."; return; }
     const heard = normalize(r.text), target = normalize(w.en);
     if (heard.includes(target) || target.includes(heard)) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
@@ -1953,40 +2008,40 @@ const GENERAL_EXTRA = {
         vocab: [
             { en: "I am a street vendor", fr: "Je suis vendeur ambulant", wo: "Baana-baana laa" },
             { en: "I work in agriculture", fr: "Je travaille dans l'agriculture", wo: "Mbay laa def" },
-            { en: "I run my own small business", fr: "Je dirige ma propre petite entreprise" }
+            { en: "I run my own small business", fr: "Je dirige ma propre petite entreprise", wo: "Damay yor sama njaay bu ndaw" }
         ],
         dialogue: [
-            { who: "A", en: "What do you do for a living?" },
-            { who: "B", en: "I am a farmer, and I also sell my vegetables at the market." },
-            { who: "A", en: "Do you sell them yourself?" },
-            { who: "B", en: "Yes, I am my own boss." }
+            { who: "A", en: "What do you do for a living?", fr: "Que faites-vous dans la vie ?", wo: "Ban liggéey nga def ?" },
+            { who: "B", en: "I am a farmer, and I also sell my vegetables at the market.", fr: "Je suis agricultrice, et je vends aussi mes légumes au marché.", wo: "Beykat laa, te maa ngi jaay sama légumes ci marse bi." },
+            { who: "A", en: "Do you sell them yourself?", fr: "Vous les vendez vous-même ?", wo: "Yaa ko jaay ci sa bopp ?" },
+            { who: "B", en: "Yes, I am my own boss.", fr: "Oui, je suis ma propre patronne.", wo: "Waaw, man laa boroom sama liggéey." }
         ],
         quiz: [{ q: "I ___ a farmer and a trader.", o: ["is", "am", "are"], a: 1, why: "Avec I, toujours « am » : I am a farmer." }]
     },
     family: {
         vocab: [
-            { en: "My family works in the fields", fr: "Ma famille travaille aux champs", wo: "Toolu" },
-            { en: "My brother sells fruit at the market", fr: "Mon frère vend des fruits au marché", wo: "Jaay" }
+            { en: "My family works in the fields", fr: "Ma famille travaille aux champs", wo: "Sama njabootu dafay liggéey ci toll yi" },
+            { en: "My brother sells fruit at the market", fr: "Mon frère vend des fruits au marché", wo: "Sama rak bu góor dafay jaay meññeef ci marse bi" }
         ],
         dialogue: [
-            { who: "A", en: "Does your family have a farm?" },
-            { who: "B", en: "Yes, my parents grow millet and groundnuts." },
-            { who: "A", en: "And your brother?" },
-            { who: "B", en: "He is a street trader in Thiès." }
+            { who: "A", en: "Does your family have a farm?", fr: "Votre famille a-t-elle une ferme ?", wo: "Ndax sa njabootu am na tool ?" },
+            { who: "B", en: "Yes, my parents grow millet and groundnuts.", fr: "Oui, mes parents cultivent du mil et des arachides.", wo: "Waaw, sama waajur yi dañuy ji dugub ak gerte." },
+            { who: "A", en: "And your brother?", fr: "Et votre frère ?", wo: "Sa rak bu góor nag ?" },
+            { who: "B", en: "He is a street trader in Thiès.", fr: "Il est commerçant ambulant à Thiès.", wo: "Baana-baana la ci Thiès." }
         ],
         quiz: [{ q: "My brother ___ vegetables at the market.", o: ["sell", "sells", "selling"], a: 1, why: "3e personne du singulier : verbe + s (he sells)." }]
     },
     work: {
         vocab: [
-            { en: "I start work at six in the morning", fr: "Je commence à travailler à six heures du matin", wo: "Liggéey" },
-            { en: "I water the plants every day", fr: "J'arrose les plantes chaque jour", wo: "Ndox" },
-            { en: "I sell my goods in the street", fr: "Je vends mes marchandises dans la rue", wo: "Jaay" }
+            { en: "I start work at six in the morning", fr: "Je commence à travailler à six heures du matin", wo: "Damay tàmbali liggéey ci juróom benn ci suba" },
+            { en: "I water the plants every day", fr: "J'arrose les plantes chaque jour", wo: "Damay sotti ndox ci gàncax yi bés bu nekk" },
+            { en: "I sell my goods in the street", fr: "Je vends mes marchandises dans la rue", wo: "Damay jaay sama yëf ci mbedd mi" }
         ],
         dialogue: [
-            { who: "A", en: "What time do you start work?" },
-            { who: "B", en: "At six. I water my vegetables first, then I go to the market." },
-            { who: "A", en: "How many hours do you work?" },
-            { who: "B", en: "About ten hours a day." }
+            { who: "A", en: "What time do you start work?", fr: "À quelle heure commencez-vous le travail ?", wo: "Ci ban waxtu nga tàmbali liggéey ?" },
+            { who: "B", en: "At six. I water my vegetables first, then I go to the market.", fr: "À six heures. J'arrose d'abord mes légumes, puis je vais au marché.", wo: "Ci juróom benn. Damay sotti ndox ci sama légumes yi njëkk, ba noppi dem ci marse bi." },
+            { who: "A", en: "How many hours do you work?", fr: "Combien d'heures travaillez-vous ?", wo: "Ñaata waxtu nga liggéey ?" },
+            { who: "B", en: "About ten hours a day.", fr: "Environ dix heures par jour.", wo: "Ni fukki waxtu ci bés bu nekk." }
         ],
         quiz: [{ q: "I ___ my vegetables every morning.", o: ["water", "waters", "watering"], a: 0, why: "Avec I, le verbe reste à la forme de base." }]
     },
@@ -1995,96 +2050,96 @@ const GENERAL_EXTRA = {
             { en: "How much is this?", fr: "Combien coûte ceci ?", wo: "Ñaata la ?" },
             { en: "It is too expensive", fr: "C'est trop cher", wo: "Dafa seer" },
             { en: "Can you lower the price a little?", fr: "Pouvez-vous baisser un peu le prix ?", wo: "Wàññil ma tuuti" },
-            { en: "I want to buy ten kilos of onions", fr: "Je veux acheter dix kilos d'oignons", wo: "Sooble" }
+            { en: "I want to buy ten kilos of onions", fr: "Je veux acheter dix kilos d'oignons", wo: "Dama bëgg jënd fukki kilo sooble" }
         ],
         dialogue: [
-            { who: "A", en: "Good morning. How much are the tomatoes?" },
-            { who: "B", en: "Five hundred francs a kilo." },
-            { who: "A", en: "It is too expensive. Can you lower the price?" },
-            { who: "B", en: "For you, four hundred. They come from the farm this morning." },
-            { who: "A", en: "Okay, I want three kilos." }
+            { who: "A", en: "Good morning. How much are the tomatoes?", fr: "Bonjour. Combien coûtent les tomates ?", wo: "Salaamaalekum. Ñaata la tamaate yi ?" },
+            { who: "B", en: "Five hundred francs a kilo.", fr: "Cinq cents francs le kilo.", wo: "Juróom téeméer franc la ci kilo bi." },
+            { who: "A", en: "It is too expensive. Can you lower the price?", fr: "C'est trop cher. Pouvez-vous baisser le prix ?", wo: "Dafa seer. Mën nga wàññi njëg li ?" },
+            { who: "B", en: "For you, four hundred. They come from the farm this morning.", fr: "Pour vous, quatre cents. Elles viennent de la ferme ce matin.", wo: "Ngir yaw, ñeent téeméer. Ñu ngi jóge ci tool bi tey ci suba." },
+            { who: "A", en: "Okay, I want three kilos.", fr: "D'accord, je veux trois kilos.", wo: "Baax na, bëgg naa ñett kilo." }
         ],
         quiz: [{ q: "How ___ are the onions?", o: ["much", "many", "long"], a: 0, why: "Pour demander un prix : « How much »." }]
     },
     travel: {
         vocab: [
-            { en: "I transport goods to Dakar", fr: "Je transporte des marchandises à Dakar", wo: "Kamiyon" },
-            { en: "The truck leaves at seven", fr: "Le camion part à sept heures" },
-            { en: "How much is the ticket to the market?", fr: "Combien coûte le billet pour le marché ?", wo: "Ñaata la ?" }
+            { en: "I transport goods to Dakar", fr: "Je transporte des marchandises à Dakar", wo: "Damay yóbbu marsandiis ci Ndakaaru" },
+            { en: "The truck leaves at seven", fr: "Le camion part à sept heures", wo: "Kamiyon bi dafay dem ci juróom ñaar" },
+            { en: "How much is the ticket to the market?", fr: "Combien coûte le billet pour le marché ?", wo: "Ñaata la bilee bi ngir dem marse bi ?" }
         ],
         dialogue: [
-            { who: "A", en: "Does this truck go to the Thiès market?" },
-            { who: "B", en: "Yes, it leaves at seven with fresh vegetables." },
-            { who: "A", en: "How much for my bags?" },
-            { who: "B", en: "Two thousand francs." }
+            { who: "A", en: "Does this truck go to the Thiès market?", fr: "Est-ce que ce camion va au marché de Thiès ?", wo: "Ndax kamiyon bii dafay dem marse bu Thiès ?" },
+            { who: "B", en: "Yes, it leaves at seven with fresh vegetables.", fr: "Oui, il part à sept heures avec des légumes frais.", wo: "Waaw, dafay dem ci juróom ñaar ak légumes yu bees." },
+            { who: "A", en: "How much for my bags?", fr: "Combien pour mes bagages ?", wo: "Ñaata la sama bagaas yi ?" },
+            { who: "B", en: "Two thousand francs.", fr: "Deux mille francs.", wo: "Ñaar junni franc la." }
         ],
         quiz: [{ q: "The truck ___ at seven o'clock.", o: ["leave", "leaves", "leaving"], a: 1, why: "The truck = it : verbe + s (leaves)." }]
     },
     health: {
         vocab: [
-            { en: "I need to rest, I worked in the sun all day", fr: "J'ai besoin de me reposer, j'ai travaillé au soleil toute la journée", wo: "Sonn" },
-            { en: "Drink a lot of water when it is hot", fr: "Buvez beaucoup d'eau quand il fait chaud", wo: "Ndox" }
+            { en: "I need to rest, I worked in the sun all day", fr: "J'ai besoin de me reposer, j'ai travaillé au soleil toute la journée", wo: "Dama war a noppalu, liggéey naa ci jant bi bés bi bépp" },
+            { en: "Drink a lot of water when it is hot", fr: "Buvez beaucoup d'eau quand il fait chaud", wo: "Naanal ndox bu bari bu tàngee" }
         ],
         dialogue: [
-            { who: "A", en: "You look tired." },
-            { who: "B", en: "I worked in the field all day, and I did not drink water." },
-            { who: "A", en: "You must drink water and rest." },
-            { who: "B", en: "You are right, thank you." }
+            { who: "A", en: "You look tired.", fr: "Vous avez l'air fatigué.", wo: "Dafa mel ni yaa ngi sonn." },
+            { who: "B", en: "I worked in the field all day, and I did not drink water.", fr: "J'ai travaillé dans le champ toute la journée, et je n'ai pas bu d'eau.", wo: "Liggéey naa ci tool bi bés bi bépp te naanul ndox." },
+            { who: "A", en: "You must drink water and rest.", fr: "Vous devez boire de l'eau et vous reposer.", wo: "War nga naan ndox te noppalu." },
+            { who: "B", en: "You are right, thank you.", fr: "Vous avez raison, merci.", wo: "Dëgg nga, jërëjëf." }
         ],
         quiz: [{ q: "You ___ drink water when it is hot.", o: ["must", "are", "does"], a: 0, why: "« must » exprime une obligation ou un conseil fort." }]
     },
     food: {
         vocab: [
-            { en: "Fresh vegetables and fruit", fr: "Légumes et fruits frais" },
-            { en: "I would like rice with chicken, please", fr: "Je voudrais du riz au poulet, s'il vous plaît", wo: "Ceeb" },
-            { en: "An egg", fr: "Un œuf", wo: "Nen" }
+            { en: "Fresh vegetables and fruit", fr: "Légumes et fruits frais", wo: "Légumes yu bees ak meññeef" },
+            { en: "I would like rice with chicken, please", fr: "Je voudrais du riz au poulet, s'il vous plaît", wo: "Dama bëgg ceeb ak ginaar, su la neexee" },
+            { en: "An egg", fr: "Un œuf", wo: "Benn nen" }
         ],
         dialogue: [
-            { who: "A", en: "What would you like?" },
-            { who: "B", en: "Rice with chicken, please." },
-            { who: "A", en: "Do you want vegetables?" },
-            { who: "B", en: "Yes, and some water." }
+            { who: "A", en: "What would you like?", fr: "Que désirez-vous ?", wo: "Lan nga bëgg ?" },
+            { who: "B", en: "Rice with chicken, please.", fr: "Du riz au poulet, s'il vous plaît.", wo: "Ceeb ak ginaar, su la neexee." },
+            { who: "A", en: "Do you want vegetables?", fr: "Voulez-vous des légumes ?", wo: "Ndax bëgg nga légumes ?" },
+            { who: "B", en: "Yes, and some water.", fr: "Oui, et de l'eau.", wo: "Waaw, ak ndox." }
         ],
         quiz: [{ q: "I ___ like rice, please.", o: ["would", "am", "is"], a: 0, why: "« I would like » est la façon polie de commander." }]
     },
     time: {
         vocab: [
-            { en: "The rainy season starts in July", fr: "La saison des pluies commence en juillet", wo: "Nawet" },
-            { en: "The market opens at six", fr: "Le marché ouvre à six heures", wo: "Marse" },
-            { en: "Five hundred francs", fr: "Cinq cents francs" }
+            { en: "The rainy season starts in July", fr: "La saison des pluies commence en juillet", wo: "Nawet dafay tàmbali ci sulet" },
+            { en: "The market opens at six", fr: "Le marché ouvre à six heures", wo: "Marse bi dafay ubbeeku ci juróom benn" },
+            { en: "Five hundred francs", fr: "Cinq cents francs", wo: "Juróom téeméer franc" }
         ],
         dialogue: [
-            { who: "A", en: "When does the rainy season start?" },
-            { who: "B", en: "In July. We plant groundnuts after the first rain." },
-            { who: "A", en: "What time does the market open?" },
-            { who: "B", en: "At six o'clock." }
+            { who: "A", en: "When does the rainy season start?", fr: "Quand commence la saison des pluies ?", wo: "Kañ la nawet di tàmbali ?" },
+            { who: "B", en: "In July. We plant groundnuts after the first rain.", fr: "En juillet. Nous plantons les arachides après la première pluie.", wo: "Ci sulet. Danuy ji gerte gannaaw taw bi njëkk." },
+            { who: "A", en: "What time does the market open?", fr: "À quelle heure ouvre le marché ?", wo: "Ci ban waxtu la marse bi di ubbeeku ?" },
+            { who: "B", en: "At six o'clock.", fr: "À six heures.", wo: "Ci juróom benn." }
         ],
         quiz: [{ q: "The market opens ___ six o'clock.", o: ["in", "at", "on"], a: 1, why: "Pour une heure précise : « at »." }]
     },
     visa: {
         vocab: [
-            { en: "I own a small business in Senegal", fr: "Je possède une petite entreprise au Sénégal" },
-            { en: "I will return home after my trip", fr: "Je rentrerai chez moi après mon voyage" },
-            { en: "I buy goods to sell in my shop", fr: "J'achète des marchandises à vendre dans ma boutique", wo: "Jënd" }
+            { en: "I own a small business in Senegal", fr: "Je possède une petite entreprise au Sénégal", wo: "Am naa sama njaay bu ndaw ci Senegaal" },
+            { en: "I will return home after my trip", fr: "Je rentrerai chez moi après mon voyage", wo: "Dinaa délsi sama kër gannaaw tukki bi" },
+            { en: "I buy goods to sell in my shop", fr: "J'achète des marchandises à vendre dans ma boutique", wo: "Damay jënd marsandiis ngir jaay ko ci sama boutik" }
         ],
         dialogue: [
-            { who: "A", en: "Why do you want to travel?" },
-            { who: "B", en: "I want to buy goods for my business." },
-            { who: "A", en: "Will you come back to Senegal?" },
-            { who: "B", en: "Yes, my family and my shop are there." }
+            { who: "A", en: "Why do you want to travel?", fr: "Pourquoi voulez-vous voyager ?", wo: "Lu tax nga bëgg a tukki ?" },
+            { who: "B", en: "I want to buy goods for my business.", fr: "Je veux acheter des marchandises pour mon commerce.", wo: "Dama bëgg jënd marsandiis ngir sama njaay." },
+            { who: "A", en: "Will you come back to Senegal?", fr: "Reviendrez-vous au Sénégal ?", wo: "Ndax dinga délsi Senegaal ?" },
+            { who: "B", en: "Yes, my family and my shop are there.", fr: "Oui, ma famille et ma boutique y sont.", wo: "Waaw, sama njabootu ak sama boutik ñu ngi fa." }
         ],
         quiz: [{ q: "I ___ come back after two weeks.", o: ["will", "am", "does"], a: 0, why: "Intention future : « will + verbe de base »." }]
     },
     housing: {
         vocab: [
-            { en: "I have a small garden behind the house", fr: "J'ai un petit jardin derrière la maison", wo: "Kër" },
-            { en: "The rent is thirty thousand francs a month", fr: "Le loyer est de trente mille francs par mois" }
+            { en: "I have a small garden behind the house", fr: "J'ai un petit jardin derrière la maison", wo: "Am naa tool bu ndaw ci gannaaw kër gi" },
+            { en: "The rent is thirty thousand francs a month", fr: "Le loyer est de trente mille francs par mois", wo: "Loyer bi fanweer junni franc la ci weer wi" }
         ],
         dialogue: [
-            { who: "A", en: "Do you have a garden?" },
-            { who: "B", en: "Yes, I grow tomatoes and onions behind the house." },
-            { who: "A", en: "Is the rent expensive?" },
-            { who: "B", en: "No, it is cheap." }
+            { who: "A", en: "Do you have a garden?", fr: "Avez-vous un jardin ?", wo: "Ndax am nga tool ?" },
+            { who: "B", en: "Yes, I grow tomatoes and onions behind the house.", fr: "Oui, je cultive des tomates et des oignons derrière la maison.", wo: "Waaw, damay ji tamaate ak sooble ci gannaaw kër gi." },
+            { who: "A", en: "Is the rent expensive?", fr: "Le loyer est-il cher ?", wo: "Ndax loyer bi dafa seer ?" },
+            { who: "B", en: "No, it is cheap.", fr: "Non, il est bon marché.", wo: "Déedéet, dafa yomb." }
         ],
         quiz: [{ q: "I ___ tomatoes behind the house.", o: ["grow", "grows", "growing"], a: 0, why: "I + verbe de base (I grow)." }]
     }
@@ -2239,68 +2294,68 @@ const CHINA_TRADE_WOLOF = {
 
 const BUSINESS_DIALOGUES = {
     colobane: [
-        { role: "client", wo: "Boy, ñaata la pièce bii ?", fr: "Dis, combien coûte cette pièce ?" },
-        { role: "marchand", wo: "Junni ak juróom-ñeent fukk yépp, waar.", fr: "Dix-neuf mille francs, mon frère." },
-        { role: "client", wo: "Waaw waaw, ndax mën nga wàññi tuuti ?", fr: "D'accord, mais tu peux baisser un peu ?" },
-        { role: "marchand", wo: "Ci sa ndigël, dinaa la ko jox ci junni ak juróom-ñaar fukk.", fr: "Pour toi, je te la fais à dix-sept mille." },
-        { role: "client", wo: "Ndax pièce bii bokk na ci fabrik bi, walla dafa ëpp copie ?", fr: "Cette pièce est d'origine ou c'est une copie ?" },
-        { role: "marchand", wo: "Dafa bokk ci fabrik bi, amul benn wérélu.", fr: "Elle est d'origine, il n'y a aucun doute." }
+        { role: "client", wo: "Boy, ñaata la pièce bii ?", fr: "Dis, combien coûte cette pièce ?", en: "Excuse me, how much is this part?" },
+        { role: "marchand", wo: "Junni ak juróom-ñeent fukk yépp, waar.", fr: "Dix-neuf mille francs, mon frère.", en: "Nineteen thousand francs, my brother." },
+        { role: "client", wo: "Waaw waaw, ndax mën nga wàññi tuuti ?", fr: "D'accord, mais tu peux baisser un peu ?", en: "Okay, but can you lower the price a little?" },
+        { role: "marchand", wo: "Ci sa ndigël, dinaa la ko jox ci junni ak juróom-ñaar fukk.", fr: "Pour toi, je te la fais à dix-sept mille.", en: "For you, I'll make it seventeen thousand." },
+        { role: "client", wo: "Ndax pièce bii bokk na ci fabrik bi, walla dafa ëpp copie ?", fr: "Cette pièce est d'origine ou c'est une copie ?", en: "Is this part original, or is it a copy?" },
+        { role: "marchand", wo: "Dafa bokk ci fabrik bi, amul benn wérélu.", fr: "Elle est d'origine, il n'y a aucun doute.", en: "It is original, there is no doubt." }
     ],
     sandaga: [
-        { role: "client", wo: "Ban taille nga am ci tissu bii ?", fr: "Quelle taille avez-vous pour ce tissu ?" },
-        { role: "marchand", wo: "Am naa L ak XL, walla mën naa la ko def ci sa mesure.", fr: "J'ai du L et du XL, ou je peux le faire sur mesure." },
-        { role: "client", wo: "Ñaata la ngir fukk pièces, bu ma jëndee ci gros ?", fr: "Combien pour dix pièces, si j'achète en gros ?" },
-        { role: "marchand", wo: "Ci gros, dinaa la ko wàññi, ñaata-fukk junni rekk.", fr: "En gros, je te fais une remise, seulement quarante mille." },
-        { role: "client", wo: "Ndax mën nga ma yónnee échantillon bu njëkk ?", fr: "Peux-tu d'abord m'envoyer un échantillon ?" },
-        { role: "marchand", wo: "Waaw, dinaa la ko yónnee léegi léegi.", fr: "Oui, je te l'envoie tout de suite." }
+        { role: "client", wo: "Ban taille nga am ci tissu bii ?", fr: "Quelle taille avez-vous pour ce tissu ?", en: "What sizes do you have for this fabric?" },
+        { role: "marchand", wo: "Am naa L ak XL, walla mën naa la ko def ci sa mesure.", fr: "J'ai du L et du XL, ou je peux le faire sur mesure.", en: "I have L and XL, or I can make it to measure." },
+        { role: "client", wo: "Ñaata la ngir fukk pièces, bu ma jëndee ci gros ?", fr: "Combien pour dix pièces, si j'achète en gros ?", en: "How much for ten pieces if I buy in bulk?" },
+        { role: "marchand", wo: "Ci gros, dinaa la ko wàññi, ñaata-fukk junni rekk.", fr: "En gros, je te fais une remise, seulement quarante mille.", en: "For wholesale, I'll give you a discount, only forty thousand." },
+        { role: "client", wo: "Ndax mën nga ma yónnee échantillon bu njëkk ?", fr: "Peux-tu d'abord m'envoyer un échantillon ?", en: "Can you send me a sample first?" },
+        { role: "marchand", wo: "Waaw, dinaa la ko yónnee léegi léegi.", fr: "Oui, je te l'envoie tout de suite.", en: "Yes, I'll send it to you right away." }
     ],
     electronique: [
-        { role: "client", wo: "Ndax jumtukaay bii dafay dox ci 220V ?", fr: "Cet appareil fonctionne-t-il en 220V ?" },
-        { role: "marchand", wo: "Waaw, dafa yem ak voltage bu Senegaal.", fr: "Oui, il est compatible avec le voltage sénégalais." },
-        { role: "client", wo: "Ndax mën nga ma ko testeel ci sama kanam ?", fr: "Peux-tu le tester devant moi ?" },
-        { role: "marchand", wo: "Waaw, léegi léegi, dinaa ko branché ci kontak bi.", fr: "Oui, tout de suite, je vais le brancher sur la prise." },
-        { role: "client", wo: "Ndax am na garanti bu fabrikaan bi ?", fr: "Y a-t-il une garantie du fabricant ?" },
-        { role: "marchand", wo: "Waaw, benn at garanti, ak facture bu njëkk.", fr: "Oui, une garantie d'un an, avec la facture d'origine." }
+        { role: "client", wo: "Ndax jumtukaay bii dafay dox ci 220V ?", fr: "Cet appareil fonctionne-t-il en 220V ?", en: "Does this device work on 220V?" },
+        { role: "marchand", wo: "Waaw, dafa yem ak voltage bu Senegaal.", fr: "Oui, il est compatible avec le voltage sénégalais.", en: "Yes, it is compatible with the Senegalese voltage." },
+        { role: "client", wo: "Ndax mën nga ma ko testeel ci sama kanam ?", fr: "Peux-tu le tester devant moi ?", en: "Can you test it in front of me?" },
+        { role: "marchand", wo: "Waaw, léegi léegi, dinaa ko branché ci kontak bi.", fr: "Oui, tout de suite, je vais le brancher sur la prise.", en: "Yes, right away, I'll plug it into the socket." },
+        { role: "client", wo: "Ndax am na garanti bu fabrikaan bi ?", fr: "Y a-t-il une garantie du fabricant ?", en: "Is there a manufacturer's warranty?" },
+        { role: "marchand", wo: "Waaw, benn at garanti, ak facture bu njëkk.", fr: "Oui, une garantie d'un an, avec la facture d'origine.", en: "Yes, a one-year warranty, with the original invoice." }
     ],
     bazar: [
-        { role: "client", wo: "Ndax meuble bii mën nañ ko wàcce ?", fr: "Ce meuble est-il démontable ?" },
-        { role: "marchand", wo: "Waaw, mën nañ ko wàcce ngir livraison bi yomb.", fr: "Oui, on peut le démonter pour faciliter la livraison." },
-        { role: "client", wo: "Ndax dinañ ko yónnee ci kër gi ?", fr: "Est-ce que vous livrez à domicile ?" },
-        { role: "marchand", wo: "Waaw, livraison bi dafa ci kanam, ñaata-fukk junni la.", fr: "Oui, la livraison est en plus, ça fait vingt mille." },
-        { role: "client", wo: "Ndax mën naa fey ci plusieurs fois ?", fr: "Puis-je payer en plusieurs fois ?" },
-        { role: "marchand", wo: "Waaw, mën nga fey ñetti yoon, ci ñetti weer.", fr: "Oui, tu peux payer en trois fois, sur trois mois." }
+        { role: "client", wo: "Ndax meuble bii mën nañ ko wàcce ?", fr: "Ce meuble est-il démontable ?", en: "Can this piece of furniture be taken apart?" },
+        { role: "marchand", wo: "Waaw, mën nañ ko wàcce ngir livraison bi yomb.", fr: "Oui, on peut le démonter pour faciliter la livraison.", en: "Yes, we can dismantle it to make delivery easier." },
+        { role: "client", wo: "Ndax dinañ ko yónnee ci kër gi ?", fr: "Est-ce que vous livrez à domicile ?", en: "Do you deliver to homes?" },
+        { role: "marchand", wo: "Waaw, livraison bi dafa ci kanam, ñaata-fukk junni la.", fr: "Oui, la livraison est en plus, ça fait vingt mille.", en: "Yes, delivery costs extra, it is twenty thousand." },
+        { role: "client", wo: "Ndax mën naa fey ci plusieurs fois ?", fr: "Puis-je payer en plusieurs fois ?", en: "Can I pay in installments?" },
+        { role: "marchand", wo: "Waaw, mën nga fey ñetti yoon, ci ñetti weer.", fr: "Oui, tu peux payer en trois fois, sur trois mois.", en: "Yes, you can pay in three installments over three months." }
     ],
     chine: [
-        { role: "client", wo: "Ñaata la transport bu conteneur bi ?", fr: "Combien coûte le transport par conteneur ?" },
-        { role: "marchand", wo: "Dafa ci wattu ñaata CBM sa marsandiz am.", fr: "Ça dépend du nombre de CBM de ta marchandise." },
-        { role: "client", wo: "Ñaata fan ngir livraison bi ci Port Dakar ?", fr: "Combien de jours pour la livraison au Port de Dakar ?" },
-        { role: "marchand", wo: "Ci diggante ñatt-fukk fan, bu dédouanement bi yomb.", fr: "Environ trente jours, si le dédouanement se passe bien." },
-        { role: "client", wo: "Soxla naa Bill of Lading bi ak packing list bi.", fr: "J'ai besoin du connaissement et de la liste de colisage." },
-        { role: "marchand", wo: "Waaw, dinaa la ko yónnee bu ñu jëlee marsandiz bi.", fr: "Oui, je te les envoie dès que la marchandise est prise en charge." }
+        { role: "client", wo: "Ñaata la transport bu conteneur bi ?", fr: "Combien coûte le transport par conteneur ?", en: "How much does shipping by container cost?" },
+        { role: "marchand", wo: "Dafa ci wattu ñaata CBM sa marsandiz am.", fr: "Ça dépend du nombre de CBM de ta marchandise.", en: "It depends on the CBM of your goods." },
+        { role: "client", wo: "Ñaata fan ngir livraison bi ci Port Dakar ?", fr: "Combien de jours pour la livraison au Port de Dakar ?", en: "How many days for delivery to the Port of Dakar?" },
+        { role: "marchand", wo: "Ci diggante ñatt-fukk fan, bu dédouanement bi yomb.", fr: "Environ trente jours, si le dédouanement se passe bien.", en: "About thirty days, if customs clearance goes well." },
+        { role: "client", wo: "Soxla naa Bill of Lading bi ak packing list bi.", fr: "J'ai besoin du connaissement et de la liste de colisage.", en: "I need the bill of lading and the packing list." },
+        { role: "marchand", wo: "Waaw, dinaa la ko yónnee bu ñu jëlee marsandiz bi.", fr: "Oui, je te les envoie dès que la marchandise est prise en charge.", en: "Yes, I'll send them as soon as the goods are picked up." }
     ]
 };
 
 const BIZ_EXTRA = {
     colobane: [
         { en: "Water pump for the field", fr: "Pompe à eau pour le champ", wo: "Toolu" },
-        { en: "Tractor spare parts", fr: "Pièces détachées de tracteur" }
+        { en: "Tractor spare parts", fr: "Pièces détachées de tracteur", wo: "Pièces détachées yu tracteur" }
     ],
     sandaga: [
         { en: "Wholesale price for street traders", fr: "Prix de gros pour vendeurs ambulants", wo: "Baana-baana" },
-        { en: "I sell on credit", fr: "Je vends à crédit" }
+        { en: "I sell on credit", fr: "Je vends à crédit", wo: "Damay jaay ci crédit" }
     ],
     electronique: [
-        { en: "Solar panel for the farm", fr: "Panneau solaire pour la ferme" },
+        { en: "Solar panel for the farm", fr: "Panneau solaire pour la ferme", wo: "Panneau solaire ngir ferme bi" },
         { en: "Mobile money payment", fr: "Paiement par mobile money", wo: "Xaalis" }
     ],
     bazar: [
-        { en: "Storage crates for vegetables", fr: "Caisses de stockage pour légumes" },
+        { en: "Storage crates for vegetables", fr: "Caisses de stockage pour légumes", wo: "Caisse ngir denc légumes yi" },
         { en: "Fresh tomatoes and onions", fr: "Tomates et oignons frais", wo: "Tomaat ak sooble" }
     ],
     chine: [
-        { en: "Irrigation equipment", fr: "Matériel d'irrigation" },
-        { en: "Shipping container", fr: "Conteneur d'expédition" },
-        { en: "Customs clearance", fr: "Dédouanement" }
+        { en: "Irrigation equipment", fr: "Matériel d'irrigation", wo: "Jumtukaay yu irrigation" },
+        { en: "Shipping container", fr: "Conteneur d'expédition", wo: "Conteneur bu yónnee" },
+        { en: "Customs clearance", fr: "Dédouanement", wo: "Dédouanement (fay douane bi)" }
     ]
 };
 Object.keys(BIZ_EXTRA).forEach(k => {
@@ -2375,14 +2430,15 @@ async function practiceBusinessPhrase(sectionKey, idx) {
     const v = CHINA_TRADE_WOLOF[sectionKey].vocab[idx];
     const res = $("biz-res-" + sectionKey + "-" + idx);
     if (!SR) { res.textContent = "Reconnaissance vocale indisponible sur ce navigateur. Utilisez Chrome."; return; }
-    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez... relâchez pour valider</span>';
     stopAllAudio();
-    const r = await startListening("en-US", 6000, false).promise;
+    const h = startListening("en-US", 15000, true); window.__micHandle = h; if (window.__micReleased) h.stop();
+    const r = await h.promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") {
         res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
         return;
     }
-    if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
+    if (!r.text) { res.textContent = "Rien entendu. Maintenez le bouton enfoncé pendant que vous parlez."; return; }
     const heard = normalize(r.text), target = normalize(v.en);
     if (heard.includes(target)) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + '</span>';
@@ -2573,14 +2629,15 @@ async function practiceWord(i) {
         res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome.";
         return;
     }
-    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez maintenant...</span>';
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez... relâchez pour valider</span>';
     stopAllAudio();
-    const r = await startListening("en-US", 6000, false).promise;
+    const h = startListening("en-US", 15000, true); window.__micHandle = h; if (window.__micReleased) h.stop();
+    const r = await h.promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") {
         res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
         return;
     }
-    if (!r.text) { res.textContent = "Rien entendu. Réessayez plus près du micro."; return; }
+    if (!r.text) { res.textContent = "Rien entendu. Maintenez le bouton enfoncé pendant que vous parlez."; return; }
     const heard = normalize(r.text), target = normalize(w.en);
     if (heard.includes(target)) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
@@ -2788,9 +2845,27 @@ const TEST_BANK = [
             "Why is it important to know basic first aid?",
             "What would you do if a family member had a high fever at night?"
         ]}
+    ]},
+    { id: "family_reunion", topic: "Family Reunification", phases: [
+        { id: "1a", label: "Personal Information", questions: [
+            "What is your name?", "Where are you from?", "Where do you live now?"
+        ]},
+        { id: "1b", label: "Topic Questioning", questions: [
+            "Do you have family in another country?", "Who do you want to live with?",
+            "Where do they live?", "How often do you talk to them?",
+            "What will you do when you join your family?"
+        ]},
+        { id: "2a", label: "Photograph Discussion", introFR: "Imaginez une photo d'une famille qui s'installe dans un nouvel appartement, avec des cartons et des meubles.", questions: [
+            "What can you see in this picture?", "What are the people doing?"
+        ]},
+        { id: "2b", label: "Further Discussion", questions: [
+            "Why do you want to live near your family?",
+            "What do you need to buy for a new home?"
+        ]}
     ]}
 ];
 const TEST_PHOTOS = {
+    family_reunion: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f3ead9"/><rect y="190" width="400" height="70" fill="#c9a877"/><rect x="30" y="40" width="70" height="80" fill="#bcdff5" stroke="#8a6a3a" stroke-width="4"/><rect x="40" y="150" width="60" height="45" fill="#b07a3c"/><rect x="60" y="130" width="50" height="40" fill="#c99a5b"/><rect x="300" y="140" width="80" height="55" fill="#7a4a2b"/><circle cx="170" cy="120" r="16" fill="#e0b98a"/><rect x="152" y="138" width="36" height="52" fill="#c0442f"/><circle cx="220" cy="130" r="14" fill="#f2c39c"/><rect x="205" y="146" width="30" height="44" fill="#3b6ea5"/><circle cx="260" cy="158" r="10" fill="#e8a97a"/><rect x="250" y="170" width="20" height="20" fill="#4a8f5c"/></svg>',
     neighbours: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="150" width="400" height="110" fill="#8fc97a"/><rect x="20" y="80" width="110" height="90" fill="#e0b98a"/><polygon points="15,80 75,35 135,80" fill="#a9583a"/><rect x="60" y="120" width="30" height="50" fill="#7a4a2b"/><rect x="250" y="70" width="110" height="100" fill="#d8cdb5"/><polygon points="245,70 305,25 365,70" fill="#6b6152"/><rect x="290" y="115" width="28" height="55" fill="#4a4232"/><rect x="0" y="200" width="400" height="14" fill="#9a9a9a"/><circle cx="150" cy="205" r="20" fill="#f2c39c"/><rect x="132" y="222" width="36" height="34" fill="#3b6ea5"/><circle cx="205" cy="205" r="20" fill="#e8a97a"/><rect x="187" y="222" width="36" height="34" fill="#c0442f"/></svg>',
     family: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f4e9d8"/><rect x="40" y="150" width="320" height="18" fill="#8a5a34"/><ellipse cx="200" cy="150" rx="140" ry="22" fill="#c99a5b"/><circle cx="150" cy="120" r="10" fill="#e0b98a"/><circle cx="200" cy="115" r="10" fill="#f2c39c"/><circle cx="250" cy="120" r="10" fill="#e8a97a"/><rect x="130" y="130" width="40" height="24" fill="#3b6ea5"/><rect x="180" y="125" width="40" height="24" fill="#c0442f"/><rect x="230" y="130" width="40" height="24" fill="#4a8f5c"/><circle cx="185" cy="145" r="8" fill="#eee"/><circle cx="215" cy="145" r="8" fill="#eee"/></svg>',
     'free-time': '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#bcdff5"/><rect y="120" width="400" height="140" fill="#6fb15c"/><circle cx="330" cy="60" r="24" fill="#f2d24b"/><circle cx="150" cy="180" r="10" fill="#e0b98a"/><rect x="140" y="190" width="20" height="26" fill="#c0442f"/><circle cx="220" cy="170" r="10" fill="#f2c39c"/><rect x="210" y="180" width="20" height="26" fill="#3b6ea5"/><circle cx="200" cy="210" r="8" fill="#fff"/></svg>',
@@ -2801,8 +2876,8 @@ const TEST_PHOTOS = {
     food: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f4e9d8"/><ellipse cx="200" cy="180" rx="110" ry="22" fill="#3b3b3b"/><ellipse cx="200" cy="170" rx="100" ry="18" fill="#c0442f"/><circle cx="170" cy="165" r="8" fill="#e8c96b"/><circle cx="220" cy="160" r="8" fill="#4a8f5c"/><circle cx="120" cy="110" r="10" fill="#e0b98a"/><rect x="104" y="126" width="32" height="30" fill="#3b6ea5"/><circle cx="280" cy="110" r="10" fill="#f2c39c"/><rect x="264" y="126" width="32" height="30" fill="#4a8f5c"/></svg>'
 };
 const TEST_MODES = {
-    entrainement: { seconds: 25, retry: true, label: "Entraînement" },
-    examen: { seconds: 15, retry: false, label: "Examen" }
+    entrainement: { seconds: 30, retry: true, label: "Entraînement" },
+    examen: { seconds: 30, retry: false, label: "Examen" }
 };
 
 let currentTest = TEST_BANK[0];
@@ -3189,10 +3264,17 @@ function retryCurrentQuestion() {
 
 function quitTest() { changeScreen("screen-dashboard"); }
 
-function setTimer(sec, urgent) {
+function setTimer(sec, urgent, calm) {
     const t = $("test-timer");
-    t.textContent = sec === null ? "--" : sec;
-    t.className = "text-2xl font-mono font-black " + (urgent ? "text-[#EE85A3]" : "text-[#E4DCC9]");
+    t.classList.remove("timer-flash");
+    if (sec === null || sec === undefined) {
+        t.textContent = "--"; t.className = "text-3xl font-mono font-black"; t.style.color = "#6B604A"; return;
+    }
+    t.textContent = "00:" + String(Math.max(0, Math.round(sec))).padStart(2, "0");
+    t.className = "text-3xl font-mono font-black";
+    if (calm) { t.style.color = "#E4DCC9"; return; }          // silence de consolidation : neutre
+    if (sec >= 10) { t.style.color = "#25D366"; }              // 30 s à 10 s : vert
+    else { t.style.color = "#FF4D4D"; t.classList.add("timer-flash"); }   // 9 s à 0 s : rouge clignotant
 }
 
 async function runTest() {
@@ -3299,7 +3381,7 @@ async function runTest() {
             const fb = analyzeAnswer(r.text || "", q.text);
             $("test-bars").classList.add("hidden");
             $("test-status").textContent = r.text ? "Vous avez dit : « " + r.text + " »" : "Aucune réponse captée.";
-            renderCorrection(fb);
+            renderCorrection(fb); renderAccuracy(r.text, q.phaseId);
             if (r.text) showSuggestionsFor(q.phaseId);
             await testSilence(run);
             if (run !== testRun) return;
@@ -3340,7 +3422,7 @@ async function runTest() {
                 const fbF = analyzeAnswer(rf.text || "", followUp);
                 $("test-bars").classList.add("hidden");
                 $("test-status").textContent = rf.text ? "Vous avez dit : « " + rf.text + " »" : "Aucune réponse captée.";
-                renderCorrection(fbF);
+                renderCorrection(fbF); renderAccuracy(rf.text, "2b-relance");
                 if (rf.text) showSuggestionsFor("2b-relance");
                 await testSilence(run);
                 if (run !== testRun) return;
@@ -3563,9 +3645,9 @@ async function finishTest() {
     }
     if (db && p && !unsupported) {
         const audioUrl = await uploadTestAudio(await stopAudioCapture(), p.phone);
-        db.from("test_results").insert({
+        insertTestResult({
             phone: p.phone, topic: currentTest.topic, score: answered, total, audio_url: audioUrl
-        }).then(() => {}, () => {});
+        });
     } else {
         stopAudioCapture();
     }
@@ -3642,6 +3724,334 @@ window.addEventListener("load", () => {
     if (!db) showStatus("Mode local : Supabase n'est pas encore configuré.", "warn");
     if (getProfile()) openDashboard();
 });
+
+/* ==========================================================
+   MICRO "MAINTENIR POUR PARLER" : délégation sur [data-practice]
+   Appui = lancement de la reconnaissance, relâchement = arrêt immédiat.
+   Le verrouillage pendant l'audio anglais reste géré par refreshPracticeButtons().
+   ========================================================== */
+window.__micHandle = null; window.__micReleased = false;
+(function () {
+    let holdBtn = null;
+    function release() {
+        if (!holdBtn) return;
+        window.__micReleased = true;
+        try { window.__micHandle && window.__micHandle.stop(); } catch (e) {}
+        holdBtn.classList.remove("mic-pulsing-whatsapp");
+        holdBtn = null;
+    }
+    document.addEventListener("pointerdown", (ev) => {
+        const b = ev.target.closest && ev.target.closest("[data-practice]");
+        if (!b || b.disabled || holdBtn) return;
+        const code = b.getAttribute("onclick");
+        if (!code || !/^\s*practice(GeneralWord|BusinessPhrase|Word)\(/.test(code)) return;
+        ev.preventDefault();
+        holdBtn = b;
+        window.__micReleased = false; window.__micHandle = null;
+        b.classList.add("mic-pulsing-whatsapp");
+        try { new Function(code).call(b); } catch (e) { console.error(e); }
+    }, { capture: true });
+    ["pointerup", "pointercancel", "touchend", "touchcancel"].forEach(t =>
+        document.addEventListener(t, release, { capture: true, passive: true }));
+    /* Le clic tactile/souris est absorbé (déjà traité à l'appui) ; le clavier (detail 0) reste possible. */
+    document.addEventListener("click", (ev) => {
+        const b = ev.target.closest && ev.target.closest("[data-practice]");
+        if (b && ev.detail > 0 && /^\s*practice(GeneralWord|BusinessPhrase|Word)\(/.test(b.getAttribute("onclick") || "")) { ev.stopPropagation(); ev.preventDefault(); }
+    }, { capture: true });
+    document.addEventListener("contextmenu", (ev) => {
+        if (ev.target.closest && ev.target.closest("[data-practice]")) ev.preventDefault();
+    });
+})();
+
+/* ==========================================================
+   PROGRESSION PAR NIVEAUX : Débutant / Intermédiaire / Avancé
+   Un état par module (general, wolof, business, ielts), sauvegardé en localStorage.
+   Les rubriques d'un module sont réparties en 3 tiers. Débutant est ouvert d'office ;
+   chaque réussite (XP gagnée) dans le module compte 1 point et débloque le tier suivant.
+   ========================================================== */
+const TIER_NAMES = ["Débutant", "Intermédiaire", "Avancé"];
+const TIER_GOALS = [0, 10, 25];      // points cumulés pour ouvrir le tier 1, 2, 3
+const TIER_KEY = "diisoo_tiers";
+let currentModuleKey = null;
+
+function tierState() {
+    const s = store.get(TIER_KEY) || {};
+    ["general", "wolof", "business", "ielts"].forEach(k => {
+        if (!s[k] || typeof s[k].unlocked !== "number") s[k] = { unlocked: 1, pts: 0 };
+    });
+    return s;
+}
+function tierCount(key) {
+    return key === "general" ? GENERAL_THEMES.length : key === "wolof" ? WOLOF_THEMES.length :
+           key === "ielts" ? TEST_BANK.length : 5;
+}
+function tierOf(i, n) { return Math.min(3, Math.floor(i / Math.ceil(n / 3)) + 1); }
+
+function tierElements(key) {
+    if (key === "general") return { box: $("general-tabs"), items: Array.from($("general-tabs").children) };
+    if (key === "wolof") return { box: $("wolof-tabs"), items: Array.from($("wolof-tabs").children) };
+    if (key === "ielts") return { box: $("test-topic-buttons"), items: Array.from($("test-topic-buttons").children) };
+    const box = $("business-picker");
+    return { box, items: Array.from(box.querySelectorAll('button[onclick^="selectBusinessModule"]')) };
+}
+
+function applyTierLocks(key) {
+    if (!key) return;
+    let els;
+    try { els = tierElements(key); } catch (e) { return; }
+    if (!els.box) return;
+    const st = tierState()[key], n = tierCount(key);
+    els.items.forEach((b, i) => {
+        if (i >= n) return;                              // ex. onglet Wikidata : jamais verrouillé
+        const locked = tierOf(i, n) > st.unlocked;
+        const old = b.querySelector(".tier-lock-tag"); if (old) old.remove();
+        b.dataset.tierLocked = locked ? "1" : "0";
+        b.style.opacity = locked ? "0.45" : "";
+        if (locked) {
+            b.disabled = true;
+            b.title = "Niveau " + TIER_NAMES[tierOf(i, n) - 1] + " verrouillé";
+            const tag = document.createElement("span");
+            tag.className = "tier-lock-tag"; tag.textContent = "🔒 ";
+            b.insertBefore(tag, b.firstChild);
+        } else { b.disabled = false; b.removeAttribute("title"); }
+    });
+    /* Barre des niveaux au-dessus de la liste */
+    let bar = document.getElementById("tierbar-" + key);
+    if (!bar) {
+        bar = document.createElement("div");
+        bar.id = "tierbar-" + key;
+        bar.className = "flex gap-1 text-[10px] font-bold mb-2";
+        els.box.insertAdjacentElement("beforebegin", bar);
+    }
+    const nextGoal = TIER_GOALS[st.unlocked];
+    bar.innerHTML = TIER_NAMES.map((nm, t) => {
+        const on = t < st.unlocked;
+        return '<span class="flex-1 text-center py-1 rounded-lg ' +
+            (on ? 'bg-[#2C8F5C]/25 text-[#5FC98F]' : 'bg-[#141A2B] text-[#A69C86]') + '">' +
+            (on ? '' : '🔒 ') + nm + '</span>';
+    }).join("") + (nextGoal ? '<span class="self-center text-[#A69C86] pl-1">' + st.pts + '/' + nextGoal + '</span>' : '');
+}
+
+function tierPoint() {
+    const key = currentModuleKey;
+    if (!key) return;
+    const all = tierState(), st = all[key];
+    st.pts++;
+    let target = 1;
+    TIER_GOALS.forEach((g, t) => { if (st.pts >= g) target = t + 1; });
+    const gained = target > st.unlocked;
+    if (gained) st.unlocked = target;
+    store.set(TIER_KEY, all);
+    applyTierLocks(key);
+    if (gained) { try { toast("🔓 Niveau " + TIER_NAMES[target - 1] + " débloqué !"); } catch (e) {} }
+}
+
+/* Branchements sur les fonctions existantes (sans les réécrire) */
+(function () {
+    const MAP = { "screen-general": "general", "screen-wolof": "wolof", "screen-business": "business", "screen-test-simulation": "ielts" };
+    const _cs = changeScreen;
+    changeScreen = function (id) { currentModuleKey = MAP[id] || null; return _cs.apply(this, arguments); };
+    const _xp = addXP;
+    addXP = function () { const r = _xp.apply(this, arguments); tierPoint(); return r; };
+    const _g = renderGeneralTabs;  renderGeneralTabs = function () { const r = _g.apply(this, arguments); applyTierLocks("general"); return r; };
+    const _w = renderWolofTabs;    renderWolofTabs = function () { const r = _w.apply(this, arguments); applyTierLocks("wolof"); return r; };
+    const _t = renderTestPicker;   renderTestPicker = function () { const r = _t.apply(this, arguments); applyTierLocks("ielts"); return r; };
+    const _b = openBusinessModule; openBusinessModule = function () { const r = _b.apply(this, arguments); applyTierLocks("business"); return r; };
+    const _cb = closeBusinessDetail; closeBusinessDetail = function () { const r = _cb.apply(this, arguments); applyTierLocks("business"); return r; };
+})();
+
+/* ==========================================================
+   PRÉCISION DE PAROLE : distance de Levenshtein (succès à 70 % ou plus)
+   Comparaison de la réponse transcrite aux réponses modèles de la phase.
+   ========================================================== */
+function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    if (!m) return n; if (!n) return m;
+    let prev = Array.from({ length: n + 1 }, (_, j) => j);
+    for (let i = 1; i <= m; i++) {
+        const cur = [i];
+        for (let j = 1; j <= n; j++) {
+            cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        }
+        prev = cur;
+    }
+    return prev[n];
+}
+function similarityPct(a, b) {
+    a = normalize(a); b = normalize(b);
+    const L = Math.max(a.length, b.length);
+    return L ? Math.round((1 - levenshtein(a, b) / L) * 100) : 0;
+}
+window.__lastPct = null;
+function renderAccuracy(text, phaseId) {
+    window.__lastPct = null;
+    if (!text) return;
+    const key = /^1/.test(phaseId) ? "1" : phaseId;
+    const models = (MODEL_ANSWERS[key] || MODEL_ANSWERS["2b"]).map(m => m.replace(/\[[^\]]*\]/g, " "));
+    const pct = Math.max.apply(null, models.map(m => similarityPct(text, m)));
+    window.__lastPct = pct;
+    const ok = pct >= 70;
+    const d = document.createElement("div");
+    d.className = "mt-1 font-mono";
+    d.textContent = "🎯 Précision : " + pct + " %" + (ok ? " ✅ Réussi" : " (objectif 70 %)");
+    $("test-correction").appendChild(d);
+    if (ok) { try { addXP(2); celebrate(); } catch (e) {} }
+}
+/* Le chrono passe au-dessus de la zone micro (barres d'écoute) */
+(function () {
+    const t = $("test-timer"), bars = $("test-bars");
+    if (t && bars && bars.parentElement) bars.parentElement.insertBefore(t, bars);
+})();
+
+/* ==========================================================
+   EXPLICATIONS POST-TEST : Wolof et Français (l'examen reste 100 % en anglais)
+   Bouton "Comprendre mon résultat" sous le score, ouvre une fenêtre bilingue.
+   ========================================================== */
+const POST_TEST_HELP = {
+    verdict: {
+        high: { wo: "Baax na lool ! Mën nga ñëw ci test bu dëgg.", fr: "Excellent, vous êtes prêt·e pour le vrai test." },
+        mid:  { wo: "Baax na, waaye kontinuwaal jàng.", fr: "Bon niveau, continuez à vous entraîner." },
+        low:  { wo: "Jàngaat tuuti balaa test bi.", fr: "Encore un peu d'entraînement avant l'examen." }
+    },
+    phases: {
+        "1a": { t: "Personal Information",
+            wo: "Fii, ñuy laaj la sa bopp : sa tur, sa at yi, foo dëkk, sa liggéey. Tontul ak baat yu leer.",
+            fr: "On vous pose des questions sur vous : nom, âge, lieu de vie, travail. Répondez simplement et clairement." },
+        "1b": { t: "Topic Questioning",
+            wo: "Laaj yi dañuy jëm ci benn mbir (kër, njabootu, liggéey). Tontul ak sipoos bu mat, bul tontu ak benn baat rekk.",
+            fr: "Questions sur un thème (logement, famille, travail). Répondez avec une phrase complète, pas un seul mot." },
+        "2a": { t: "Photograph Discussion",
+            wo: "Xool nataal bi te wax li nga gis : nit ñi, béj bi, li ñuy def. Ni : « I can see... ».",
+            fr: "Regardez la photo et décrivez ce que vous voyez : personnes, lieu, actions. Ex : « I can see... »." },
+        "2b": { t: "Further Discussion",
+            wo: "Wax sa xalaat te joxal ab sabab. Ni : « I think... because... ».",
+            fr: "Donnez votre opinion et une raison. Ex : « I think... because... »." }
+    },
+    tips: [
+        { wo: "Précision : bu sa tontu nuru ab tontu bu baax, pourcentage bi dafay yokku. 70 % ak kanam = baax na.",
+          fr: "Précision : plus votre réponse ressemble à une bonne réponse type, plus le pourcentage monte. 70 % ou plus = réussi." },
+        { wo: "Tontu ak sipoos bu mat (sujet + verbe), bul yem ci benn baat.",
+          fr: "Répondez avec une phrase complète (sujet + verbe), pas un seul mot." },
+        { wo: "Ci 5 sekond yi ñu noppi, xalaatal ci li nga wax.",
+          fr: "Pendant les 5 secondes de silence, repassez dans votre tête ce que vous venez de dire." }
+    ]
+};
+
+function closePostTestHelp() { const m = document.getElementById("post-test-help"); if (m) m.remove(); }
+
+function openPostTestHelp() {
+    closePostTestHelp();
+    const total = questionList.length || 1;
+    const answered = testAnswers.filter(a => analyzeAnswer(a.text).ok).length;
+    const pct = Math.round(answered / total * 100);
+    const v = pct >= 80 ? POST_TEST_HELP.verdict.high : pct >= 50 ? POST_TEST_HELP.verdict.mid : POST_TEST_HELP.verdict.low;
+    const pair = (o) => '<p class="text-[11px] text-[#F0906B] font-semibold">🇸🇳 ' + o.wo + '</p>' +
+                        '<p class="text-[11px] text-[#C9BFA8]">🇫🇷 ' + o.fr + '</p>';
+    const seen = [];
+    testAnswers.forEach(a => { const k = /^1a/.test(a.phaseId) ? "1a" : /^1b/.test(a.phaseId) ? "1b" : a.phaseId; if (POST_TEST_HELP.phases[k] && !seen.includes(k)) seen.push(k); });
+    let html = '<div class="bg-[#141A2B] rounded-xl p-3 space-y-1"><p class="text-xs font-bold text-[#F6F1E7]">' + answered + ' / ' + total + '</p>' + pair(v) + '</div>';
+    seen.forEach(k => { const p = POST_TEST_HELP.phases[k];
+        html += '<div class="bg-[#141A2B] rounded-xl p-3 space-y-1"><p class="text-[10px] font-bold text-[#F0906B] uppercase tracking-wider">Phase ' + k + ' · ' + p.t + '</p>' + pair(p) + '</div>'; });
+    html += '<p class="text-[10px] font-bold text-[#F0906B] uppercase tracking-wider pt-1">Conseils</p>';
+    POST_TEST_HELP.tips.forEach(t => { html += '<div class="bg-[#141A2B] rounded-xl p-3 space-y-1">' + pair(t) + '</div>'; });
+    const m = document.createElement("div");
+    m.id = "post-test-help";
+    m.className = "fixed inset-0 z-50 bg-[#0B0F1C]/95 overflow-y-auto p-4";
+    m.innerHTML = '<div class="max-w-md mx-auto space-y-3 pt-4 pb-10">' +
+        '<div class="flex justify-between items-center"><h3 class="text-base font-bold text-[#F6F1E7]">💡 Comprendre mon résultat</h3>' +
+        '<button onclick="closePostTestHelp()" class="text-[#A69C86] text-xl px-2" aria-label="Fermer">✕</button></div>' +
+        '<p class="text-[10px] text-[#8C8064]">Wolof et Français. Le test, lui, reste 100 % en anglais.</p>' + html +
+        '<button onclick="closePostTestHelp()" class="w-full py-3 btn-primary rounded-xl text-sm font-bold">Fermer</button></div>';
+    document.body.appendChild(m);
+}
+
+(function () {
+    const _f = finishTest;
+    finishTest = function () {
+        const p = _f.apply(this, arguments);          // la partie affichage s'exécute avant le premier await
+        try {
+            const box = $("test-result");
+            if (box && !box.classList.contains("hidden") && !testAnswers.some(a => a.unsupported)) {
+                const b = document.createElement("button");
+                b.className = "w-full py-3 btn-primary rounded-xl text-sm font-bold";
+                b.textContent = "💡 Comprendre mon résultat (Wolof · Français)";
+                b.onclick = openPostTestHelp;
+                if (box.firstElementChild) box.firstElementChild.insertAdjacentElement("afterend", b); else box.appendChild(b);
+            }
+        } catch (e) { console.error(e); }
+        return p;
+    };
+})();
+
+/* ==========================================================
+   SUPABASE : synchronisation niveau débloqué, XP et précision
+   Tables conservées : profiles (+ niveau_debloque, xp_total) et test_results (+ score_pourcentage).
+   Tout est silencieux en cas d'erreur : l'app reste 100 % fonctionnelle en local.
+   Prérequis : exécuter supabase_diisoo.sql dans le SQL Editor.
+   ========================================================== */
+window.__pcts = [];
+(function () {
+    const _ra = renderAccuracy;
+    renderAccuracy = function () { const r = _ra.apply(this, arguments); if (window.__lastPct !== null) window.__pcts.push(window.__lastPct); return r; };
+    const _rt = runTest;
+    runTest = function () { window.__pcts = []; return _rt.apply(this, arguments); };
+})();
+
+function avgAccuracy() {
+    const a = window.__pcts || [];
+    return a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : null;
+}
+
+async function insertTestResult(row) {
+    const pct = avgAccuracy();
+    try {
+        if (pct !== null) {
+            const r = await db.from("test_results").insert(Object.assign({}, row, { score_pourcentage: pct }));
+            if (!r.error) return;
+        }
+        await db.from("test_results").insert(row);     // repli : colonne absente, on garde au moins le résultat
+    } catch (e) {}
+}
+
+let cloudDead = false, cloudTimer = null;
+function tiersSnapshot() {
+    const t = tierState(), o = {};
+    Object.keys(t).forEach(k => o[k] = t[k].unlocked);
+    return o;
+}
+async function cloudSyncNow() {
+    const p = getProfile();
+    if (!db || !p || cloudDead) return;
+    try {
+        const { error } = await db.from("profiles")
+            .update({ niveau_debloque: tiersSnapshot(), xp_total: getXP().total })
+            .eq("phone", p.phone);
+        if (error) { cloudDead = true; console.warn("Sync Supabase désactivée :", error.message); }
+    } catch (e) { cloudDead = true; }
+}
+function scheduleCloudSync() { clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudSyncNow, 4000); }
+
+async function cloudPull() {
+    const p = getProfile();
+    if (!db || !p) return;
+    try {
+        const { data, error } = await db.from("profiles").select("niveau_debloque, xp_total").eq("phone", p.phone).maybeSingle();
+        if (error || !data) return;
+        const xp = getXP();
+        if (typeof data.xp_total === "number" && data.xp_total > xp.total) { xp.total = data.xp_total; store.set("diisoo_xp", xp); renderXPBar(); }
+        if (data.niveau_debloque && typeof data.niveau_debloque === "object") {
+            const t = tierState();
+            Object.keys(t).forEach(k => { const v = Number(data.niveau_debloque[k]); if (v > t[k].unlocked && v <= 3) t[k].unlocked = v; });
+            store.set(TIER_KEY, t);
+        }
+    } catch (e) {}
+}
+
+(function () {
+    const _xp = addXP;
+    addXP = function () { const r = _xp.apply(this, arguments); scheduleCloudSync(); return r; };
+    cloudPull();
+})();
 </script>
 </body>
 </html>
