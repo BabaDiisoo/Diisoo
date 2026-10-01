@@ -2607,13 +2607,66 @@ function toFrenchPhonetic(s) {
         .replace(/ŋ/g, "ng").replace(/Ŋ/g, "Ng")
         .replace(/ë/g, "eu").replace(/Ë/g, "Eu");
 }
+/* ---------- Voix wolof Oolel (Space Hugging Face, démo gratuite, 500 caractères max) ----------
+   Essaie d'abord la vraie voix wolof ; si le Space est lent, indisponible ou refuse,
+   on retombe sur l'ancienne lecture (voix française + orthographe adaptée). */
+const OOLEL_SPACE = "soynade-research/Oolel-Voices-Demo";
+const OOLEL_VOICE = "https://huggingface.co/spaces/soynade-research/Oolel-Voices-Demo/resolve/main/8_1_c.wav";
+const OOLEL_TIMEOUT_MS = 30000;
+const oolelCache = new Map();   // texte -> URL audio (évite de redemander la même phrase)
+let oolelClientPromise = null;
+let oolelReq = 0;               // seule la dernière demande a le droit de jouer
+
+async function oolelGetUrl(text) {
+    if (oolelCache.has(text)) return oolelCache.get(text);
+    if (!oolelClientPromise) {
+        oolelClientPromise = import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js")
+            .then(async m => ({ m, client: await m.Client.connect(OOLEL_SPACE) }))
+            .catch(e => { oolelClientPromise = null; throw e; });
+    }
+    const { m, client } = await oolelClientPromise;
+    const res = await client.predict("/generate_tts_audio", {
+        text_input: text,
+        audio_prompt_path_input: m.handle_file(OOLEL_VOICE),
+        exaggeration_input: 0.3,
+        temperature_input: 0.2,
+        seed_num_input: 0,
+        cfgw_input: 0.5
+    });
+    const url = res && res.data && res.data[0] && res.data[0].url;
+    if (!url) throw new Error("Réponse audio vide");
+    oolelCache.set(text, url);
+    return url;
+}
+
+async function speakWolofOolel(text, fallback) {
+    text = (text || "").trim().slice(0, 500);
+    if (!text) return;
+    const myReq = ++oolelReq;
+    const first = !oolelCache.has(text);
+    try {
+        if (first && typeof toast === "function") toast("⏳ Chargement de la voix wolof...");
+        const url = await Promise.race([
+            oolelGetUrl(text),
+            new Promise((_, rej) => setTimeout(() => rej(new Error("Délai dépassé")), OOLEL_TIMEOUT_MS))
+        ]);
+        if (myReq !== oolelReq) return;                 // une autre demande est passée entre-temps
+        const r = await playAudioFile(url);
+        if (r === null && myReq === oolelReq) fallback();
+    } catch (e) {
+        console.warn("Oolel indisponible, lecture de secours :", e);
+        if (myReq === oolelReq) fallback();
+    }
+}
+
 function playWolof(i) {
     const w = LEXICON[i];
+    const secours = () => speak(toFrenchPhonetic(w.wo), "fr-FR", 0.8);
     if (w.audio) {
-        playAudioFile(w.audio).then(r => { if (r === null) speak(toFrenchPhonetic(w.wo), "fr-FR", 0.8); });
+        playAudioFile(w.audio).then(r => { if (r === null) speakWolofOolel(w.wo, secours); });
         return;
     }
-    speak(toFrenchPhonetic(w.wo), "fr-FR", 0.8);
+    speakWolofOolel(w.wo, secours);
 }
 function playEnglish(i) {
     const w = LEXICON[i];
@@ -3686,7 +3739,7 @@ function unlockAudio() {
         if (!mod || !mod.vocab[i]) return;
         const v = mod.vocab[i];
         if (b.dataset.biz === "en") speak(v.en, "en-US", 0.9, "biz:" + sec + ":" + i);   // débloque « M'entraîner »
-        else if (b.dataset.biz === "wo" && v.wo) speak(toFrenchPhonetic(v.wo), "fr-FR", 0.85);
+        else if (b.dataset.biz === "wo" && v.wo) speakWolofOolel(v.wo, () => speak(toFrenchPhonetic(v.wo), "fr-FR", 0.85));
     });
     const pairs = $("pairs-list");
     if (pairs) pairs.addEventListener("click", (ev) => {
