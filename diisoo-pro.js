@@ -1,21 +1,16 @@
-// diisoo-pro.js : logique commerciale de Diisoo (Taches 1 a 5)
+// diisoo-pro.js v2 : logique commerciale de Diisoo
 // A inclure dans index.html avec : <script type="module" src="diisoo-pro.js"></script>
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
 // ---------------------------------------------------------------
-// CONFIGURATION : remplace ces deux valeurs (Supabase > Project Settings > API)
-// Utilise la cle "anon public". Ne mets JAMAIS la cle "service_role" ici.
+// CONFIGURATION (cle publique uniquement, jamais la cle secrete)
 // ---------------------------------------------------------------
 const CONFIG = {
   SUPABASE_URL: "https://jkwtyoefqvafnlqkhium.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable__lzrlmMaJdFC_kav6DkfEA_UbH6DiTC",
 };
-
-if (CONFIG.SUPABASE_URL.startsWith("COLLE_ICI")) {
-  console.error("Diisoo : renseigne SUPABASE_URL et SUPABASE_ANON_KEY dans diisoo-pro.js");
-}
 
 const sb = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
@@ -23,8 +18,25 @@ const QUOTA_GRATUIT = { local: 100, etranger: 15 };
 const etat = { user: null, profil: null, segment: "local" };
 
 // ---------------------------------------------------------------
-// Utilitaires d'interface (message court en bas de l'ecran)
+// Utilitaires asynchrones : aucun appel reseau ne reste sans delai maximum
 // ---------------------------------------------------------------
+const DELAI_RESEAU = 15000;
+
+function avecDelai(p, ms, nom) {
+  let t;
+  const limite = new Promise((_, rej) => {
+    t = setTimeout(() => rej(new Error("delai depasse : " + (nom || "operation"))), ms);
+  });
+  return Promise.race([Promise.resolve(p), limite]).finally(() => clearTimeout(t));
+}
+
+const pause = (ms) => new Promise((r) => setTimeout(r, ms || 0));
+
+function sansErreur(reponse) {
+  if (reponse && reponse.error) throw reponse.error;
+  return reponse ? reponse.data : null;
+}
+
 function message(texte) {
   let el = document.getElementById("diisoo-toast");
   if (!el) {
@@ -43,7 +55,7 @@ function message(texte) {
 }
 
 // ---------------------------------------------------------------
-// TACHE 2 : segmentation etrangers / locaux
+// Segmentation etrangers / locaux
 // ---------------------------------------------------------------
 function detecterSegment() {
   const lang = (navigator.language || "fr").toLowerCase();
@@ -55,104 +67,155 @@ function detecterSegment() {
 }
 
 // ---------------------------------------------------------------
-// TACHE 2 : reservoir local, synchronisation differee (5 s)
+// Reservoir local securise : seules les ecoutes en attente sont persistees,
+// les totaux sont toujours recalcules a partir du profil serveur
 // ---------------------------------------------------------------
-let res = { voix: 0, credits: 0, attVoix: 0, attCredits: 0 };
-const cleReservoir = () => "diisoo_reservoir_" + (etat.user ? etat.user.id : "anon");
+const CAP_ATTENTE = 100000;
+const res = { attVoix: 0, attCredits: 0 };
 
-function chargerReservoir() {
-  res = { voix: 0, credits: 0, attVoix: 0, attCredits: 0 };
+function entier(v) {
+  const n = Math.floor(Number(v));
+  return Number.isFinite(n) && n > 0 ? Math.min(n, CAP_ATTENTE) : 0;
+}
+
+const cleReservoir = () => "diisoo_reservoir_v2_" + (etat.user ? etat.user.id : "anon");
+
+function relireReservoir() {
   try {
-    const r = JSON.parse(localStorage.getItem(cleReservoir()));
-    if (r) {
-      res.attVoix = Number(r.attVoix) || 0;
-      res.attCredits = Number(r.attCredits) || 0;
+    const brut = localStorage.getItem(cleReservoir());
+    if (!brut) return;
+    const r = JSON.parse(brut);
+    if (r && r.v === 2) {
+      res.attVoix = entier(r.attVoix);
+      res.attCredits = entier(r.attCredits);
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) { /* donnees corrompues ou stockage indisponible : on garde la memoire */ }
 }
 
-function sauverReservoir() {
-  try { localStorage.setItem(cleReservoir(), JSON.stringify(res)); } catch (e) { /* ignore */ }
+function persisterReservoir() {
+  try {
+    localStorage.setItem(cleReservoir(), JSON.stringify({ v: 2, attVoix: res.attVoix, attCredits: res.attCredits }));
+  } catch (e) { /* mode prive ou quota plein : on reste en memoire */ }
 }
 
-async function rafraichirProfil() {
-  if (!etat.user) return null;
-  const { data, error } = await sb
-    .from("diisoo_profiles")
-    .select("est_premium, compteur_voix, credits_voix, points_xp, serie_jours")
-    .single();
-  if (error) { console.error(error.message); return null; }
-  etat.profil = data;
-  res.voix = data.compteur_voix + res.attVoix;
-  res.credits = Math.max(0, data.credits_voix - res.attCredits);
-  sauverReservoir();
-  return data;
-}
+window.addEventListener("storage", (e) => {
+  if (e.key === cleReservoir()) relireReservoir();
+});
 
 const estPremium = () => !!(etat.profil && etat.profil.est_premium);
+const voixUtilisees = () => (etat.profil ? etat.profil.compteur_voix : 0) + res.attVoix;
+const creditsRestants = () => Math.max(0, (etat.profil ? etat.profil.credits_voix : 0) - res.attCredits);
 
 function peutEcouter() {
-  return estPremium() || res.voix < QUOTA_GRATUIT[etat.segment] || res.credits > 0;
+  return estPremium() || voixUtilisees() < QUOTA_GRATUIT[etat.segment] || creditsRestants() > 0;
 }
 
 function consommerEcoute() {
   if (estPremium()) return;
-  if (res.voix < QUOTA_GRATUIT[etat.segment]) { res.voix++; res.attVoix++; }
-  else { res.credits--; res.attCredits++; }
-  sauverReservoir();
+  relireReservoir();
+  if (voixUtilisees() < QUOTA_GRATUIT[etat.segment]) res.attVoix++;
+  else if (creditsRestants() > 0) res.attCredits++;
+  persisterReservoir();
   planifierSync();
 }
 
 let minuteurSync = null;
-function planifierSync() {
+let syncEnCours = false;
+let echecsSync = 0;
+
+function planifierSync(delai) {
   clearTimeout(minuteurSync);
-  minuteurSync = setTimeout(syncServeur, 5000);
+  const d = delai !== undefined ? delai : Math.min(5000 * Math.pow(2, echecsSync), 60000);
+  minuteurSync = setTimeout(syncServeur, d);
 }
 
 async function syncServeur() {
-  if (!etat.user) return;
+  if (!etat.user || !etat.profil || syncEnCours) return;
+  syncEnCours = true;
   try {
+    relireReservoir();
     if (res.attVoix > 0) {
       const n = Math.min(res.attVoix, 50);
-      const { error } = await sb.rpc("incrementer_voix", { p_n: n });
-      if (error) throw error;
+      sansErreur(await avecDelai(sb.rpc("incrementer_voix", { p_n: n }), DELAI_RESEAU, "voix"));
       res.attVoix -= n;
+      etat.profil.compteur_voix += n;
+      persisterReservoir();
     }
     if (res.attCredits > 0) {
       const n = Math.min(res.attCredits, 500);
-      const { error } = await sb.rpc("consommer_credits", { p_n: n });
-      if (error) throw error;
+      sansErreur(await avecDelai(sb.rpc("consommer_credits", { p_n: n }), DELAI_RESEAU, "credits"));
       res.attCredits -= n;
+      etat.profil.credits_voix = Math.max(0, etat.profil.credits_voix - n);
+      persisterReservoir();
     }
-    sauverReservoir();
-    if (res.attVoix > 0 || res.attCredits > 0) planifierSync();
+    echecsSync = 0;
+    if (res.attVoix > 0 || res.attCredits > 0) planifierSync(1000);
   } catch (e) {
+    echecsSync = Math.min(echecsSync + 1, 4);
     console.error(e.message);
     planifierSync();
+  } finally {
+    syncEnCours = false;
   }
 }
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") syncServeur();
+  else relireReservoir();
 });
+window.addEventListener("pagehide", () => { persisterReservoir(); syncServeur(); });
 
 // ---------------------------------------------------------------
-// Connexion (boite simple creee en JavaScript, utilisee seulement si besoin)
+// Session et profil
 // ---------------------------------------------------------------
+async function rafraichirProfil() {
+  if (!etat.user) return null;
+  try {
+    const data = sansErreur(
+      await avecDelai(
+        sb.from("diisoo_profiles")
+          .select("est_premium, compteur_voix, credits_voix, points_xp, serie_jours")
+          .single(),
+        DELAI_RESEAU,
+        "profil"
+      )
+    );
+    etat.profil = data;
+    return data;
+  } catch (e) {
+    console.error(e.message);
+    return null;
+  }
+}
+
 async function chargerSession() {
-  const { data } = await sb.auth.getSession();
-  etat.user = data.session ? data.session.user : null;
-  if (etat.user) {
-    chargerReservoir();
-    await rafraichirProfil();
-  } else {
-    etat.profil = null;
+  try {
+    const rep = await avecDelai(sb.auth.getSession(), DELAI_RESEAU, "session");
+    const user = rep && rep.data && rep.data.session ? rep.data.session.user : null;
+    if (!user || !etat.user || etat.user.id !== user.id) {
+      res.attVoix = 0;
+      res.attCredits = 0;
+      etat.profil = null;
+    }
+    etat.user = user;
+    if (user) {
+      relireReservoir();
+      await rafraichirProfil();
+    }
+  } catch (e) {
+    console.error(e.message);
   }
   return !!etat.user;
 }
 
+// ---------------------------------------------------------------
+// Boite de connexion (une seule a la fois)
+// ---------------------------------------------------------------
+let dialogueEnCours = null;
+
 function ouvrirConnexion() {
-  return new Promise((resolve) => {
+  if (dialogueEnCours) return dialogueEnCours;
+  dialogueEnCours = new Promise((resolve) => {
     const fond = document.createElement("div");
     fond.style.cssText =
       "position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px";
@@ -171,7 +234,8 @@ function ouvrirConnexion() {
       i.type = type;
       i.placeholder = placeholder;
       i.autocomplete = auto;
-      i.style.cssText = "width:100%;box-sizing:border-box;padding:11px;margin:0 0 10px;border:1px solid #9aa5b1;border-radius:8px;font-size:16px";
+      i.style.cssText =
+        "width:100%;box-sizing:border-box;padding:11px;margin:0 0 10px;border:1px solid #9aa5b1;border-radius:8px;font-size:16px";
       return i;
     };
     const email = champ("email", "Email", "email");
@@ -196,32 +260,47 @@ function ouvrirConnexion() {
     info.style.cssText = "min-height:20px;margin:4px 0 8px;font-size:14px;color:#b42318";
     info.setAttribute("role", "alert");
 
+    let occupe = false;
     async function action(inscription) {
+      if (occupe) return;
+      occupe = true;
+      info.style.color = "#52606d";
       info.textContent = "Un instant...";
-      const identifiants = { email: email.value.trim(), password: mdp.value };
-      const { data, error } = inscription
-        ? await sb.auth.signUp(identifiants)
-        : await sb.auth.signInWithPassword(identifiants);
-      if (error) { info.textContent = error.message; return; }
-      if (!data.session) {
-        info.style.color = "#0a7d4b";
-        info.textContent = "Compte créé. Confirme ton email, puis connecte-toi.";
-        return;
+      try {
+        const identifiants = { email: email.value.trim(), password: mdp.value };
+        const rep = await avecDelai(
+          inscription ? sb.auth.signUp(identifiants) : sb.auth.signInWithPassword(identifiants),
+          DELAI_RESEAU,
+          "connexion"
+        );
+        if (rep.error) throw rep.error;
+        if (!rep.data.session) {
+          info.style.color = "#0a7d4b";
+          info.textContent = "Compte créé. Confirme ton email, puis connecte-toi.";
+          return;
+        }
+        await chargerSession();
+        fond.remove();
+        resolve(true);
+      } catch (e) {
+        info.style.color = "#b42318";
+        info.textContent = e.message;
+      } finally {
+        occupe = false;
       }
-      await chargerSession();
-      fond.remove();
-      resolve(true);
     }
 
     bConnexion.addEventListener("click", () => action(false));
     bInscription.addEventListener("click", () => action(true));
     bFermer.addEventListener("click", () => { fond.remove(); resolve(false); });
+    mdp.addEventListener("keydown", (e) => { if (e.key === "Enter") action(false); });
 
     boite.append(titre, email, mdp, info, bConnexion, bInscription, bFermer);
     fond.appendChild(boite);
     document.body.appendChild(fond);
     email.focus();
-  });
+  }).finally(() => { dialogueEnCours = null; });
+  return dialogueEnCours;
 }
 
 async function assurerConnexion() {
@@ -235,76 +314,124 @@ async function assurerConnexion() {
 }
 
 // ---------------------------------------------------------------
-// TACHE 1 : classement Top 5
+// Classement Top 5
 // ---------------------------------------------------------------
 async function top5(listeEl) {
-  const { data, error } = await sb.rpc("top5_xp");
-  if (error) { console.error(error.message); return []; }
-  if (listeEl) {
-    listeEl.textContent = "";
-    data.forEach((u, i) => {
-      const li = document.createElement("li");
-      li.textContent = (i + 1) + ". " + u.pseudo + " : " + u.points_xp + " XP";
-      listeEl.appendChild(li);
-    });
+  try {
+    const data = sansErreur(await avecDelai(sb.rpc("top5_xp"), DELAI_RESEAU, "classement")) || [];
+    if (listeEl) {
+      listeEl.textContent = "";
+      data.forEach((u, i) => {
+        const li = document.createElement("li");
+        li.textContent = (i + 1) + ". " + u.pseudo + " : " + u.points_xp + " XP";
+        listeEl.appendChild(li);
+      });
+    }
+    return data;
+  } catch (e) {
+    console.error(e.message);
+    return [];
   }
-  return data;
 }
 
 // ---------------------------------------------------------------
-// TACHE 2 : achat Premium (5 000 FCFA) et recharge (1 000 FCFA)
+// Paiement : Premium (5 000 FCFA) et recharge (1 000 FCFA)
 // ---------------------------------------------------------------
+let achatEnCours = false;
+
 async function acheter(type) {
-  if (!(await assurerConnexion())) return;
-  const fenetre = window.open("about:blank", "_blank");
-  const { data, error } = await sb.functions.invoke("paytech-creer", { body: { type } });
-  if (error || !data || !data.url) {
-    if (fenetre) fenetre.close();
+  if (achatEnCours) return;
+  if (type !== "premium" && type !== "recharge") return;
+  achatEnCours = true;
+  let fenetre = null;
+  try {
+    if (!(await assurerConnexion())) return;
+    fenetre = window.open("about:blank", "_blank");
+    const rep = await avecDelai(sb.functions.invoke("paytech-creer", { body: { type } }), 25000, "paiement");
+    if (rep.error || !rep.data || !rep.data.url) throw rep.error || new Error("adresse de paiement absente");
+    if (fenetre) { fenetre.opener = null; fenetre.location.href = rep.data.url; }
+    else window.open(rep.data.url, "_blank");
+  } catch (e) {
+    console.error(e.message);
+    if (fenetre) { try { fenetre.close(); } catch (e2) { /* ignore */ } }
     message("Paiement indisponible. Réessaie dans un instant.");
-    return;
+  } finally {
+    achatEnCours = false;
   }
-  if (fenetre) { fenetre.opener = null; fenetre.location.href = data.url; }
-  else window.open(data.url, "_blank");
 }
 
 async function gererRetourPaiement() {
-  const params = new URLSearchParams(location.search);
-  const retour = params.get("paiement");
+  const retour = new URLSearchParams(location.search).get("paiement");
   if (!retour) return;
   history.replaceState(null, "", location.pathname);
   if (retour === "annule") { message("Paiement annulé."); return; }
   if (!etat.user) return;
   message("Vérification du paiement...");
-  const avant = etat.profil ? { p: etat.profil.est_premium, c: etat.profil.credits_voix } : { p: false, c: 0 };
+  const avant = etat.profil
+    ? { p: etat.profil.est_premium, c: etat.profil.credits_voix }
+    : { p: false, c: 0 };
   for (let i = 0; i < 8; i++) {
     const profil = await rafraichirProfil();
     if (profil && (profil.est_premium !== avant.p || profil.credits_voix !== avant.c)) {
       message("Paiement confirmé. Merci !");
       return;
     }
-    await new Promise((r) => setTimeout(r, 3000));
+    await pause(3000);
   }
   message("Paiement en cours de confirmation. Reviens dans quelques minutes.");
 }
 
 // ---------------------------------------------------------------
-// TACHE 3 : texte wolof, cache communautaire, moteur Oolel
+// Wolof : dictionnaire de normalisation (voyelles longues, accents)
+// Forme courante sans accents -> forme standard.
+// Les mots d'origine francaise (marche, douane, conteneur, pieces, etc.) restent
+// en orthographe francaise, comme dans les textes de reference d'Oolel.
+// Evite les cles ambigues (ex. "naan" = boire, "degg"/"dëgg", "net", "new").
 // ---------------------------------------------------------------
-// Dictionnaire a enrichir : forme courante vers forme correcte (voyelles longues, accents)
-const DICO_WOLOF = { jerejef: "jërëjëf", waw: "waaw", deedeet: "déedéet", bax: "baax" };
+const DICO_WOLOF = new Map(Object.entries({
+  // Salutations et politesse
+  salamalekum: "asalaa maalekum", salamaleykum: "asalaa maalekum", malekum: "maalekum",
+  mangi: "maa ngi", yaangi: "yaa ngi",
+  jamm: "jàmm", yalla: "yàlla",
+  jerejef: "jërëjëf", jerejeef: "jërëjëf",
+  waw: "waaw", dedet: "déedéet", deedeet: "déedéet", deedet: "déedéet",
+  ndeysan: "ndeysaan", teranga: "teraanga", benen: "beneen",
+
+  // Personnes
+  gor: "goor", jigeen: "jigéen", toubab: "tubaab",
+
+  // Temps
+  bes: "bés", demb: "démb", elleg: "ëllëg", legi: "léegi",
+
+  // Commerce, marche, negociation
+  jaykat: "jaaykat", jend: "jënd", xalis: "xaalis", njeg: "njëg",
+  gaw: "gaaw", tuti: "tuuti", wanni: "wàññi", wani: "wàññi",
+  waxtan: "waxtaan", laj: "laaj", liggey: "liggéey", ligey: "liggéey",
+
+  // Import, export, circulation
+  genne: "génne", yon: "yoon", jang: "jàng",
+
+  // Nombres et prix
+  naar: "ñaar", nett: "ñett", nent: "ñent", ñata: "ñaata", nyata: "ñaata",
+  juroom: "juróom", temeer: "téeméer", teemeer: "téeméer", juni: "junni",
+}));
 
 function normaliserWolof(texte) {
-  return texte.replace(/[\p{L}]+/gu, (m) => DICO_WOLOF[m.toLowerCase()] ?? m);
+  return texte.replace(/[\p{L}]+/gu, (m) => {
+    const v = DICO_WOLOF.get(m.toLowerCase());
+    return v !== undefined ? v : m;
+  });
 }
 
-function chunkWolofText(texte, max = 500) {
+function chunkWolofText(texte, max) {
+  const limite = max || 500;
   let reste = normaliserWolof(texte).replace(/\s+/g, " ").trim();
   const morceaux = [];
-  while (reste.length > max) {
-    const fenetre = reste.slice(0, max);
+  while (reste.length > limite) {
+    const fenetre = reste.slice(0, limite);
     let i = Math.max(fenetre.lastIndexOf("."), fenetre.lastIndexOf(";"), fenetre.lastIndexOf(","));
     if (i < 1) i = fenetre.lastIndexOf(" ");
-    if (i < 1) i = max - 1;
+    if (i < 1) i = limite - 1;
     morceaux.push(reste.slice(0, i + 1).trim());
     reste = reste.slice(i + 1).trim();
   }
@@ -312,59 +439,97 @@ function chunkWolofText(texte, max = 500) {
   return morceaux;
 }
 
+// ---------------------------------------------------------------
+// Cache communautaire (table diisoo_lecons)
+// ---------------------------------------------------------------
 async function hashTexte(t) {
+  if (!window.crypto || !crypto.subtle) return null;
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 async function lireCache(texte) {
-  const h = await hashTexte(texte);
-  const { data } = await sb.from("diisoo_lecons").select("audio_base64, mime").eq("hash", h).maybeSingle();
-  return data || null;
-}
-
-async function ecrireCache(texte, base64, mime) {
-  const { error } = await sb.rpc("enregistrer_lecon", { p_texte: texte, p_audio: base64, p_mime: mime });
-  if (error) console.error(error.message);
-}
-
-const avecDelai = (p, ms) =>
-  Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("delai")), ms))]);
-
-let clientOolel = null;
-async function genererOolel(texte) {
-  if (!clientOolel) {
-    clientOolel = await avecDelai(Client.connect("soynade-research/Oolel-Voices-Demo"), 30000);
+  try {
+    const h = await hashTexte(texte);
+    if (!h) return null;
+    const data = sansErreur(
+      await avecDelai(
+        sb.from("diisoo_lecons").select("audio_base64, mime").eq("hash", h).maybeSingle(),
+        8000,
+        "cache"
+      )
+    );
+    return data || null;
+  } catch (e) {
+    console.error(e.message);
+    return null;
   }
-  const r = await avecDelai(
-    clientOolel.predict("/generate_tts_audio", {
-      text_input: texte,
-      exaggeration_input: 0.3,
-      temperature_input: 0.2,
-      seed_num_input: 0,
-      cfgw_input: 0.5,
-    }),
-    90000
-  );
-  const rep = await fetch(r.data[0].url);
-  if (!rep.ok) throw new Error("audio indisponible");
-  return await rep.blob();
+}
+
+function ecrireCache(texte, base64, mime) {
+  avecDelai(sb.rpc("enregistrer_lecon", { p_texte: texte, p_audio: base64, p_mime: mime }), DELAI_RESEAU, "ecriture cache")
+    .then((rep) => { if (rep && rep.error) console.error(rep.error.message); })
+    .catch((e) => console.error(e.message));
+}
+
+// ---------------------------------------------------------------
+// Moteur Oolel (Gradio) : connexion unique, delais maximum, reprise apres echec
+// ---------------------------------------------------------------
+let promesseClient = null;
+
+function clientOolel() {
+  if (!promesseClient) {
+    promesseClient = avecDelai(Client.connect("soynade-research/Oolel-Voices-Demo"), 30000, "connexion voix")
+      .catch((e) => { promesseClient = null; throw e; });
+  }
+  return promesseClient;
+}
+
+async function genererOolel(texte) {
+  try {
+    const client = await clientOolel();
+    const r = await avecDelai(
+      client.predict("/generate_tts_audio", {
+        text_input: texte,
+        exaggeration_input: 0.3,
+        temperature_input: 0.2,
+        seed_num_input: 0,
+        cfgw_input: 0.5,
+      }),
+      90000,
+      "synthese"
+    );
+    const url = r && r.data && r.data[0] && r.data[0].url;
+    if (!url) throw new Error("reponse vide");
+    const rep = await avecDelai(fetch(url), 30000, "telechargement audio");
+    if (!rep.ok) throw new Error("audio indisponible");
+    return await rep.blob();
+  } catch (e) {
+    promesseClient = null;
+    throw e;
+  }
 }
 
 function blobVersBase64(blob) {
-  return new Promise((res2, rej) => {
+  return new Promise((resolve, reject) => {
     const r = new FileReader();
-    r.onload = () => res2(String(r.result).split(",")[1]);
-    r.onerror = rej;
+    r.onload = () => resolve(String(r.result).split(",")[1]);
+    r.onerror = reject;
     r.readAsDataURL(blob);
   });
 }
 
-function base64VersBlob(b64, mime) {
-  const bin = atob(b64);
-  const u8 = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-  return new Blob([u8], { type: mime });
+// Decodage asynchrone via fetch(data:) pour ne pas figer l'interface
+async function base64VersBlob(b64, mime) {
+  try {
+    const rep = await fetch("data:" + mime + ";base64," + b64);
+    return await rep.blob();
+  } catch (e) {
+    const bin = atob(b64);
+    const u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return new Blob([u8], { type: mime });
+  }
 }
 
 // Nettoyage memoire : 30 s maximum si jamais lu, 15 s apres la fin de lecture
@@ -386,47 +551,62 @@ function jouerBlob(blob) {
     audio.addEventListener("playing", () => clearTimeout(tMax), { once: true });
     audio.addEventListener("ended", () => { setTimeout(nettoyer, 15000); resolve(); });
     audio.addEventListener("error", nettoyer);
-    audio.play().catch(nettoyer);
+    audio.play().catch(() => { message("Lecture impossible. Touche à nouveau pour écouter."); nettoyer(); });
   });
 }
 
+async function preparerMorceau(morceau) {
+  const cache = await lireCache(morceau);
+  if (cache) return base64VersBlob(cache.audio_base64, cache.mime);
+  const blob = await genererOolel(morceau);
+  blobVersBase64(blob)
+    .then((b64) => {
+      if (b64.length <= 600000) ecrireCache(morceau, b64, blob.type || "audio/wav");
+      else console.warn("Audio trop gros pour le cache : " + b64.length);
+    })
+    .catch((e) => console.error(e && e.message));
+  return blob;
+}
+
+let lectureEnCours = false;
+
 async function ecouter(texteWolof) {
-  if (!(await assurerConnexion())) return "connexion";
-  if (!peutEcouter()) {
-    message("Limite atteinte. Passe en Premium ou recharge tes écoutes.");
-    return "limite";
-  }
+  if (lectureEnCours) return "occupe";
+  if (!texteWolof || !String(texteWolof).trim()) return "vide";
+  lectureEnCours = true;
   try {
-    const blobs = [];
-    for (const morceau of chunkWolofText(texteWolof)) {
-      let blob;
-      const cache = await lireCache(morceau);
-      if (cache) {
-        blob = base64VersBlob(cache.audio_base64, cache.mime);
-      } else {
-        blob = await genererOolel(morceau);
-        const b64 = await blobVersBase64(blob);
-        if (b64.length <= 600000) ecrireCache(morceau, b64, blob.type || "audio/wav");
-        else console.warn("Audio trop gros pour le cache : " + b64.length);
-      }
-      blobs.push(blob);
+    if (!(await assurerConnexion())) return "connexion";
+    if (!peutEcouter()) {
+      message("Limite atteinte. Passe en Premium ou recharge tes écoutes.");
+      return "limite";
     }
-    consommerEcoute();
-    for (const b of blobs) await jouerBlob(b);
+    const morceaux = chunkWolofText(String(texteWolof));
+    if (!morceaux.length) return "vide";
+    // Le morceau suivant est prepare pendant la lecture du precedent
+    const lancer = (m) => { const p = preparerMorceau(m); p.catch(() => {}); return p; };
+    let suivante = lancer(morceaux[0]);
+    for (let i = 0; i < morceaux.length; i++) {
+      const blob = await suivante;
+      if (i === 0) consommerEcoute();
+      if (i + 1 < morceaux.length) suivante = lancer(morceaux[i + 1]);
+      await jouerBlob(blob);
+    }
     return "ok";
   } catch (e) {
     console.error(e.message);
     message("Voix indisponible pour le moment. Réessaie plus tard.");
     return "erreur";
+  } finally {
+    lectureEnCours = false;
   }
 }
 
 // ---------------------------------------------------------------
-// TACHE 4 : coach vocal (reconnaissance nettoyee, serie de jours, XP)
+// Coach vocal : reconnaissance nettoyee, serie de jours, XP
 // ---------------------------------------------------------------
 function nettoyerTexte(s) {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim();
+    .replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim().slice(0, 300);
 }
 
 function distance(a, b) {
@@ -454,18 +634,32 @@ function ecouterReponse(langue) {
     rec.lang = langue;
     rec.interimResults = false;
     rec.maxAlternatives = 3;
-    rec.onresult = (e) => resolve([...e.results[0]].map((a) => a.transcript));
-    rec.onerror = (e) => reject(new Error(e.error));
-    rec.onend = () => resolve([]);
-    rec.start();
+    let fini = false;
+    let garde = null;
+    const terminer = (valeur, erreur) => {
+      if (fini) return;
+      fini = true;
+      clearTimeout(garde);
+      if (erreur) reject(erreur); else resolve(valeur);
+    };
+    garde = setTimeout(() => { try { rec.stop(); } catch (e) { /* ignore */ } terminer([]); }, 12000);
+    rec.onresult = (e) => terminer([...e.results[0]].map((a) => a.transcript));
+    rec.onerror = (e) => terminer(null, new Error(e.error));
+    rec.onend = () => terminer([]);
+    try { rec.start(); } catch (e) { terminer(null, e); }
   });
 }
 
 async function enregistrerValidation() {
-  const { data, error } = await sb.rpc("valider_exercice");
-  if (error) { console.error(error.message); return null; }
-  if (etat.profil) { etat.profil.points_xp = data[0].xp_total; etat.profil.serie_jours = data[0].serie; }
-  return { xp: data[0].xp_total, serie: data[0].serie };
+  try {
+    const data = sansErreur(await avecDelai(sb.rpc("valider_exercice"), DELAI_RESEAU, "validation"));
+    if (!data || !data[0]) return null;
+    if (etat.profil) { etat.profil.points_xp = data[0].xp_total; etat.profil.serie_jours = data[0].serie; }
+    return { xp: data[0].xp_total, serie: data[0].serie };
+  } catch (e) {
+    console.error(e.message);
+    return null;
+  }
 }
 
 // langue : "fr-FR" ou "en-US" (le wolof n'est pas reconnu par le navigateur)
@@ -488,43 +682,87 @@ async function validerRepetition() {
 }
 
 // ---------------------------------------------------------------
-// TACHE 5 : PWA (service worker)
+// PWA : service worker avec mise a jour automatique
 // ---------------------------------------------------------------
 function enregistrerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
-  navigator.serviceWorker.register("./service-worker.js").catch((e) => console.error("SW", e.message));
+  const avaitControleur = !!navigator.serviceWorker.controller;
+  let rechargement = false;
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!avaitControleur || rechargement) return;
+    rechargement = true;
+    persisterReservoir();
+    window.location.reload();
+  });
+
+  navigator.serviceWorker.register("./service-worker.js")
+    .then((reg) => {
+      const activer = (sw) => { if (sw) sw.postMessage({ type: "SKIP_WAITING" }); };
+      if (reg.waiting && navigator.serviceWorker.controller) activer(reg.waiting);
+      reg.addEventListener("updatefound", () => {
+        const nouveau = reg.installing;
+        if (!nouveau) return;
+        nouveau.addEventListener("statechange", () => {
+          if (nouveau.state === "installed" && navigator.serviceWorker.controller) activer(nouveau);
+        });
+      });
+      const verifier = () => { reg.update().catch(() => {}); };
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") verifier();
+      });
+      setInterval(verifier, 30 * 60 * 1000);
+    })
+    .catch((e) => console.error("SW", e.message));
 }
 
 // ---------------------------------------------------------------
 // Demarrage et API publique : window.Diisoo
 // ---------------------------------------------------------------
+let initFait = false;
+
 async function init() {
-  etat.segment = detecterSegment();
-  await chargerSession();
-  sb.auth.onAuthStateChange((evenement) => {
-    if (evenement === "SIGNED_OUT") { etat.user = null; etat.profil = null; }
-  });
-  enregistrerServiceWorker();
-  await gererRetourPaiement();
+  if (initFait) return;
+  initFait = true;
+  try {
+    etat.segment = detecterSegment();
+    enregistrerServiceWorker();
+    await chargerSession();
+    sb.auth.onAuthStateChange((evenement, session) => {
+      setTimeout(() => {
+        if (evenement === "SIGNED_OUT") {
+          etat.user = null;
+          etat.profil = null;
+          res.attVoix = 0;
+          res.attCredits = 0;
+        } else if (evenement === "SIGNED_IN" && session && (!etat.user || etat.user.id !== session.user.id)) {
+          chargerSession();
+        }
+      }, 0);
+    });
+    await gererRetourPaiement();
+  } catch (e) {
+    console.error(e.message);
+  }
 }
 
 window.Diisoo = {
   init,
   connexion: ouvrirConnexion,
   deconnexion: () => sb.auth.signOut(),
-  ecouter,                 // Diisoo.ecouter("texte wolof")
-  acheter,                 // Diisoo.acheter("premium") ou Diisoo.acheter("recharge")
-  top5,                    // Diisoo.top5(elementUl)
-  verifierReponse,         // Diisoo.verifierReponse("phrase attendue", "fr-FR")
-  validerRepetition,       // Diisoo.validerRepetition()
+  ecouter,
+  acheter,
+  top5,
+  verifierReponse,
+  validerRepetition,
   rafraichirProfil,
   etat: () => ({
     segment: etat.segment,
     connecte: !!etat.user,
     premium: estPremium(),
     quotaGratuit: QUOTA_GRATUIT[etat.segment],
-    ecoutesUtilisees: res.voix,
-    creditsRestants: res.credits,
+    ecoutesUtilisees: voixUtilisees(),
+    creditsRestants: creditsRestants(),
     xp: etat.profil ? etat.profil.points_xp : 0,
     serie: etat.profil ? etat.profil.serie_jours : 0,
   }),
