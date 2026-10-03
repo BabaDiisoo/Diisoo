@@ -3238,6 +3238,47 @@ function confirmTestContinue() {
     if (currentConfirmEarly) currentConfirmEarly();
 }
 
+let silCtx = null, silSource = null, silAnalyser = null, silBuf = null;
+
+function closeAnalyser() {
+    try { if (silSource) silSource.disconnect(); } catch (e) {}
+    try { if (silCtx) silCtx.close(); } catch (e) {}
+    silCtx = null; silSource = null; silAnalyser = null; silBuf = null;
+}
+
+function ensureAnalyser() {
+    try {
+        if (!micStream) return false;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return false;
+        if (silCtx && silSource && silSource.mediaStream === micStream) {
+            if (silCtx.state === "suspended") silCtx.resume();
+            return true;
+        }
+        closeAnalyser();
+        silCtx = new AC();
+        silSource = silCtx.createMediaStreamSource(micStream);
+        silAnalyser = silCtx.createAnalyser();
+        silAnalyser.fftSize = 1024;
+        silAnalyser.smoothingTimeConstant = 0.2;
+        silSource.connect(silAnalyser);
+        silBuf = new Float32Array(silAnalyser.fftSize);
+        if (silCtx.resume) silCtx.resume();
+        return true;
+    } catch (e) {
+        console.warn("[diisoo-ielts] analyseur audio indisponible :", e);
+        closeAnalyser();
+        return false;
+    }
+}
+
+function micLevel() {
+    silAnalyser.getFloatTimeDomainData(silBuf);
+    let sum = 0;
+    for (let i = 0; i < silBuf.length; i++) sum += silBuf[i] * silBuf[i];
+    return Math.sqrt(sum / silBuf.length);
+}
+
 function listenWithSilenceAutoAdvance(lang, ms, onText) {
     let lastText = "";
     let lastChangeAt = Date.now();
@@ -3271,8 +3312,38 @@ function listenWithSilenceAutoAdvance(lang, ms, onText) {
         session.stop();
     }
 
+    const ampOk = ensureAnalyser();
+    let noiseSum = 0, noiseN = 0, threshold = 0.02, voiceMs = 0, hasSpoken = false;
+    const startedAt = Date.now();
+    let lastTick = startedAt, lastVoiceAt = startedAt;
+    const ampTimer = ampOk ? setInterval(() => {
+        const now = Date.now();
+        const dt = now - lastTick;
+        lastTick = now;
+        let v = 0;
+        try { v = micLevel(); } catch (e) { return; }
+        if (now - startedAt < 700) {
+            noiseSum += v; noiseN++;
+            threshold = Math.min(0.06, Math.max(0.015, (noiseSum / noiseN) * 3));
+            lastVoiceAt = now;
+            return;
+        }
+        if (v > threshold) {
+            lastVoiceAt = now;
+            voiceMs += dt;
+            if (!hasSpoken && voiceMs >= 400) { hasSpoken = true; console.log("[diisoo-ielts] voix detectee, seuil =", threshold.toFixed(3)); }
+            if (graceActive) cancelGrace();
+        } else if (hasSpoken && !graceActive && now - lastVoiceAt >= SILENCE_MS) {
+            console.log("[diisoo-ielts] silence continu de 5 s detecte, passage a la suite");
+            graceActive = true;
+            currentConfirmEarly = confirmEarlyStop;
+            showHint();
+            graceTimeout = setTimeout(confirmEarlyStop, GRACE_MS);
+        }
+    }, 100) : null;
+
     const checkInterval = setInterval(() => {
-        if (!lastText.trim() || graceActive) return;
+        if (ampTimer || !lastText.trim() || graceActive) return;
         if (Date.now() - lastChangeAt >= SILENCE_MS) {
             graceActive = true;
             currentConfirmEarly = confirmEarlyStop;
@@ -3283,6 +3354,7 @@ function listenWithSilenceAutoAdvance(lang, ms, onText) {
 
     session.promise.then(() => {
         clearInterval(checkInterval);
+        if (ampTimer) clearInterval(ampTimer);
         clearTimeout(graceTimeout);
         currentConfirmEarly = null;
         hideHint();
@@ -3615,6 +3687,7 @@ function stopAudioCapture() {
     return new Promise((resolve) => {
         if (!mediaRecorder) { resolve(null); return; }
         mediaRecorder.onstop = () => {
+            closeAnalyser();
             if (micStream) micStream.getTracks().forEach(t => t.stop());
             resolve(new Blob(audioChunks, { type: (recMime || "audio/webm").split(";")[0] }));
         };
