@@ -46,6 +46,17 @@ h1{flex:1;margin:0;font-family:'Fredoka',system-ui,sans-serif;font-size:21px;let
 .secondaires{display:flex;gap:8px;margin-top:8px}
 .secondaire{flex:1;padding:11px;border-radius:12px;border:1px solid var(--bord);background:transparent;color:var(--texte);font-size:13px;font-weight:600}
 .cache{display:none!important}
+.palier{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 10px;font-size:13px;font-weight:800;color:var(--or)}
+.test{padding:9px 14px;border:0;border-radius:999px;font-size:13px;font-weight:800;color:var(--sombre);background:linear-gradient(135deg,var(--or),var(--terre))}
+#quiz{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.82);display:flex;align-items:flex-end;justify-content:center}
+#quiz .boite{width:100%;max-width:480px;max-height:92vh;overflow:auto;background:var(--fond);border:1px solid var(--bord);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+#quiz .compte{font-size:12px;color:var(--doux);margin-bottom:8px}
+#quiz .q{font-size:19px;font-weight:800;line-height:1.35;margin:6px 0 14px}
+#quiz .choix{display:block;width:100%;text-align:left;padding:13px;margin-bottom:8px;border-radius:12px;border:1px solid var(--bord);background:var(--carte);color:var(--texte);font-size:15px}
+#quiz .choix.bon{border-color:#4cc38a;background:rgba(76,195,138,.15)}
+#quiz .choix.faux{border-color:#ff6b6b;background:rgba(255,107,107,.15)}
+#quiz .ecoute{margin-bottom:10px}
+#quiz .fin{font-size:16px;line-height:1.5;margin:10px 0 16px}
 details{margin-top:18px;border:1px solid var(--bord);border-radius:12px;padding:10px 12px;background:var(--carte)}
 summary{font-size:12px;color:var(--doux);font-weight:600}
 pre{margin:10px 0 0;white-space:pre-wrap;word-break:break-word;font-size:11px;line-height:1.45;color:var(--doux);max-height:220px;overflow:auto}
@@ -68,9 +79,10 @@ pre{margin:10px 0 0;white-space:pre-wrap;word-break:break-word;font-size:11px;li
 <pre id="journalTexte">Aucun message pour le moment.</pre>
 </details>
 </div>
+<div id="quiz" class="cache" role="dialog" aria-modal="true"></div>
 <aside id="offre" class="cache">
 <div class="interieur">
-<p><strong>Premium, 5 000 FCFA.</strong> Toutes les phrases des 3 modules et l'écoute illimitée. Paiement par Wave, Orange Money ou carte (PayTech).</p>
+<p><strong>Premium, 5 000 FCFA.</strong> L'écoute vocale illimitée. Les paliers, eux, se débloquent par ton niveau et non par le paiement. Paiement par Wave, Orange Money ou carte (PayTech).</p>
 <button id="btnAcheter" class="principal" type="button">Débloquer Premium</button>
 <div class="secondaires">
 <button id="btnConnexion" class="secondaire" type="button">Se connecter</button>
@@ -79,7 +91,6 @@ pre{margin:10px 0 0;white-space:pre-wrap;word-break:break-word;font-size:11px;li
 </div>
 </aside>
 <script type="module">
-const GRATUIT = 3;
 const SPACE = "soynade-research/Oolel-Voices-Demo";
 const ENDPOINT = "/generate_tts_audio";
 const CLIENT_URL = "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
@@ -372,6 +383,7 @@ async function attendreSession() {
     await attente(250);
   }
   if (Diisoo.etat().connecte) await Diisoo.rafraichirProfil();
+  await chargerNiveau();
 }
 const estPremium = () => !!(Diisoo && Diisoo.etat().premium);
 const estConnecte = () => !!(Diisoo && Diisoo.etat().connecte);
@@ -386,12 +398,12 @@ async function lignesDuModule(m) {
   return m.lignes;
 }
 
-function creerLigne(l, i, premium) {
+function creerLigne(l, verrouNiveau) {
   const ligne = document.createElement("div");
   ligne.className = "ligne";
   const txt = document.createElement("div");
   txt.className = "txt";
-  if (!premium && i >= GRATUIT) {
+  if (verrouNiveau) {
     ligne.classList.add("verrou");
     const fr = document.createElement("div");
     fr.className = "wo";
@@ -399,7 +411,7 @@ function creerLigne(l, i, premium) {
     txt.appendChild(fr);
     const cad = document.createElement("span");
     cad.className = "cadenas";
-    cad.textContent = "🔒 Premium";
+    cad.textContent = "🔒 Palier " + verrouNiveau;
     ligne.append(txt, cad);
     return ligne;
   }
@@ -417,6 +429,158 @@ function creerLigne(l, i, premium) {
   b.addEventListener("click", () => parler(l[0], b));
   ligne.append(txt, b);
   return ligne;
+}
+
+const SEUILS = [0, 100, 300, 600, 1000];
+const SCORE_MIN = 70;
+let niveauValide = 0;
+
+const xpActuel = () => (Diisoo ? Diisoo.etat().xp || 0 : 0);
+
+async function chargerNiveau() {
+  niveauValide = 0;
+  if (!Diisoo || !estConnecte()) return;
+  try {
+    const r = await Diisoo.niveaux.etat();
+    niveauValide = (r && r.niveau_valide) || 0;
+    LOG("niveau valide =", niveauValide);
+  } catch (e) { ERR("niveau indisponible :", e); }
+}
+
+function decouper(l) {
+  const n = l.length;
+  return [0, 1, 2, 3, 4].map((i) => l.slice(Math.floor(i * n / 5), Math.floor((i + 1) * n / 5)));
+}
+
+function melanger(a) {
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+
+function creerEntete(p) {
+  const e = document.createElement("div");
+  e.className = "palier";
+  const t = document.createElement("span");
+  const st = p <= niveauValide ? "✅ Validé" : (p === niveauValide + 1 ? "🔓 En cours" : "🔒 Verrouillé");
+  t.textContent = "Palier " + p + " · " + st;
+  e.appendChild(t);
+  if (p === niveauValide + 1) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "test";
+    b.textContent = "Passer le test";
+    b.addEventListener("click", () => ouvrirTest(p));
+    e.appendChild(b);
+  }
+  return e;
+}
+
+async function ouvrirTest(p) {
+  if (!Diisoo) { diag("Test indisponible pour le moment."); return; }
+  if (!estConnecte()) {
+    await Diisoo.connexion();
+    await attendreSession();
+    await chargerNiveau();
+    await afficher();
+    return;
+  }
+  const pool = [];
+  MODULES.forEach((m) => decouper(m.lignes)[p - 1].forEach((l) => pool.push(l)));
+  const toutes = [];
+  MODULES.forEach((m) => m.lignes.forEach((l) => toutes.push(l)));
+  const qs = melanger(pool).slice(0, 5).map((l) => {
+    const faux = melanger(toutes.filter((x) => x[1] !== l[1])).slice(0, 3).map((x) => x[1]);
+    return { wo: l[0], bon: l[1], choix: melanger(faux.concat([l[1]])) };
+  });
+  const zone = $("quiz");
+  zone.classList.remove("cache");
+  let i = 0;
+  let bonnes = 0;
+  const xp = [];
+
+  const fermer = async () => {
+    zone.classList.add("cache");
+    zone.textContent = "";
+    await chargerNiveau();
+    await afficher();
+  };
+
+  const finir = async () => {
+    zone.textContent = "";
+    const boite = document.createElement("div");
+    boite.className = "boite";
+    const fin = document.createElement("p");
+    fin.className = "fin";
+    fin.textContent = "Calcul du résultat…";
+    boite.appendChild(fin);
+    zone.appendChild(boite);
+    await Promise.all(xp);
+    const score = Math.round(bonnes / qs.length * 100);
+    let msg;
+    if (score >= SCORE_MIN) {
+      try {
+        await Diisoo.niveaux.valider(p, score);
+        msg = "Score " + score + "/100. Palier " + p + " validé !";
+      } catch (e) {
+        ERR("validation du palier :", e);
+        const m = String((e && e.message) || e);
+        if (m.includes("xp_insuffisant")) msg = "Score " + score + "/100, mais il te faut " + SEUILS[p - 1] + " XP pour valider (tu en as " + xpActuel() + "). Refais des tests pour gagner de l'XP.";
+        else if (m.includes("palier_non_disponible")) msg = "Ce palier n'est pas encore disponible.";
+        else msg = "Validation impossible : " + m;
+      }
+    } else {
+      msg = "Score " + score + "/100. Il faut " + SCORE_MIN + " pour valider. Réessaie.";
+    }
+    fin.textContent = msg;
+    const ok = document.createElement("button");
+    ok.type = "button";
+    ok.className = "principal";
+    ok.textContent = "Fermer";
+    ok.addEventListener("click", fermer);
+    boite.appendChild(ok);
+  };
+
+  const montrer = () => {
+    zone.textContent = "";
+    const boite = document.createElement("div");
+    boite.className = "boite";
+    const q = qs[i];
+    const c = document.createElement("div");
+    c.className = "compte";
+    c.textContent = "Palier " + p + " · Question " + (i + 1) + "/" + qs.length;
+    const son = document.createElement("button");
+    son.type = "button";
+    son.className = "ecoute";
+    son.textContent = "🔊";
+    son.addEventListener("click", () => parler(q.wo, son));
+    const t = document.createElement("div");
+    t.className = "q";
+    t.textContent = q.wo;
+    boite.append(c, son, t);
+    let repondu = false;
+    q.choix.forEach((txt) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "choix";
+      b.textContent = txt;
+      b.addEventListener("click", () => {
+        if (repondu) return;
+        repondu = true;
+        const juste = txt === q.bon;
+        b.classList.add(juste ? "bon" : "faux");
+        if (!juste) boite.querySelectorAll(".choix").forEach((x) => { if (x.textContent === q.bon) x.classList.add("bon"); });
+        if (juste) { bonnes++; xp.push(Diisoo.exercice().catch(() => null)); }
+        setTimeout(() => { i++; if (i < qs.length) montrer(); else finir(); }, 900);
+      });
+      boite.appendChild(b);
+    });
+    zone.appendChild(boite);
+  };
+  montrer();
 }
 
 let courant = MODULES[0].id;
@@ -447,13 +611,18 @@ function majOffre() {
 async function afficher() {
   const m = MODULES.find((x) => x.id === courant);
   rendreOnglets();
-  $("sous").textContent = m.sous;
   const liste = $("liste");
   const lignes = await lignesDuModule(m);
   if (m.id !== courant) return;
-  const premium = estPremium();
+  const suivant = Math.min(niveauValide + 1, 5);
+  $("sous").textContent = m.sous + " Niveau validé : " + niveauValide + "/5. XP : " + xpActuel() + (niveauValide < 5 ? " (palier " + suivant + " : " + SEUILS[suivant - 1] + " XP requis)." : ".");
   liste.textContent = "";
-  lignes.forEach((l, i) => liste.appendChild(creerLigne(l, i, premium)));
+  decouper(lignes).forEach((groupe, k) => {
+    const p = k + 1;
+    if (!groupe.length) return;
+    liste.appendChild(creerEntete(p));
+    groupe.forEach((l) => liste.appendChild(creerLigne(l, p <= niveauValide + 1 ? 0 : p)));
+  });
   majOffre();
 }
 
