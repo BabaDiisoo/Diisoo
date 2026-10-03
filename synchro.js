@@ -1,4 +1,4 @@
-const CLES = ["diisoo_xp", "diisoo_streak", "diisoo_daily_xp", "diisoo_badges", "diisoo_tests", "diisoo_word_stats", "diisoo_tiers", "diisoo_profile", "diisoo_goal", "diisoo_tuto_seen", "diisoo_feedback", "diisoo_coach_heard"];
+const CLES = ["diisoo_xp", "diisoo_streak", "diisoo_daily_xp", "diisoo_badges", "diisoo_tests", "diisoo_word_stats", "diisoo_tiers", "diisoo_profile", "diisoo_goal", "diisoo_tuto_seen", "diisoo_feedback"];
 const LOG = (...a) => console.log("[diisoo-synchro]", ...a);
 const ERR = (...a) => console.error("[diisoo-synchro]", ...a);
 
@@ -144,14 +144,17 @@ function creerPuce() {
   puce.setAttribute("aria-label", "Sauvegarder mon progrès");
   puce.style.cssText = "flex:none;margin:0 6px;padding:3px 8px;border-radius:999px;border:1px solid rgba(243,169,78,.35);background:rgba(243,169,78,.08);color:#F3A94E;font:700 12px system-ui,sans-serif;line-height:1.3";
   puce.addEventListener("click", actionPuce);
-  const bienvenue = document.getElementById("welcome-tag");
-  const rangee = bienvenue && bienvenue.parentElement;
-  if (rangee) {
-    rangee.insertBefore(puce, bienvenue.nextSibling);
-  } else {
-    puce.style.cssText += ";position:fixed;top:calc(8px + env(safe-area-inset-top));right:8px;z-index:30;background:#1c1c1e";
-    document.body.appendChild(puce);
-  }
+  window.montrerSauvegarde = function () {
+    const slot = document.getElementById("slot-save");
+    if (slot && puce && puce.parentElement !== slot) {
+      puce.style.position = "";
+      puce.style.cssText = "flex:none;margin:0 6px 0 0;padding:2px 7px;border-radius:999px;border:1px solid " + (puce.style.borderColor || "rgba(243,169,78,.35)") + ";background:rgba(243,169,78,.08);color:" + (puce.style.color || "#F3A94E") + ";font:700 12px system-ui,sans-serif;line-height:1.3";
+      slot.appendChild(puce);
+    }
+  };
+  puce.style.cssText += ";position:fixed;top:calc(8px + env(safe-area-inset-top));right:8px;z-index:30;background:#1c1c1e";
+  document.body.appendChild(puce);
+  window.montrerSauvegarde();
 }
 
 async function demarrer() {

@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v5";
+const VERSION = "diisoo-cache-v6";
 const SHELL = [
   "./",
   "./index.html",
@@ -8,7 +8,6 @@ const SHELL = [
   "./icon-512.png",
   "./diisoo-update.js",
   "./diisoo-pro.js",
-  "./voix-wolof.js",
   "./synchro.js",
   "./pwa-install.js",
   "https://cdn.tailwindcss.com",

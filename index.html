@@ -12,7 +12,7 @@
     <title>Diisoo - Application Trilingue Officielle</title>
     <!-- Tailwind CSS (lien corrigé) -->
     <script src="diisoo-update.js"></script>
-    <script type="module" src="voix-wolof.js"></script>
+    <script type="module" src="diisoo-pro.js"></script>
     <script type="module" src="synchro.js"></script>
     <script src="pwa-install.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -116,6 +116,7 @@
 .timer-flash{ animation: timerFlash 0.8s steps(2, start) infinite; }
 @keyframes timerFlash { 0%{opacity:1} 100%{opacity:0.2} }
 #test-timer{ text-align:center; }
+.locked{pointer-events:none!important;opacity:.45;filter:grayscale(.6)}
 </style>
 </head>
 <body class="bg-[#0B0F1C] font-sans antialiased text-white">
@@ -212,7 +213,7 @@
                     <h1 class="text-3xl font-black tracking-tight font-display">Diisoo</h1>
                 </div>
                 <h2 class="text-xl font-bold text-[#E4DCC9]">Créer votre profil en ligne</h2>
-                <p class="text-xs text-[#A69C86]">Votre profil sera sauvegardé de façon sécurisée pour activer vos bilans et relances WhatsApp.</p>
+                <p class="text-xs text-[#A69C86]">Votre progression sera sauvegardée de façon sécurisée sur votre compte.</p>
             </div>
 
             <form id="form-onboarding" class="space-y-4" onsubmit="handleOnboarding(event)">
@@ -227,60 +228,38 @@
                     </div>
                 </div>
                 <div class="space-y-1.5">
+                    <label for="user-email" class="text-xs font-semibold text-[#A69C86] uppercase">E-mail</label>
+                    <input type="email" id="user-email" required autocomplete="email" placeholder="fatou@exemple.com" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
+                </div>
+                <div class="flex items-start space-x-3 pt-1">
+                    <input type="checkbox" id="whatsapp-optin" onchange="majChampsInscription()" class="mt-1 accent-[#3FAE74] h-4 w-4 rounded border-[#1E2740] bg-[#141A2B] text-[#3FAE74]">
+                    <label for="whatsapp-optin" class="text-[11px] text-[#A69C86] leading-relaxed cursor-pointer select-none">
+                        Je souhaite recevoir mes alertes de révision quotidiennes sur WhatsApp
+                    </label>
+                </div>
+                <div id="wa-field" class="hidden space-y-1.5">
                     <label for="user-phone" class="text-xs font-semibold text-[#A69C86] uppercase">Numéro WhatsApp</label>
                     <div class="relative">
                         <span class="absolute left-4 top-3.5 text-sm text-[#8C8064] font-medium">🇸🇳 +221</span>
-                        <input type="tel" id="user-phone" required inputmode="numeric" autocomplete="tel-national" placeholder="70 123 45 67" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl pl-20 pr-4 py-3 text-sm font-mono text-white focus:outline-none focus:border-[#E1693F]">
+                        <input type="tel" id="user-phone" inputmode="numeric" autocomplete="tel-national" placeholder="70 123 45 67" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl pl-20 pr-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
                     </div>
-                    <p id="phone-error" class="hidden text-[11px] text-[#EE85A3]"></p>
                 </div>
-                <div class="flex items-start space-x-3 pt-2">
-                    <input type="checkbox" id="whatsapp-optin" checked required class="mt-1 accent-[#3FAE74] h-4 w-4 rounded border-[#1E2740] bg-[#141A2B] text-[#3FAE74]">
-                    <label for="whatsapp-optin" class="text-[11px] text-[#A69C86] leading-relaxed cursor-pointer select-none">
-                        J'autorise Diisoo à sauvegarder mon profil et m'envoyer mes alertes de révision quotidiennes sur WhatsApp.
-                    </label>
+                <div id="code-field" class="hidden space-y-1.5">
+                    <label for="user-code" class="text-xs font-semibold text-[#A69C86] uppercase">Code reçu par e-mail</label>
+                    <input type="text" id="user-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F] tracking-widest text-center">
                 </div>
-                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 btn-primary font-bold rounded-2xl text-sm transition mt-4 shadow-lg shadow-[#C2542D]/20">S'inscrire & Se connecter</button>
+                <p id="phone-error" class="hidden text-[11px] text-[#EE85A3]"></p>
+                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 btn-primary font-bold rounded-2xl text-sm transition mt-2 shadow-lg shadow-[#C2542D]/20">Recevoir mon code</button>
+                <button type="button" onclick="continuerSansCompte()" class="w-full text-center text-[11px] text-[#8C8064] underline">Continuer sans compte</button>
             </form>
             <div class="text-center text-[10px] text-[#6B604A] space-y-2">
                 <p>Sénégal 🇸🇳 · Souveraineté & Inclusion par la voix</p>
-                <button onclick="openCoachGate()" class="text-[#6B604A] hover:text-[#A69C86] underline">Espace coach</button>
             </div>
         </div>
 
         <!-- ======================================================== -->
         <!-- ESPACE COACH (accès protégé par code) -->
-        <!-- ======================================================== -->
-        <div id="screen-coach-gate" class="hidden fixed inset-0 z-50 bg-[#0B0F1C]/95 flex items-center justify-center p-6">
-            <div class="w-full max-w-md bg-[#141A2B] border border-[#1E2740] rounded-3xl p-5 space-y-4 pop-in">
-                <div class="text-center space-y-1">
-                    <span class="text-3xl">👩‍🏫</span>
-                    <h2 class="text-lg font-black text-[#F6F1E7]">Espace coach</h2>
-                </div>
-                <input type="password" id="coach-code" placeholder="Code d'accès" class="w-full bg-[#0B0F1C]/60 border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
-                <p id="coach-code-error" class="hidden text-[11px] text-[#EE85A3]">Code incorrect.</p>
-                <div class="flex space-x-2">
-                    <button onclick="closeCoachGate()" class="flex-1 py-3 bg-[#0B0F1C]/60 text-[#A69C86] rounded-xl text-xs font-semibold">Annuler</button>
-                    <button onclick="checkCoachCode()" class="flex-1 py-3 btn-primary rounded-2xl text-sm font-bold">Entrer</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ======================================================== -->
-        <!-- TABLEAU DE BORD COACH -->
-        <!-- ======================================================== -->
-        <div id="screen-coach" class="hidden fixed inset-0 z-50 bg-[#0B0F1C] overflow-y-auto p-4">
-            <div class="max-w-md mx-auto space-y-4 pb-8">
-                <div class="flex items-center justify-between pt-2">
-                    <h2 class="text-lg font-black text-[#F6F1E7]">👩‍🏫 Tableau de bord coach</h2>
-                    <button onclick="closeCoach()" class="text-xs text-[#A69C86]">Fermer ✕</button>
-                </div>
-                <p id="coach-status" class="text-xs text-[#A69C86]"></p>
-                <div id="coach-list" class="space-y-2"></div>
-            </div>
-        </div>
-
-        <!-- ======================================================== -->
+                <!-- ======================================================== -->
         <!-- ÉCRAN 2 : LE DASHBOARD CENTRAL (3 PILIERS) -->
         <!-- ======================================================== -->
         <div id="screen-dashboard" class="hidden flex flex-col justify-between h-full space-y-6 my-auto">
@@ -302,7 +281,7 @@
                         <button onclick="toggleBurgerMenu();showTutorial()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">❓ Comment ça marche</button>
                         <button onclick="toggleBurgerMenu();openFeedback()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Donner mon avis</button>
                         <button onclick="toggleBurgerMenu();openProgress()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📈 Ma progression</button>
-                        <button onclick="toggleBurgerMenu();logout()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">👤 Changer de profil</button>
+                        <div id="menu-session"></div>
                     </div>
                 </div>
             </div>
@@ -390,39 +369,29 @@
         <div id="screen-business" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-[#C99CEA] uppercase">Outils Business</span>
-                <h3 class="text-lg font-bold text-[#F6F1E7]">Vocabulaire par métier</h3>
-                <p class="text-xs text-[#A69C86] mt-1">Choisissez votre secteur pour des phrases prêtes à l'emploi.</p>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Vocabulaire par niveau</h3>
+                <p class="text-xs text-[#A69C86] mt-1">Choisissez votre niveau pour des phrases prêtes à l'emploi.</p>
             </div>
             <div id="business-picker" class="grid grid-cols-1 gap-3">
-                <button onclick="selectBusinessModule('colobane')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A1810,#141A2B);border:1px solid #3A2A1E;">
-                    <span class="text-3xl">🚗</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Pièces Détachées de Colobane</h4>
-                    <p class="text-[11px] text-[#A69C86]">Négociation, désignation des pièces, marques.</p>
+                <button onclick="selectBusinessModule('debutant')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#10261A,#141A2B);border:1px solid #1E2740">
+                    <span class="text-3xl">🌱</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Débutant</h4>
+                    <p class="text-[11px] text-[#A69C86]">Mots et expressions courtes du commerce.</p>
                 </button>
-                <button onclick="selectBusinessModule('sandaga')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A1024,#141A2B);border:1px solid #3A1E33;">
-                    <span class="text-3xl">👗</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Mode & Beauté de Sandaga</h4>
-                    <p class="text-[11px] text-[#A69C86]">Tailles, tissus, prix de gros, tendances.</p>
+                <button onclick="selectBusinessModule('intermediaire')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A2410,#141A2B);border:1px solid #1E2740">
+                    <span class="text-3xl">🌿</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Intermédiaire</h4>
+                    <p class="text-[11px] text-[#A69C86]">Phrases complètes pour acheter et vendre.</p>
                 </button>
-                <button onclick="selectBusinessModule('electronique')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#102A2A,#141A2B);border:1px solid #1E3A3A;">
-                    <span class="text-3xl">🔌</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Électronique du Centenaire</h4>
-                    <p class="text-[11px] text-[#A69C86]">Voltage, garantie, test avant achat.</p>
-                </button>
-                <button onclick="selectBusinessModule('bazar')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A2410,#141A2B);border:1px solid #3A331E;">
-                    <span class="text-3xl">🛋️</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Bazar & Meubles</h4>
-                    <p class="text-[11px] text-[#A69C86]">Livraison, matière, paiement échelonné.</p>
-                </button>
-                <button onclick="selectBusinessModule('chine')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#0F2A24,#141A2B);border:1px solid #1E3A33;">
-                    <span class="text-3xl">📦</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Logistique & Voyage Axe Chine</h4>
-                    <p class="text-[11px] text-[#A69C86]">Import, conteneurs, douane, fournisseurs.</p>
+                <button onclick="selectBusinessModule('avance')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A1810,#141A2B);border:1px solid #1E2740">
+                    <span class="text-3xl">🌳</span>
+                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Avancé</h4>
+                    <p class="text-[11px] text-[#A69C86]">Négociation, import et logistique.</p>
                 </button>
             </div>
             <div id="business-content" class="hidden space-y-3 overflow-y-auto max-h-[55vh] pr-1"></div>
             <div class="flex space-x-2">
-                <button id="btn-business-back" onclick="closeBusinessDetail()" class="hidden flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Changer de métier</button>
+                <button id="btn-business-back" onclick="closeBusinessDetail()" class="hidden flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Changer de niveau</button>
                 <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Tableau de bord</button>
             </div>
         </div>
@@ -708,8 +677,9 @@ function renderDailyGoal() {
     if (!el) return;
     const g = getDailyGoal();
     const done = Math.min(g.done, DAILY_TARGET);
-    el.innerHTML = '<div class="flex justify-between items-center text-[11px] text-[#A69C86] mb-1"><span>🎯 Objectif du jour</span><span>' + done + '/' + DAILY_TARGET + '</span></div>' +
+    el.innerHTML = '<div class="flex justify-between items-center text-[11px] text-[#A69C86] mb-1"><span>🎯 Objectif du jour</span><span class="flex items-center"><span id="slot-save"></span>' + done + '/' + DAILY_TARGET + '</span></div>' +
         '<div class="w-full bg-[#141A2B] h-1.5 rounded-full overflow-hidden"><div class="bg-[#3FAE74] h-full transition-all" style="width:' + (done / DAILY_TARGET * 100) + '%"></div></div>';
+    if (window.montrerSauvegarde) window.montrerSauvegarde();
 }
 
 /* ---------- Révision espacée simple pour le vocabulaire wolof ---------- */
@@ -785,7 +755,6 @@ let audioBusy = false;
 let sequenceActive = false;    // verrou maintenu entre les répliques d'un dialogue
 let seqToken = 0;
 let pendingResolve = null;
-let activeUtterance = null;    // référence gardée : évite le bug Chrome "onend jamais appelé"
 const heardKeys = new Set();
 
 function refreshPracticeButtons() {
@@ -804,93 +773,47 @@ function stopAllAudio(keepSeq) {
         try { currentAudio.onended = null; currentAudio.onerror = null; currentAudio.pause(); currentAudio.currentTime = 0; } catch (e) {}
         currentAudio = null;
     }
-    if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch (e) {} }
-    activeUtterance = null;
+    try { if (window.Diisoo && window.Diisoo.voix) window.Diisoo.voix.arreter(); } catch (error) { console.error("Erreur Audio Diisoo :", error); }
     audioBusy = false;
     const r = pendingResolve; pendingResolve = null;
     if (r) r();
     refreshPracticeButtons();
 }
 
-function pickVoice(lang) {
-    try {
-        const vs = speechSynthesis.getVoices();
-        if (!vs || !vs.length) return null;
-        const l = lang.replace("_", "-");
-        return vs.find(v => v.lang.replace("_", "-") === l) || vs.find(v => v.lang.slice(0, 2) === l.slice(0, 2)) || null;
-    } catch (e) { return null; }
-}
-
-/* Résout true (fini), false (interrompu). Ne reste jamais bloquée : minuterie de sécurité. */
-async function _speakWolof(text, key, keepSeq) {
-    stopAllAudio(keepSeq);
-    const myReq = ++oolelReq;
-    try {
-        const url = await oolelGetUrl((text || "").trim().slice(0, 500));
-        if (myReq !== oolelReq) return false;
-        const r = await playAudioFile(url, key, keepSeq);
-        return r === true;
-    } catch (e) {
-        console.error("[diisoo-voix] lecture wolof impossible :", e);
-        if (typeof toast === "function") toast("Voix wolof indisponible, réessaie dans un instant");
-        return false;
-    }
-}
-
-function _speak(text, lang, rate, key, keepSeq) {
-    if (lang === "wo") return _speakWolof(text, key, keepSeq);
+function attendreVoix() {
+    if (window.Diisoo) return Promise.resolve();
     return new Promise(resolve => {
-        const wasBusy = ("speechSynthesis" in window) && (speechSynthesis.speaking || speechSynthesis.pending);
-        stopAllAudio(keepSeq);
-        if (!text || !("speechSynthesis" in window)) {
-            if (key) heardKeys.add(key);
-            refreshPracticeButtons();
-            resolve(true);
-            return;
-        }
-        const myToken = audioToken;
-        let done = false, safety = null, blockTimer = null, started = false;
-        const finish = (natural) => {
-            if (done) return;
-            done = true; clearTimeout(safety); clearTimeout(blockTimer);
-            if (myToken !== audioToken) { resolve(false); return; }   // interrompu
-            activeUtterance = null; pendingResolve = null; audioBusy = false;
-            if (key) heardKeys.add(key);
-            refreshPracticeButtons();
-            resolve(natural);
-        };
-        pendingResolve = () => finish(false);
-        audioBusy = true;
-        refreshPracticeButtons();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = lang || "en-US"; u.rate = rate || 0.9;
-        const v = pickVoice(u.lang); if (v) u.voice = v;
-        activeUtterance = u;
-        u.onstart = () => { started = true; clearTimeout(blockTimer); };
-        u.onend = () => finish(true);
-        u.onerror = () => finish(true);
-        /* iPhone/Safari : si le son est refusé (lecture hors geste tactile), on dégèle les boutons
-           au lieu de rester bloqué, et on invite à toucher 🔊. */
-        blockTimer = setTimeout(() => {
-            if (started || done) return;
-            try { if (speechSynthesis.speaking) return; speechSynthesis.cancel(); } catch (e) {}
-            if (myToken === audioToken) {
-                if (typeof toast === "function") toast("🔊 Touchez « Écouter » pour lancer le son");
-                finish(true);
-            }
-        }, 2500);
-        safety = setTimeout(() => {
-            try { speechSynthesis.cancel(); } catch (e) {}
-            finish(true);
-        }, Math.max(4000, text.length * 140 / (u.rate || 0.9)) + 2000);
-        const go = () => {
-            if (myToken !== audioToken) return;
-            try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch (e) { finish(true); }
-        };
-        // Lecture immédiate (indispensable sur iPhone : elle doit rester dans le geste tactile).
-        // Petit délai uniquement si une voix venait d'être coupée (fiabilise Chrome/Android).
-        if (wasBusy) setTimeout(go, 80); else go();
+        let n = 0;
+        const t = setInterval(() => { if (window.Diisoo || ++n > 100) { clearInterval(t); resolve(); } }, 100);
     });
+}
+
+async function _speak(text, lang, rate, key, keepSeq) {
+    stopAllAudio(keepSeq);
+    text = (text || "").trim().slice(0, 500);
+    if (!text) { if (key) heardKeys.add(key); refreshPracticeButtons(); return true; }
+    const myToken = audioToken;
+    audioBusy = true;
+    refreshPracticeButtons();
+    let ok = false, erreur = false;
+    try {
+        await attendreVoix();
+        if (myToken !== audioToken) return false;
+        if (!window.Diisoo) throw new Error("Moteur audio indisponible");
+        const langue = lang === "wo" ? "wo" : "en";
+        ok = await window.Diisoo.voix.jouer(text, langue, {
+            onAttente: () => { if (typeof toast === "function") toast("⏳ Voix en préparation..."); }
+        });
+    } catch (error) {
+        console.error("Erreur Audio Diisoo :", error);
+        erreur = true;
+    }
+    if (myToken !== audioToken) return false;
+    audioBusy = false;
+    if (erreur && typeof toast === "function") toast("Voix indisponible, réessaie dans un instant");
+    if (key) heardKeys.add(key);
+    refreshPracticeButtons();
+    return ok;
 }
 function speak(text, lang, rate, key) { return _speak(text, lang, rate, key, false); }
 
@@ -1024,52 +947,68 @@ function startListening(lang, ms, continuous, onText) {
    ========================================================== */
 function getProfile() { return store.get("diisoo_profile"); }
 
+let onboardingEtape = 1;
+function majChampsInscription() {
+    const on = $("whatsapp-optin").checked;
+    $("wa-field").classList.toggle("hidden", !on);
+    $("user-phone").required = on;
+}
+function erreurInscription(msg) {
+    const err = $("phone-error");
+    err.textContent = msg;
+    err.classList.remove("hidden");
+}
+function terminerInscription(profile) {
+    store.set("diisoo_profile", profile);
+    onboardingEtape = 1;
+    openDashboard();
+}
+function continuerSansCompte() {
+    const first = $("user-firstname").value.trim() || "Ami";
+    const last = $("user-lastname").value.trim();
+    terminerInscription({ first_name: first, last_name: last, email: null, phone: null, whatsapp_optin: false });
+}
 async function handleOnboarding(e) {
     e.preventDefault();
     const btn = $("btn-submit-onboarding");
-    const err = $("phone-error");
-    err.classList.add("hidden");
-
+    $("phone-error").classList.add("hidden");
     const first = $("user-firstname").value.trim();
     const last = $("user-lastname").value.trim();
-    const digits = $("user-phone").value.replace(/\D/g, "").replace(/^221/, "");
-
-    if (!/^7[05-8]\d{7}$/.test(digits)) {
-        err.textContent = "Numéro invalide. Exemple : 70 123 45 67 (9 chiffres).";
-        err.classList.remove("hidden");
-        return;
+    const email = $("user-email").value.trim().toLowerCase();
+    const opt = $("whatsapp-optin").checked;
+    let phone = null;
+    if (opt) {
+        const digits = $("user-phone").value.replace(/\D/g, "").replace(/^221/, "");
+        if (!/^7[05-8]\d{7}$/.test(digits)) { erreurInscription("Numéro invalide. Exemple : 70 123 45 67 (9 chiffres)."); return; }
+        phone = "+221" + digits;
     }
-
-    const profile = {
-        first_name: first,
-        last_name: last,
-        phone: "+221" + digits,
-        whatsapp_optin: $("whatsapp-optin").checked
-    };
-
+    if (!window.Diisoo) { erreurInscription("Chargement en cours, réessayez dans un instant."); return; }
     btn.disabled = true;
-    btn.textContent = "Inscription en cours...";
-
-    if (db) {
-        try {
-            const { error } = await db.from("profiles").insert(profile);
-            if (error && error.code !== "23505") {   // 23505 = numéro déjà inscrit, on continue
-                showStatus("Profil gardé sur cet appareil. Synchronisation impossible pour le moment.", "warn");
-            } else {
-                showStatus("Profil enregistré.", "ok");
-            }
-        } catch (ex) {
-            showStatus("Réseau indisponible. Profil gardé sur cet appareil.", "warn");
+    try {
+        if (onboardingEtape === 1) {
+            btn.textContent = "Envoi du code...";
+            await window.Diisoo.auth.demanderCode({ prenom: first, nom: last, email: email, alertes: opt, whatsapp: phone });
+            onboardingEtape = 2;
+            $("code-field").classList.remove("hidden");
+            $("user-code").focus();
+            btn.textContent = "Valider le code";
+            showStatus("Code envoyé à " + email, "ok");
+        } else {
+            const code = $("user-code").value.replace(/\D/g, "");
+            if (code.length < 6) { erreurInscription("Saisissez le code reçu par e-mail."); return; }
+            btn.textContent = "Vérification...";
+            const ok = await window.Diisoo.auth.verifierCode(email, code, { prenom: first, nom: last, alertes: opt, whatsapp: phone });
+            if (!ok) { erreurInscription("Code incorrect ou expiré."); return; }
+            terminerInscription({ first_name: first, last_name: last, email: email, phone: phone, whatsapp_optin: opt });
         }
-    } else {
-        showStatus("Mode local : le profil reste sur cet appareil.", "warn");
+    } catch (error) {
+        console.error("Erreur inscription Diisoo :", error);
+        erreurInscription(onboardingEtape === 1 ? "Impossible d'envoyer le code. Vérifiez l'e-mail et réessayez." : "Code incorrect ou expiré.");
+    } finally {
+        btn.disabled = false;
+        if (onboardingEtape === 1) btn.textContent = "Recevoir mon code";
+        else btn.textContent = "Valider le code";
     }
-
-    store.set("diisoo_profile", profile);
-    btn.disabled = false;
-    btn.textContent = "S'inscrire & Se connecter";
-    await new Promise(r => setTimeout(r, 1500));
-    openDashboard();
 }
 
 function updateStreak() {
@@ -1092,7 +1031,30 @@ function updateStreak() {
     $("streak-counter").textContent = "🔥 Série active : " + n + (n > 1 ? " jours" : " jour") + " de révision ! Reviens demain pour ne pas la perdre.";
 }
 
-function toggleBurgerMenu() { $("burger-menu").classList.toggle("hidden"); }
+function toggleBurgerMenu() { $("burger-menu").classList.toggle("hidden"); majMenuSession(); }
+function majMenuSession() {
+    const box = $("menu-session");
+    if (!box) return;
+    let connecte = false;
+    try { connecte = !!(window.Diisoo && window.Diisoo.etat().connecte); } catch (e) {}
+    const cls = "w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]";
+    box.innerHTML = connecte
+        ? '<button onclick="menuDeconnexion()" class="' + cls + '">🚪 Déconnexion</button>'
+        : '<button onclick="menuConnexion()" class="' + cls + '">🔑 Connexion</button>';
+}
+async function menuConnexion() {
+    $("burger-menu").classList.add("hidden");
+    const p = getProfile();
+    try { await window.Diisoo.connexion(p ? { prenom: p.first_name, nom: p.last_name, email: p.email || "" } : undefined); }
+    catch (error) { console.error("Erreur connexion Diisoo :", error); toast("Connexion indisponible pour le moment"); }
+    majMenuSession();
+}
+async function menuDeconnexion() {
+    $("burger-menu").classList.add("hidden");
+    try { await window.Diisoo.deconnexion(); } catch (error) { console.error("Erreur déconnexion Diisoo :", error); }
+    logout();
+    majMenuSession();
+}
 
 function showTutorial() { $("screen-tutorial").classList.remove("hidden"); }
 function closeTutorial() {
@@ -1130,7 +1092,7 @@ async function submitFeedback() {
     if (feedbackRating === 0) { toast("Choisissez d'abord une note ⭐"); return; }
     const p = getProfile();
     const entry = {
-        phone: p ? p.phone : null,
+        phone: p ? (p.phone || p.email || null) : null,
         first_name: p ? p.first_name : null,
         rating: feedbackRating,
         comment: $("feedback-comment").value.trim(),
@@ -1199,151 +1161,6 @@ function openProgress() {
 
 function closeProgress() { $("screen-progress").classList.add("hidden"); }
 
-/* ---------- Espace coach ---------- */
-const COACH_CODE_HASH = "fa5f36d1e25d0277ea985bc12d7b8ab0972a1951c1ff3c29de778e1abfd3bf0e";
-let coachAttempts = 0;
-let coachLockUntil = 0;
-
-async function sha256Hex(str) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-function openCoachGate() {
-    $("coach-code").value = "";
-    $("coach-code-error").classList.add("hidden");
-    $("screen-coach-gate").classList.remove("hidden");
-}
-function closeCoachGate() { $("screen-coach-gate").classList.add("hidden"); }
-
-async function checkCoachCode() {
-    if (Date.now() < coachLockUntil) {
-        $("coach-code-error").textContent = "Trop d'essais. Réessayez dans une minute.";
-        $("coach-code-error").classList.remove("hidden");
-        return;
-    }
-    const hash = await sha256Hex($("coach-code").value);
-    if (hash === COACH_CODE_HASH) {
-        coachAttempts = 0;
-        closeCoachGate();
-        openCoachDashboard();
-    } else {
-        coachAttempts++;
-        $("coach-code-error").textContent = "Code incorrect.";
-        $("coach-code-error").classList.remove("hidden");
-        if (coachAttempts >= 5) { coachLockUntil = Date.now() + 60000; coachAttempts = 0; }
-    }
-}
-
-function closeCoach() { $("screen-coach").classList.add("hidden"); }
-
-function getHeardSet() { return new Set(store.get("diisoo_coach_heard") || []); }
-function toggleHeard(url) {
-    const set = getHeardSet();
-    if (set.has(url)) set.delete(url); else set.add(url);
-    store.set("diisoo_coach_heard", Array.from(set));
-    renderCoachList(coachData);
-}
-
-let coachData = null;
-
-async function openCoachDashboard() {
-    $("screen-coach").classList.remove("hidden");
-    $("coach-status").textContent = "Chargement...";
-    $("coach-list").innerHTML = "";
-    if (!db) { $("coach-status").textContent = "Supabase non configuré : impossible de charger les apprenantes."; return; }
-    try {
-        const [profilesRes, testsRes, discRes] = await Promise.all([
-            db.from("profiles").select("phone, first_name, last_name"),
-            db.from("test_results").select("phone, topic, score, total, audio_url, created_at"),
-            db.from("discussions").select("phone, first_name, prompt, audio_url, created_at")
-        ]);
-        coachData = {
-            profiles: profilesRes.data || [],
-            tests: testsRes.data || [],
-            discussions: discRes.data || []
-        };
-        $("coach-status").textContent = coachData.profiles.length + " apprenante(s) inscrite(s).";
-        renderCoachList(coachData);
-    } catch (e) {
-        $("coach-status").textContent = "Erreur de chargement des données.";
-    }
-}
-
-function renderCoachList(data) {
-    if (!data) return;
-    const heard = getHeardSet();
-    const byPhone = {};
-    data.profiles.forEach(p => {
-        byPhone[p.phone] = { profile: p, tests: [], discussions: [], lastActivity: null, avgScore: null, unheard: 0 };
-    });
-    data.tests.forEach(t => {
-        const b = byPhone[t.phone]; if (!b) return;
-        b.tests.push(t);
-        if (!b.lastActivity || t.created_at > b.lastActivity) b.lastActivity = t.created_at;
-        if (t.audio_url && !heard.has(t.audio_url)) b.unheard++;
-    });
-    data.discussions.forEach(d => {
-        const b = byPhone[d.phone]; if (!b) return;
-        b.discussions.push(d);
-        if (!b.lastActivity || d.created_at > b.lastActivity) b.lastActivity = d.created_at;
-        if (d.audio_url && !heard.has(d.audio_url)) b.unheard++;
-    });
-    Object.values(byPhone).forEach(b => {
-        if (b.tests.length) b.avgScore = Math.round(b.tests.reduce((s, t) => s + (t.score / t.total), 0) / b.tests.length * 100);
-    });
-
-    const list = Object.values(byPhone).sort((a, b) => (b.unheard - a.unheard) || ((b.lastActivity || "") > (a.lastActivity || "") ? 1 : -1));
-
-    const box = $("coach-list");
-    box.innerHTML = "";
-    if (list.length === 0) { box.innerHTML = '<p class="text-xs text-[#6B604A] text-center">Aucune apprenante inscrite.</p>'; return; }
-
-    list.forEach(b => {
-        const card = document.createElement("div");
-        card.className = "bg-[#141A2B] border border-[#1E2740] rounded-2xl p-3.5 space-y-2";
-        const daysAgo = b.lastActivity ? Math.floor((Date.now() - new Date(b.lastActivity)) / 86400000) : null;
-        const activityLabel = daysAgo === null ? "Aucune activité" : daysAgo === 0 ? "Active aujourd'hui" : "Active il y a " + daysAgo + "j";
-        card.innerHTML =
-            '<div class="flex justify-between items-center">' +
-                '<span class="text-sm font-bold text-[#F6F1E7]">' + (b.profile.first_name || "?") + " " + (b.profile.last_name || "") + '</span>' +
-                (b.unheard > 0 ? '<span class="text-[9px] bg-[#EE85A3]/20 text-[#EE85A3] px-2 py-0.5 rounded-full font-bold">' + b.unheard + ' à écouter</span>' : '') +
-            '</div>' +
-            '<div class="flex items-center justify-between text-[11px] text-[#A69C86]">' +
-                '<span>' + activityLabel + '</span>' +
-                '<span>' + (b.avgScore !== null ? "Score moyen : " + b.avgScore + "%" : "Aucun test") + '</span>' +
-            '</div>';
-
-        if (daysAgo === null || daysAgo >= 2) {
-            const relanceMsg = "Salut " + (b.profile.first_name || "") + " ! Ça fait un moment qu'on ne t'a pas vue sur Diisoo, on continue ta préparation ? 💪";
-            const waNumber = (b.profile.phone || "").replace(/\D/g, "");
-            const relance = document.createElement("a");
-            relance.href = "https://wa.me/" + waNumber + "?text=" + encodeURIComponent(relanceMsg);
-            relance.target = "_blank";
-            relance.className = "block text-center text-[11px] font-bold text-[#3FAE74] bg-[#3FAE74]/10 rounded-xl py-2";
-            relance.textContent = "📲 Relancer sur WhatsApp";
-            card.appendChild(relance);
-        }
-
-        const recordings = [...b.tests.filter(t => t.audio_url).map(t => ({ url: t.audio_url, label: "🎧 Test · " + t.topic, date: t.created_at })),
-                             ...b.discussions.filter(d => d.audio_url).map(d => ({ url: d.audio_url, label: "🎧 Binôme · " + d.prompt, date: d.created_at }))]
-            .sort((x, y) => (y.date > x.date ? 1 : -1)).slice(0, 5);
-
-        recordings.forEach(r => {
-            const row = document.createElement("div");
-            row.className = "flex items-center justify-between bg-[#0B0F1C]/60 rounded-xl px-3 py-2";
-            const isHeard = heard.has(r.url);
-            row.innerHTML =
-                '<a href="' + r.url + '" target="_blank" class="text-[11px] text-[#EE85A3] font-semibold truncate pr-2">' + r.label + '</a>' +
-                '<button class="text-[10px] font-bold shrink-0 ' + (isHeard ? "text-[#5FC98F]" : "text-[#6B604A]") + '">' + (isHeard ? "✓ Écouté" : "Marquer écouté") + '</button>';
-            row.querySelector("button").onclick = () => toggleHeard(r.url);
-            card.appendChild(row);
-        });
-
-        box.appendChild(card);
-    });
-}
-
 function openDashboard() {
     const p = getProfile();
     $("welcome-tag").textContent = p ? "Bonjour " + p.first_name : "";
@@ -1358,7 +1175,11 @@ function openDashboard() {
 function logout() {
     store.del("diisoo_profile");
     $("form-onboarding").reset();
-    $("whatsapp-optin").checked = true;
+    $("whatsapp-optin").checked = false;
+    onboardingEtape = 1;
+    $("code-field").classList.add("hidden");
+    $("btn-submit-onboarding").textContent = "Recevoir mon code";
+    majChampsInscription();
     changeScreen("screen-onboarding");
 }
 
@@ -1714,6 +1535,7 @@ function setGeneralTheme(id) {
     generalQuizIndex = 0; generalQuizScore = 0;
     renderGeneralTabs();
     renderGeneralContent();
+    try { const th = currentGeneralTheme(); prefetchVoix((th.vocab || []).map(v => v.en), "en"); prefetchVoix((th.vocab || []).map(v => v.wo), "wo"); } catch (error) { console.error("Erreur Audio Diisoo :", error); }
 }
 
 function renderGeneralContent() {
@@ -2397,6 +2219,40 @@ if (BUSINESS_DIALOGUES.bazar) {
     );
 }
 
+(function regrouperParNiveaux() {
+    const mots = t => (t || "").trim().split(/\s+/).filter(Boolean).length;
+    const niv = { debutant: [], intermediaire: [], avance: [] };
+    const vus = new Set();
+    const tous = [];
+    Object.keys(CHINA_TRADE_WOLOF).forEach(k => {
+        (CHINA_TRADE_WOLOF[k].vocab || []).forEach(v => {
+            if (!v || vus.has(v.en)) return;
+            vus.add(v.en);
+            tous.push(v);
+        });
+    });
+    tous.sort((a, b) => mots(a.en) - mots(b.en) || a.en.length - b.en.length);
+    const tiers = Math.ceil(tous.length / 3);
+    tous.forEach((v, i) => niv[i < tiers ? "debutant" : i < 2 * tiers ? "intermediaire" : "avance"].push(v));
+    const secteurs = Object.keys(BUSINESS_DIALOGUES).map(k => {
+        const l = BUSINESS_DIALOGUES[k];
+        const moy = l.reduce((a, x) => a + mots(x.en), 0) / (l.length || 1);
+        return { k, l, moy };
+    }).sort((a, b) => a.moy - b.moy);
+    const dlg = { debutant: [], intermediaire: [], avance: [] };
+    secteurs.forEach((x, i) => {
+        const cle = i < 2 ? "debutant" : i < 4 ? "intermediaire" : "avance";
+        x.l.forEach((ligne, j) => dlg[cle].push(j === 0 && !ligne.scene ? Object.assign({ scene: "💬 Scène " + (dlg[cle].filter(y => y.scene).length + 1) }, ligne) : ligne));
+    });
+    Object.keys(CHINA_TRADE_WOLOF).forEach(k => delete CHINA_TRADE_WOLOF[k]);
+    Object.keys(BUSINESS_DIALOGUES).forEach(k => delete BUSINESS_DIALOGUES[k]);
+    const titres = { debutant: "Débutant : mots et expressions courtes", intermediaire: "Intermédiaire : phrases du commerce", avance: "Avancé : négociation et import" };
+    Object.keys(niv).forEach(k => {
+        CHINA_TRADE_WOLOF[k] = { title: titres[k], vocab: niv[k] };
+        BUSINESS_DIALOGUES[k] = dlg[k];
+    });
+})();
+
 function openBusinessModule() {
     changeScreen("screen-business");
     closeBusinessDetail();
@@ -2404,9 +2260,16 @@ function openBusinessModule() {
 
 let businessModule = null;
 
+function prefetchVoix(textes, langue) {
+    try { if (window.Diisoo && window.Diisoo.voix) window.Diisoo.voix.precharger(textes.filter(Boolean), langue).catch(error => console.error("Erreur Audio Diisoo :", error)); }
+    catch (error) { console.error("Erreur Audio Diisoo :", error); }
+}
+
 function selectBusinessModule(sectionKey) {
     businessModule = sectionKey;
     const mod = CHINA_TRADE_WOLOF[sectionKey];
+    prefetchVoix(mod.vocab.map(v => v.wo).concat((BUSINESS_DIALOGUES[sectionKey] || []).map(l => l.wo)), "wo");
+    prefetchVoix(mod.vocab.map(v => v.en).concat((BUSINESS_DIALOGUES[sectionKey] || []).map(l => l.en)), "en");
     $("business-picker").classList.add("hidden");
     $("btn-business-back").classList.remove("hidden");
     const box = $("business-content");
@@ -2500,6 +2363,8 @@ function setWolofCat(cat) {
     wolofCat = cat;
     window.scrollTo({ top: 0, behavior: "smooth" });
     renderWolofTabs();
+    prefetchVoix(LEXICON.filter(w => w.cat === cat).map(w => w.wo), "wo");
+    prefetchVoix(LEXICON.filter(w => w.cat === cat).map(w => w.en), "en");
     if (cat === "wikidata" && !wikidataLoaded) loadWikidata(); else renderLexicon();
 }
 
@@ -2624,61 +2489,17 @@ function renderLexicon() {
     refreshPracticeButtons();
 }
 
-function toFrenchPhonetic(s) {
-    // Adapte l'orthographe wolof pour qu'une voix française la lise correctement
-    return s
-        .replace(/x/g, "kh").replace(/X/g, "Kh")
-        .replace(/ñ/g, "gn").replace(/Ñ/g, "Gn")
-        .replace(/ŋ/g, "ng").replace(/Ŋ/g, "Ng")
-        .replace(/ë/g, "eu").replace(/Ë/g, "Eu");
-}
-/* ---------- Voix wolof Oolel (Space Hugging Face, démo gratuite, 500 caractères max) ----------
-   Essaie d'abord la vraie voix wolof ; si le Space est lent, indisponible ou refuse,
-   on retombe sur l'ancienne lecture (voix française + orthographe adaptée). */
-const OOLEL_SPACE = "soynade-research/Oolel-Voices-Demo";
-const OOLEL_VOICE = "https://huggingface.co/spaces/soynade-research/Oolel-Voices-Demo/resolve/main/8_1_c.wav";
-const OOLEL_TIMEOUT_MS = 180000;
-const oolelCache = new Map();   // texte -> URL audio (évite de redemander la même phrase)
-let oolelClientPromise = null;
-let oolelReq = 0;               // seule la dernière demande a le droit de jouer
-
-async function oolelGetUrl(text) {
-    if (oolelCache.has(text)) return oolelCache.get(text);
-    for (let i = 0; i < 40 && !window.VoixWolof; i++) await new Promise(r => setTimeout(r, 100));
-    if (!window.VoixWolof) throw new Error("Module de voix wolof non charge");
-    const url = await window.VoixWolof.url(text);
-    oolelCache.set(text, url);
-    return url;
-}
-
-async function speakWolofOolel(text, fallback) {
-    text = (text || "").trim().slice(0, 500);
-    if (!text) return;
-    const myReq = ++oolelReq;
-    const first = !oolelCache.has(text);
-    try {
-        if (first && typeof toast === "function") toast("⏳ Voix wolof en préparation (jusqu'à 1 minute la première fois)...");
-        const url = await Promise.race([
-            oolelGetUrl(text),
-            new Promise((_, rej) => setTimeout(() => rej(new Error("Délai dépassé")), OOLEL_TIMEOUT_MS))
-        ]);
-        if (myReq !== oolelReq) return;                 // une autre demande est passée entre-temps
-        const r = await playAudioFile(url);
-        if (r === null && myReq === oolelReq) fallback();
-    } catch (e) {
-        console.warn("Oolel indisponible, lecture de secours :", e);
-        if (myReq === oolelReq) fallback();
-    }
+async function speakWolofOolel(text) {
+    return _speak(text, "wo", 0.9, null, false);
 }
 
 function playWolof(i) {
     const w = LEXICON[i];
-    const secours = () => { if (typeof toast === "function") toast("Voix wolof indisponible, réessaie dans un instant"); };
     if (w.audio) {
-        playAudioFile(w.audio).then(r => { if (r === null) speakWolofOolel(w.wo, secours); });
+        playAudioFile(w.audio).then(r => { if (r === null) speakWolofOolel(w.wo); });
         return;
     }
-    speakWolofOolel(w.wo, secours);
+    speakWolofOolel(w.wo);
 }
 function playEnglish(i) {
     const w = LEXICON[i];
@@ -2710,7 +2531,7 @@ async function practiceWord(i) {
         addXP(3); bumpDailyGoal(1); checkBilingueBadge();
         const fu = pickFollowUp(heard);
         res.innerHTML += '<p class="text-[11px] text-[#A69C86] mt-1">💬 ' + fu + '</p>';
-        if ("speechSynthesis" in window) speak(fu, "en-US", 0.85);
+        speak(fu, "en-US", 0.85);
     } else {
         res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessayez.</span>';
         bumpWordStat(w.en, "wrong");
@@ -3183,10 +3004,10 @@ async function recordPairAnswer() {
     $("pairs-controls").classList.add("hidden");
     const blob = await stopAudioCapture();
     $("pairs-status").textContent = "Envoi en cours...";
-    const audioUrl = await uploadTestAudio(blob, p ? p.phone : null);
+    const audioUrl = await uploadTestAudio(blob, p ? (p.phone || p.email) : null);
     if (db && p && audioUrl) {
         await db.from("discussions").insert({
-            phone: p.phone, first_name: p.first_name, prompt: pairsPromptOfToday(), audio_url: audioUrl
+            phone: p.phone || p.email, first_name: p.first_name, prompt: pairsPromptOfToday(), audio_url: audioUrl
         });
         $("pairs-status").textContent = "✅ Réponse envoyée. Les autres apprenantes peuvent l'écouter.";
     } else {
@@ -3319,7 +3140,18 @@ function listenWithSilenceAutoAdvance(lang, ms, onText) {
         session.stop();
     }
 
-    const ampOk = ensureAnalyser();
+    let vad = null;
+    if (window.Diisoo && window.Diisoo.micro && micStream) {
+        try {
+            vad = window.Diisoo.micro.creerVAD(micStream, {
+                silenceMs: SILENCE_MS,
+                seuilDb: -50,
+                onSilence: () => { graceActive = true; currentConfirmEarly = confirmEarlyStop; confirmEarlyStop(); },
+                onSecours: () => { vad = null; }
+            });
+        } catch (error) { console.error("Erreur Audio Diisoo :", error); vad = null; }
+    }
+    const ampOk = vad ? false : ensureAnalyser();
     let noiseSum = 0, noiseN = 0, threshold = 0.02, voiceMs = 0, hasSpoken = false;
     const startedAt = Date.now();
     let lastTick = startedAt, lastVoiceAt = startedAt;
@@ -3362,6 +3194,7 @@ function listenWithSilenceAutoAdvance(lang, ms, onText) {
     session.promise.then(() => {
         clearInterval(checkInterval);
         if (ampTimer) clearInterval(ampTimer);
+        if (vad) { try { vad.arreter(); } catch (error) { console.error("Erreur Audio Diisoo :", error); } }
         clearTimeout(graceTimeout);
         currentConfirmEarly = null;
         hideHint();
@@ -3418,6 +3251,7 @@ async function runTest() {
     const run = ++testRun;
     testAnswers = [];
     questionList = buildQuestionList(currentTest);
+    prefetchVoix(questionList.map(q => q.text), "en");
     currentQIndex = 0;
     navTarget = null;
     isPaused = false;
@@ -3667,7 +3501,7 @@ function toggleSuggestions() {
     }
 }
 
-/* ---------- Enregistrement audio du test (pour le coach) ---------- */
+/* ---------- Enregistrement audio du test ---------- */
 let mediaRecorder = null;
 let audioChunks = [];
 let micStream = null;
@@ -3676,7 +3510,7 @@ let recMime = "audio/webm";
 function recExt() { return /mp4|aac/.test(recMime) ? "m4a" : "webm"; }
 async function startAudioCapture() {
     try {
-        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
         audioChunks = [];
         const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac"];
         recMime = "";
@@ -3782,9 +3616,9 @@ async function finishTest() {
         addXP(20); bumpDailyGoal(3); awardBadge("pret-visa");
     }
     if (db && p && !unsupported) {
-        const audioUrl = await uploadTestAudio(await stopAudioCapture(), p.phone);
+        const audioUrl = await uploadTestAudio(await stopAudioCapture(), p.phone || p.email);
         insertTestResult({
-            phone: p.phone, topic: currentTest.topic, score: answered, total, audio_url: audioUrl
+            phone: p.phone || p.email, topic: currentTest.topic, score: answered, total, audio_url: audioUrl
         });
     } else {
         stopAudioCapture();
@@ -3796,13 +3630,7 @@ let audioUnlocked = false;
 function unlockAudio() {
     if (audioUnlocked) return;
     audioUnlocked = true;
-    try {
-        if ("speechSynthesis" in window) {
-            const u = new SpeechSynthesisUtterance(" ");
-            u.volume = 0;
-            speechSynthesis.speak(u);
-        }
-    } catch (e) {}
+    try { if (window.Diisoo && window.Diisoo.voix) window.Diisoo.voix.debloquer(); } catch (error) { console.error("Erreur Audio Diisoo :", error); }
     try {
         const a = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=");
         a.volume = 0;
@@ -3824,7 +3652,7 @@ function unlockAudio() {
         if (!mod || !mod.vocab[i]) return;
         const v = mod.vocab[i];
         if (b.dataset.biz === "en") speak(v.en, "en-US", 0.9, "biz:" + sec + ":" + i);   // débloque « M'entraîner »
-        else if (b.dataset.biz === "wo" && v.wo) speakWolofOolel(v.wo, () => { if (typeof toast === "function") toast("Voix wolof indisponible, réessaie dans un instant"); });
+        else if (b.dataset.biz === "wo" && v.wo) speakWolofOolel(v.wo);
     });
     const pairs = $("pairs-list");
     if (pairs) pairs.addEventListener("click", (ev) => {
@@ -3838,7 +3666,6 @@ function unlockAudio() {
     if (retry) { retry.dataset.practice = "test-retry"; retry.dataset.gate = "0"; }
     document.addEventListener("visibilitychange", () => { if (document.hidden) stopAllAudio(); });
     window.addEventListener("pagehide", () => stopAllAudio());
-    if ("speechSynthesis" in window) { try { speechSynthesis.onvoiceschanged = () => {}; speechSynthesis.getVoices(); } catch (e) {} }
 })();
 
 /* ---------- Mode hors-ligne partiel ---------- */
@@ -3921,7 +3748,7 @@ function tierState() {
 }
 function tierCount(key) {
     return key === "general" ? GENERAL_THEMES.length : key === "wolof" ? WOLOF_THEMES.length :
-           key === "ielts" ? TEST_BANK.length : 5;
+           key === "ielts" ? TEST_BANK.length : 3;
 }
 function tierOf(i, n) { return Math.min(3, Math.floor(i / Math.ceil(n / 3)) + 1); }
 
@@ -3945,6 +3772,8 @@ function applyTierLocks(key) {
         const old = b.querySelector(".tier-lock-tag"); if (old) old.remove();
         b.dataset.tierLocked = locked ? "1" : "0";
         b.style.opacity = locked ? "0.45" : "";
+        b.classList.toggle("locked", locked);
+        b.style.pointerEvents = locked ? "none" : "";
         if (locked) {
             b.disabled = true;
             b.title = "Niveau " + TIER_NAMES[tierOf(i, n) - 1] + " verrouillé";
@@ -4016,7 +3845,8 @@ function levenshtein(a, b) {
     return prev[n];
 }
 function similarityPct(a, b) {
-    a = normalize(a); b = normalize(b);
+    const fe = (window.Diisoo && window.Diisoo.texte && window.Diisoo.texte.filtrerEntites) || (t => t);
+    a = normalize(fe(a)); b = normalize(fe(b));
     const L = Math.max(a.length, b.length);
     return L ? Math.round((1 - levenshtein(a, b) / L) * 100) : 0;
 }
@@ -4159,7 +3989,7 @@ function tiersSnapshot() {
 }
 async function cloudSyncNow() {
     const p = getProfile();
-    if (!db || !p || cloudDead) return;
+    if (!db || !p || !p.phone || cloudDead) return;
     try {
         const { error } = await db.from("profiles")
             .update({ niveau_debloque: tiersSnapshot(), xp_total: getXP().total })
@@ -4171,7 +4001,7 @@ function scheduleCloudSync() { clearTimeout(cloudTimer); cloudTimer = setTimeout
 
 async function cloudPull() {
     const p = getProfile();
-    if (!db || !p) return;
+    if (!db || !p || !p.phone) return;
     try {
         const { data, error } = await db.from("profiles").select("niveau_debloque, xp_total").eq("phone", p.phone).maybeSingle();
         if (error || !data) return;
