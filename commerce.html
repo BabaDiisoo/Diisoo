@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#121212">
+<title>Diisoo - Outils Business</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--fond:#121212;--carte:#1b1b1b;--bord:#2b2b2b;--texte:#f4efe6;--doux:#a79d88;--or:#F3A94E;--terre:#E1693F;--sombre:#241505}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fond);color:var(--texte);font-family:'Plus Jakarta Sans',system-ui,sans-serif;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--terre);outline-offset:2px}
+.page{max-width:480px;margin:0 auto;padding:0 16px 190px}
+header{position:sticky;top:0;z-index:10;background:var(--fond);display:flex;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--bord)}
+header a{color:var(--or);text-decoration:none;font-size:22px;line-height:1;padding:6px 8px}
+h1{flex:1;margin:0;font-family:'Fredoka',system-ui,sans-serif;font-size:21px;letter-spacing:-.01em}
+#badge{font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;border:1px solid var(--bord);color:var(--doux)}
+#badge.premium{color:var(--sombre);border-color:transparent;background:linear-gradient(135deg,var(--or),var(--terre))}
+#diag{font-size:12px;color:var(--doux);min-height:18px;margin:10px 0 0}
+#onglets{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
+#onglets::-webkit-scrollbar{display:none}
+.puce{flex:none;padding:10px 16px;border-radius:999px;border:1px solid var(--bord);background:var(--carte);color:var(--doux);font-size:14px;font-weight:700}
+.puce.actif{color:var(--sombre);border-color:transparent;background:linear-gradient(135deg,var(--or),var(--terre))}
+#sous{font-size:13px;color:var(--doux);margin:10px 0 12px}
+.ligne{display:flex;align-items:center;gap:12px;padding:14px;background:var(--carte);border:1px solid var(--bord);border-radius:16px;margin-bottom:10px}
+.txt{flex:1;min-width:0}
+.wo{font-weight:700;font-size:16px;line-height:1.35}
+.fr,.en{font-size:13px;color:var(--doux);margin-top:3px;line-height:1.35}
+.ecoute{flex:none;width:50px;height:50px;border-radius:50%;border:0;font-size:20px;color:var(--sombre);background:linear-gradient(135deg,var(--or),var(--terre))}
+.ecoute:active{transform:scale(.94)}
+.ecoute:disabled{opacity:.5;cursor:not-allowed}
+.ligne.verrou{opacity:.6}
+.cadenas{flex:none;font-size:12px;font-weight:800;color:var(--or);border:1px solid var(--bord);border-radius:999px;padding:6px 10px}
+#offre{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#171717;border-top:1px solid var(--bord);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+#offre .interieur{max-width:480px;margin:0 auto}
+#offre p{margin:0 0 10px;font-size:13px;color:var(--doux);line-height:1.4}
+#offre strong{color:var(--texte)}
+.principal{width:100%;padding:14px;border:0;border-radius:14px;font-size:16px;font-weight:800;color:var(--sombre);background:linear-gradient(135deg,var(--or),var(--terre))}
+.principal:disabled{opacity:.6}
+.secondaires{display:flex;gap:8px;margin-top:8px}
+.secondaire{flex:1;padding:11px;border-radius:12px;border:1px solid var(--bord);background:transparent;color:var(--texte);font-size:13px;font-weight:600}
+.cache{display:none!important}
+details{margin-top:18px;border:1px solid var(--bord);border-radius:12px;padding:10px 12px;background:var(--carte)}
+summary{font-size:12px;color:var(--doux);font-weight:600}
+pre{margin:10px 0 0;white-space:pre-wrap;word-break:break-word;font-size:11px;line-height:1.45;color:var(--doux);max-height:220px;overflow:auto}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+<a href="index.html" aria-label="Retour">&#8592;</a>
+<h1>Outils Business</h1>
+<span id="badge">Gratuit</span>
+</header>
+<p id="diag" role="status"></p>
+<nav id="onglets" aria-label="Modules"></nav>
+<p id="sous"></p>
+<main id="liste"></main>
+<details>
+<summary>Diagnostic voix</summary>
+<pre id="journalTexte">Aucun message pour le moment.</pre>
+</details>
+</div>
+<aside id="offre" class="cache">
+<div class="interieur">
+<p><strong>Premium, 5 000 FCFA.</strong> Toutes les phrases des 3 modules et l'écoute illimitée. Paiement par Wave, Orange Money ou carte (PayTech).</p>
+<button id="btnAcheter" class="principal" type="button">Débloquer Premium</button>
+<div class="secondaires">
+<button id="btnConnexion" class="secondaire" type="button">Se connecter</button>
+<button id="btnActualiser" class="secondaire" type="button">J'ai payé, actualiser</button>
+</div>
+</div>
+</aside>
+<script type="module">
+const GRATUIT = 3;
+const SPACE = "soynade-research/Oolel-Voices-Demo";
+const ENDPOINT = "/generate_tts_audio";
+const CLIENT_URL = "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+const SILENCE = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+
+const MODULES = [
+  { id: "colobane", titre: "Colobane", sous: "Pièces détachées : négocier, vérifier, commander.", lignes: [
+    ["Ban yoon bii ?", "Quelle est la référence de cette pièce ?", "What is the reference of this part?"],
+    ["Fren", "Frein / plaquettes", "Brakes / brake pads"],
+    ["Amortisör", "Amortisseur", "Shock absorber"],
+    ["Ndax pièce bii daf ko bokk ci fabrik bi ?", "Est-ce une pièce d'origine ou une copie ?", "Is this an original part or a copy?"],
+    ["Ñaata la pièce bii ?", "Combien coûte cette pièce ?", "How much does this part cost?"],
+    ["Ndax am nga garanti ?", "Avez-vous la garantie ?", "Do you have a warranty?"],
+    ["Ndax pièce bii OEM la walla aftermarket ?", "C'est une pièce OEM ou aftermarket ?", "Is this an OEM or an aftermarket part?"],
+    ["Maa ngi wut fournisseur bu jóge fabrik bi", "Je cherche un fournisseur direct usine", "I'm looking for a direct factory supplier"],
+    ["Ñaata ngir commande gros ?", "Combien pour une commande de gros ?", "How much for a bulk order?"],
+    ["Ñaata acompte laa war a fey ?", "Je verse un acompte de combien ?", "How much deposit do I pay?"],
+    ["Ndax fey nga ci Yuan walla dollar ?", "Payez-vous en Yuan ou en dollars ?", "Do you pay in Yuan or dollars?"],
+    ["Ñaata weer garanti pièce bii am ?", "Cette pièce a combien de mois de garantie ?", "How many months of warranty does this part have?"],
+    ["Ndax prix bi dafa bokk montage bi ?", "Le prix inclut-il le montage ?", "Does the price include installation?"],
+    ["Dinaa dellusi bu prix bi neexul ma", "Je reviendrai si le prix ne me convient pas", "I will come back if the price doesn't suit me"],
+    ["Ndax mën nga ma jox factuur ?", "Pouvez-vous me faire une facture ?", "Can you give me an invoice?"],
+    ["Pièce bii, ban marque wàttu la yem ak ?", "Cette pièce est compatible avec quelle marque de véhicule ?", "Which vehicle brand is this part compatible with?"]
+  ] },
+  { id: "sandaga", titre: "Sandaga", sous: "Mode et beauté : tailles, tissus, prix de gros.", lignes: [
+    ["Ban taille nga am ?", "Quelle taille avez-vous ?", "What size do you have?"],
+    ["Prix gros / prix détail", "Prix de gros / prix de détail", "Wholesale price / retail price"],
+    ["Ndax tissu bii baax na ?", "Ce tissu est-il de bonne qualité ?", "Is this fabric good quality?"],
+    ["Am nga yeneen couleur ?", "Avez-vous d'autres couleurs ?", "Do you have other colours?"],
+    ["Bëgg naa jënd ci gros", "Je voudrais acheter en gros", "I would like to buy in bulk"],
+    ["Ñaata ngir fukk pièces ?", "Combien pour dix pièces ?", "How much for ten pieces?"],
+    ["Ndax tissu bii dafay soppi couleur bu ñu ko raxasee ?", "Est-ce que ce tissu déteint au lavage ?", "Does this fabric bleed when washed?"],
+    ["Ñaata la minimum commande bi ?", "Quel est le minimum de commande ?", "What is the minimum order quantity?"],
+    ["Ndax mën nga ma yónnee un échantillon ?", "Pouvez-vous m'envoyer un échantillon ?", "Can you send me a sample?"],
+    ["Ndax tissu bii coton pur la ?", "Le tissu est-il en coton pur ?", "Is the fabric pure cotton?"],
+    ["Am nga ticket bi ?", "Avez-vous un ticket de caisse ?", "Do you have a receipt?"],
+    ["Ndax mën naa ko soppi su neexul ma ?", "Puis-je échanger si ça ne convient pas ?", "Can I exchange it if it doesn't fit?"],
+    ["Ñaata fan ngir am beneen stock ?", "Quel est le délai de réapprovisionnement ?", "What is the restocking time?"],
+    ["Ndax jayye nga itam ci internet ?", "Vendez-vous en ligne aussi ?", "Do you also sell online?"]
+  ] },
+  { id: "axe-chine", titre: "Axe Chine", sous: "Import : fournisseurs, conteneurs, douane.", lignes: [
+    ["Ñaata la transport bu conteneur ?", "Combien coûte le transport par conteneur ?", "How much does transport by container cost?"],
+    ["Ñaata fan ngir livraison bi ?", "Quel est le délai de livraison ?", "What is the delivery time?"],
+    ["Ndax soxla nga visa d'affaires ?", "Avez-vous besoin d'un visa d'affaires ?", "Do you need a business visa?"],
+    ["Fan la bureau douane bi ?", "Où est le bureau de douane ?", "Where is the customs office?"],
+    ["Maa ngi wut fournisseur bu wóor", "Je cherche un fournisseur fiable", "I'm looking for a reliable supplier"],
+    ["Ñaata la prix FOB bi ?", "Quel est le prix FOB ?", "What is the FOB price?"],
+    ["Bëgg naa envoi bu bokk ak yeneen", "Je préfère un envoi groupé", "I prefer a groupage shipment"],
+    ["Ñaata CBM la sama marsandiz am ?", "Combien de CBM fait ma marchandise ?", "How many CBM is my cargo?"],
+    ["Soxla naa Bill of Lading bi", "J'ai besoin du connaissement (Bill of Lading)", "I need the Bill of Lading"],
+    ["Fan la packing list bi ?", "Où est la liste de colisage (packing list) ?", "Where is the packing list?"],
+    ["Ñaata fan ngir dédouaner ci Port Dakar ?", "Combien de jours pour dédouaner au Port de Dakar ?", "How many days to clear customs at the Port of Dakar?"],
+    ["Ban Incoterm nga jëfandikoo ?", "Quel Incoterm utilisez-vous ?", "Which Incoterm do you use?"],
+    ["Ndax nangu nga fey ci acompte, topp solde bi ?", "Acceptez-vous un paiement par acompte puis solde ?", "Do you accept a deposit then balance payment?"],
+    ["Ñaata fan la devis bi dëkk ?", "Quelle est la durée de validité du devis ?", "What is the validity period of the quote?"],
+    ["Am nga assurance transport ?", "Avez-vous une assurance transport ?", "Do you have transport insurance?"]
+  ] }
+];
+
+const $ = (id) => document.getElementById(id);
+const attente = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const journal = [];
+function enTexte(args) {
+  return args.map((a) => {
+    if (typeof a === "string") return a;
+    if (a && a.message) return a.message;
+    try { return JSON.stringify(a); } catch (e) { return String(a); }
+  }).join(" ");
+}
+function noter(niveau, args) {
+  journal.push(new Date().toISOString().slice(11, 19) + " " + niveau + " " + enTexte(args));
+  if (journal.length > 60) journal.shift();
+  const el = $("journalTexte");
+  if (el) el.textContent = journal.slice(-16).join("\n");
+}
+const LOG = (...a) => { console.log("[diisoo]", ...a); noter("info", a); };
+const ERR = (...a) => { console.error("[diisoo]", ...a); noter("ERREUR", a); };
+const diag = (t) => { $("diag").textContent = t; };
+
+function avecDelai(p, ms, nom) {
+  let t;
+  const limite = new Promise((_, rej) => { t = setTimeout(() => rej(new Error("delai depasse : " + nom)), ms); });
+  return Promise.race([Promise.resolve(p), limite]).finally(() => clearTimeout(t));
+}
+
+let promesseIDB = null;
+function ouvrirIDB() {
+  if (!("indexedDB" in window)) return Promise.resolve(null);
+  if (!promesseIDB) {
+    promesseIDB = new Promise((resolve) => {
+      try {
+        const rq = indexedDB.open("DiisooStore", 1);
+        rq.onupgradeneeded = () => {
+          if (!rq.result.objectStoreNames.contains("audio_cache")) rq.result.createObjectStore("audio_cache", { keyPath: "hash" });
+        };
+        rq.onsuccess = () => resolve(rq.result);
+        rq.onerror = () => resolve(null);
+        rq.onblocked = () => resolve(null);
+      } catch (e) { resolve(null); }
+    });
+  }
+  return promesseIDB;
+}
+async function idbGet(hash) {
+  const base = await ouvrirIDB();
+  if (!base) return null;
+  return new Promise((resolve) => {
+    try {
+      const rq = base.transaction("audio_cache", "readonly").objectStore("audio_cache").get(hash);
+      rq.onsuccess = () => resolve(rq.result || null);
+      rq.onerror = () => resolve(null);
+    } catch (e) { resolve(null); }
+  });
+}
+async function idbPut(hash, blob) {
+  const base = await ouvrirIDB();
+  if (!base) return;
+  await new Promise((resolve) => {
+    try {
+      const tx = base.transaction("audio_cache", "readwrite");
+      tx.objectStore("audio_cache").put({ hash, blob, mime: blob.type, taille: blob.size, date: Date.now() });
+      tx.oncomplete = resolve;
+      tx.onerror = resolve;
+      tx.onabort = resolve;
+    } catch (e) { resolve(); }
+  });
+}
+async function hacher(texte) {
+  if (!window.crypto || !crypto.subtle) return null;
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(texte));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+const lecteur = new Audio();
+lecteur.preload = "auto";
+const memoire = new Map();
+let clientP = null;
+let enCours = false;
+
+function obtenirClient() {
+  if (!clientP) {
+    clientP = (async () => {
+      LOG("import du client Gradio");
+      const m = await avecDelai(import(CLIENT_URL), 30000, "import du client");
+      LOG("client importe, connexion au Space", SPACE);
+      let dernier = "";
+      const c = await avecDelai(m.Client.connect(SPACE, {
+        events: ["data", "status"],
+        status_callback: (s) => {
+          const t = (s && (s.message || s.status)) || "";
+          if (t !== dernier) { dernier = t; LOG("etat du Space :", t); diag("Voix : " + t); }
+        }
+      }), 120000, "connexion au Space");
+      LOG("Space connecte");
+      return c;
+    })().catch((e) => { clientP = null; ERR("connexion impossible :", e); throw e; });
+  }
+  return clientP;
+}
+
+async function synthese(texte) {
+  const client = await obtenirClient();
+  LOG("envoi de la phrase a Oolel");
+  const job = client.submit(ENDPOINT, {
+    text_input: texte,
+    exaggeration_input: 0.3,
+    temperature_input: 0.2,
+    seed_num_input: 0,
+    cfgw_input: 0.5
+  });
+  let sortie = null;
+  let vu = "";
+  for await (const ev of job) {
+    if (ev.type === "status") {
+      const marque = ev.stage + ":" + (ev.position !== undefined ? ev.position : "") + ":" + (ev.message || "");
+      if (marque !== vu) {
+        vu = marque;
+        LOG("statut", ev.stage, ev.position !== undefined ? "file " + ev.position : "", ev.message || "");
+        if (ev.stage === "pending" && ev.position !== undefined) diag("Voix : file d'attente, position " + ev.position);
+        if (ev.stage === "generating") diag("Voix : génération en cours");
+      }
+      if (ev.stage === "error") throw new Error(ev.message || "erreur renvoyee par le Space");
+    } else if (ev.type === "data") {
+      sortie = ev.data;
+    }
+  }
+  if (!Array.isArray(sortie) || !sortie[0] || typeof sortie[0].url !== "string" || !/^https:\/\//i.test(sortie[0].url)) {
+    ERR("reponse inattendue", sortie);
+    throw new Error("reponse du Space invalide");
+  }
+  LOG("audio genere", sortie[0].url);
+  return sortie[0].url;
+}
+
+async function recupererAudio(url) {
+  try {
+    const rep = await avecDelai(fetch(url), 30000, "telechargement");
+    if (!rep.ok) throw new Error("HTTP " + rep.status);
+    const blob = await rep.blob();
+    if (!blob.size) throw new Error("audio vide");
+    LOG("audio telecharge", blob.size, "octets", blob.type);
+    return { blob };
+  } catch (e) {
+    ERR("telechargement impossible, lecture directe de l'adresse :", e);
+    return { url };
+  }
+}
+
+function amorcer() {
+  try {
+    lecteur.src = SILENCE;
+    const p = lecteur.play();
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) { return; }
+}
+
+function jouer(source) {
+  return new Promise((resolve, reject) => {
+    let adresse = source.url;
+    let objet = null;
+    if (source.blob) { objet = URL.createObjectURL(source.blob); adresse = objet; }
+    const fin = (erreur) => {
+      lecteur.onended = null;
+      lecteur.onerror = null;
+      if (objet) setTimeout(() => URL.revokeObjectURL(objet), 15000);
+      if (erreur) reject(erreur); else resolve();
+    };
+    lecteur.onended = () => { LOG("lecture terminee"); fin(); };
+    lecteur.onerror = () => {
+      const c = lecteur.error;
+      fin(new Error("lecture impossible" + (c ? " (code " + c.code + ")" : "")));
+    };
+    lecteur.src = adresse;
+    const p = lecteur.play();
+    if (p && p.catch) p.catch((e) => fin(new Error("lecture refusee : " + e.message)));
+  });
+}
+
+async function parler(texte, bouton) {
+  if (enCours) { LOG("une lecture est deja en cours, demande ignoree"); return; }
+  enCours = true;
+  amorcer();
+  const ancien = bouton.textContent;
+  bouton.textContent = "⏳";
+  bouton.disabled = true;
+  try {
+    LOG("demande de lecture,", texte.length, "caracteres");
+    let source = memoire.get(texte) || null;
+    if (!source) {
+      const h = await hacher(texte);
+      if (h) {
+        const local = await idbGet(h);
+        if (local && local.blob && local.blob.size) { LOG("audio trouve dans le cache de l'appareil"); source = { blob: local.blob }; }
+      }
+      if (!source) {
+        diag("Voix : préparation (jusqu'à une minute la première fois)");
+        const url = await avecDelai(synthese(texte), 180000, "generation de la voix");
+        source = await recupererAudio(url);
+        if (source.blob && h) idbPut(h, source.blob);
+      }
+      memoire.set(texte, source);
+    }
+    await jouer(source);
+    diag("Voix : prête");
+  } catch (e) {
+    ERR("echec de la lecture :", e);
+    diag("Voix indisponible : " + (e && e.message ? e.message : "erreur inconnue"));
+  } finally {
+    enCours = false;
+    bouton.textContent = ancien;
+    bouton.disabled = false;
+  }
+}
+
+let Diisoo = null;
+async function chargerDiisoo() {
+  try {
+    await import("./diisoo-pro.js");
+    Diisoo = window.Diisoo || null;
+    LOG(Diisoo ? "module de paiement charge" : "module de paiement absent");
+  } catch (e) {
+    ERR("module de paiement indisponible :", e);
+  }
+}
+async function attendreSession() {
+  if (!Diisoo) return;
+  for (let i = 0; i < 16; i++) {
+    if (Diisoo.etat().connecte) break;
+    await attente(250);
+  }
+  if (Diisoo.etat().connecte) await Diisoo.rafraichirProfil();
+}
+const estPremium = () => !!(Diisoo && Diisoo.etat().premium);
+const estConnecte = () => !!(Diisoo && Diisoo.etat().connecte);
+
+async function lignesDuModule(m) {
+  if (Diisoo) {
+    try {
+      const data = await Diisoo.themes.charger(m.id);
+      if (Array.isArray(data) && data.length) return data.map((p) => [p.wolof, p.francais || "", p.anglais || ""]);
+    } catch (e) { ERR("themes indisponibles :", e); }
+  }
+  return m.lignes;
+}
+
+function creerLigne(l, i, premium) {
+  const ligne = document.createElement("div");
+  ligne.className = "ligne";
+  const txt = document.createElement("div");
+  txt.className = "txt";
+  if (!premium && i >= GRATUIT) {
+    ligne.classList.add("verrou");
+    const fr = document.createElement("div");
+    fr.className = "wo";
+    fr.textContent = l[1] || l[0];
+    txt.appendChild(fr);
+    const cad = document.createElement("span");
+    cad.className = "cadenas";
+    cad.textContent = "🔒 Premium";
+    ligne.append(txt, cad);
+    return ligne;
+  }
+  const wo = document.createElement("div");
+  wo.className = "wo";
+  wo.textContent = l[0];
+  txt.appendChild(wo);
+  if (l[1]) { const fr = document.createElement("div"); fr.className = "fr"; fr.textContent = l[1]; txt.appendChild(fr); }
+  if (l[2]) { const en = document.createElement("div"); en.className = "en"; en.textContent = l[2]; txt.appendChild(en); }
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "ecoute";
+  b.textContent = "🔊";
+  b.setAttribute("aria-label", "Écouter en wolof");
+  b.addEventListener("click", () => parler(l[0], b));
+  ligne.append(txt, b);
+  return ligne;
+}
+
+let courant = MODULES[0].id;
+
+function rendreOnglets() {
+  const nav = $("onglets");
+  nav.textContent = "";
+  MODULES.forEach((m) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "puce" + (m.id === courant ? " actif" : "");
+    b.textContent = m.titre;
+    b.addEventListener("click", () => { courant = m.id; afficher(); });
+    nav.appendChild(b);
+  });
+}
+
+function majOffre() {
+  const premium = estPremium();
+  const badge = $("badge");
+  badge.textContent = premium ? "Premium" : "Gratuit";
+  badge.className = premium ? "premium" : "";
+  $("offre").classList.toggle("cache", premium);
+  $("btnConnexion").classList.toggle("cache", !Diisoo || estConnecte());
+  $("btnActualiser").classList.toggle("cache", !Diisoo || !estConnecte());
+}
+
+async function afficher() {
+  const m = MODULES.find((x) => x.id === courant);
+  rendreOnglets();
+  $("sous").textContent = m.sous;
+  const liste = $("liste");
+  const lignes = await lignesDuModule(m);
+  if (m.id !== courant) return;
+  const premium = estPremium();
+  liste.textContent = "";
+  lignes.forEach((l, i) => liste.appendChild(creerLigne(l, i, premium)));
+  majOffre();
+}
+
+$("btnAcheter").addEventListener("click", async () => {
+  if (!Diisoo) { diag("Paiement indisponible pour le moment."); ERR("achat impossible : module de paiement non charge"); return; }
+  LOG("demarrage de l'achat Premium");
+  await Diisoo.acheter("premium");
+  majOffre();
+});
+
+$("btnConnexion").addEventListener("click", async () => {
+  if (!Diisoo) return;
+  await Diisoo.connexion();
+  await attendreSession();
+  afficher();
+});
+
+$("btnActualiser").addEventListener("click", async () => {
+  if (!Diisoo) return;
+  await Diisoo.rafraichirProfil();
+  LOG("profil actualise, premium =", estPremium());
+  if (!estPremium()) diag("Paiement pas encore confirmé. Réessaie dans quelques minutes.");
+  afficher();
+});
+
+document.addEventListener("visibilitychange", async () => {
+  if (document.visibilityState !== "visible" || !Diisoo || !estConnecte() || estPremium()) return;
+  await Diisoo.rafraichirProfil();
+  if (estPremium()) afficher();
+});
+
+window.addEventListener("error", (e) => ERR("erreur de page :", e.message));
+window.addEventListener("unhandledrejection", (e) => ERR("promesse rejetee :", e.reason));
+
+(async function demarrer() {
+  await afficher();
+  setTimeout(() => { obtenirClient().catch(() => {}); }, 2000);
+  await chargerDiisoo();
+  await attendreSession();
+  await afficher();
+})();
+</script>
+</body>
+</html>
