@@ -131,6 +131,31 @@ async function generer(texte) {
   return blob;
 }
 
+const DOSSIER_SECOURS = "audio/wolof/";
+
+function cleSecours(t) {
+  return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function cheminSecours(t) {
+  const c = cleSecours(t);
+  return c ? DOSSIER_SECOURS + c + ".mp3" : null;
+}
+
+async function blobSecours(chemin) {
+  try {
+    const r = await fetch(chemin);
+    if (!r.ok) throw new Error("audio local introuvable (HTTP " + r.status + ")");
+    const b = await r.blob();
+    if (!b.size) throw new Error("audio local vide");
+    return b;
+  } catch (error) {
+    console.error("Erreur Audio Diisoo :", error);
+    return null;
+  }
+}
+
+const DELAI_SECOURS = 3000;
 const memoire = new Map();
 const enCours = new Map();
 
@@ -140,7 +165,7 @@ async function url(texte) {
   const hash = await hacher(t);
   if (memoire.has(hash)) return memoire.get(hash);
   if (enCours.has(hash)) return enCours.get(hash);
-  const travail = (async () => {
+  const principal = (async () => {
     let blob = await idbGet(hash);
     if (blob) LOG("source : cache local");
     if (!blob) {
@@ -156,6 +181,25 @@ async function url(texte) {
     const u = URL.createObjectURL(blob);
     memoire.set(hash, u);
     return u;
+  })();
+  const chemin = cheminSecours(t);
+  const travail = (async () => {
+    if (!chemin) {
+      try { return await principal; } catch (error) { console.error("Erreur Audio Diisoo :", error); throw error; }
+    }
+    let lent = false;
+    const r = await Promise.race([
+      principal,
+      new Promise((res) => setTimeout(() => { lent = true; res(null); }, DELAI_SECOURS))
+    ]).catch((error) => { console.error("Erreur Audio Diisoo :", error); lent = true; return null; });
+    if (r) return r;
+    if (lent) console.error("Erreur Audio Diisoo :", new Error("voix en ligne trop lente ou en echec, lecture locale"));
+    const loc = await blobSecours(chemin);
+    if (loc) {
+      principal.catch(() => {});
+      return URL.createObjectURL(loc);
+    }
+    return principal;
   })();
   enCours.set(hash, travail);
   try { return await travail; } finally { enCours.delete(hash); }

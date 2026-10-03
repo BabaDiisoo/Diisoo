@@ -9,7 +9,7 @@ function creer(texte, action) {
   bouton = document.createElement("button");
   bouton.type = "button";
   bouton.textContent = texte;
-  bouton.style.cssText = "position:fixed;left:10px;bottom:52px;z-index:30;padding:8px 12px;border-radius:999px;border:0;background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;font:800 11px system-ui,sans-serif";
+  bouton.style.cssText = "position:fixed;left:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;padding:8px 12px;border-radius:999px;border:0;background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;font:800 11px system-ui,sans-serif";
   bouton.addEventListener("click", action);
   document.body.appendChild(bouton);
 }

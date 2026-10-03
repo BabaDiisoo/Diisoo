@@ -72,8 +72,13 @@ function appliquer(m) {
 
 function afficher(txt, titre) {
   if (!puce) return;
-  puce.textContent = txt;
-  puce.title = titre || "";
+  const ok = /Sauvegardé/.test(txt || "");
+  const attente = /Restauration|Chargement/.test(txt || "");
+  puce.textContent = ok ? "💾✓" : attente ? "💾…" : "💾";
+  puce.style.color = ok ? "#5FC98F" : "#F3A94E";
+  puce.style.borderColor = ok ? "rgba(95,201,143,.45)" : "rgba(243,169,78,.35)";
+  puce.title = titre || txt || "Sauvegarder mon progrès";
+  puce.setAttribute("aria-label", puce.title);
 }
 
 function connecte() {
@@ -125,7 +130,7 @@ async function actionPuce() {
     try { await D.connexion(); } catch (e) { ERR("connexion", e); }
     for (let i = 0; i < 20 && !connecte(); i++) await new Promise((r) => setTimeout(r, 500));
     if (connecte()) { try { await D.rafraichirProfil(); } catch (e) {} await restaurer(); }
-    else afficher("☁️ Sauvegarder mon progrès");
+    else afficher("Sauvegarder mon progrès");
   } else {
     await pousser(true);
   }
@@ -134,10 +139,19 @@ async function actionPuce() {
 function creerPuce() {
   puce = document.createElement("button");
   puce.type = "button";
-  puce.textContent = "☁️ Sauvegarder mon progrès";
-  puce.style.cssText = "position:fixed;left:10px;bottom:10px;z-index:30;padding:8px 12px;border-radius:999px;border:1px solid #2e2e32;background:#1c1c1e;color:#F3A94E;font:700 11px system-ui,sans-serif;opacity:.92";
+  puce.textContent = "💾";
+  puce.title = "Sauvegarder mon progrès";
+  puce.setAttribute("aria-label", "Sauvegarder mon progrès");
+  puce.style.cssText = "flex:none;margin:0 6px;padding:3px 8px;border-radius:999px;border:1px solid rgba(243,169,78,.35);background:rgba(243,169,78,.08);color:#F3A94E;font:700 12px system-ui,sans-serif;line-height:1.3";
   puce.addEventListener("click", actionPuce);
-  document.body.appendChild(puce);
+  const bienvenue = document.getElementById("welcome-tag");
+  const rangee = bienvenue && bienvenue.parentElement;
+  if (rangee) {
+    rangee.insertBefore(puce, bienvenue.nextSibling);
+  } else {
+    puce.style.cssText += ";position:fixed;top:calc(8px + env(safe-area-inset-top));right:8px;z-index:30;background:#1c1c1e";
+    document.body.appendChild(puce);
+  }
 }
 
 async function demarrer() {

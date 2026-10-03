@@ -658,6 +658,45 @@ async function preparerMorceau(morceau) {
   return blob;
 }
 
+const DOSSIER_SECOURS = "audio/wolof/";
+
+function cleSecours(t) {
+  return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function cheminSecours(t) {
+  const c = cleSecours(t);
+  return c ? DOSSIER_SECOURS + c + ".mp3" : null;
+}
+
+async function blobSecours(chemin) {
+  try {
+    const r = await fetch(chemin);
+    if (!r.ok) throw new Error("audio local introuvable (HTTP " + r.status + ")");
+    const b = await r.blob();
+    if (!b.size) throw new Error("audio local vide");
+    return b;
+  } catch (error) {
+    console.error("Erreur Audio Diisoo :", error);
+    return null;
+  }
+}
+
+async function avecSecours(promesse, chemin) {
+  let lent = false;
+  const r = await Promise.race([
+    promesse,
+    new Promise((res) => setTimeout(() => { lent = true; res(null); }, 3000))
+  ]).catch((error) => { console.error("Erreur Audio Diisoo :", error); lent = true; return null; });
+  if (r) return r;
+  if (lent) {
+    console.error("Erreur Audio Diisoo :", new Error("voix en ligne trop lente ou en echec, lecture locale"));
+    const loc = await blobSecours(chemin);
+    if (loc) { promesse.catch(() => {}); return loc; }
+  }
+  return promesse;
+}
+
 let lectureEnCours = false;
 
 async function ecouter(texteWolof) {
@@ -679,9 +718,10 @@ async function ecouter(texteWolof) {
     for (let i = 0; i < morceaux.length; i++) {
       let blob = null;
       try {
-        blob = await suivante;
-      } catch (e) {
-        console.error(e.message);
+        const secours = morceaux.length === 1 ? cheminSecours(texteWolof) : null;
+        blob = await (i === 0 && secours ? avecSecours(suivante, secours) : suivante);
+      } catch (error) {
+        console.error("Erreur Audio Diisoo :", error);
       }
       if (i + 1 < morceaux.length) suivante = lancer(morceaux[i + 1]);
       if (!blob) continue; // un micro-echec saute le fragment sans bloquer la suite
