@@ -1034,6 +1034,10 @@ window.Diisoo = {
   certification,
   themes: { liste: THEMES, charger: chargerTheme, afficher: afficherTheme, monter: monterThemes },
   exercice: enregistrerValidation,
+  synchro: {
+    charger: async () => sansErreur(await avecDelai(sb.rpc("charger_donnees"), DELAI_RESEAU, "restauration")),
+    sauvegarder: async (donnees) => sansErreur(await avecDelai(sb.rpc("sauvegarder_donnees", { p_donnees: donnees }), DELAI_RESEAU, "sauvegarde")),
+  },
   niveaux: {
     etat: async () => sansErreur(await avecDelai(sb.rpc("etat_niveaux"), DELAI_RESEAU, "niveaux")),
     valider: async (niveau, score) => {
