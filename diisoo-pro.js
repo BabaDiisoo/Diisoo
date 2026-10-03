@@ -1033,6 +1033,15 @@ window.Diisoo = {
   rafraichirProfil,
   certification,
   themes: { liste: THEMES, charger: chargerTheme, afficher: afficherTheme, monter: monterThemes },
+  exercice: enregistrerValidation,
+  niveaux: {
+    etat: async () => sansErreur(await avecDelai(sb.rpc("etat_niveaux"), DELAI_RESEAU, "niveaux")),
+    valider: async (niveau, score) => {
+      const r = sansErreur(await avecDelai(sb.rpc("valider_palier", { p_niveau: niveau, p_score: score }), DELAI_RESEAU, "palier"));
+      await rafraichirProfil();
+      return r;
+    },
+  },
   etat: () => ({
     segment: etat.segment,
     connecte: !!etat.user,
