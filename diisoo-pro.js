@@ -1582,3 +1582,25 @@ window.Diisoo = {
   })
 };
 init();
+// Connexion par code e-mail desactivee pour l'instant
+(function sansCode() {
+  const passer = () => {
+    try {
+      const ob = document.getElementById("screen-onboarding");
+      if (ob && ob.offsetParent !== null && typeof window.continuerSansCompte === "function") {
+        window.continuerSansCompte();
+      }
+      const ms = document.getElementById("menu-session");
+      if (ms) ms.style.display = "none";
+      const cf = document.getElementById("code-field");
+      if (cf) cf.style.display = "none";
+    } catch (e) {}
+  };
+  window.menuConnexion = function () {};
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => setTimeout(passer, 300));
+  } else {
+    setTimeout(passer, 300);
+  }
+  setTimeout(passer, 1500);
+})();
