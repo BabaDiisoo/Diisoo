@@ -1,3 +1,30 @@
+const _jouerVoixOrig = jouerVoix;
+const _arreterVoixOrig = arreterVoix;
+arreterVoix = function () {
+  try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+  return _arreterVoixOrig();
+};
+jouerVoix = async function (texte, langue, options) {
+  if (langue !== "en") return _jouerVoixOrig(texte, langue, options);
+  const o = options || {};
+  const synth = window.speechSynthesis;
+  if (!synth) throw new Error("synthese vocale indisponible");
+  arreterVoix();
+  const phrase = String(texte || "").replace(/\s+/g, " ").trim();
+  if (!phrase) return true;
+  return await new Promise((resolve, reject) => {
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.lang = "en-US";
+    u.rate = 0.9;
+    const voices = synth.getVoices();
+    const v = voices.find((x) => /^en[-_]US/i.test(x.lang)) || voices.find((x) => /^en/i.test(x.lang));
+    if (v) u.voice = v;
+    u.onstart = () => { if (o.onDebut) o.onDebut(); };
+    u.onend = () => resolve(true);
+    u.onerror = (e) => (e.error === "canceled" || e.error === "interrupted") ? resolve(false) : reject(new Error("voix " + e.error));
+    synth.speak(u);
+  });
+};
 genererOolel = async function (texte) {
   const rep = await avecDelai(sb.functions.invoke("smart-handler", { body: { texte, lang: "wo" } }), 12e4, "voix wolof");
   if (rep.error) throw rep.error;
