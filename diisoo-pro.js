@@ -1,3 +1,9 @@
+genererOolel = async function (texte) {
+  const rep = await avecDelai(sb.functions.invoke("smart-handler", { body: { texte, lang: "wo" } }), 12e4, "voix wolof");
+  if (rep.error) throw rep.error;
+  if (!rep.data || !rep.data.audio_base64) throw new Error("reponse vocale vide");
+  return depaqueter(rep.data.audio_base64, rep.data.mime);
+};
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 const CONFIG = {
   SUPABASE_URL: "https://jkwtyoefqvafnlqkhium.supabase.co",
