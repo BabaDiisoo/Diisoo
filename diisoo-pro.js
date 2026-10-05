@@ -1658,3 +1658,13 @@ init();
   setTimeout(adapter, 200);
   setTimeout(adapter, 1500);
 })();
+// Reinitialisation unique du profil
+(function () {
+  try {
+    if (!localStorage.getItem("diisoo_reset1")) {
+      localStorage.setItem("diisoo_reset1", "1");
+      localStorage.removeItem("diisoo_profile");
+      location.reload();
+    }
+  } catch (e) {}
+})();
