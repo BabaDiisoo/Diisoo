@@ -1604,3 +1604,47 @@ init();
   }
   setTimeout(passer, 1500);
 })();
+// Inscription simple : prenom, nom, WhatsApp, sans code
+(function inscriptionSimple() {
+  const $ = (id) => document.getElementById(id);
+  const origSans = window.continuerSansCompte;
+  let humain = false;
+  document.addEventListener("pointerdown", () => { humain = true; }, true);
+  window.continuerSansCompte = function () {
+    if (!humain) return;
+    return origSans.apply(this, arguments);
+  };
+  window.handleOnboarding = function (e) {
+    e.preventDefault();
+    const first = $("user-firstname").value.trim();
+    const last = $("user-lastname").value.trim();
+    const email = $("user-email").value.trim().toLowerCase() || null;
+    const opt = $("whatsapp-optin").checked;
+    let phone = null;
+    if (opt) {
+      const d = $("user-phone").value.replace(/\D/g, "").replace(/^221/, "");
+      if (!/^7[05-8]\d{7}$/.test(d)) {
+        const er = $("phone-error");
+        er.textContent = "Numéro invalide. Exemple : 70 123 45 67 (9 chiffres).";
+        er.classList.remove("hidden");
+        return;
+      }
+      phone = "+221" + d;
+    }
+    window.terminerInscription({ first_name: first, last_name: last, email: email, phone: phone, whatsapp_optin: opt });
+  };
+  const adapter = () => {
+    try {
+      const em = $("user-email");
+      if (em) em.required = false;
+      const l = document.querySelector('label[for="user-email"]');
+      if (l) l.textContent = "E-mail (facultatif)";
+      const b = $("btn-submit-onboarding");
+      if (b) b.textContent = "Commencer";
+      const cf = $("code-field");
+      if (cf) cf.style.display = "none";
+    } catch (e) {}
+  };
+  setTimeout(adapter, 200);
+  setTimeout(adapter, 1500);
+})();
