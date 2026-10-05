@@ -1637,6 +1637,16 @@ init();
     try {
       const em = $("user-email");
       if (em) em.required = false;
+                        // Effacement unique du faux profil "Ami"
+(function () {
+  try {
+    const p = JSON.parse(localStorage.getItem("diisoo_profile") || "null");
+    if (p && p.first_name === "Ami" && !p.last_name && !p.email) {
+      localStorage.removeItem("diisoo_profile");
+      location.reload();
+    }
+  } catch (e) {}
+})();
       const l = document.querySelector('label[for="user-email"]');
       if (l) l.textContent = "E-mail (facultatif)";
       const b = $("btn-submit-onboarding");
