@@ -369,29 +369,15 @@
         <div id="screen-business" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-[#C99CEA] uppercase">Outils Business</span>
-                <h3 class="text-lg font-bold text-[#F6F1E7]">Vocabulaire par niveau</h3>
-                <p class="text-xs text-[#A69C86] mt-1">Choisissez votre niveau pour des phrases prêtes à l'emploi.</p>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Vocabulaire par secteur</h3>
+                <p class="text-xs text-[#A69C86] mt-1">Choisissez votre secteur d'activité. Dans chaque secteur, les phrases vont du plus simple au plus avancé.</p>
             </div>
-            <div id="business-picker" class="grid grid-cols-1 gap-3">
-                <button onclick="selectBusinessModule('debutant')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#10261A,#141A2B);border:1px solid #1E2740">
-                    <span class="text-3xl">🌱</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Débutant</h4>
-                    <p class="text-[11px] text-[#A69C86]">Mots et expressions courtes du commerce.</p>
-                </button>
-                <button onclick="selectBusinessModule('intermediaire')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A2410,#141A2B);border:1px solid #1E2740">
-                    <span class="text-3xl">🌿</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Intermédiaire</h4>
-                    <p class="text-[11px] text-[#A69C86]">Phrases complètes pour acheter et vendre.</p>
-                </button>
-                <button onclick="selectBusinessModule('avance')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,#2A1810,#141A2B);border:1px solid #1E2740">
-                    <span class="text-3xl">🌳</span>
-                    <h4 class="text-sm font-bold text-[#F6F1E7] mt-2">Avancé</h4>
-                    <p class="text-[11px] text-[#A69C86]">Négociation, import et logistique.</p>
-                </button>
+            <div id="business-picker" class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[60vh] pr-1">
+                <!-- Les secteurs sont injectés ici par renderBusinessPicker() -->
             </div>
             <div id="business-content" class="hidden space-y-3 overflow-y-auto max-h-[55vh] pr-1"></div>
             <div class="flex space-x-2">
-                <button id="btn-business-back" onclick="closeBusinessDetail()" class="hidden flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Changer de niveau</button>
+                <button id="btn-business-back" onclick="closeBusinessDetail()" class="hidden flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Changer de secteur</button>
                 <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Tableau de bord</button>
             </div>
         </div>
@@ -2219,42 +2205,70 @@ if (BUSINESS_DIALOGUES.bazar) {
     );
 }
 
-(function regrouperParNiveaux() {
+/* ---------- Classement par SECTEUR d'activité (le niveau reste visible à l'intérieur) ---------- */
+const BUSINESS_SECTORS = {
+    colobane:     { icon: "🔧", titre: "Pièces détachées",          sousTitre: "Colobane : références, garanties, prix de gros.",       fond: "#10261A" },
+    sandaga:      { icon: "👗", titre: "Mode & Beauté",             sousTitre: "Sandaga : tissus, tailles, achat en gros.",             fond: "#2A1810" },
+    electronique: { icon: "📱", titre: "Électronique",              sousTitre: "Centenaire : voltage, garantie, paiement mobile.",      fond: "#14203A" },
+    bazar:        { icon: "🛋️", titre: "Bazar & Meubles",           sousTitre: "Livraison, montage, paiement en plusieurs fois.",       fond: "#2A2410" },
+    agriculture:  { icon: "🌾", titre: "Agriculture & Marché frais", sousTitre: "Légumes, irrigation, matériel agricole.",              fond: "#10261A" },
+    chine:        { icon: "🚢", titre: "Logistique & Import",       sousTitre: "Axe Chine : conteneur, douane, incoterms, visa.",       fond: "#1A1830" }
+};
+const NIVEAUX_BIZ = { debutant: "🌱 Débutant", intermediaire: "🌿 Intermédiaire", avance: "🌳 Avancé" };
+
+(function organiserParSecteur() {
     const mots = t => (t || "").trim().split(/\s+/).filter(Boolean).length;
-    const niv = { debutant: [], intermediaire: [], avance: [] };
-    const vus = new Set();
-    const tous = [];
+    /* Entrées qui relèvent de l'agriculture : sorties de leur ancien secteur */
+    const AGRI_EN = new Set([
+        "Water pump for the field", "Tractor spare parts", "Solar panel for the farm",
+        "Storage crates for vegetables", "Fresh tomatoes and onions", "Irrigation equipment"
+    ]);
+    const agri = [];
     Object.keys(CHINA_TRADE_WOLOF).forEach(k => {
-        (CHINA_TRADE_WOLOF[k].vocab || []).forEach(v => {
-            if (!v || vus.has(v.en)) return;
-            vus.add(v.en);
-            tous.push(v);
-        });
+        const gardes = [];
+        (CHINA_TRADE_WOLOF[k].vocab || []).forEach(v => (AGRI_EN.has(v.en) ? agri : gardes).push(v));
+        CHINA_TRADE_WOLOF[k].vocab = gardes;
     });
-    tous.sort((a, b) => mots(a.en) - mots(b.en) || a.en.length - b.en.length);
-    const tiers = Math.ceil(tous.length / 3);
-    tous.forEach((v, i) => niv[i < tiers ? "debutant" : i < 2 * tiers ? "intermediaire" : "avance"].push(v));
-    const secteurs = Object.keys(BUSINESS_DIALOGUES).map(k => {
-        const l = BUSINESS_DIALOGUES[k];
-        const moy = l.reduce((a, x) => a + mots(x.en), 0) / (l.length || 1);
-        return { k, l, moy };
-    }).sort((a, b) => a.moy - b.moy);
-    const dlg = { debutant: [], intermediaire: [], avance: [] };
-    secteurs.forEach((x, i) => {
-        const cle = i < 2 ? "debutant" : i < 4 ? "intermediaire" : "avance";
-        x.l.forEach((ligne, j) => dlg[cle].push(j === 0 && !ligne.scene ? Object.assign({ scene: "💬 Scène " + (dlg[cle].filter(y => y.scene).length + 1) }, ligne) : ligne));
-    });
-    Object.keys(CHINA_TRADE_WOLOF).forEach(k => delete CHINA_TRADE_WOLOF[k]);
-    Object.keys(BUSINESS_DIALOGUES).forEach(k => delete BUSINESS_DIALOGUES[k]);
-    const titres = { debutant: "Débutant : mots et expressions courtes", intermediaire: "Intermédiaire : phrases du commerce", avance: "Avancé : négociation et import" };
-    Object.keys(niv).forEach(k => {
-        CHINA_TRADE_WOLOF[k] = { title: titres[k], vocab: niv[k] };
-        BUSINESS_DIALOGUES[k] = dlg[k];
+    CHINA_TRADE_WOLOF.agriculture = { title: "", vocab: agri };
+    /* Le dialogue des légumes (Scène 2 du Bazar) passe dans Agriculture */
+    const bz = BUSINESS_DIALOGUES.bazar || [];
+    const coupe = bz.findIndex(l => l.scene);
+    BUSINESS_DIALOGUES.agriculture = coupe >= 0 ? bz.splice(coupe) : [];
+    if (BUSINESS_DIALOGUES.agriculture[0]) {
+        BUSINESS_DIALOGUES.agriculture[0] = Object.assign({}, BUSINESS_DIALOGUES.agriculture[0], { scene: "🍅 Baana-baana et producteur de légumes" });
+    }
+    /* Niveau de chaque phrase selon sa longueur, puis tri du plus simple au plus avancé dans chaque secteur */
+    const ordre = ["debutant", "intermediaire", "avance"];
+    Object.keys(BUSINESS_SECTORS).forEach(k => {
+        const mod = CHINA_TRADE_WOLOF[k];
+        if (!mod) return;
+        const vus = new Set();
+        mod.vocab = mod.vocab.filter(v => v && !vus.has(v.en) && vus.add(v.en));
+        /* Tri du plus court au plus long, puis découpe en 3 tiers : chaque secteur a ses 3 niveaux */
+        mod.vocab.sort((a, b) => mots(a.en) - mots(b.en) || a.en.length - b.en.length);
+        const tiers = Math.ceil(mod.vocab.length / 3);
+        mod.vocab.forEach((v, i) => { v.niveau = ordre[Math.min(2, Math.floor(i / tiers))]; });
+        mod.title = BUSINESS_SECTORS[k].icon + " " + BUSINESS_SECTORS[k].titre;
     });
 })();
 
+function renderBusinessPicker() {
+    const box = $("business-picker");
+    if (!box) return;
+    box.innerHTML = Object.keys(BUSINESS_SECTORS).filter(k => CHINA_TRADE_WOLOF[k]).map(k => {
+        const s = BUSINESS_SECTORS[k], n = CHINA_TRADE_WOLOF[k].vocab.length;
+        return '<button onclick="selectBusinessModule(\'' + k + '\')" class="business-card text-left p-4 rounded-2xl shadow-md" style="background:linear-gradient(135deg,' + s.fond + ',#141A2B);border:1px solid #1E2740">' +
+            '<span class="text-3xl">' + s.icon + '</span>' +
+            '<h4 class="text-sm font-bold text-[#F6F1E7] mt-2">' + s.titre + '</h4>' +
+            '<p class="text-[11px] text-[#A69C86]">' + s.sousTitre + '</p>' +
+            '<p class="text-[10px] text-[#C99CEA] mt-1">' + n + ' mots et phrases</p>' +
+        '</button>';
+    }).join("");
+}
+
 function openBusinessModule() {
     changeScreen("screen-business");
+    renderBusinessPicker();
     closeBusinessDetail();
 }
 
@@ -2276,6 +2290,7 @@ function selectBusinessModule(sectionKey) {
     box.classList.remove("hidden");
     box.innerHTML = '<h4 class="text-sm font-bold text-[#F6F1E7] text-center">' + mod.title + '</h4>' +
         mod.vocab.map((v, i) =>
+            (i === 0 || mod.vocab[i - 1].niveau !== v.niveau ? '<p class="text-[11px] font-bold text-[#C99CEA] pt-2">' + (NIVEAUX_BIZ[v.niveau] || "") + '</p>' : '') +
             '<div class="bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 space-y-1">' +
                 '<p class="text-sm font-semibold text-[#F6F1E7]">' + v.en + '</p>' +
                 '<p class="text-xs text-[#A69C86]">' + v.fr + '</p>' +
@@ -3762,6 +3777,7 @@ function tierElements(key) {
 
 function applyTierLocks(key) {
     if (!key) return;
+    if (key === "business") { const old = document.getElementById("tierbar-business"); if (old) old.remove(); return; }
     let els;
     try { els = tierElements(key); } catch (e) { return; }
     if (!els.box) return;
