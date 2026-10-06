@@ -914,3 +914,89 @@ B> Yes, I listen and I repeat every morning. | Oui, j'écoute et je répète cha
   if (typeof TEST_BANK !== "undefined") TESTS.forEach((t) => { if (!TEST_BANK.some((o) => o.id === t.id)) TEST_BANK.push(t); });
   window.DIISOO_BINOME = Object.assign(window.DIISOO_BINOME || {}, Object.fromEntries(TESTS.map((t) => [t.id, t.binome])));
 })();
+
+
+/* DIISOO : correctifs wolof (orthographe unifiee, chiffres en lettres, sans parentheses).
+   S'applique apres le chargement des autres modules, sans danger si repete. */
+(function diisooCorrectifsWolof() {
+  "use strict";
+  const U = ["", "benn", "ñaar", "ñett", "ñeent", "juróom", "juróom-benn", "juróom-ñaar", "juróom-ñett", "juróom-ñeent"];
+  const D = ["", "fukk", "ñaar-fukk", "fanweer", "ñeent-fukk", "juróom-fukk", "juróom-benn-fukk", "juróom-ñaar-fukk", "juróom-ñett-fukk", "juróom-ñeent-fukk"];
+  function nombre(n) {
+    if (n === 0) return "zero";
+    const p = [];
+    const m = Math.floor(n / 1000), c = Math.floor((n % 1000) / 100), r = n % 100;
+    if (m) p.push(m === 1 ? "junni" : U[m] + " junni");
+    if (c) p.push(c === 1 ? "téeméer" : U[c] + " téeméer");
+    if (r) {
+      const d = Math.floor(r / 10), u = r % 10;
+      if (r < 10) p.push(U[r]); else if (!u) p.push(D[d]); else p.push(D[d] + " ak " + U[u]);
+    }
+    return p.join(" ak ");
+  }
+  const CORRECT = {
+    "i work in a shop": "Maa ngi liggéey ci butik",
+    "see you tomorrow": "Ba ëllëg",
+    "family": "Njaboot",
+    "do you have a big family?": "Ndax am nga njaboot bu bare ?",
+    "market": "Marse bi",
+    "five hundred francs a kilo.": "Juróom téeméer franc la ci kilo bi.",
+    "airport": "Ayropoor bi",
+    "ticket": "Bilee bi",
+    "bus": "Bus bi",
+    "what time does the bus leave?": "Ci ban waxtu la bus bi di dem ?",
+    "where is the airport?": "Fan la ayropoor bi nekk ?",
+    "doctor": "Doktoor bi",
+    "medicine": "Garab gi",
+    "i need to see a doctor": "Dama war a gis doktoor",
+    "water": "Ndox mi",
+    "i am hungry": "Xiif naa",
+    "tomorrow": "Ëllëg",
+    "number": "Limu",
+    "i was busy yesterday": "Damaa am liggéey bu bari démb",
+    "landlord": "Boroom kër gi",
+    "the electricity is not working": "Kuraŋ bi du liggéey",
+    "can i visit the house?": "Ndax mën naa xool kër gi ?",
+    "i need to sign the lease": "Dama war a sinye kontra kër gi",
+    "the neighbourhood is quiet": "Quartier bi dafa dal",
+    "field": "Tool bi",
+    "farmer": "Baykat bi",
+    "how are you?": "Nanga def ?",
+    "i'm fine": "Maa ngi fi rekk",
+    "what is your name?": "Noo tudd ?",
+    "good night": "Fanaanal ak jàmm",
+    "shop": "Butik bi",
+    "far": "Sore",
+    "foot": "Tànk",
+    "morning": "Suba",
+    "customs clearance": "Fay douane bi"
+  };
+  const MOTS = [[/\bboutik\b/g, "butik"], [/\bBoutik\b/g, "Butik"], [/\bbileet\b/g, "bilee"], [/\bBileet\b/g, "Bilee"],
+    [/\bàeroporu\b/g, "ayropoor"], [/\bÀeroporu\b/g, "Ayropoor"], [/\bsori\b/g, "sore"], [/\bSori\b/g, "Sore"], [/\bjamm\b/g, "jàmm"]];
+  function nettoyer(wo, en) {
+    if (typeof wo !== "string") return wo;
+    const cle = (en || "").toLowerCase();
+    if (CORRECT[cle]) return CORRECT[cle];
+    let t = wo;
+    t = t.replace(/\s*\([^)]*\)/g, "");
+    t = t.replace(/\s+\/\s+/g, ", ").replace(/\s*;\s*/g, ", ").replace(/\s+:\s+/g, ", ");
+    t = t.replace(/(\d+)\s*V\b/g, (m, n) => nombre(+n) + " volt");
+    t = t.replace(/\d{1,4}/g, (n) => nombre(+n));
+    MOTS.forEach(([re, to]) => { t = t.replace(re, to); });
+    return t.trim();
+  }
+  function corriger(o) { if (o && o.wo) o.wo = nettoyer(o.wo, o.en); }
+  function appliquer() {
+    try {
+      if (typeof GENERAL_THEMES !== "undefined") GENERAL_THEMES.forEach((t) => { (t.vocab || []).forEach(corriger); (t.dialogue || []).forEach(corriger); });
+      if (typeof WOLOF_THEMES !== "undefined") WOLOF_THEMES.forEach((t) => (t.words || []).forEach(corriger));
+      if (typeof CHINA_TRADE_WOLOF !== "undefined") Object.keys(CHINA_TRADE_WOLOF).forEach((k) => (CHINA_TRADE_WOLOF[k].vocab || []).forEach(corriger));
+      if (typeof BUSINESS_DIALOGUES !== "undefined") Object.keys(BUSINESS_DIALOGUES).forEach((k) => (BUSINESS_DIALOGUES[k] || []).forEach(corriger));
+      if (typeof LEXICON !== "undefined" && typeof WOLOF_THEMES !== "undefined") {
+        LEXICON.length = 0;
+        WOLOF_THEMES.forEach((t) => t.words.forEach((w) => LEXICON.push({ cat: t.id, en: w.en, wo: w.wo, fr: w.fr, audio: w.audio || null })));
+      }
+    } catch (e) {}
+  }
+  [800, 2500, 5000, 9000].forEach((ms) => setTimeout(appliquer, ms));
+})();
