@@ -303,6 +303,22 @@
         </div>
 
         <!-- ======================================================== -->
+        <!-- PREMIUM & PACKS (commande par WhatsApp) -->
+        <!-- ======================================================== -->
+        <div id="screen-premium" class="hidden fixed inset-0 z-50 bg-[#0B0F1C]/95 flex items-center justify-center p-6">
+            <div class="w-full max-w-md bg-[#141A2B] border border-[#1E2740] rounded-3xl p-5 space-y-4 pop-in max-h-[90vh] overflow-y-auto">
+                <div class="text-center space-y-1">
+                    <span class="text-3xl">⭐</span>
+                    <h2 class="text-lg font-black text-[#F6F1E7]">Premium &amp; packs</h2>
+                    <p id="premium-test-note" class="text-xs text-[#A69C86]"></p>
+                </div>
+                <div id="premium-offers" class="space-y-3"></div>
+                <p class="text-[10px] text-[#8C8064] text-center leading-relaxed">Après votre message WhatsApp, vous recevez les instructions de paiement (Wave ou Orange Money). Votre offre est activée après confirmation du paiement.</p>
+                <button onclick="closePremium()" class="w-full py-3 btn-primary rounded-2xl text-sm font-bold">Fermer</button>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
         <!-- ÉCRAN 1 : ONBOARDING & CAPTURE DU COMPTE WHATSAPP -->
         <!-- ======================================================== -->
         <div id="screen-onboarding" class="flex flex-col justify-between h-full space-y-6 my-auto">
@@ -387,6 +403,7 @@
                         <button onclick="toggleBurgerMenu();showTutorial()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">❓ Comment ça marche</button>
                         <button onclick="toggleBurgerMenu();openFeedback()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Donner mon avis</button>
                         <button onclick="toggleBurgerMenu();openProgress()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📈 Ma progression</button>
+                        <button onclick="toggleBurgerMenu();openPremium()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Premium &amp; packs</button>
                         <div id="menu-session"></div>
                     </div>
                 </div>
@@ -433,6 +450,13 @@
                     <p class="text-[11px] text-[#A69C86] leading-relaxed">Simulateur officiel chronométré, 100% en anglais pour s'habituer au rythme et au stress réel de l'examen de visa.</p>
                 </button>
             </div>
+            <button onclick="openPremium()" class="w-full text-left bg-gradient-to-br from-[#2A1810] to-[#141A2B] p-4 rounded-2xl border border-[#E1693F]/30 hover:border-[#E1693F]/60 transition shadow-md">
+                <div class="flex justify-between items-center mb-1">
+                    <div class="flex items-center space-x-2"><span class="text-lg">⭐</span><h3 class="text-sm font-bold text-[#F6F1E7]">Premium &amp; packs</h3></div>
+                    <span class="text-[9px] bg-[#E1693F]/10 text-[#F0906B] px-2 py-0.5 rounded-full font-medium">Nouveau</span>
+                </div>
+                <p class="text-[11px] text-[#A69C86] leading-relaxed">Coaching vocal, pack visa, packs commerçants. Commande simple par WhatsApp.</p>
+            </button>
             <div class="space-y-2">
                 <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
                 <p class="text-center text-xs font-bold tracking-wide text-[#C2542D]">🏢 Un produit ABC-GLOBAL</p>
@@ -1153,6 +1177,53 @@ function closeTutorial() {
     $("screen-tutorial").classList.add("hidden");
     store.set("diisoo_tuto_seen", true);
 }
+
+/* ---------- Premium & packs (commande par WhatsApp) ----------
+   Modifier ici les prix, les textes et la disponibilité des offres.
+   dispo:false = l'offre affiche "Bientôt" et le bouton "Me prévenir". */
+const PREMIUM_CONFIG = {
+    whatsapp: "221772882109",
+    finTest: "30 octobre 2026",
+    offres: [
+        { id: "premium", icone: "⭐", titre: "Premium", prix: "5 000 FCFA / mois", dispo: false,
+          texte: "Tous les niveaux, audio anglais et wolof, simulateur IELTS complet." },
+        { id: "coaching", icone: "🎧", titre: "Coaching accompagné", prix: "15 000 FCFA / mois", dispo: true,
+          texte: "Vos enregistrements vocaux sont écoutés et corrigés chaque semaine." },
+        { id: "visa", icone: "✈️", titre: "Pack Visa + Anglais", prix: "35 000 FCFA", dispo: true,
+          texte: "Préparation IELTS Life Skills et entretien visa, avec les conseils de l'agence ABC-GLOBAL. Aucune garantie d'obtention du visa." },
+        { id: "commercants", icone: "🧰", titre: "Pack Commerçants", prix: "15 000 FCFA", dispo: true,
+          texte: "Vocabulaire et dialogues par métier : pièces détachées, mode, électronique, import Chine." },
+        { id: "pro", icone: "🏢", titre: "Écoles, ONG et entreprises", prix: "Sur devis", dispo: true,
+          texte: "Formation de groupes avec suivi des apprenants." }
+    ]
+};
+
+function premiumMessage(o) {
+    const p = getProfile() || {};
+    const nom = [p.first_name, p.last_name].filter(Boolean).join(" ").trim();
+    let m = "Bonjour. " + (nom ? "Je suis " + nom + ". " : "");
+    if (o.dispo) m += "Je suis intéressé(e) par l'offre « " + o.titre + " » (" + o.prix + ") sur Diisoo. Pouvez-vous m'envoyer les instructions de paiement ?";
+    else m += "Je souhaite être prévenu(e) de l'ouverture de l'offre « " + o.titre + " » (" + o.prix + ") sur Diisoo.";
+    return m;
+}
+function premiumLien(o) {
+    return "https://wa.me/" + PREMIUM_CONFIG.whatsapp + "?text=" + encodeURIComponent(premiumMessage(o));
+}
+function renderPremium() {
+    $("premium-test-note").textContent = "Tout reste gratuit pendant la période de test, jusqu'au " + PREMIUM_CONFIG.finTest + ".";
+    $("premium-offers").innerHTML = PREMIUM_CONFIG.offres.map(o =>
+        '<div class="bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3 space-y-2">' +
+            '<div class="flex justify-between items-start gap-2">' +
+                '<div class="flex items-center space-x-2"><span class="text-lg">' + o.icone + '</span><h3 class="text-sm font-bold text-[#F6F1E7]">' + o.titre + '</h3></div>' +
+                '<span class="text-[11px] font-bold text-[#F0906B] whitespace-nowrap">' + (o.dispo ? o.prix : "Bientôt") + '</span>' +
+            '</div>' +
+            '<p class="text-[11px] text-[#A69C86] leading-relaxed">' + o.texte + '</p>' +
+            '<a href="' + premiumLien(o) + '" target="_blank" rel="noopener" class="block w-full text-center py-2.5 ' + (o.dispo ? "btn-primary" : "bg-[#1E2740] text-[#C9BFA8]") + ' rounded-xl text-xs font-bold">' + (o.dispo ? "Commander sur WhatsApp" : "Me prévenir sur WhatsApp") + '</a>' +
+        '</div>'
+    ).join("");
+}
+function openPremium() { renderPremium(); $("screen-premium").classList.remove("hidden"); }
+function closePremium() { $("screen-premium").classList.add("hidden"); }
 
 /* ---------- Avis de satisfaction ---------- */
 let feedbackRating = 0;
