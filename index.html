@@ -409,6 +409,7 @@
                 </div>
             </div>
 
+            <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
             <div id="daily-goal" class="bg-[#141A2B]/60 rounded-xl p-3 border border-[#1E2740]"></div>
             <div class="space-y-1.5">
                 <div class="w-full bg-[#141A2B] h-2 rounded-full overflow-hidden"><div id="xp-bar" class="bg-[#E1693F] h-full transition-all" style="width:0%"></div></div>
@@ -417,13 +418,21 @@
             <div id="badges-row" class="flex space-x-3 overflow-x-auto pb-1"></div>
 
             <div class="space-y-4 my-auto">
+                <!-- MA REVISION DU JOUR -->
+                <button id="revision-card" onclick="openRevision()" class="w-full text-left bg-gradient-to-br from-[#10251A] to-[#141A2B] p-4 rounded-2xl border border-[#3FAE74]/40 hover:border-[#3FAE74]/70 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">🔁</span><h3 class="text-sm font-bold text-[#F6F1E7]">Ma révision du jour</h3></div>
+                        <span id="revision-badge" class="text-[9px] bg-[#3FAE74]/20 text-[#5FC98F] px-2 py-0.5 rounded-full font-bold">6 mots</span>
+                    </div>
+                    <p id="revision-sub" class="text-[11px] text-[#A69C86] leading-relaxed">6 mots choisis pour toi, à écouter et à choisir. Environ 2 minutes.</p>
+                </button>
                 <!-- PILIER 1 -->
                 <button onclick="openGeneralModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#1E2740] p-4 rounded-2xl border border-[#1E2740] hover:border-[#E1693F]/30 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
                         <div class="flex items-center space-x-2"><span class="text-lg">📚</span><h3 class="text-sm font-bold text-[#F6F1E7]">1. Anglais Général (Français)</h3></div>
                         <span class="text-[9px] bg-[#E1693F]/10 text-[#F0906B] px-2 py-0.5 rounded-full font-medium">Anglais / Fr</span>
                     </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">8 thèmes de la vie courante : se présenter, famille, travail, achats, voyage, santé, nourriture, temps. Vocabulaire, dialogues et grammaire.</p>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">8 thèmes du quotidien : vocabulaire, dialogues et grammaire.</p>
                 </button>
                 <!-- PILIER 2 -->
                 <button onclick="openWolofModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#10251A]/20 p-4 rounded-2xl border border-[#1E2740] hover:border-[#3FAE74]/30 transition shadow-md">
@@ -431,36 +440,51 @@
                         <div class="flex items-center space-x-2"><span class="text-lg">🇸🇳</span><h3 class="text-sm font-bold text-[#F6F1E7]">2. Anglais Wolof (Vie & Commerce)</h3></div>
                         <span class="text-[9px] bg-[#3FAE74]/10 text-[#5FC98F] px-2 py-0.5 rounded-full font-medium">Général & Business</span>
                     </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Inclusion 100% orale. Les 8 mêmes thèmes que le pilier 1, en wolof, pour apprendre les deux langues ensemble.</p>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">100% à l'oral : les 8 mêmes thèmes, en wolof et en anglais.</p>
                 </button>
-                <!-- PILIER 3 : OUTILS BUSINESS -->
+                <!-- PILIER 3 : SIMULATEUR IELTS (affiche en 3e position) -->
+                <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#0B2320]/40 p-4 rounded-2xl border border-[#0E2B28]/20 hover:border-[#2FC2AC]/40 transition shadow-md">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-[#F6F1E7]">3. Simulateur de Test IELTS</h3></div>
+                        <span class="text-[9px] bg-[#2FC2AC]/20 text-[#55D2BE] px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
+                    </div>
+                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Simulateur chronométré inspiré du format IELTS Life Skills, 100% en anglais, pour s'habituer au rythme de l'examen de visa.</p>
+                </button>
+                <!-- PILIER 4 : OUTILS BUSINESS (affiche en 4e position) -->
                 <button onclick="openBusinessModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#241238]/30 p-4 rounded-2xl border border-[#1E2740] hover:border-[#B26FE0]/30 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">🧰</span><h3 class="text-sm font-bold text-[#F6F1E7]">3. Outils Business</h3></div>
+                        <div class="flex items-center space-x-2"><span class="text-lg">🧰</span><h3 class="text-sm font-bold text-[#F6F1E7]">4. Outils Business</h3></div>
                         <span class="text-[9px] bg-[#B26FE0]/10 text-[#C99CEA] px-2 py-0.5 rounded-full font-medium">Métiers</span>
                     </div>
                     <p class="text-[11px] text-[#A69C86] leading-relaxed">Vocabulaire pratique par métier : pièces détachées, mode & beauté, logistique Chine.</p>
                 </button>
-                <!-- PILIER 4 -->
-                <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#0B2320]/40 p-4 rounded-2xl border border-[#0E2B28]/20 hover:border-[#2FC2AC]/40 transition shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-[#F6F1E7]">4. Simulateur de Test IELTS</h3></div>
-                        <span class="text-[9px] bg-[#2FC2AC]/20 text-[#55D2BE] px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
-                    </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Simulateur officiel chronométré, 100% en anglais pour s'habituer au rythme et au stress réel de l'examen de visa.</p>
-                </button>
             </div>
-            <button onclick="openPremium()" class="w-full text-left bg-gradient-to-br from-[#2A1810] to-[#141A2B] p-4 rounded-2xl border border-[#E1693F]/30 hover:border-[#E1693F]/60 transition shadow-md">
+            <button onclick="openPremium()" class="w-full text-left bg-gradient-to-br from-[#F3A94E] to-[#E1693F] p-4 rounded-2xl border border-transparent transition shadow-md">
                 <div class="flex justify-between items-center mb-1">
-                    <div class="flex items-center space-x-2"><span class="text-lg">⭐</span><h3 class="text-sm font-bold text-[#F6F1E7]">Premium &amp; packs</h3></div>
-                    <span class="text-[9px] bg-[#E1693F]/10 text-[#F0906B] px-2 py-0.5 rounded-full font-medium">Nouveau</span>
+                    <div class="flex items-center space-x-2"><span class="text-lg">⭐</span><h3 class="text-sm font-bold text-[#241505]">Premium &amp; packs</h3></div>
+                    <span class="text-[9px] bg-[#241505]/15 text-[#241505] px-2 py-0.5 rounded-full font-bold">Nouveau</span>
                 </div>
-                <p class="text-[11px] text-[#A69C86] leading-relaxed">Coaching vocal, pack visa, packs commerçants. Commande simple par WhatsApp.</p>
+                <p class="text-[11px] text-[#3A2208] leading-relaxed">Coaching vocal, pack visa, packs commerçants. Commande simple par WhatsApp.</p>
             </button>
             <div class="space-y-2">
-                <div id="streak-counter" class="text-center text-xs text-amber-500 bg-amber-500/5 py-2.5 rounded-xl border border-amber-500/10 font-medium">🔥 Série active : 1 jour de révision !</div>
                 <p class="text-center text-xs font-bold tracking-wide text-[#C2542D]">🏢 Un produit ABC-GLOBAL</p>
             </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- ÉCRAN : MA RÉVISION DU JOUR -->
+        <!-- ======================================================== -->
+        <div id="screen-revision" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
+            <div class="text-center pt-2">
+                <span class="text-[10px] font-bold tracking-widest text-[#5FC98F] uppercase">Chaque jour, mieux</span>
+                <h3 class="text-lg font-bold text-[#F6F1E7]">Ma révision du jour</h3>
+            </div>
+            <div class="space-y-1.5">
+                <div class="w-full bg-[#141A2B] h-2 rounded-full overflow-hidden"><div id="rev-bar" class="bg-[#3FAE74] h-full transition-all" style="width:0%"></div></div>
+                <p id="rev-etape" class="text-[10px] text-[#8C8064] text-center"></p>
+            </div>
+            <div id="rev-contenu" class="space-y-4 pb-2"></div>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Revenir au tableau de bord</button>
         </div>
 
         <!-- ======================================================== -->
@@ -665,7 +689,8 @@ const BADGES = {
     "serie-3": { icon: "🔥", label: "Série de 3", desc: "3 jours de révision d'affilée" },
     "serie-7": { icon: "🔥", label: "Série de 7", desc: "7 jours de révision d'affilée" },
     "serie-30": { icon: "🏆", label: "Série de 30", desc: "30 jours de révision d'affilée" },
-    "pret-visa": { icon: "🛂", label: "Prêt pour le visa", desc: "Simulateur IELTS terminé" }
+    "pret-visa": { icon: "🛂", label: "Prêt pour le visa", desc: "Simulateur IELTS terminé" },
+    "reviseur": { icon: "🔁", label: "Réviseur", desc: "Première révision du jour terminée" }
 };
 
 function toast(msg) {
@@ -761,16 +786,32 @@ function renderBadges() {
     const box = $("badges-row");
     if (!box) return;
     const earned = getBadges();
+    const ids = Object.keys(BADGES);
+    const aVenir = ids.filter(id => !earned.includes(id)).length;
+    const tous = !!window.badgesTous;
     box.innerHTML = "";
-    Object.keys(BADGES).forEach(id => {
+    let prochainMontre = false;
+    ids.forEach(id => {
         const b = BADGES[id];
         const has = earned.includes(id);
+        if (!has && !tous) {
+            if (prochainMontre) return;
+            prochainMontre = true;
+        }
         const span = document.createElement("div");
         span.className = "flex flex-col items-center w-14 shrink-0" + (has ? "" : " opacity-25");
         span.title = b.desc;
         span.innerHTML = '<div class="text-xl">' + b.icon + '</div><p class="text-[9px] text-[#A69C86] text-center leading-tight mt-1">' + b.label + '</p>';
         box.appendChild(span);
     });
+    if (aVenir > 1) {
+        const bascule = document.createElement("button");
+        bascule.type = "button";
+        bascule.className = "flex flex-col items-center justify-center w-14 shrink-0 text-[10px] font-bold text-[#E1693F]";
+        bascule.textContent = tous ? "Réduire" : "Tout voir";
+        bascule.onclick = () => { window.badgesTous = !window.badgesTous; renderBadges(); };
+        box.appendChild(bascule);
+    }
 }
 
 const DAILY_TARGET = 5;
@@ -1187,12 +1228,12 @@ const PREMIUM_CONFIG = {
     offres: [
         { id: "premium", icone: "⭐", titre: "Premium", prix: "5 000 FCFA / mois", dispo: false,
           texte: "Tous les niveaux, audio anglais et wolof, simulateur IELTS complet." },
-        { id: "coaching", icone: "🎧", titre: "Coaching accompagné", prix: "15 000 FCFA / mois", dispo: true,
-          texte: "Vos enregistrements vocaux sont écoutés et corrigés chaque semaine." },
         { id: "visa", icone: "✈️", titre: "Pack Visa + Anglais", prix: "35 000 FCFA", dispo: true,
           texte: "Préparation IELTS Life Skills et entretien visa, avec les conseils de l'agence ABC-GLOBAL. Aucune garantie d'obtention du visa." },
         { id: "commercants", icone: "🧰", titre: "Pack Commerçants", prix: "15 000 FCFA", dispo: true,
           texte: "Vocabulaire et dialogues par métier : pièces détachées, mode, électronique, import Chine." },
+        { id: "coaching", icone: "🎧", titre: "Coaching accompagné", prix: "15 000 FCFA / mois", dispo: true,
+          texte: "Vos enregistrements vocaux sont écoutés et corrigés chaque semaine." },
         { id: "pro", icone: "🏢", titre: "Écoles, ONG et entreprises", prix: "Sur devis", dispo: true,
           texte: "Formation de groupes avec suivi des apprenants." }
     ]
@@ -4139,6 +4180,312 @@ function openPostTestHelp() {
             }
         } catch (e) { console.error(e); }
         return p;
+    };
+})();
+
+/* ==========================================================
+   MA RÉVISION DU JOUR
+   Chaque jour, 6 éléments choisis pour l'utilisateur parmi tout le
+   vocabulaire (Anglais Général + Anglais Wolof), sans répétition inutile :
+   - ce qui a été raté revient en premier ;
+   - ce qui a été réussi revient de plus en plus tard (1, 2, 4, 8, 16 jours) ;
+   - le reste est du vocabulaire jamais vu ;
+   - rien de ce qui a déjà été répondu aujourd'hui ne revient dans "Encore 6".
+   Marche sans micro (donc aussi sur iPhone) : on écoute, puis on choisit.
+   Les réponses alimentent les mêmes statistiques que le reste de l'app
+   (étiquette "À revoir", "Mots maîtrisés", objectif du jour, XP).
+   ========================================================== */
+const REV_STORE = "diisoo_rev";
+const REV_JOUR_STORE = "diisoo_rev_jour";
+const REV_INTERVALLES = [1, 2, 4, 8, 16];
+const REV_TAILLE = 6;
+const REV_ORDRE = ["ecoute", "wolof", "traduire", "ecoute", "wolof", "traduire"];
+let revSession = null;
+
+function revAujourdhui() { return new Date().toISOString().slice(0, 10); }
+function revEcart(d) { return d ? Math.round((new Date(revAujourdhui()) - new Date(d)) / 86400000) : 999; }
+function revMelanger(liste) {
+    const t = liste.slice();
+    for (let i = t.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const x = t[i]; t[i] = t[j]; t[j] = x;
+    }
+    return t;
+}
+function revJour() {
+    const t = revAujourdhui();
+    const j = store.get(REV_JOUR_STORE);
+    if (j && j.date === t && Array.isArray(j.vus)) return j;
+    return { date: t, vus: [], bon: 0, total: 0, series: 0 };
+}
+
+/* Tout le vocabulaire révisable, sans doublon (clé identique ou même mot anglais) */
+function revPool() {
+    const pool = [];
+    const cles = new Set();
+    function ajouter(it) {
+        if (!it.en || !it.fr || cles.has(it.cle)) return;
+        cles.add(it.cle);
+        pool.push(it);
+    }
+    GENERAL_THEMES.forEach(t => (t.vocab || []).forEach(w => ajouter({ cle: "gen:" + t.id + ":" + w.en, src: "gen", en: w.en, fr: w.fr, wo: w.wo || "", audio: null })));
+    LEXICON.forEach(w => { if (w.cat !== "wikidata") ajouter({ cle: "wo:" + w.en, src: "wo", en: w.en, fr: w.fr, wo: w.wo || "", audio: w.audio || null }); });
+    return pool;
+}
+
+/* Trie le vocabulaire : à revoir (raté ou échéance passée), nouveau, plus tard */
+function revClasser(pool) {
+    const rev = store.get(REV_STORE) || {};
+    const stats = getWordStats();
+    const du = [], nouveau = [], plusTard = [];
+    pool.forEach(it => {
+        const r = rev[it.cle];
+        const st = stats[it.cle];
+        if (r) {
+            const b = Math.min(Math.max(r.b | 0, 0), REV_INTERVALLES.length - 1);
+            const reste = REV_INTERVALLES[b] - revEcart(r.d);
+            if (reste <= 0) du.push({ it: Object.assign({}, it, { etat: "du" }), b: b, reste: reste });
+            else plusTard.push({ it: Object.assign({}, it, { etat: "tard" }), reste: reste });
+        } else if (st && st.wrong > st.correct) {
+            du.push({ it: Object.assign({}, it, { etat: "du" }), b: 0, reste: -99 });
+        } else {
+            nouveau.push({ it: Object.assign({}, it, { etat: "nouveau" }), vu: st ? 1 : 0 });
+        }
+    });
+    du.sort((x, y) => (x.b - y.b) || (x.reste - y.reste));
+    plusTard.sort((x, y) => x.reste - y.reste);
+    return {
+        du: du.map(x => x.it),
+        nouveau: revMelanger(nouveau).sort((x, y) => x.vu - y.vu).map(x => x.it),
+        plusTard: plusTard.map(x => x.it)
+    };
+}
+
+/* Choisit les éléments de la séance : jusqu'à 4 à revoir, puis du nouveau, puis le reste */
+function revChoisir(exclus) {
+    const c = revClasser(revPool());
+    const pris = [];
+    const mots = new Set();
+    function prendre(liste, max, strict) {
+        for (const it of liste) {
+            if (pris.length >= REV_TAILLE || max <= 0) break;
+            if (strict && exclus.has(it.cle)) continue;
+            const m = it.en.trim().toLowerCase();
+            if (mots.has(m)) continue;
+            mots.add(m);
+            pris.push(it);
+            max--;
+        }
+    }
+    [true, false].forEach(strict => {
+        if (pris.length >= REV_TAILLE) return;
+        prendre(c.du, 4, strict);
+        prendre(c.nouveau, REV_TAILLE, strict);
+        prendre(c.du, REV_TAILLE, strict);
+        prendre(c.plusTard, REV_TAILLE, strict);
+    });
+    return revMelanger(pris);
+}
+
+/* Fausses réponses de longueur proche, jamais identiques à la bonne */
+function revLeurres(pool, champ, bonne, n) {
+    const b = bonne.trim().toLowerCase();
+    const l = bonne.length;
+    const uniques = [];
+    revMelanger(pool).forEach(p => {
+        const x = p[champ];
+        if (!x) return;
+        const k = x.trim().toLowerCase();
+        if (k === b || uniques.some(u => u.trim().toLowerCase() === k)) return;
+        uniques.push(x);
+    });
+    const proches = uniques.filter(x => Math.abs(x.length - l) <= Math.max(8, l * 0.6));
+    return (proches.length >= n ? proches : uniques).slice(0, n);
+}
+
+function revConstruire(it, mode, pool) {
+    if (mode === "wolof" && !it.wo) mode = "ecoute";
+    const champ = mode === "traduire" ? "en" : "fr";
+    const bonne = it[champ];
+    const options = revMelanger([bonne].concat(revLeurres(pool, champ, bonne, 2)));
+    return { it: it, mode: mode, options: options, bonne: options.indexOf(bonne), repondu: false };
+}
+
+function openRevision() { revDemarrer(); }
+
+function revDemarrer() {
+    const j = revJour();
+    const items = revChoisir(new Set(j.vus));
+    if (!items.length) { toast("Aucun mot à réviser pour le moment"); return; }
+    const pool = revPool();
+    revSession = { questions: items.map((it, i) => revConstruire(it, REV_ORDRE[i % REV_ORDRE.length], pool)), i: 0, bon: 0, xp: 0, rates: 0 };
+    changeScreen("screen-revision");
+    revAfficher();
+}
+
+function revJouer(langue) {
+    const s = revSession;
+    if (!s) return;
+    const it = s.questions[s.i].it;
+    try {
+        if (langue === "wo") {
+            if (it.audio) playAudioFile(it.audio).then(r => { if (r === null) speakWolofOolel(it.wo); });
+            else speakWolofOolel(it.wo);
+        } else {
+            speak(it.en, "en-US", 0.85, null);
+        }
+    } catch (e) { console.error("Erreur Audio Diisoo :", e); }
+}
+
+function revAfficher() {
+    const s = revSession;
+    const q = s.questions[s.i];
+    const it = q.it;
+    const n = s.questions.length;
+    $("rev-bar").style.width = Math.round(s.i / n * 100) + "%";
+    $("rev-etape").textContent = "Question " + (s.i + 1) + " sur " + n;
+    const etiquette = it.etat === "du"
+        ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold">🔁 À revoir</span>'
+        : it.etat === "tard"
+            ? '<span class="text-[9px] bg-[#2FC2AC]/20 text-[#55D2BE] px-2 py-0.5 rounded-full font-bold">🧠 Pour retenir</span>'
+            : '<span class="text-[9px] bg-[#3FAE74]/20 text-[#5FC98F] px-2 py-0.5 rounded-full font-bold">✨ Nouveau</span>';
+    let invite, grand = "", bouton = "";
+    if (q.mode === "ecoute") {
+        invite = "Écoute, puis choisis le sens en français.";
+        bouton = '<button type="button" onclick="revJouer(\'en\')" class="px-5 py-3 btn-primary rounded-xl text-sm font-bold">🔊 Écouter en anglais</button>';
+    } else if (q.mode === "wolof") {
+        invite = "Que veut dire ce mot wolof ?";
+        grand = '<p class="text-xl font-black text-[#5FC98F]">' + esc(it.wo) + '</p>';
+        bouton = '<button type="button" onclick="revJouer(\'wo\')" class="px-5 py-3 bg-[#1E2740] hover:bg-[#2A3454] rounded-xl text-sm font-bold">🔊 Écouter en wolof</button>';
+    } else {
+        invite = "Comment dit-on en anglais ?";
+        grand = '<p class="text-xl font-black text-[#F6F1E7]">' + esc(it.fr) + '</p>';
+    }
+    $("rev-contenu").innerHTML =
+        '<div class="bg-[#141A2B] border border-[#1E2740] rounded-2xl p-5 space-y-3 text-center pop-in">' +
+            etiquette +
+            '<p class="text-[11px] text-[#8C8064]">' + invite + '</p>' + grand + bouton +
+        '</div>' +
+        '<div id="rev-options" class="space-y-2">' +
+            q.options.map((o, k) => '<button type="button" onclick="revRepondre(' + k + ')" class="w-full text-left bg-[#141A2B] border border-[#1E2740] hover:border-[#E1693F]/40 rounded-xl px-4 py-3 text-sm transition">' + esc(o) + '</button>').join("") +
+        '</div>' +
+        '<div id="rev-retour" class="space-y-3"></div>';
+    window.scrollTo(0, 0);
+    if (q.mode !== "traduire") {
+        const pos = s.i;
+        setTimeout(() => { if (revSession === s && s.i === pos && !q.repondu) revJouer(q.mode === "wolof" ? "wo" : "en"); }, 350);
+    }
+}
+
+function revEnregistrer(it, ok) {
+    const rev = store.get(REV_STORE) || {};
+    const existe = !!rev[it.cle];
+    const r = rev[it.cle] || { b: 0, d: null };
+    r.b = ok ? (existe ? Math.min(r.b + 1, REV_INTERVALLES.length - 1) : 1) : 0;
+    r.d = revAujourdhui();
+    rev[it.cle] = r;
+    store.set(REV_STORE, rev);
+    bumpStat("diisoo_word_stats", it.cle, ok ? "correct" : "wrong");
+    const j = revJour();
+    if (!j.vus.includes(it.cle)) j.vus.push(it.cle);
+    j.total++;
+    if (ok) j.bon++;
+    store.set(REV_JOUR_STORE, j);
+}
+
+function revRepondre(k) {
+    const s = revSession;
+    if (!s) return;
+    const q = s.questions[s.i];
+    if (q.repondu) return;
+    q.repondu = true;
+    const it = q.it;
+    const ok = k === q.bonne;
+    document.querySelectorAll("#rev-options button").forEach((b, i) => {
+        b.disabled = true;
+        b.className = "w-full text-left rounded-xl px-4 py-3 text-sm border " +
+            (i === q.bonne ? "bg-[#3FAE74]/20 border-[#3FAE74] text-[#F6F1E7] font-bold"
+                : i === k ? "bg-[#E5628A]/15 border-[#E5628A]/60 text-[#EE85A3]"
+                    : "bg-[#141A2B] border-[#1E2740] text-[#6B604A]");
+    });
+    revEnregistrer(it, ok);
+    if (ok) { s.bon++; s.xp += 2; addXP(2); bumpDailyGoal(1); bumpCombo(); } else { s.rates++; resetCombo(); }
+    const dernier = s.i >= s.questions.length - 1;
+    $("rev-retour").innerHTML =
+        '<p class="text-sm font-bold text-center ' + (ok ? "text-[#5FC98F] pop-in" : "text-amber-400") + '">' +
+            (ok ? "✅ " + encourageMsg() : "Presque. La bonne réponse est en vert.") + '</p>' +
+        '<div class="bg-[#141A2B] border border-[#1E2740] rounded-2xl p-4 space-y-2">' +
+            '<p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider">À retenir</p>' +
+            '<p class="text-base font-bold text-[#F6F1E7]">' + esc(it.en) + '</p>' +
+            '<p class="text-xs text-[#C9BFA8]">🇫🇷 ' + esc(it.fr) + '</p>' +
+            (it.wo ? '<p class="text-xs text-[#5FC98F]">🗣️ ' + esc(it.wo) + '</p>' : '') +
+            '<div class="grid ' + (it.wo ? "grid-cols-2" : "grid-cols-1") + ' gap-2 pt-1">' +
+                '<button type="button" onclick="revJouer(\'en\')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+                (it.wo ? '<button type="button" onclick="revJouer(\'wo\')" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' : '') +
+            '</div>' +
+        '</div>' +
+        '<button type="button" onclick="revSuivant()" class="w-full py-3 btn-primary rounded-xl text-sm font-bold">' + (dernier ? "Voir mon résultat" : "Suivant ▶") + '</button>';
+    const suite = $("rev-retour").lastElementChild;
+    if (suite && suite.scrollIntoView) suite.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function revSuivant() {
+    const s = revSession;
+    if (!s) return;
+    stopAllAudio();
+    s.i++;
+    if (s.i >= s.questions.length) revResultat(); else revAfficher();
+}
+
+function revResultat() {
+    const s = revSession;
+    const n = s.questions.length;
+    const pct = Math.round(s.bon / n * 100);
+    const j = revJour();
+    j.series++;
+    store.set(REV_JOUR_STORE, j);
+    awardBadge("reviseur");
+    $("rev-bar").style.width = "100%";
+    $("rev-etape").textContent = "Révision terminée";
+    const message = pct >= 80
+        ? "Excellent. Ces mots reviendront dans quelques jours, juste avant que tu les oublies."
+        : pct >= 50
+            ? "Bien joué. Les mots ratés reviendront demain pour que tu les retiennes."
+            : "Pas grave : c'est en se trompant qu'on retient. Les mots ratés reviennent demain.";
+    $("rev-contenu").innerHTML =
+        '<div class="bg-[#141A2B] border border-[#1E2740] rounded-2xl p-5 text-center space-y-2 pop-in">' +
+            '<p class="text-3xl font-black text-[#5FC98F]">' + s.bon + ' / ' + n + '</p>' +
+            '<p class="text-xs text-[#A69C86]">' + message + '</p>' +
+            '<p class="text-[11px] text-amber-400">+' + s.xp + ' XP' + (s.rates ? ' · ' + s.rates + ' à revoir demain' : '') + '</p>' +
+        '</div>' +
+        '<button type="button" onclick="revDemarrer()" class="w-full py-3 btn-primary rounded-xl text-sm font-bold">🔁 Encore ' + REV_TAILLE + ' autres mots</button>';
+    if (pct >= 80) celebrate();
+    revSession = null;
+    renderRevisionCard();
+}
+
+/* Carte du tableau de bord : combien de mots attendent, ou "fait aujourd'hui" */
+function renderRevisionCard() {
+    const badge = $("revision-badge"), sub = $("revision-sub");
+    if (!badge || !sub) return;
+    let du = 0;
+    try { du = revClasser(revPool()).du.length; } catch (e) { console.error(e); }
+    const j = revJour();
+    const fait = j.series > 0;
+    badge.textContent = du > 0 ? du + " à revoir" : fait ? "✅ Fait" : REV_TAILLE + " mots";
+    sub.textContent = fait
+        ? "Bravo pour aujourd'hui (" + j.bon + " bonne" + (j.bon > 1 ? "s" : "") + " réponse" + (j.bon > 1 ? "s" : "") + "). Tu peux en refaire " + REV_TAILLE + " autres."
+        : du > 0
+            ? "Les mots que tu as ratés reviennent ici, avec quelques nouveaux. Environ 2 minutes."
+            : REV_TAILLE + " mots choisis pour toi, à écouter et à choisir. Environ 2 minutes.";
+}
+
+(function () {
+    const _cs = changeScreen;
+    changeScreen = function (id) {
+        const r = _cs.apply(this, arguments);
+        if (id === "screen-dashboard") { try { renderRevisionCard(); } catch (e) { console.error(e); } }
+        return r;
     };
 })();
 
