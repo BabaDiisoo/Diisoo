@@ -970,7 +970,9 @@ const PRONONCIATION_WO = [
     [/\.\.\./g, " "],                     /* retire les points de suspension */
     [/\s\/\s/g, ". "],                   /* la barre / devient une pause */
     [/\bJërëjëf\b/gi, "Jëre jëf"],       /* validé à l'oreille */
-    [/\bThiès\b/g, "Cees"]               /* Thiès se dit Cees en wolof */
+    [/\bThiès\b/g, "Cees"],              /* Thiès se dit Cees en wolof */
+    [/Ñ/g, "Ny"],                         /* test : ñ lu comme ny (ñaar, ñett, ñata) */
+    [/ñ/g, "ny"]
 ];
 function prononciationWolof(texte) {
     let t = String(texte || "");
@@ -2075,7 +2077,7 @@ const WOLOF_THEMES = [
         { en: "How much is the rent?", wo: "Ñaata la loyer bi ?", fr: "Quel est le montant du loyer ?" },
         { en: "Landlord", wo: "Boroom kër", fr: "Propriétaire" },
         { en: "Room", wo: "Néeg", fr: "Chambre" },
-        { en: "Kitchen", wo: "Kuusin", fr: "Cuisine" },
+        { en: "Kitchen", wo: "Néegu togg", fr: "Cuisine" },
         { en: "Can I visit the house?", wo: "Ndax mën naa xool kër gi ?", fr: "Puis-je visiter la maison ?" },
         { en: "The electricity is not working", wo: "Kuraŋ bi du liggéey", fr: "L'électricité ne fonctionne pas" },
         { en: "The neighbourhood is quiet", wo: "Gox bi dafa dal", fr: "Le quartier est calme" },
