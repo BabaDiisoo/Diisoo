@@ -4661,7 +4661,9 @@ async function cloudPull() {
                 etat.dernier = "Dernière voix : " + t.slice(0, 40);
             } catch (e) {
                 etat.ko++; echecsDeSuite++;
-                etat.dernier = "Échec, nouvel essai bientôt : " + t.slice(0, 30);
+                const raison = String((e && e.message) || e || "inconnue").replace(/\s+/g, " ").slice(0, 140);
+                etat.derniereErreur = raison;
+                etat.dernier = "Échec (" + raison + ") : " + t.slice(0, 25);
                 if (echecsDeSuite >= 5) {
                     etat.actif = false; fini = false;
                     etat.dernier = "La démo de voix est saturée. Réessaie dans 30 minutes.";
