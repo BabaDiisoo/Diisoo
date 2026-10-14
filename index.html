@@ -983,6 +983,14 @@ function prononciationWolof(texte) {
 async function _speak(text, lang, rate, key, keepSeq) {
     stopAllAudio(keepSeq);
     text = (text || "").trim().slice(0, 500);
+    if (lang === "wo" && window.voixHumaine) {
+        const url = await window.voixHumaine.url(text);
+        if (url) {
+            const r = await playAudioFile(url, key, keepSeq);
+            if (r !== null) return r === true;
+            stopAllAudio(keepSeq);
+        }
+    }
     if (lang === "wo") text = prononciationWolof(text);
     if (!text) { if (key) heardKeys.add(key); refreshPracticeButtons(); return true; }
     const myToken = audioToken;
@@ -4723,6 +4731,180 @@ async function cloudPull() {
     window.ouvrirPrechauffage = ouvrir;
     window.__prechCollecter = collecter;
     if (location.hash === "#prechauffage-voix") window.addEventListener("load", () => setTimeout(ouvrir, 3000));
+})();
+
+/* ==========================================================
+   VOIX HUMAINES (wolof) : enregistrements prioritaires + outil caché
+   Ouvrir l'outil : https://diisoo.sn/#enregistrer-voix
+   Bucket Supabase public "voix-wolof", un fichier par phrase (nom = empreinte du texte).
+   ========================================================== */
+(function () {
+    const BUCKET = "voix-wolof", CLE_IDX = "diisoo_voix_idx", TTL = 300000;
+    const base = SUPABASE_URL + "/storage/v1/object/public/" + BUCKET + "/";
+    let carte = null, promesse = null;
+    const norm = t => String(t || "").trim().slice(0, 500).toLowerCase().replace(/\s+/g, " ");
+    function empreinte(t) {
+        t = norm(t); let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+        for (let i = 0; i < t.length; i++) { const c = t.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+    }
+    async function lister() {
+        const out = {};
+        for (let off = 0; off < 5000; off += 1000) {
+            const r = await db.storage.from(BUCKET).list("", { limit: 1000, offset: off });
+            if (r.error) throw r.error;
+            (r.data || []).forEach(f => { if (f.name && f.name.indexOf(".") > 0) out[f.name.split(".")[0]] = f.name + "?v=" + encodeURIComponent(f.updated_at || f.created_at || ""); });
+            if (!r.data || r.data.length < 1000) break;
+        }
+        return out;
+    }
+    function charger(force) {
+        if (promesse && !force) return promesse;
+        promesse = (async () => {
+            let c = null;
+            try { c = JSON.parse(localStorage.getItem(CLE_IDX) || "null"); } catch (e) {}
+            if (!force && c && Date.now() - c.t < TTL) { carte = c.m; return carte; }
+            try {
+                if (!db) throw new Error("db");
+                carte = await lister();
+                try { localStorage.setItem(CLE_IDX, JSON.stringify({ t: Date.now(), m: carte })); } catch (e) {}
+            } catch (e) { carte = (c && c.m) || {}; }
+            return carte;
+        })();
+        return promesse;
+    }
+    window.voixHumaine = {
+        empreinte, norm, charger, base,
+        async url(t) {
+            const m = await Promise.race([charger(), new Promise(r => setTimeout(() => r(carte), 1500))]);
+            const f = m && m[empreinte(t)];
+            return f ? base + f : null;
+        },
+        existe(t) { return !!(carte && carte[empreinte(t)]); }
+    };
+    window.addEventListener("load", () => setTimeout(() => charger(), 2500));
+
+    /* ---------- outil d'enregistrement ---------- */
+    const el = id => document.getElementById(id);
+    const E = { liste: [], i: 0, rec: null, blob: null, flux: null, ext: "webm", filtre: true };
+    function collecter() {
+        const vus = new Set(), out = [];
+        const marche = (o, d) => {
+            if (!o || typeof o !== "object" || d > 7) return;
+            if (Array.isArray(o)) { o.forEach(x => marche(x, d + 1)); return; }
+            if (typeof o.wo === "string") {
+                const t = o.wo.trim().slice(0, 500), k = norm(t);
+                if (t.length > 1 && !vus.has(k)) { vus.add(k); out.push({ wo: t, fr: o.fr || "", en: o.en || "" }); }
+            }
+            Object.keys(o).forEach(k => { if (o[k] && typeof o[k] === "object") marche(o[k], d + 1); });
+        };
+        [typeof WOLOF_THEMES !== "undefined" ? WOLOF_THEMES : null, typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null,
+         typeof CHINA_TRADE_WOLOF !== "undefined" ? CHINA_TRADE_WOLOF : null, typeof BUSINESS_DIALOGUES !== "undefined" ? BUSINESS_DIALOGUES : null,
+         typeof WOLOF_EXTRA !== "undefined" ? WOLOF_EXTRA : null, typeof GENERAL_EXTRA !== "undefined" ? GENERAL_EXTRA : null,
+         typeof BIZ_EXTRA !== "undefined" ? BIZ_EXTRA : null].forEach(x => marche(x, 0));
+        const nb = t => t.split(/\s+/).length;
+        return out.map((o, n) => [o, n]).sort((a, b) => nb(a[0].wo) - nb(b[0].wo) || a[1] - b[1]).map(x => x[0]);
+    }
+    const vue = () => E.liste.filter(o => !E.filtre || !window.voixHumaine.existe(o.wo));
+    function maj() {
+        if (!el("enr-mot")) return;
+        const v = vue(), tot = E.liste.length, ok = E.liste.filter(o => window.voixHumaine.existe(o.wo)).length;
+        el("enr-compte").textContent = ok + " / " + tot + " enregistrées";
+        el("enr-barre").style.width = (tot ? Math.round(ok * 100 / tot) : 0) + "%";
+        if (E.i >= v.length) E.i = Math.max(0, v.length - 1);
+        const o = v[E.i];
+        el("enr-pos").textContent = o ? ("Phrase " + (E.i + 1) + " sur " + v.length) : "Tout est enregistré. Bravo !";
+        el("enr-mot").textContent = o ? o.wo : "";
+        el("enr-fr").textContent = o ? (o.fr + (o.en ? "  |  " + o.en : "")) : "";
+        el("enr-etat").textContent = o && window.voixHumaine.existe(o.wo) ? "✅ Déjà enregistrée" : "⚪ Pas encore enregistrée";
+        el("enr-actions").style.display = E.blob ? "block" : "none";
+        el("enr-filtre").textContent = E.filtre ? "Afficher aussi les déjà enregistrées" : "Masquer les déjà enregistrées";
+    }
+    function msg(t) { if (el("enr-msg")) el("enr-msg").textContent = t; }
+    async function demarrer() {
+        if (E.rec) { E.rec.stop(); return; }
+        try {
+            E.flux = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+        } catch (e) { msg("Micro refusé. Autorise le micro pour diisoo.sn dans les réglages du navigateur."); return; }
+        const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+        const mt = types.find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || "";
+        E.ext = mt.indexOf("mp4") >= 0 ? "m4a" : "webm";
+        const morceaux = [];
+        E.rec = new MediaRecorder(E.flux, mt ? { mimeType: mt, audioBitsPerSecond: 32000 } : {});
+        E.rec.ondataavailable = ev => { if (ev.data && ev.data.size) morceaux.push(ev.data); };
+        E.rec.onstop = () => {
+            E.flux.getTracks().forEach(t => t.stop());
+            E.blob = new Blob(morceaux, { type: (mt || "audio/webm").split(";")[0] });
+            E.rec = null; clearTimeout(E.stopAuto);
+            el("enr-micro").textContent = "🎙️ Recommencer";
+            el("enr-micro").style.background = "#E1693F";
+            msg("Écoute-toi, puis valide ou recommence."); maj();
+        };
+        E.blob = null; maj();
+        E.rec.start();
+        E.stopAuto = setTimeout(() => { if (E.rec) E.rec.stop(); }, 20000);
+        el("enr-micro").textContent = "⏹ Arrêter";
+        el("enr-micro").style.background = "#C0392B";
+        msg("Je t'écoute... Dis la phrase, puis appuie sur Arrêter.");
+    }
+    async function envoyer() {
+        const o = vue()[E.i]; if (!o || !E.blob) return;
+        const s = await db.auth.getSession();
+        if (!s.data || !s.data.session) { msg("Connecte-toi d'abord dans l'application (avec ton e-mail), puis reviens ici."); return; }
+        msg("Envoi en cours...");
+        const nom = window.voixHumaine.empreinte(o.wo) + "." + E.ext;
+        const r = await db.storage.from(BUCKET).upload(nom, E.blob, { upsert: true, contentType: E.blob.type, cacheControl: "3600" });
+        if (r.error) { msg("Échec de l'envoi : " + r.error.message); return; }
+        await window.voixHumaine.charger(true);
+        E.blob = null; el("enr-micro").textContent = "🎙️ Enregistrer"; el("enr-micro").style.background = "#3FAE74";
+        msg("✅ Envoyé. Phrase suivante."); maj();
+    }
+    function ecouter(blob) { if (!blob) return; const a = new Audio(URL.createObjectURL(blob)); a.play().catch(() => msg("Lecture impossible.")); }
+    async function ecouterActuel() { const o = vue()[E.i]; if (!o) return; const u = await window.voixHumaine.url(o.wo); if (u) new Audio(u).play().catch(() => {}); else msg("Pas encore d'enregistrement."); }
+    function construire() {
+        if (el("screen-enregistrer")) return;
+        const d = document.createElement("div");
+        d.id = "screen-enregistrer";
+        d.style.cssText = "position:fixed;inset:0;z-index:9999;background:#0B0F1C;color:#F6F1E7;padding:20px;overflow-y:auto;font-family:inherit";
+        const bt = (id, txt, bg, col) => '<button id="' + id + '" style="width:100%;margin-top:10px;padding:14px;border-radius:14px;background:' + bg + ';color:' + (col || "#fff") + ';font-weight:700;font-size:15px;border:0">' + txt + '</button>';
+        d.innerHTML = '<div style="max-width:420px;margin:0 auto">' +
+            '<p style="font-size:11px;letter-spacing:.15em;color:#5FC98F;font-weight:700;text-transform:uppercase;text-align:center">Outil caché</p>' +
+            '<h3 style="font-size:20px;font-weight:700;text-align:center;margin:6px 0 10px">Enregistrer les voix wolof</h3>' +
+            '<div style="height:8px;background:#141A2B;border-radius:9999px;overflow:hidden"><div id="enr-barre" style="height:100%;width:0;background:#3FAE74"></div></div>' +
+            '<p id="enr-compte" style="font-size:13px;margin-top:6px;color:#D5CCB6"></p>' +
+            '<div style="margin-top:14px;padding:18px;border-radius:16px;background:#141A2B;border:1px solid #1E2740">' +
+            '<p id="enr-pos" style="font-size:12px;color:#A69C86"></p>' +
+            '<p id="enr-mot" style="font-size:26px;font-weight:800;color:#5FC98F;margin:8px 0;line-height:1.25"></p>' +
+            '<p id="enr-fr" style="font-size:14px;color:#D5CCB6"></p>' +
+            '<p id="enr-etat" style="font-size:12px;margin-top:8px"></p></div>' +
+            bt("enr-micro", "🎙️ Enregistrer", "#3FAE74") +
+            '<div id="enr-actions" style="display:none">' + bt("enr-ecoute", "▶️ Écouter mon enregistrement", "#141A2B", "#F6F1E7") + bt("enr-valide", "✅ Valider et envoyer", "#E1693F") + '</div>' +
+            '<p id="enr-msg" style="font-size:13px;color:#D5CCB6;min-height:34px;margin-top:10px"></p>' +
+            '<div style="display:flex;gap:8px"><button id="enr-prec" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;border:1px solid #1E2740">⬅️ Précédente</button><button id="enr-suiv" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;border:1px solid #1E2740">Passer ➡️</button></div>' +
+            '<div style="display:flex;gap:8px;margin-top:10px"><input id="enr-num" type="number" min="1" placeholder="N° de phrase" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#F6F1E7;border:1px solid #1E2740"><button id="enr-aller" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;border:1px solid #1E2740">Aller à ce numéro</button></div>' +
+            '<button id="enr-actuel" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740">▶️ Entendre la version actuelle de l\'app</button>' +
+            '<button id="enr-filtre" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740"></button>' +
+            '<button id="enr-fermer" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740">Fermer</button></div>';
+        document.body.appendChild(d);
+        const reset = () => { E.blob = null; el("enr-micro").textContent = "🎙️ Enregistrer"; el("enr-micro").style.background = "#3FAE74"; msg(""); };
+        el("enr-micro").onclick = demarrer;
+        el("enr-ecoute").onclick = () => ecouter(E.blob);
+        el("enr-valide").onclick = envoyer;
+        el("enr-suiv").onclick = () => { reset(); E.i++; maj(); };
+        el("enr-prec").onclick = () => { reset(); E.i = Math.max(0, E.i - 1); maj(); };
+        el("enr-actuel").onclick = ecouterActuel;
+        el("enr-aller").onclick = () => { const n = parseInt(el("enr-num").value, 10); if (n > 0) { E.filtre = false; reset(); E.i = Math.min(n - 1, E.liste.length - 1); maj(); } };
+        el("enr-filtre").onclick = () => { E.filtre = !E.filtre; E.i = 0; reset(); maj(); };
+        el("enr-fermer").onclick = () => { d.remove(); if (location.hash === "#enregistrer-voix") history.replaceState(null, "", location.pathname + location.search); };
+    }
+    async function ouvrir() {
+        construire(); E.liste = collecter(); E.i = 0; maj();
+        await window.voixHumaine.charger(true); maj();
+    }
+    window.ouvrirEnregistrement = ouvrir;
+    if (location.hash === "#enregistrer-voix") window.addEventListener("load", () => setTimeout(ouvrir, 3000));
 })();
 </script>
 </body>
