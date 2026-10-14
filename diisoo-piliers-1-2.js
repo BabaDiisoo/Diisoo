@@ -290,7 +290,7 @@ Wife | Épouse | Jabar
 Friend | Ami | Xarit
 Family | Famille | Njaboot
 Grandparent | Grand-parent | Maam
-Neighbour | Voisin | Jarbaat
+Neighbour | Voisin | Dëkkandoo
 Elder brother or sister | Aîné | Mag
 Younger brother or sister | Cadet | Rakk
 `),
