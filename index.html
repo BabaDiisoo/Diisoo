@@ -947,9 +947,25 @@ function attendreVoix() {
     });
 }
 
+/* ---------- Prononciation wolof : ce qui s'affiche n'est pas toujours ce que la voix doit lire ----------
+   Chaque ligne : [motif, remplacement]. Pour corriger un mot mal lu, ajoute simplement une ligne ici. */
+const PRONONCIATION_WO = [
+    [/\s*\([^)]*\)/g, ""],              /* retire les explications entre parenthèses */
+    [/\.\.\./g, " "],                     /* retire les points de suspension */
+    [/\s\/\s/g, ". "],                   /* la barre / devient une pause */
+    [/\bJërëjëf\b/gi, "Jëre jëf"],       /* validé à l'oreille */
+    [/\bThiès\b/g, "Cees"]               /* Thiès se dit Cees en wolof */
+];
+function prononciationWolof(texte) {
+    let t = String(texte || "");
+    PRONONCIATION_WO.forEach(r => { t = t.replace(r[0], r[1]); });
+    return t.replace(/\s{2,}/g, " ").replace(/\s+([?!.,;:])/g, "$1").trim();
+}
+
 async function _speak(text, lang, rate, key, keepSeq) {
     stopAllAudio(keepSeq);
     text = (text || "").trim().slice(0, 500);
+    if (lang === "wo") text = prononciationWolof(text);
     if (!text) { if (key) heardKeys.add(key); refreshPracticeButtons(); return true; }
     const myToken = audioToken;
     audioBusy = true;
@@ -1403,7 +1419,7 @@ const GENERAL_THEMES = [
         { en: "How old are you?", fr: "Quel âge as-tu ?", wo: "Ñaata at nga am ?" },
         { en: "I am thirty years old", fr: "J'ai trente ans", wo: "Am naa fanweer at" },
         { en: "Where do you live?", fr: "Où habites-tu ?", wo: "Foo dëkk ?" },
-        { en: "I live in Thiès", fr: "J'habite à Thiès", wo: "Dama dëkk Thiès" },
+        { en: "I live in Thiès", fr: "J'habite à Thiès", wo: "Maa ngi dëkk Cees" },
         { en: "What do you do for a living?", fr: "Que fais-tu dans la vie ?", wo: "Ban liggéey nga def ?" },
         { en: "I speak English and French", fr: "Je parle anglais et français", wo: "Damay wax angale ak farañse" },
         { en: "Can you spell your name?", fr: "Peux-tu épeler ton nom ?", wo: "Mën nga wax sa tur araf ci araf ?" },
@@ -1661,7 +1677,7 @@ const GENERAL_THEMES = [
         { en: "Can I visit the house?", fr: "Puis-je visiter la maison ?", wo: "Mën naa gis kër gi ?" },
         { en: "How many rooms are there?", fr: "Combien de pièces y a-t-il ?", wo: "Ñaata pièce la am ?" },
         { en: "I need to sign the lease", fr: "Je dois signer le bail", wo: "Dama war a sinye kontra kër gi" },
-        { en: "The neighbourhood is quiet", fr: "Le quartier est calme", wo: "Quartier bi dafa dal" }
+        { en: "The neighbourhood is quiet", fr: "Le quartier est calme", wo: "Gox bi dafa dal" }
       ],
       dialogue: [
         { who: "A", en: "How much is the rent for this apartment?", fr: "Combien coûte le loyer de cet appartement ?", wo: "Ñaata la loyer apartema bii ?" },
@@ -1955,6 +1971,7 @@ const WOLOF_THEMES = [
     ]},
     { id: "maison", title: "Maison & vie quotidienne", words: [
         { en: "House", wo: "Kër", fr: "Maison" },
+        { en: "Neighbour", wo: "Dëkkandoo", fr: "Voisin" },
         { en: "Water", wo: "Ndox", fr: "Eau" },
         { en: "Work", wo: "Liggéey", fr: "Travail" },
         { en: "Friend", wo: "Xarit", fr: "Ami" },
@@ -1962,7 +1979,7 @@ const WOLOF_THEMES = [
         { en: "Food", wo: "Ñam", fr: "Nourriture" },
         { en: "I am going home", wo: "Maa ngi dem kër", fr: "Je rentre à la maison" },
         { en: "I need water", wo: "Soxla naa ndox", fr: "J'ai besoin d'eau" },
-        { en: "I am tired today", wo: "Sonn naa tay", fr: "Je suis fatigué(e) aujourd'hui" },
+        { en: "I am tired today", wo: "Sonn naa tey", fr: "Je suis fatigué(e) aujourd'hui" },
         { en: "Where do you live?", wo: "Foo dëkk ?", fr: "Où habites-tu ?" },
         { en: "Where do you work?", wo: "Fan nga liggéey ?", fr: "Où travailles-tu ?" },
         { en: "I work in a shop", wo: "Maa ngi liggéey ci butik", fr: "Je travaille dans une boutique" }
@@ -2231,7 +2248,7 @@ const WOLOF_EXTRA = {
     voyage: [{ en: "Truck", wo: "Kamiyon", fr: "Camion" }],
     corps: [
         { en: "Tired", wo: "Sonn", fr: "Fatigué" },
-        { en: "Hot", wo: "Tang", fr: "Chaud" }
+        { en: "Hot", wo: "Tàng", fr: "Chaud" }
     ],
     logement: [{ en: "House", wo: "Kër", fr: "Maison" }]
 };

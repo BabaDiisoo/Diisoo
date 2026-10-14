@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v9";
+const VERSION = "diisoo-cache-v10";
 const SHELL = [
   "./",
   "./index.html",
@@ -10,7 +10,6 @@ const SHELL = [
   "./diisoo-pro.js",
   "./synchro.js",
   "./pwa-install.js",
-  "https://cdn.tailwindcss.com",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm",
   "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js",
