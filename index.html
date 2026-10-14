@@ -217,6 +217,22 @@
 @keyframes timerFlash { 0%{opacity:1} 100%{opacity:0.2} }
 #test-timer{ text-align:center; }
 .locked{pointer-events:none!important;opacity:.45;filter:grayscale(.6)}
+
+        /* ===== Lisibilité globale des traductions (français et wolof) ===== */
+        .italic.text-\[\#5FC98F\],
+        p.text-xs.text-\[\#5FC98F\] {
+            font-size: 15px; font-style: normal; font-weight: 600; line-height: 1.45;
+            letter-spacing: .01em; color: #7FE3AE; margin-top: 4px; text-align: left; overflow-wrap: anywhere;
+        }
+        p.text-xs.text-\[\#8C8064\],
+        p.text-xs.text-\[\#A69C86\],
+        p.text-xs.text-\[\#C9BFA8\],
+        span.block.italic.text-\[\#A69C86\] {
+            font-size: 14px; font-style: normal; line-height: 1.45; color: #D5CCB6; overflow-wrap: anywhere;
+        }
+        .text-right:has(> p.text-xs.text-\[\#8C8064\]) { max-width: 62%; text-align: left; }
+        span.block.italic.text-\[\#A69C86\],
+        span.block.italic.text-\[\#5FC98F\] { margin-top: 3px; }
 </style>
 </head>
 <body class="bg-[#0B0F1C] font-sans antialiased text-white">
