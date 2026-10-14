@@ -4593,6 +4593,133 @@ async function cloudPull() {
     addXP = function () { const r = _xp.apply(this, arguments); scheduleCloudSync(); return r; };
     cloudPull();
 })();
+
+/* ==========================================================
+   PRÉCHAUFFAGE DES VOIX WOLOF (outil caché)
+   Ouvrir : https://diisoo.sn/#prechauffage-voix
+   Fabrique une fois toutes les voix wolof et les garde pour tout le monde.
+   Reprend là où il s'est arrêté. Style en ligne uniquement.
+   ========================================================== */
+(function () {
+    const CLE = "diisoo_prechauffe";
+    const AUTO = "diisoo_prech_auto";
+    const etat = { actif: false, liste: [], faits: new Set(store.get(CLE) || []), ok: 0, ko: 0, dernier: "" };
+    let verrou = null;
+    const el = id => document.getElementById(id);
+    const pause = ms => new Promise(r => setTimeout(r, ms));
+    const sauver = () => store.set(CLE, Array.from(etat.faits));
+
+    function collecter() {
+        const vus = new Set(), out = [];
+        const marche = (o, d) => {
+            if (!o || typeof o !== "object" || d > 7) return;
+            if (Array.isArray(o)) { o.forEach(x => marche(x, d + 1)); return; }
+            if (typeof o.wo === "string") {
+                const t = prononciationWolof(o.wo.trim().slice(0, 500));
+                if (t.length > 1 && !vus.has(t)) { vus.add(t); out.push(t); }
+            }
+            Object.keys(o).forEach(k => { if (o[k] && typeof o[k] === "object") marche(o[k], d + 1); });
+        };
+        [typeof WOLOF_THEMES !== "undefined" ? WOLOF_THEMES : null,
+         typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null,
+         typeof CHINA_TRADE_WOLOF !== "undefined" ? CHINA_TRADE_WOLOF : null,
+         typeof BUSINESS_DIALOGUES !== "undefined" ? BUSINESS_DIALOGUES : null,
+         typeof WOLOF_EXTRA !== "undefined" ? WOLOF_EXTRA : null,
+         typeof GENERAL_EXTRA !== "undefined" ? GENERAL_EXTRA : null,
+         typeof BIZ_EXTRA !== "undefined" ? BIZ_EXTRA : null].forEach(s => marche(s, 0));
+        return out;
+    }
+
+    function maj() {
+        if (!el("prech-texte")) return;
+        const total = etat.liste.length;
+        const faits = etat.liste.filter(t => etat.faits.has(t)).length;
+        const pct = total ? Math.round(faits * 100 / total) : 0;
+        el("prech-texte").textContent = faits + " / " + total + " voix prêtes (" + pct + " %)";
+        el("prech-barre").style.width = pct + "%";
+        el("prech-info").textContent = (etat.dernier || (etat.actif ? "En cours..." : "En pause.")) + (etat.ko ? "  Échecs : " + etat.ko : "");
+        el("prech-bouton").textContent = etat.actif ? "Mettre en pause" : (faits >= total && total ? "Terminé" : "Démarrer");
+    }
+
+    async function boucle() {
+        if (etat.actif) return;
+        etat.actif = true; etat.dernier = "Connexion au moteur de voix..."; maj();
+        try { if (navigator.wakeLock) verrou = await navigator.wakeLock.request("screen"); } catch (e) {}
+        await attendreVoix();
+        if (!window.Diisoo || !window.Diisoo.voix) { etat.actif = false; etat.dernier = "Moteur audio indisponible."; maj(); return; }
+        let echecsDeSuite = 0, traites = 0, fini = true;
+        for (const t of etat.liste) {
+            if (!etat.actif) { fini = false; break; }
+            if (etat.faits.has(t)) continue;
+            try {
+                await Promise.race([
+                    window.Diisoo.voix.preparer(t, "wo", ""),
+                    new Promise((_, rej) => setTimeout(() => rej(new Error("trop long")), 150000))
+                ]);
+                etat.faits.add(t); etat.ok++; traites++; echecsDeSuite = 0;
+                if (traites % 5 === 0) sauver();
+                etat.dernier = "Dernière voix : " + t.slice(0, 40);
+            } catch (e) {
+                etat.ko++; echecsDeSuite++;
+                etat.dernier = "Échec, nouvel essai bientôt : " + t.slice(0, 30);
+                if (echecsDeSuite >= 5) {
+                    etat.actif = false; fini = false;
+                    etat.dernier = "La démo de voix est saturée. Réessaie dans 30 minutes.";
+                    break;
+                }
+                maj();
+                await pause(Math.min(30000 * echecsDeSuite, 120000));
+            }
+            maj();
+            if (traites >= 40 && etat.actif) {
+                sauver();
+                try { sessionStorage.setItem(AUTO, "1"); } catch (e) {}
+                location.reload();
+                return;
+            }
+            await pause(1200);
+        }
+        sauver();
+        if (fini) { etat.actif = false; etat.dernier = "Terminé : toutes les voix sont prêtes."; try { sessionStorage.removeItem(AUTO); } catch (e) {} }
+        try { if (verrou) { verrou.release(); verrou = null; } } catch (e) {}
+        maj();
+    }
+
+    function construire() {
+        if (el("screen-prechauffage")) return;
+        const d = document.createElement("div");
+        d.id = "screen-prechauffage";
+        d.style.cssText = "position:fixed;inset:0;z-index:9999;background:#0B0F1C;color:#F6F1E7;padding:24px;overflow-y:auto;font-family:inherit";
+        d.innerHTML =
+            '<div style="max-width:420px;margin:0 auto">' +
+            '<p style="font-size:11px;letter-spacing:.15em;color:#5FC98F;font-weight:700;text-transform:uppercase;text-align:center">Outil caché</p>' +
+            '<h3 style="font-size:20px;font-weight:700;text-align:center;margin:6px 0 14px">Préchauffage des voix wolof</h3>' +
+            '<p style="font-size:14px;line-height:1.5;color:#D5CCB6">Fabrique une fois toutes les voix wolof pour que les utilisateurs ne voient plus « Voix indisponible ». Garde l\'écran allumé et le téléphone branché. Tu peux arrêter et reprendre : les voix déjà prêtes ne sont pas refaites.</p>' +
+            '<div style="margin:18px 0 8px;height:10px;background:#141A2B;border-radius:9999px;overflow:hidden"><div id="prech-barre" style="height:100%;width:0;background:#3FAE74;transition:width .3s"></div></div>' +
+            '<p id="prech-texte" style="font-size:15px;font-weight:700"></p>' +
+            '<p id="prech-info" style="font-size:13px;color:#D5CCB6;min-height:36px;margin-top:4px"></p>' +
+            '<button id="prech-bouton" style="width:100%;margin-top:14px;padding:14px;border-radius:14px;background:#E1693F;color:#fff;font-weight:700;font-size:15px;border:0"></button>' +
+            '<button id="prech-reset" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740">Tout recommencer à zéro</button>' +
+            '<button id="prech-fermer" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740">Fermer</button>' +
+            '</div>';
+        document.body.appendChild(d);
+        el("prech-bouton").onclick = () => { if (etat.actif) { etat.actif = false; etat.dernier = "Mise en pause..."; sauver(); maj(); } else boucle(); };
+        el("prech-reset").onclick = () => { if (confirm("Effacer la progression locale du préchauffage ?")) { etat.faits.clear(); etat.ok = 0; etat.ko = 0; sauver(); maj(); } };
+        el("prech-fermer").onclick = () => { etat.actif = false; sauver(); d.remove(); if (location.hash === "#prechauffage-voix") history.replaceState(null, "", location.pathname + location.search); };
+    }
+
+    function ouvrir() {
+        construire();
+        etat.liste = collecter();
+        maj();
+        let auto = false;
+        try { auto = sessionStorage.getItem(AUTO) === "1"; } catch (e) {}
+        if (auto) boucle();
+    }
+    window.ouvrirPrechauffage = ouvrir;
+    window.__prechCollecter = collecter;
+    if (location.hash === "#prechauffage-voix") window.addEventListener("load", () => setTimeout(ouvrir, 3000));
+})();
 </script>
 </body>
 </html>
