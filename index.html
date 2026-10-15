@@ -357,12 +357,6 @@
                 <p class="text-xs text-[#A69C86]">Votre progression sera sauvegardée de façon sécurisée sur votre compte.</p>
             </div>
 
-            <button type="button" id="btn-google" onclick="connexionGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:16px;background:#fff;color:#1f1f1f;font-weight:700;font-size:14px;border:0">
-                <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
-                Continuer avec Google
-            </button>
-            <p id="google-error" class="hidden text-[11px] text-[#EE85A3] text-center"></p>
-            <p class="text-center text-[11px] text-[#8C8064]">ou avec ton e-mail</p>
             <form id="form-onboarding" class="space-y-4" onsubmit="handleOnboarding(event)">
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1.5">
@@ -374,21 +368,16 @@
                         <input type="text" id="user-lastname" required placeholder="Ndiaye" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
                     </div>
                 </div>
-                <div class="space-y-1.5">
+                <div class="hidden space-y-1.5">
                     <label for="user-email" class="text-xs font-semibold text-[#A69C86] uppercase">E-mail</label>
-                    <input type="email" id="user-email" required autocomplete="email" placeholder="fatou@exemple.com" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
+                    <input type="email" id="user-email" autocomplete="email" placeholder="fatou@exemple.com" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
                 </div>
-                <div class="flex items-start space-x-3 pt-1">
-                    <input type="checkbox" id="whatsapp-optin" onchange="majChampsInscription()" class="mt-1 accent-[#3FAE74] h-4 w-4 rounded border-[#1E2740] bg-[#141A2B] text-[#3FAE74]">
-                    <label for="whatsapp-optin" class="text-[11px] text-[#A69C86] leading-relaxed cursor-pointer select-none">
-                        Je souhaite recevoir mes alertes de révision quotidiennes sur WhatsApp
-                    </label>
-                </div>
-                <div id="wa-field" class="hidden space-y-1.5">
+                <input type="checkbox" id="whatsapp-optin" checked class="hidden" tabindex="-1" aria-hidden="true">
+                <div id="wa-field" class="space-y-1.5">
                     <label for="user-phone" class="text-xs font-semibold text-[#A69C86] uppercase">Numéro WhatsApp</label>
                     <div class="relative">
                         <span class="absolute left-4 top-3.5 text-sm text-[#8C8064] font-medium">🇸🇳 +221</span>
-                        <input type="tel" id="user-phone" inputmode="numeric" autocomplete="tel-national" placeholder="70 123 45 67" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl pl-20 pr-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
+                        <input type="tel" id="user-phone" required inputmode="numeric" autocomplete="tel-national" placeholder="70 123 45 67" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl pl-20 pr-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
                     </div>
                 </div>
                 <div id="code-field" class="hidden space-y-1.5">
@@ -396,9 +385,14 @@
                     <input type="text" id="user-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F] tracking-widest text-center">
                 </div>
                 <p id="phone-error" class="hidden text-[11px] text-[#EE85A3]"></p>
-                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 btn-primary font-bold rounded-2xl text-sm transition mt-2 shadow-lg shadow-[#C2542D]/20">Recevoir mon code</button>
-                <button type="button" onclick="continuerSansCompte()" class="w-full text-center text-[11px] text-[#8C8064] underline">Continuer sans compte</button>
+                <button type="submit" id="btn-submit-onboarding" class="w-full py-4 btn-primary font-bold rounded-2xl text-sm transition mt-2 shadow-lg shadow-[#C2542D]/20">Commencer</button>
             </form>
+            <p class="text-center text-[11px] text-[#8C8064] -mt-2">ou</p>
+            <button type="button" id="btn-google" onclick="connexionGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:16px;background:#fff;color:#1f1f1f;font-weight:700;font-size:14px;border:0">
+                <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+                Continuer avec Google
+            </button>
+            <p id="google-error" class="hidden text-[11px] text-[#EE85A3] text-center"></p>
             <div class="text-center text-[10px] text-[#6B604A] space-y-2">
                 <p>Sénégal 🇸🇳 · Souveraineté & Inclusion par la voix</p>
             </div>
@@ -1157,7 +1151,7 @@ function getProfile() { return store.get("diisoo_profile"); }
 
 let onboardingEtape = 1;
 function majChampsInscription() {
-    const on = $("whatsapp-optin").checked;
+    const on = true;
     $("wa-field").classList.toggle("hidden", !on);
     $("user-phone").required = on;
 }
@@ -1456,10 +1450,10 @@ function openDashboard() {
 function logout() {
     store.del("diisoo_profile");
     $("form-onboarding").reset();
-    $("whatsapp-optin").checked = false;
+    $("whatsapp-optin").checked = true;
     onboardingEtape = 1;
     $("code-field").classList.add("hidden");
-    $("btn-submit-onboarding").textContent = "Recevoir mon code";
+    $("btn-submit-onboarding").textContent = "Commencer";
     majChampsInscription();
     changeScreen("screen-onboarding");
 }
