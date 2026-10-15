@@ -357,6 +357,12 @@
                 <p class="text-xs text-[#A69C86]">Votre progression sera sauvegardée de façon sécurisée sur votre compte.</p>
             </div>
 
+            <button type="button" id="btn-google" onclick="connexionGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:16px;background:#fff;color:#1f1f1f;font-weight:700;font-size:14px;border:0">
+                <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+                Continuer avec Google
+            </button>
+            <p id="google-error" class="hidden text-[11px] text-[#EE85A3] text-center"></p>
+            <p class="text-center text-[11px] text-[#8C8064]">ou avec ton e-mail</p>
             <form id="form-onboarding" class="space-y-4" onsubmit="handleOnboarding(event)">
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1.5">
@@ -1165,6 +1171,32 @@ function terminerInscription(profile) {
     onboardingEtape = 1;
     openDashboard();
 }
+async function connexionGoogle() {
+    const err = $("google-error");
+    try {
+        if (!db) throw new Error("db");
+        const r = await db.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + "/" } });
+        if (r.error) throw r.error;
+    } catch (e) {
+        console.error("Erreur connexion Google :", e);
+        if (err) { err.textContent = "Connexion Google impossible pour le moment. Réessaie ou utilise ton e-mail."; err.classList.remove("hidden"); }
+    }
+}
+async function reprendreSessionGoogle() {
+    try {
+        if (!db || getProfile()) return;
+        const r = await db.auth.getSession();
+        const u = r && r.data && r.data.session && r.data.session.user;
+        if (!u) return;
+        const m = u.user_metadata || {};
+        const nomComplet = String(m.full_name || m.name || "").trim();
+        const first = String(m.given_name || nomComplet.split(" ")[0] || "Ami").trim();
+        const last = String(m.family_name || nomComplet.split(" ").slice(1).join(" ") || "").trim();
+        terminerInscription({ first_name: first, last_name: last, email: u.email || null, phone: null, whatsapp_optin: false });
+        try { await attendreVoix(); if (window.Diisoo && window.Diisoo.auth) await window.Diisoo.auth.enregistrerIdentite({ prenom: first, nom: last, alertes: false }); } catch (e) {}
+    } catch (e) { console.error("Erreur session Google :", e); }
+}
+window.addEventListener("load", () => setTimeout(reprendreSessionGoogle, 1200));
 function continuerSansCompte() {
     const first = $("user-firstname").value.trim() || "Ami";
     const last = $("user-lastname").value.trim();
