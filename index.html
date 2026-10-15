@@ -4829,7 +4829,7 @@ async function cloudPull() {
             if (Array.isArray(o)) { o.forEach(x => marche(x, d + 1)); return; }
             if (typeof o.wo === "string") {
                 const t = o.wo.trim().slice(0, 500), k = norm(t);
-                if (t.length > 1 && !vus.has(k)) { vus.add(k); out.push({ wo: t, fr: o.fr || "", en: o.en || "" }); }
+                if (t.length > 1 && !vus.has(k)) { vus.add(k); out.push({ wo: t, fr: o.fr || "", en: o.en || "", wo0: o.wo0 || t }); }
             }
             Object.keys(o).forEach(k => { if (o[k] && typeof o[k] === "object") marche(o[k], d + 1); });
         };
@@ -4898,6 +4898,23 @@ async function cloudPull() {
     }
     function ecouter(blob) { if (!blob) return; const a = new Audio(URL.createObjectURL(blob)); a.play().catch(() => msg("Lecture impossible.")); }
     async function ecouterActuel() { const o = vue()[E.i]; if (!o) return; const u = await window.voixHumaine.url(o.wo); if (u) new Audio(u).play().catch(() => {}); else msg("Pas encore d'enregistrement."); }
+    async function corriger(retour) {
+        const o = vue()[E.i]; if (!o) return;
+        const orig = o.wo0 || o.wo;
+        const nv = retour ? orig : el("enr-edit-input").value.trim();
+        if (!nv) { msg("Le texte ne peut pas être vide."); return; }
+        const s = await db.auth.getSession();
+        if (!s.data || !s.data.session) { msg("Connecte-toi d'abord dans l'application (avec Google), puis reviens ici."); return; }
+        msg("Enregistrement de la correction...");
+        const r = nv === orig
+            ? await db.from("corrections_wolof").delete().eq("original", orig)
+            : await db.from("corrections_wolof").upsert({ original: orig, corrige: nv, auteur: s.data.session.user.email });
+        if (r.error) { msg("Échec : " + r.error.message); return; }
+        try { await window.corrigerWolof.recharger(); } catch (e) {}
+        o.wo = nv; o.wo0 = orig;
+        el("enr-edit-zone").style.display = "none";
+        msg(retour ? "↩️ Texte d'origine rétabli." : "✅ Correction enregistrée. Enregistre maintenant ta voix sur la phrase corrigée."); maj();
+    }
     function construire() {
         if (el("screen-enregistrer")) return;
         const d = document.createElement("div");
@@ -4919,6 +4936,8 @@ async function cloudPull() {
             '<p id="enr-msg" style="font-size:13px;color:#D5CCB6;min-height:34px;margin-top:10px"></p>' +
             '<div style="display:flex;gap:8px"><button id="enr-prec" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;border:1px solid #1E2740">⬅️ Précédente</button><button id="enr-suiv" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;border:1px solid #1E2740">Passer ➡️</button></div>' +
             '<div style="display:flex;gap:8px;margin-top:10px"><input id="enr-num" type="number" min="1" placeholder="N° de phrase" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#F6F1E7;border:1px solid #1E2740"><button id="enr-aller" style="flex:1;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;border:1px solid #1E2740">Aller à ce numéro</button></div>' +
+            '<button id="enr-edit" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#F0906B;font-size:13px;border:1px solid #1E2740">✏️ Corriger le texte de cette phrase</button>' +
+            '<div id="enr-edit-zone" style="display:none;margin-top:10px;padding:14px;border-radius:14px;background:#141A2B;border:1px solid #1E2740"><p id="enr-edit-orig" style="font-size:12px;color:#A69C86;margin-bottom:8px"></p><textarea id="enr-edit-input" rows="3" style="width:100%;padding:10px;border-radius:10px;background:#0B0F1C;color:#F6F1E7;border:1px solid #1E2740;font-size:16px"></textarea><button id="enr-edit-ok" style="width:100%;margin-top:8px;padding:12px;border-radius:12px;background:#3FAE74;color:#fff;font-weight:700;border:0">Enregistrer la correction</button><button id="enr-edit-reset" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;background:transparent;color:#D5CCB6;border:1px solid #1E2740;font-size:13px">↩️ Revenir au texte d\'origine</button></div>' +
             '<button id="enr-actuel" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740">▶️ Entendre la version actuelle de l\'app</button>' +
             '<button id="enr-filtre" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740"></button>' +
             '<button id="enr-fermer" style="width:100%;margin-top:10px;padding:12px;border-radius:14px;background:#141A2B;color:#D5CCB6;font-size:13px;border:1px solid #1E2740">Fermer</button></div>';
@@ -4930,6 +4949,9 @@ async function cloudPull() {
         el("enr-suiv").onclick = () => { reset(); E.i++; maj(); };
         el("enr-prec").onclick = () => { reset(); E.i = Math.max(0, E.i - 1); maj(); };
         el("enr-actuel").onclick = ecouterActuel;
+        el("enr-edit").onclick = () => { const o = vue()[E.i]; if (!o) return; const z = el("enr-edit-zone"); z.style.display = z.style.display === "block" ? "none" : "block"; el("enr-edit-input").value = o.wo; el("enr-edit-orig").textContent = "Texte d'origine : " + (o.wo0 || o.wo); };
+        el("enr-edit-ok").onclick = () => corriger(false);
+        el("enr-edit-reset").onclick = () => corriger(true);
         el("enr-aller").onclick = () => { const n = parseInt(el("enr-num").value, 10); if (n > 0) { E.filtre = false; reset(); E.i = Math.min(n - 1, E.liste.length - 1); maj(); } };
         el("enr-filtre").onclick = () => { E.filtre = !E.filtre; E.i = 0; reset(); maj(); };
         el("enr-fermer").onclick = () => { d.remove(); if (location.hash === "#enregistrer-voix") history.replaceState(null, "", location.pathname + location.search); };
@@ -4941,6 +4963,53 @@ async function cloudPull() {
     window.ouvrirEnregistrement = ouvrir;
     if (location.hash === "#enregistrer-voix") window.addEventListener("load", () => setTimeout(ouvrir, 3000));
 })();
+
+/* ==========================================================
+   CORRECTIONS DU WOLOF (table Supabase corrections_wolof)
+   Remplace à l'affichage les textes wolof corrigés, pour tous les utilisateurs.
+   ========================================================== */
+(function () {
+    const CLE = "diisoo_corrections", TTL = 300000;
+    let carte = {};
+    function structures() {
+        return [typeof WOLOF_THEMES !== "undefined" ? WOLOF_THEMES : null, typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null,
+            typeof CHINA_TRADE_WOLOF !== "undefined" ? CHINA_TRADE_WOLOF : null, typeof BUSINESS_DIALOGUES !== "undefined" ? BUSINESS_DIALOGUES : null,
+            typeof WOLOF_EXTRA !== "undefined" ? WOLOF_EXTRA : null, typeof GENERAL_EXTRA !== "undefined" ? GENERAL_EXTRA : null,
+            typeof BIZ_EXTRA !== "undefined" ? BIZ_EXTRA : null, typeof LEXICON !== "undefined" ? LEXICON : null];
+    }
+    function appliquer() {
+        let n = 0;
+        const marche = (o, d) => {
+            if (!o || typeof o !== "object" || d > 7) return;
+            if (Array.isArray(o)) { o.forEach(x => marche(x, d + 1)); return; }
+            if (typeof o.wo === "string") {
+                const cle = o.wo0 || o.wo.trim();
+                if (carte[cle] && o.wo !== carte[cle]) { o.wo0 = cle; o.wo = carte[cle]; n++; }
+                else if (!carte[cle] && o.wo0) { o.wo = o.wo0; delete o.wo0; n++; }
+            }
+            Object.keys(o).forEach(k => { if (o[k] && typeof o[k] === "object") marche(o[k], d + 1); });
+        };
+        structures().forEach(x => marche(x, 0));
+        return n;
+    }
+    async function recharger(force) {
+        let c = null;
+        try { c = JSON.parse(localStorage.getItem(CLE) || "null"); } catch (e) {}
+        if (!force && c && Date.now() - c.t < TTL) { carte = c.m || {}; return appliquer(); }
+        try {
+            if (!db) throw new Error("db");
+            const r = await db.from("corrections_wolof").select("original,corrige");
+            if (r.error) throw r.error;
+            carte = {};
+            (r.data || []).forEach(x => { if (x.original && x.corrige) carte[x.original] = x.corrige; });
+            try { localStorage.setItem(CLE, JSON.stringify({ t: Date.now(), m: carte })); } catch (e) {}
+        } catch (e) { carte = (c && c.m) || carte; }
+        return appliquer();
+    }
+    window.corrigerWolof = { recharger: () => recharger(true), appliquer };
+    window.addEventListener("load", () => { setTimeout(() => recharger(false), 2000); setTimeout(() => recharger(false), 7000); });
+})();
+
 </script>
 </body>
 </html>
