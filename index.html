@@ -4788,7 +4788,7 @@ async function cloudPull() {
         for (let off = 0; off < 5000; off += 1000) {
             const r = await db.storage.from(BUCKET).list("", { limit: 1000, offset: off });
             if (r.error) throw r.error;
-            (r.data || []).forEach(f => { if (f.name && f.name.indexOf(".") > 0) out[f.name.split(".")[0]] = f.name + "?v=" + encodeURIComponent(f.updated_at || f.created_at || ""); });
+            (r.data || []).forEach(f => { if (f.name && f.name.indexOf(".") > 0) { const b0 = f.name.split(".")[0]; const cle = b0.indexOf("--") > 0 ? b0.split("--").pop() : b0; out[cle] = f.name + "?v=" + encodeURIComponent(f.updated_at || f.created_at || ""); } });
             if (!r.data || r.data.length < 1000) break;
         }
         return out;
@@ -4887,11 +4887,13 @@ async function cloudPull() {
         const s = await db.auth.getSession();
         if (!s.data || !s.data.session) { msg("Connecte-toi d'abord dans l'application (avec ton e-mail), puis reviens ici."); return; }
         msg("Envoi en cours...");
-        const nom = window.voixHumaine.empreinte(o.wo) + "." + E.ext;
+        const slug = o.wo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "phrase";
+        const nom = slug + "--" + window.voixHumaine.empreinte(o.wo) + "." + E.ext;
         const r = await db.storage.from(BUCKET).upload(nom, E.blob, { upsert: true, contentType: E.blob.type, cacheControl: "3600" });
         if (r.error) { msg("Échec de l'envoi : " + r.error.message); return; }
         await window.voixHumaine.charger(true);
         E.blob = null; el("enr-micro").textContent = "🎙️ Enregistrer"; el("enr-micro").style.background = "#3FAE74";
+        if (!E.filtre) E.i = Math.min(E.i + 1, E.liste.length - 1);
         msg("✅ Envoyé. Phrase suivante."); maj();
     }
     function ecouter(blob) { if (!blob) return; const a = new Audio(URL.createObjectURL(blob)); a.play().catch(() => msg("Lecture impossible.")); }
