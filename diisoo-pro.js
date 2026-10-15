@@ -1622,14 +1622,14 @@ init();
     const opt = $("whatsapp-optin").checked;
     let phone = null;
     if (opt) {
-      const d = $("user-phone").value.replace(/\D/g, "").replace(/^221/, "");
-      if (!/^7[05-8]\d{7}$/.test(d)) {
+      const tel = window.normaliserTelephone($("user-country").value, $("user-phone").value);
+      if (!tel.ok) {
         const er = $("phone-error");
-        er.textContent = "Numéro invalide. Exemple : 70 123 45 67 (9 chiffres).";
+        er.textContent = tel.erreur;
         er.classList.remove("hidden");
         return;
       }
-      phone = "+221" + d;
+      phone = tel.e164;
     }
     window.terminerInscription({ first_name: first, last_name: last, email: email, phone: phone, whatsapp_optin: opt });
   };
