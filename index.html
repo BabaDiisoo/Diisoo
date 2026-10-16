@@ -434,6 +434,7 @@
                         <button onclick="toggleBurgerMenu();openFeedback()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Donner mon avis</button>
                         <button onclick="toggleBurgerMenu();openProgress()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📈 Ma progression</button>
                         <button onclick="toggleBurgerMenu();openPremium()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Premium &amp; packs</button>
+                        <button onclick="toggleBurgerMenu();partagerDiisoo()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📤 Partager Diisoo</button>
                         <div id="menu-session"></div>
                     </div>
                 </div>
@@ -518,6 +519,10 @@
                     <span class="text-[9px] bg-[#241505]/15 text-[#241505] px-2 py-0.5 rounded-full font-bold">Nouveau</span>
                 </div>
                 <p class="text-[11px] text-[#3A2208] leading-relaxed">Coaching vocal, pack visa, packs commerçants. Commande simple par WhatsApp.</p>
+            </button>
+            <button type="button" onclick="partagerDiisoo()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#10251A]/40 p-4 rounded-2xl border border-[#3FAE74]/30 hover:border-[#3FAE74]/60 transition">
+                <div class="flex items-center space-x-2 mb-1"><span class="text-lg">📤</span><h3 class="text-sm font-bold text-[#F6F1E7]">Partager Diisoo sur WhatsApp</h3></div>
+                <p class="text-[11px] text-[#A69C86] leading-relaxed">Un ami veut apprendre l'anglais ou le wolof ? Envoie-lui l'application en un geste.</p>
             </button>
             <div class="space-y-2">
                 <p class="text-center text-xs font-bold tracking-wide text-[#C2542D]">🏢 Un produit ABC-GLOBAL</p>
@@ -1470,6 +1475,12 @@ function openProgress() {
 }
 
 function closeProgress() { $("screen-progress").classList.add("hidden"); }
+
+/* ===== Partage WhatsApp ===== */
+function partagerDiisoo() {
+    const txt = "Salut ! Je te recommande Diisoo : une application pour apprendre l'anglais et le wolof avec la voix, sur téléphone. Essaie-la ici : https://diisoo.sn";
+    window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+}
 
 /* ===== Numéros internationaux ===== */
 const PAYS_TEL = {
