@@ -786,7 +786,8 @@ function contexteAudio() {
     if (!AC) throw new Error("AudioContext indisponible");
     ctxAudio = new AC();
   }
-  if (ctxAudio.state === "suspended") ctxAudio.resume().catch(() => {
+  try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+  if (ctxAudio.state !== "running") ctxAudio.resume().catch(() => {
   });
   return ctxAudio;
 }
