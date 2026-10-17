@@ -1576,6 +1576,17 @@ async function majStatutAcces() {
     return lireAcces();
 }
 function aAcces(type) { return enPeriodeTest() || !!lireAcces()[type]; }
+const IELTS_TESTS_GRATUITS = 3; /* nombre de tests IELTS gratuits ; mettre 0 pour tout verrouiller */
+function verrouBiz(mod, v, i) {
+    if (aAcces("commercants") || v.niveau === "debutant") return null;
+    if (!(i === 0 || mod.vocab[i - 1].niveau !== v.niveau)) return "";
+    const off = PREMIUM_CONFIG.offres.find(o => o.id === "commercants") || {};
+    return '<p class="text-[11px] font-bold text-[#C99CEA] pt-2">' + (NIVEAUX_BIZ[v.niveau] || "") + '</p>' +
+        '<button type="button" onclick="openPremium()" class="w-full text-left bg-[#141A2B] border border-[#C99CEA]/40 rounded-xl p-3">' +
+            '<p class="text-sm font-bold text-[#F6F1E7]">🔒 Réservé au Pack Commerçants</p>' +
+            '<p class="text-[11px] text-[#A69C86]">' + (off.prix || "") + ', paiement unique, accès à vie. Appuie pour voir l\'offre.</p>' +
+        '</button>';
+}
 window.addEventListener("online", majStatutAcces);
 setTimeout(majStatutAcces, 3000);
 
@@ -2845,7 +2856,7 @@ function selectBusinessModule(sectionKey) {
     const box = $("business-content");
     box.classList.remove("hidden");
     box.innerHTML = '<h4 class="text-sm font-bold text-[#F6F1E7] text-center">' + mod.title + '</h4>' +
-        mod.vocab.map((v, i) =>
+        mod.vocab.map((v, i) => { const vb = verrouBiz(mod, v, i); if (vb !== null) return vb; return (
             (i === 0 || mod.vocab[i - 1].niveau !== v.niveau ? '<p class="text-[11px] font-bold text-[#C99CEA] pt-2">' + (NIVEAUX_BIZ[v.niveau] || "") + '</p>' : '') +
             '<div class="bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 space-y-1">' +
                 '<p class="text-sm font-semibold text-[#F6F1E7]">' + v.en + '</p>' +
@@ -2858,7 +2869,7 @@ function selectBusinessModule(sectionKey) {
                 '<button onclick="practiceBusinessPhrase(\'' + sectionKey + '\',' + i + ')" data-practice="biz:' + sectionKey + ':' + i + '" class="mt-1 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🎤 M\'entraîner</button>' +
                 '<p id="biz-res-' + sectionKey + '-' + i + '" class="text-[11px] text-[#A69C86]">👂 Écoutez d\'abord l\'anglais, puis entraînez-vous.</p>' +
             '</div>'
-        ).join("") +
+        ); }).join("") +
         (BUSINESS_DIALOGUES[sectionKey] ? renderBusinessDialogue(sectionKey) : "");
     refreshPracticeButtons();
 }
@@ -3418,13 +3429,16 @@ function buildQuestionList(test) {
 function renderTestPicker() {
     const box = $("test-topic-buttons");
     box.innerHTML = "";
-    TEST_BANK.forEach(t => {
+    TEST_BANK.forEach((t, idx) => {
+        const verrou = idx >= IELTS_TESTS_GRATUITS && !aAcces("premium");
         const active = currentTest && currentTest.id === t.id;
         const b = document.createElement("button");
         b.className = "w-full text-left px-4 py-3 rounded-xl text-sm font-semibold border transition " +
             (active ? "bg-[#C2542D] border-[#E1693F] text-white" : "bg-[#141A2B] border-[#1E2740] text-[#C9BFA8]");
-        b.textContent = "Test : " + t.topic;
-        b.onclick = () => { currentTest = t; renderTestPicker(); runTest(); };
+        b.textContent = (verrou ? "⭐ " : "") + "Test : " + t.topic;
+        b.onclick = verrou
+            ? () => { toast("Ce test est réservé aux abonnés Premium."); openPremium(); }
+            : () => { currentTest = t; renderTestPicker(); runTest(); };
         box.appendChild(b);
     });
     const onM = "py-2.5 rounded-xl text-xs font-bold border-2 transition bg-[#2C8F5C] border-[#5FC98F] text-white";
