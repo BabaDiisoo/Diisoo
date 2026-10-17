@@ -1343,8 +1343,8 @@ const PREMIUM_CONFIG = {
           texte: "Simulateur IELTS complet, discussion libre avec l'IA, formations avancées. Les leçons vocales restent gratuites." },
         { id: "visa", icone: "✈️", titre: "Pack Visa + Anglais", prix: "35 000 FCFA", dispo: true,
           texte: "Préparation IELTS Life Skills et entretien visa, avec les conseils de l'agence ABC-GLOBAL. Aucune garantie d'obtention du visa." },
-        { id: "commercants", icone: "🧰", titre: "Pack Commerçants", prix: "15 000 FCFA", dispo: true,
-          texte: "Vocabulaire et dialogues par métier : pièces détachées, mode, électronique, import Chine." },
+        { id: "commercants", icone: "🧰", titre: "Pack Commerçants", prix: "5 000 FCFA", dispo: true,
+          texte: "Niveaux Intermédiaire et Avancé de tous les secteurs : pièces détachées, mode, électronique, import Chine. Paiement unique, accès à vie." },
         { id: "coaching", icone: "🎧", titre: "Coaching accompagné", prix: "15 000 FCFA / mois", dispo: true,
           texte: "Vos enregistrements vocaux sont écoutés et corrigés chaque semaine." },
         { id: "pro", icone: "🏢", titre: "Écoles, ONG et entreprises", prix: "Sur devis", dispo: true,
@@ -1365,20 +1365,28 @@ function premiumLien(o) {
 }
 function renderPremium() {
     $("premium-test-note").textContent = "Tout reste gratuit pendant la période de test, jusqu'au " + PREMIUM_CONFIG.finTest + ".";
-    majStatutAcces().then(a => {
+    const dessiner = () => {
+        const ac = lireAcces();
         const t = $("premium-test-note");
-        if (t && (a.premium || a.commercants)) t.textContent = "✅ Ton accès : " + [a.premium ? "Premium" : "", a.commercants ? "Pack Commerçants" : ""].filter(Boolean).join(" et ") + " actif.";
-    });
-    $("premium-offers").innerHTML = PREMIUM_CONFIG.offres.map(o =>
-        '<div class="bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3 space-y-2">' +
-            '<div class="flex justify-between items-start gap-2">' +
-                '<div class="flex items-center space-x-2"><span class="text-lg">' + o.icone + '</span><h3 class="text-sm font-bold text-[#F6F1E7]">' + o.titre + '</h3></div>' +
-                '<span class="text-[11px] font-bold text-[#F0906B] whitespace-nowrap">' + (o.dispo ? o.prix : "Bientôt") + '</span>' +
-            '</div>' +
-            '<p class="text-[11px] text-[#A69C86] leading-relaxed">' + o.texte + '</p>' +
-            '<a href="' + premiumLien(o) + '" target="_blank" rel="noopener" class="block w-full text-center py-2.5 ' + (o.dispo ? "btn-primary" : "bg-[#1E2740] text-[#C9BFA8]") + ' rounded-xl text-xs font-bold">' + (o.dispo ? "Commander sur WhatsApp" : "Me prévenir sur WhatsApp") + '</a>' +
-        '</div>'
-    ).join("");
+        if (t && (ac.premium || ac.commercants)) t.textContent = "✅ Ton accès : " + [ac.premium ? "Premium" : "", ac.commercants ? "Pack Commerçants" : ""].filter(Boolean).join(" et ") + " actif.";
+        $("premium-offers").innerHTML = PREMIUM_CONFIG.offres.map(o => {
+            const actif = (o.id === "premium" && ac.premium) || (o.id === "commercants" && ac.commercants);
+            const badge = actif ? "Actif ✅" : (o.dispo ? o.prix : "Bientôt");
+            const bouton = actif
+                ? '<div class="block w-full text-center py-2.5 bg-[#10251A] text-[#5FC98F] rounded-xl text-xs font-bold">Accès actif</div>'
+                : '<a href="' + premiumLien(o) + '" target="_blank" rel="noopener" class="block w-full text-center py-2.5 ' + (o.dispo ? "btn-primary" : "bg-[#1E2740] text-[#C9BFA8]") + ' rounded-xl text-xs font-bold">' + (o.dispo ? "Commander sur WhatsApp" : "Me prévenir sur WhatsApp") + '</a>';
+            return '<div class="bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3 space-y-2">' +
+                '<div class="flex justify-between items-start gap-2">' +
+                    '<div class="flex items-center space-x-2"><span class="text-lg">' + o.icone + '</span><h3 class="text-sm font-bold text-[#F6F1E7]">' + o.titre + '</h3></div>' +
+                    '<span class="text-[11px] font-bold text-[#F0906B] whitespace-nowrap">' + badge + '</span>' +
+                '</div>' +
+                '<p class="text-[11px] text-[#A69C86] leading-relaxed">' + o.texte + '</p>' +
+                bouton +
+            '</div>';
+        }).join("");
+    };
+    dessiner();
+    majStatutAcces().then(dessiner);
 }
 function openPremium() { renderPremium(); $("screen-premium").classList.remove("hidden"); }
 function closePremium() { $("screen-premium").classList.add("hidden"); }
