@@ -508,7 +508,7 @@
                 </button>
                 </div>
                 <button onclick="openPremium()" class="w-full flex items-center justify-between bg-gradient-to-br from-[#F3A94E] to-[#E1693F] px-4 py-3 rounded-2xl shadow-md">
-                    <span class="text-xs font-bold text-[#241505]">⭐ Tout est gratuit jusqu'au 1er janvier 2027</span>
+                    <span id="bandeau-gratuit" class="text-xs font-bold text-[#241505]">⭐ Tout est gratuit jusqu'au 1er janvier 2027</span>
                     <span class="text-[10px] font-bold text-[#241505] bg-[#241505]/15 px-2 py-0.5 rounded-full">Premium</span>
                 </button>
                 <button type="button" onclick="partagerDiisoo()" class="w-full text-left bg-[#141A2B]/60 px-4 py-2.5 rounded-2xl border border-[#3FAE74]/30">
@@ -1704,7 +1704,17 @@ function enregistrerWhatsApp() {
     toast("✅ Merci ! Ton numéro WhatsApp est enregistré.");
 }
 
+function majBandeauGratuit() {
+    const el = $("bandeau-gratuit");
+    if (!el) return;
+    try {
+        const jours = Math.ceil((FIN_TEST - new Date()) / 86400000);
+        if (jours <= 0) el.textContent = "⭐ Découvre Premium et les packs";
+        else if (jours <= 31) el.textContent = "⭐ Gratuit encore " + jours + (jours > 1 ? " jours" : " jour") + " : fin le 1er janvier";
+    } catch (e) {}
+}
 function openDashboard() {
+    majBandeauGratuit();
     const p = getProfile();
     $("welcome-tag").textContent = p ? "Bonjour " + p.first_name : "";
     updateStreak();
