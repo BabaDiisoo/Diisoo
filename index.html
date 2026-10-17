@@ -1365,6 +1365,10 @@ function premiumLien(o) {
 }
 function renderPremium() {
     $("premium-test-note").textContent = "Tout reste gratuit pendant la période de test, jusqu'au " + PREMIUM_CONFIG.finTest + ".";
+    majStatutAcces().then(a => {
+        const t = $("premium-test-note");
+        if (t && (a.premium || a.commercants)) t.textContent = "✅ Ton accès : " + [a.premium ? "Premium" : "", a.commercants ? "Pack Commerçants" : ""].filter(Boolean).join(" et ") + " actif.";
+    });
     $("premium-offers").innerHTML = PREMIUM_CONFIG.offres.map(o =>
         '<div class="bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3 space-y-2">' +
             '<div class="flex justify-between items-start gap-2">' +
@@ -1545,6 +1549,24 @@ lireParrainURL();
 window.addEventListener("online", synchroParrainage);
 setTimeout(synchroParrainage, 2500);
 setTimeout(majCompteurParrainage, 2500);
+
+/* ===== Accès payants : statut du numéro WhatsApp (table acces_premium, fonction statut_acces) =====
+   Avant le 1er janvier 2027 tout reste gratuit. Ensuite aAcces("premium") / aAcces("commercants") décideront du verrouillage. */
+const FIN_TEST = new Date("2027-01-01T00:00:00");
+function enPeriodeTest() { return new Date() < FIN_TEST; }
+function lireAcces() { const a = store.get("diisoo_acces"); return a && typeof a === "object" ? a : { premium: false, commercants: false }; }
+async function majStatutAcces() {
+    const p = getProfile();
+    if (!db || !p || !p.phone) return lireAcces();
+    try {
+        const r = await db.rpc("statut_acces", { p_whatsapp: p.phone });
+        if (r && !r.error && r.data && typeof r.data === "object") store.set("diisoo_acces", { premium: !!r.data.premium, commercants: !!r.data.commercants });
+    } catch (e) {}
+    return lireAcces();
+}
+function aAcces(type) { return enPeriodeTest() || !!lireAcces()[type]; }
+window.addEventListener("online", majStatutAcces);
+setTimeout(majStatutAcces, 3000);
 
 /* ===== Numéros internationaux ===== */
 const PAYS_TEL = {
