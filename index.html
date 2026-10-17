@@ -435,6 +435,8 @@
                         <button onclick="toggleBurgerMenu();openProgress()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📈 Ma progression</button>
                         <button onclick="toggleBurgerMenu();openPremium()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Premium &amp; packs</button>
                         <button onclick="toggleBurgerMenu();partagerDiisoo()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📤 Partager Diisoo</button>
+                        <a href="https://wa.me/221768426961?text=2" target="_blank" rel="noopener" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">👑 ABC Leaders</a>
+                        <a href="https://wa.me/221772882109?text=Bonjour%2C%20je%20souhaite%20contacter%20l%27agence%20ABC-GLOBAL." target="_blank" rel="noopener" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📞 Contacter l'agence</a>
                         <div id="menu-session"></div>
                     </div>
                 </div>
@@ -471,7 +473,7 @@
             </div>
             <div id="badges-row" class="flex space-x-3 overflow-x-auto pb-1"></div>
 
-            <div class="space-y-4 my-auto">
+            <div class="space-y-3 my-auto">
                 <!-- MA REVISION DU JOUR -->
                 <button id="revision-card" onclick="openRevision()" class="w-full text-left bg-gradient-to-br from-[#10251A] to-[#141A2B] p-4 rounded-2xl border border-[#3FAE74]/40 hover:border-[#3FAE74]/70 transition shadow-md">
                     <div class="flex justify-between items-center mb-2">
@@ -480,52 +482,38 @@
                     </div>
                     <p id="revision-sub" class="text-[11px] text-[#A69C86] leading-relaxed">6 mots choisis pour toi, à écouter et à choisir. Environ 2 minutes.</p>
                 </button>
-                <!-- PILIER 1 -->
-                <button onclick="openGeneralModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#1E2740] p-4 rounded-2xl border border-[#1E2740] hover:border-[#E1693F]/30 transition shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">📚</span><h3 class="text-sm font-bold text-[#F6F1E7]">1. Anglais Général (Français)</h3></div>
-                        <span class="text-[9px] bg-[#E1693F]/10 text-[#F0906B] px-2 py-0.5 rounded-full font-medium">Anglais / Fr</span>
-                    </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">8 thèmes du quotidien : vocabulaire, dialogues et grammaire.</p>
+                <!-- 4 MODULES -->
+                <div class="grid grid-cols-2 gap-3">
+                <button onclick="startTestSimulation()" class="text-left bg-[#141A2B] p-3.5 rounded-2xl border border-[#1E2740] hover:border-[#2FC2AC]/50 transition shadow-md">
+                    <span class="text-2xl block mb-1">✈️</span>
+                    <h3 class="text-[13px] font-bold text-[#F6F1E7] leading-tight">Visa &amp; IELTS</h3>
+                    <p class="text-[10px] text-[#A69C86] mt-0.5 leading-snug">Simulateur chronométré</p>
                 </button>
-                <!-- PILIER 2 -->
-                <button onclick="openWolofModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#10251A]/20 p-4 rounded-2xl border border-[#1E2740] hover:border-[#3FAE74]/30 transition shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">🇸🇳</span><h3 class="text-sm font-bold text-[#F6F1E7]">2. Anglais Wolof (Vie & Commerce)</h3></div>
-                        <span class="text-[9px] bg-[#3FAE74]/10 text-[#5FC98F] px-2 py-0.5 rounded-full font-medium">Général & Business</span>
-                    </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">100% à l'oral : les 8 mêmes thèmes, en wolof et en anglais.</p>
+                <button onclick="openBusinessModule()" class="text-left bg-[#141A2B] p-3.5 rounded-2xl border border-[#1E2740] hover:border-[#B26FE0]/50 transition shadow-md">
+                    <span class="text-2xl block mb-1">💼</span>
+                    <h3 class="text-[13px] font-bold text-[#F6F1E7] leading-tight">Business</h3>
+                    <p class="text-[10px] text-[#A69C86] mt-0.5 leading-snug">Négociation et métiers</p>
                 </button>
-                <!-- PILIER 3 : SIMULATEUR IELTS (affiche en 3e position) -->
-                <button onclick="startTestSimulation()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#0B2320]/40 p-4 rounded-2xl border border-[#0E2B28]/20 hover:border-[#2FC2AC]/40 transition shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">⏱️</span><h3 class="text-sm font-bold text-[#F6F1E7]">3. Simulateur de Test IELTS</h3></div>
-                        <span class="text-[9px] bg-[#2FC2AC]/20 text-[#55D2BE] px-2 py-0.5 rounded-full font-bold animate-pulse">IELTS A1</span>
-                    </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Simulateur chronométré inspiré du format IELTS Life Skills, 100% en anglais, pour s'habituer au rythme de l'examen de visa.</p>
+                <button onclick="openGeneralModule()" class="text-left bg-[#141A2B] p-3.5 rounded-2xl border border-[#1E2740] hover:border-[#E1693F]/50 transition shadow-md">
+                    <span class="text-2xl block mb-1">📚</span>
+                    <h3 class="text-[13px] font-bold text-[#F6F1E7] leading-tight">Anglais</h3>
+                    <p class="text-[10px] text-[#A69C86] mt-0.5 leading-snug">Tous les jours, en français</p>
                 </button>
-                <!-- PILIER 4 : OUTILS BUSINESS (affiche en 4e position) -->
-                <button onclick="openBusinessModule()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#241238]/30 p-4 rounded-2xl border border-[#1E2740] hover:border-[#B26FE0]/30 transition shadow-md">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><span class="text-lg">🧰</span><h3 class="text-sm font-bold text-[#F6F1E7]">4. Outils Business</h3></div>
-                        <span class="text-[9px] bg-[#B26FE0]/10 text-[#C99CEA] px-2 py-0.5 rounded-full font-medium">Métiers</span>
-                    </div>
-                    <p class="text-[11px] text-[#A69C86] leading-relaxed">Vocabulaire pratique par métier : pièces détachées, mode & beauté, logistique Chine.</p>
+                <button onclick="openWolofModule()" class="text-left bg-[#141A2B] p-3.5 rounded-2xl border border-[#1E2740] hover:border-[#3FAE74]/50 transition shadow-md">
+                    <span class="text-2xl block mb-1">🇸🇳</span>
+                    <h3 class="text-[13px] font-bold text-[#F6F1E7] leading-tight">Wolof ↔ Anglais</h3>
+                    <p class="text-[10px] text-[#A69C86] mt-0.5 leading-snug">100% à l'oral</p>
+                </button>
+                </div>
+                <button onclick="openPremium()" class="w-full flex items-center justify-between bg-gradient-to-br from-[#F3A94E] to-[#E1693F] px-4 py-3 rounded-2xl shadow-md">
+                    <span class="text-xs font-bold text-[#241505]">⭐ Tout est gratuit jusqu'au 1er janvier 2027</span>
+                    <span class="text-[10px] font-bold text-[#241505] bg-[#241505]/15 px-2 py-0.5 rounded-full">Premium</span>
+                </button>
+                <button type="button" onclick="partagerDiisoo()" class="w-full text-left bg-[#141A2B]/60 px-4 py-2.5 rounded-2xl border border-[#3FAE74]/30">
+                    <p class="text-[11px] text-[#C9BFA8]">📤 Invite 3 amis : <span class="text-[#F0906B] font-bold">1 mois Premium offert</span></p>
+                    <p id="ref-compteur" class="text-[11px] text-[#5FC98F] font-bold"></p>
                 </button>
             </div>
-            <button onclick="openPremium()" class="w-full text-left bg-gradient-to-br from-[#F3A94E] to-[#E1693F] p-4 rounded-2xl border border-transparent transition shadow-md">
-                <div class="flex justify-between items-center mb-1">
-                    <div class="flex items-center space-x-2"><span class="text-lg">⭐</span><h3 class="text-sm font-bold text-[#241505]">Premium &amp; packs</h3></div>
-                    <span class="text-[9px] bg-[#241505]/15 text-[#241505] px-2 py-0.5 rounded-full font-bold">Nouveau</span>
-                </div>
-                <p class="text-[11px] text-[#3A2208] leading-relaxed">Coaching vocal, pack visa, packs commerçants. Commande simple par WhatsApp.</p>
-            </button>
-            <button type="button" onclick="partagerDiisoo()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#10251A]/40 p-4 rounded-2xl border border-[#3FAE74]/30 hover:border-[#3FAE74]/60 transition">
-                <div class="flex items-center space-x-2 mb-1"><span class="text-lg">📤</span><h3 class="text-sm font-bold text-[#F6F1E7]">Partager Diisoo sur WhatsApp</h3></div>
-                <p class="text-[11px] text-[#A69C86] leading-relaxed">Un ami veut apprendre l'anglais ou le wolof ? Envoie-lui l'application en un geste.</p>
-                <p class="text-[11px] text-[#F0906B] font-bold mt-1">Invite 3 amis : 1 mois Premium offert (activé le 1er janvier 2027).</p>
-                <p id="ref-compteur" class="text-[11px] text-[#5FC98F] font-bold mt-1"></p>
-            </button>
             <div class="space-y-2">
                 <p class="text-center text-xs font-bold tracking-wide text-[#C2542D]">🏢 Un produit ABC-GLOBAL</p>
             </div>
