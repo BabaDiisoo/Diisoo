@@ -523,6 +523,8 @@
             <button type="button" onclick="partagerDiisoo()" class="w-full text-left bg-gradient-to-br from-[#141A2B] to-[#10251A]/40 p-4 rounded-2xl border border-[#3FAE74]/30 hover:border-[#3FAE74]/60 transition">
                 <div class="flex items-center space-x-2 mb-1"><span class="text-lg">📤</span><h3 class="text-sm font-bold text-[#F6F1E7]">Partager Diisoo sur WhatsApp</h3></div>
                 <p class="text-[11px] text-[#A69C86] leading-relaxed">Un ami veut apprendre l'anglais ou le wolof ? Envoie-lui l'application en un geste.</p>
+                <p class="text-[11px] text-[#F0906B] font-bold mt-1">Invite 3 amis : 1 mois Premium offert (activé le 1er janvier 2027).</p>
+                <p id="ref-compteur" class="text-[11px] text-[#5FC98F] font-bold mt-1"></p>
             </button>
             <div class="space-y-2">
                 <p class="text-center text-xs font-bold tracking-wide text-[#C2542D]">🏢 Un produit ABC-GLOBAL</p>
@@ -1478,9 +1480,71 @@ function closeProgress() { $("screen-progress").classList.add("hidden"); }
 
 /* ===== Partage WhatsApp ===== */
 function partagerDiisoo() {
-    const txt = "Salut ! Je te recommande Diisoo : une application pour apprendre l'anglais et le wolof avec la voix, sur téléphone. Essaie-la ici : https://diisoo.sn";
+    const txt = "Salut ! Je te recommande Diisoo : une application pour apprendre l'anglais et le wolof avec la voix, sur téléphone. Essaie-la ici : https://diisoo.sn/?ref=" + monCodeRef();
     window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+    setTimeout(majCompteurParrainage, 1500);
 }
+
+/* ===== Parrainage : lien ?ref=CODE, tables parrainages (enregistrer / valider / compter) ===== */
+const REF_RE = /^[A-Z0-9]{6,10}$/;
+function monCodeRef() {
+    const c = store.get("diisoo_ref_code");
+    if (typeof c === "string" && REF_RE.test(c)) return c;
+    const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let s = "";
+    try { const r = new Uint8Array(8); crypto.getRandomValues(r); r.forEach(x => { s += A[x % A.length]; }); }
+    catch (e) { for (let i = 0; i < 8; i++) s += A[Math.floor(Math.random() * A.length)]; }
+    store.set("diisoo_ref_code", s);
+    return s;
+}
+function lireParrainURL() {
+    try {
+        const r = (new URLSearchParams(location.search).get("ref") || "").toUpperCase();
+        if (REF_RE.test(r) && r !== monCodeRef() && !store.get("diisoo_ref_parrain")) store.set("diisoo_ref_parrain", r);
+    } catch (e) {}
+}
+async function synchroParrainage() {
+    if (!db) return;
+    const parrain = store.get("diisoo_ref_parrain");
+    if (!parrain) return;
+    try {
+        if (!store.get("diisoo_ref_envoye")) {
+            const r = await db.rpc("enregistrer_parrainage", { p_parrain: parrain, p_filleul: monCodeRef() });
+            if (r && r.error && !/invalide/i.test(r.error.message || "")) return;
+            store.set("diisoo_ref_envoye", 1);
+        }
+        if (store.get("diisoo_ref_actif") && !store.get("diisoo_ref_valide")) {
+            const v = await db.rpc("valider_parrainage", { p_filleul: monCodeRef() });
+            if (!(v && v.error)) store.set("diisoo_ref_valide", 1);
+        }
+    } catch (e) {}
+}
+async function majCompteurParrainage() {
+    const el = $("ref-compteur");
+    if (!el) return;
+    let n = store.get("diisoo_ref_nb") || 0;
+    if (db) {
+        try {
+            const r = await db.rpc("compter_parrainages", { p_parrain: monCodeRef() });
+            if (r && !r.error && typeof r.data === "number") { n = r.data; store.set("diisoo_ref_nb", n); }
+        } catch (e) {}
+    }
+    if (n >= 10) el.textContent = "🎁 " + n + " amis invités : Pack Commerçants offert !";
+    else if (n >= 3) el.textContent = "🎁 " + n + " amis invités : 1 mois Premium gagné ! 10 amis = Pack Commerçants offert.";
+    else el.textContent = "Amis invités : " + n + " / 3 pour 1 mois Premium offert.";
+}
+(function () {
+    const _xp = addXP;
+    addXP = function () {
+        const r = _xp.apply(this, arguments);
+        if (store.get("diisoo_ref_parrain") && !store.get("diisoo_ref_actif")) { store.set("diisoo_ref_actif", 1); synchroParrainage(); }
+        return r;
+    };
+})();
+lireParrainURL();
+window.addEventListener("online", synchroParrainage);
+setTimeout(synchroParrainage, 2500);
+setTimeout(majCompteurParrainage, 2500);
 
 /* ===== Numéros internationaux ===== */
 const PAYS_TEL = {
