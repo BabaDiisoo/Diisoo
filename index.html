@@ -1375,13 +1375,16 @@ function renderPremium() {
             const bouton = actif
                 ? '<div class="block w-full text-center py-2.5 bg-[#10251A] text-[#5FC98F] rounded-xl text-xs font-bold">Accès actif</div>'
                 : '<a href="' + premiumLien(o) + '" target="_blank" rel="noopener" class="block w-full text-center py-2.5 ' + (o.dispo ? "btn-primary" : "bg-[#1E2740] text-[#C9BFA8]") + ' rounded-xl text-xs font-bold">' + (o.dispo ? "Commander sur WhatsApp" : "Me prévenir sur WhatsApp") + '</a>';
+            const payer = (!actif && (o.id === "premium" || o.id === "commercants") && paiementOuvert())
+                ? '<button type="button" onclick="payerOffre(\'' + o.id + '\')" class="block w-full text-center py-2.5 btn-primary rounded-xl text-xs font-bold">💳 Payer par Wave ou Orange Money</button>'
+                : '';
             return '<div class="bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3 space-y-2">' +
                 '<div class="flex justify-between items-start gap-2">' +
                     '<div class="flex items-center space-x-2"><span class="text-lg">' + o.icone + '</span><h3 class="text-sm font-bold text-[#F6F1E7]">' + o.titre + '</h3></div>' +
                     '<span class="text-[11px] font-bold text-[#F0906B] whitespace-nowrap">' + badge + '</span>' +
                 '</div>' +
                 '<p class="text-[11px] text-[#A69C86] leading-relaxed">' + o.texte + '</p>' +
-                bouton +
+                payer + bouton +
             '</div>';
         }).join("");
     };
@@ -1575,6 +1578,38 @@ async function majStatutAcces() {
 function aAcces(type) { return enPeriodeTest() || !!lireAcces()[type]; }
 window.addEventListener("online", majStatutAcces);
 setTimeout(majStatutAcces, 3000);
+
+/* ===== Paiement PayTech (Wave, Orange Money) =====
+   La fonction Supabase "bright-action" = paytech-creer. Bouton visible seulement en mode test (?paytest=1) tant que PAIEMENT_PUBLIC = false. */
+const PAIEMENT_PUBLIC = false;
+try { if (new URLSearchParams(location.search).get("paytest") === "1") store.set("diisoo_pay_test", 1); } catch (e) {}
+function paiementOuvert() { return PAIEMENT_PUBLIC || store.get("diisoo_pay_test") === 1; }
+async function payerOffre(offre) {
+    const p = getProfile();
+    if (!p || !p.phone) { toast("Ajoute d'abord ton numéro WhatsApp sur l'écran d'accueil, puis reviens ici."); closePremium(); return; }
+    if (!db) { toast("Paiement indisponible hors connexion."); return; }
+    toast("Ouverture du paiement sécurisé...");
+    try {
+        const r = await db.functions.invoke("bright-action", { body: { whatsapp: p.phone, offre: offre } });
+        const url = r && r.data && r.data.url;
+        if (url && /^https:\/\/paytech\.sn\//.test(url)) { location.href = url; return; }
+    } catch (e) {}
+    toast("Paiement indisponible. Commande par WhatsApp.");
+}
+(function () {
+    try {
+        const q = new URLSearchParams(location.search).get("paiement");
+        if (!q) return;
+        setTimeout(async () => {
+            if (q === "ok") {
+                toast("Paiement reçu. Activation en cours...");
+                await new Promise(r => setTimeout(r, 4000));
+                await majStatutAcces();
+                openPremium();
+            } else toast("Paiement annulé.");
+        }, 3500);
+    } catch (e) {}
+})();
 
 /* ===== Numéros internationaux ===== */
 const PAYS_TEL = {
