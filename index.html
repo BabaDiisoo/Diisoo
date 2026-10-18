@@ -427,17 +427,25 @@
                     <span>Diisoo <span class="text-[#E1693F] text-xs px-2 py-0.5 bg-[#E1693F]/10 rounded ml-1 uppercase font-sans font-bold">Dashboard</span></span>
                 </h1>
                 <span id="welcome-tag" class="text-xs text-[#A69C86] font-medium"></span>
-                <div class="relative">
-                    <button onclick="toggleBurgerMenu()" class="text-xl px-2 text-[#A69C86]">☰</button>
-                    <div id="burger-menu" class="hidden absolute right-0 mt-2 w-52 bg-[#141A2B] border border-[#1E2740] rounded-2xl shadow-xl z-50 overflow-hidden">
-                        <button onclick="toggleBurgerMenu();openProgress()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📈 Ma progression</button>
-                        <button onclick="toggleBurgerMenu();openPremium()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">⭐ Premium &amp; packs</button>
-                        <button onclick="toggleBurgerMenu();partagerDiisoo()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📤 Partager Diisoo</button>
-                        <a href="https://wa.me/221768426961?text=2" target="_blank" rel="noopener" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">👑 ABC Leaders</a>
-                        <a href="https://wa.me/221772882109?text=Bonjour%2C%20je%20souhaite%20contacter%20l%27agence%20ABC-GLOBAL." target="_blank" rel="noopener" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">📞 Contacter l'agence</a>
-                        <button onclick="toggleBurgerMenu();showTutorial()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">❓ Comment ça marche</button>
-                        <button onclick="toggleBurgerMenu();openFeedback()" class="w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]">💬 Donner mon avis</button>
-                        <div id="menu-session" class="border-t border-[#1E2740]"></div>
+                <div class="relative" id="burger-wrap">
+                    <button id="burger-btn" type="button" onclick="toggleBurgerMenu()" aria-label="Menu" aria-haspopup="true" aria-expanded="false" class="text-xl px-3 py-1 text-[#A69C86]">☰</button>
+                    <div id="burger-menu" role="menu" style="width:16.5rem;max-width:calc(100vw - 24px)" class="hidden absolute right-0 mt-2 bg-[#141A2B] border border-[#1E2740] rounded-2xl shadow-xl z-50 overflow-hidden">
+                        <div class="px-4 py-3 bg-[#0B0F1C]/60 border-b border-[#1E2740]">
+                            <p id="menu-etat-nom" class="text-sm font-bold text-[#F6F1E7]">Invité</p>
+                            <p id="menu-etat-statut" class="text-[10px] text-[#8C8064]"></p>
+                        </div>
+                        <p class="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#8C8064]">Mon espace</p>
+                        <button type="button" onclick="toggleBurgerMenu();openProgress()" role="menuitem" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740] active:bg-[#1E2740]">📈 Ma progression</button>
+                        <button type="button" onclick="toggleBurgerMenu();openPremium()" role="menuitem" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740] active:bg-[#1E2740]">⭐ Premium &amp; packs</button>
+                        <p class="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#8C8064]">Faire connaître</p>
+                        <button type="button" onclick="toggleBurgerMenu();partagerDiisoo()" role="menuitem" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740] active:bg-[#1E2740]">📤 Partager Diisoo</button>
+                        <p class="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#8C8064]">Aide</p>
+                        <button type="button" onclick="toggleBurgerMenu();showTutorial()" role="menuitem" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740] active:bg-[#1E2740]">❓ Comment ça marche</button>
+                        <button type="button" onclick="toggleBurgerMenu();openFeedback()" role="menuitem" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740] active:bg-[#1E2740]">💬 Donner mon avis</button>
+                        <p class="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#8C8064]">ABC-GLOBAL</p>
+                        <a href="https://wa.me/221768426961?text=2" target="_blank" rel="noopener" role="menuitem" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740] active:bg-[#1E2740]">👑 ABC Leaders</a>
+                        <a href="https://wa.me/221772882109?text=Bonjour%2C%20je%20souhaite%20contacter%20l%27agence%20ABC-GLOBAL." target="_blank" rel="noopener" role="menuitem" class="block w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740] active:bg-[#1E2740]">📞 Contacter ABC-GLOBAL</a>
+                        <div id="menu-session" class="mt-2 border-t border-[#1E2740]"></div>
                     </div>
                 </div>
             </div>
@@ -1291,26 +1299,51 @@ function updateStreak() {
     $("streak-counter").textContent = "🔥 " + n + (n > 1 ? " jours" : " jour");
 }
 
-function toggleBurgerMenu() { $("burger-menu").classList.toggle("hidden"); majMenuSession(); }
+function fermerMenu() {
+    const m = $("burger-menu");
+    if (m) m.classList.add("hidden");
+    const b = $("burger-btn");
+    if (b) b.setAttribute("aria-expanded", "false");
+}
+function toggleBurgerMenu() {
+    const m = $("burger-menu");
+    const ouvrir = m.classList.contains("hidden");
+    m.classList.toggle("hidden");
+    const b = $("burger-btn");
+    if (b) b.setAttribute("aria-expanded", String(ouvrir));
+    if (ouvrir) majMenuSession();
+}
+/* Un toucher en dehors du menu (ou la touche Échap) le referme */
+document.addEventListener("pointerdown", function (e) {
+    const w = $("burger-wrap");
+    if (w && !w.contains(e.target)) fermerMenu();
+}, true);
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") fermerMenu(); });
 function majMenuSession() {
     const box = $("menu-session");
     if (!box) return;
     let connecte = false;
     try { connecte = !!(window.Diisoo && window.Diisoo.etat().connecte); } catch (e) {}
-    const cls = "w-full text-left px-4 py-3 text-xs text-[#C9BFA8] hover:bg-[#1E2740]";
+    let nom = "Invité";
+    try { const p = getProfile(); if (p && p.first_name) nom = p.first_name + (p.last_name ? " " + p.last_name : ""); } catch (e) {}
+    const n = $("menu-etat-nom"), st = $("menu-etat-statut");
+    if (n) n.textContent = nom;
+    if (st) st.textContent = connecte ? "🟢 Connecté · progression sauvegardée" : "⚪ Non connecté · progression sur ce téléphone seulement";
+    const base = "block w-full text-left px-4 py-3 text-xs font-bold hover:bg-[#1E2740] active:bg-[#1E2740] ";
     box.innerHTML = connecte
-        ? '<button onclick="menuDeconnexion()" class="' + cls + '">🚪 Déconnexion</button>'
-        : '<button onclick="menuConnexion()" class="' + cls + '">🔑 Connexion</button>';
+        ? '<button type="button" role="menuitem" onclick="menuDeconnexion()" class="' + base + 'text-[#EE85A3]">🚪 Déconnexion</button>'
+        : '<button type="button" role="menuitem" onclick="menuConnexion()" class="' + base + 'text-[#5FC98F]">🔑 Connexion</button>';
 }
+try { majMenuSession(); } catch (e) {}
 async function menuConnexion() {
-    $("burger-menu").classList.add("hidden");
+    fermerMenu();
     const p = getProfile();
     try { await window.Diisoo.connexion(p ? { prenom: p.first_name, nom: p.last_name, email: p.email || "" } : undefined); }
     catch (error) { console.error("Erreur connexion Diisoo :", error); toast("Connexion indisponible pour le moment"); }
     majMenuSession();
 }
 async function menuDeconnexion() {
-    $("burger-menu").classList.add("hidden");
+    fermerMenu();
     try { await window.Diisoo.deconnexion(); } catch (error) { console.error("Erreur déconnexion Diisoo :", error); }
     logout();
     majMenuSession();
