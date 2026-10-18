@@ -1,36 +1,26 @@
 {
   "name": "Diisoo",
   "short_name": "Diisoo",
-  "description": "Apprendre l'anglais et le wolof : voix wolof, dialogues de marché et simulateur IELTS Life Skills.",
+  "description": "Apprendre l'anglais et le wolof au Sénégal : voix wolof, dialogues de marché (Sandaga, Colobane), anglais business et simulateur IELTS Life Skills. Édité par ABC-GLOBAL.",
   "id": "./",
-  "start_url": "./",
+  "start_url": "./?source=pwa",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
+  "dir": "ltr",
   "lang": "fr",
   "background_color": "#0B0F1C",
   "theme_color": "#0B0F1C",
+  "prefer_related_applications": false,
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
-  "categories": [
-    "education"
+  "categories": ["education", "business", "productivity"],
+  "shortcuts": [
+    { "name": "Ma révision du jour", "short_name": "Révision", "url": "./?source=raccourci-revision", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Simulateur IELTS", "short_name": "IELTS", "url": "./?source=raccourci-ielts", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] }
   ]
 }
