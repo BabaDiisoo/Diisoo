@@ -43,7 +43,7 @@ window.addEventListener("appinstalled", () => {
 const iOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
 if (iOS && !dejaInstallee()) {
   const attendre = () => creer("📲 Installer Diisoo", () => {
-    alert("Sur iPhone : touche le bouton Partager, puis « Sur l'écran d'accueil ».");
+    if (window.DiisooGuide) window.DiisooGuide.ouvrir(); else alert("Sur iPhone : touche le bouton Partager, puis « Sur l'écran d'accueil ».");
   });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", attendre);
   else attendre();
