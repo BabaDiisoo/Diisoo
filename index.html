@@ -2819,6 +2819,69 @@ const NIVEAUX_BIZ = { debutant: "🌱 Débutant", intermediaire: "🌿 Interméd
     });
 })();
 
+/* ---------- Dialogues supplémentaires par secteur (ajoutés après le tri par secteur) ---------- */
+(function ajouterDialoguesSecteurs() {
+    const AJOUTS = {
+        colobane: [
+            { scene: "🔧 Scène 2 : Garantie et retour", role: "client", wo: "Ndax am na garanti ci pièce bii ?", fr: "Y a-t-il une garantie sur cette pièce ?", en: "Is there a warranty on this part?" },
+            { role: "marchand", wo: "Waaw, ñetti weer la.", fr: "Oui, trois mois.", en: "Yes, three months." },
+            { role: "client", wo: "Bu ma ko tàbbalee te dootul dox, mën naa ko delloo ?", fr: "Si je l'installe et qu'elle ne marche plus, puis-je la rendre ?", en: "If I install it and it stops working, can I return it?" },
+            { role: "marchand", wo: "Waaw, indil ma facture bi ak pièce bi.", fr: "Oui, apporte-moi la facture et la pièce.", en: "Yes, bring me the invoice and the part." },
+            { role: "client", wo: "Ndax mën nga ma ko wuutal ak beneen ?", fr: "Pouvez-vous me l'échanger contre une autre ?", en: "Can you exchange it for another one?" },
+            { role: "marchand", wo: "Waaw, mën nañu ko wuutal ci ñetti fan.", fr: "Oui, on peut l'échanger dans les trois jours.", en: "Yes, we can exchange it within three days." }
+        ],
+        sandaga: [
+            { scene: "👗 Scène 2 : Prix de gros", role: "client", wo: "Ñaata la ci téeméer pièces ?", fr: "Combien pour cent pièces ?", en: "How much for one hundred pieces?" },
+            { role: "marchand", wo: "Ci téeméer pièces, ñett téeméer ak juróom-fukk junni.", fr: "Pour cent pièces, trois cent cinquante mille.", en: "For one hundred pieces, three hundred fifty thousand." },
+            { role: "client", wo: "Dafa seer. Ndax mën nga ko def ñett téeméer junni ?", fr: "C'est cher. Peux-tu faire trois cent mille ?", en: "That is expensive. Can you make it three hundred thousand?" },
+            { role: "marchand", wo: "Baax na, waaye fey bi dafa war a jëkk.", fr: "D'accord, mais le paiement doit venir d'abord.", en: "Okay, but the payment must come first." },
+            { role: "client", wo: "Dinaa fey juróom-fukk ci téeméer léegi, li desul bu ma jotee marsandiis bi.", fr: "Je paie cinquante pour cent maintenant, le reste à la réception.", en: "I will pay fifty percent now, and the rest when I receive the goods." },
+            { role: "marchand", wo: "Waaw, jërëjëf. Dinaa ko waajal ci ñetti fan.", fr: "Oui, merci. Je le prépare en trois jours.", en: "Yes, thank you. I will prepare it in three days." }
+        ],
+        electronique: [
+            { scene: "📱 Scène 2 : Paiement mobile et reçu", role: "client", wo: "Ndax mën naa fey ak Wave ?", fr: "Puis-je payer avec Wave ?", en: "Can I pay with Wave?" },
+            { role: "marchand", wo: "Waaw, yónnee ma ko ci numéro bii.", fr: "Oui, envoie-le moi sur ce numéro.", en: "Yes, send it to me on this number." },
+            { role: "client", wo: "Yónnee naa ko. Ndax mën nga ma jox reçu ?", fr: "Je l'ai envoyé. Pouvez-vous me donner un reçu ?", en: "I have sent it. Can you give me a receipt?" },
+            { role: "marchand", wo: "Waaw, dinaa la jox facture bi ak numéro série bi.", fr: "Oui, je te donne la facture et le numéro de série.", en: "Yes, I will give you the invoice and the serial number." },
+            { role: "client", wo: "Bu mu xaalee ci benn weer, ndax dinga ma ko wuutal ?", fr: "S'il tombe en panne dans le mois, me le remplacerez-vous ?", en: "If it breaks down within a month, will you replace it?" },
+            { role: "marchand", wo: "Waaw, ndegam garanti bi mu ngi fi.", fr: "Oui, tant que la garantie est valable.", en: "Yes, as long as the warranty is valid." }
+        ],
+        bazar: [
+            { scene: "🛋️ Scène 2 : Mesures et montage", role: "client", wo: "Ndax mën nga ñëw ci kër gi ngir jël mesure yi ?", fr: "Pouvez-vous venir à la maison prendre les mesures ?", en: "Can you come to the house to take the measurements?" },
+            { role: "marchand", wo: "Waaw, kañ nga bëgg ñu ñëw ?", fr: "Oui, quand voulez-vous que nous venions ?", en: "Yes, when would you like us to come?" },
+            { role: "client", wo: "Altine ci suba.", fr: "Lundi matin.", en: "Monday morning." },
+            { role: "marchand", wo: "Baax na. Dinañu ñëw ak ñaari liggéeykat ngir montage bi.", fr: "D'accord. Nous viendrons à deux pour le montage.", en: "Okay. We will come with two workers for the installation." },
+            { role: "client", wo: "Ñaata la montage bi ?", fr: "Combien coûte le montage ?", en: "How much is the installation?" },
+            { role: "marchand", wo: "Bokkul ci njëg bi, juróom junni la.", fr: "Il n'est pas inclus dans le prix, c'est cinq mille.", en: "It is not included in the price, it is five thousand." }
+        ],
+        agriculture: [
+            { scene: "🌾 Scène 2 : Acheter une pompe", role: "client", wo: "Ñaata la pompu ndox bii ?", fr: "Combien coûte cette pompe à eau ?", en: "How much is this water pump?" },
+            { role: "marchand", wo: "Ñaar téeméer ak juróom-fukk junni la.", fr: "Deux cent cinquante mille francs.", en: "Two hundred fifty thousand francs." },
+            { role: "client", wo: "Ndax dafay dox ak solaire ?", fr: "Fonctionne-t-elle à l'énergie solaire ?", en: "Does it work on solar power?" },
+            { role: "marchand", wo: "Waaw, am na panneau solaire bu mu àndal.", fr: "Oui, elle vient avec un panneau solaire.", en: "Yes, it comes with a solar panel." },
+            { role: "client", wo: "Ndax mën nga ma won ni muy liggéey ?", fr: "Pouvez-vous me montrer comment elle marche ?", en: "Can you show me how it works?" },
+            { role: "marchand", wo: "Waaw, ñëwal, dinaa la ko won ci tool bi.", fr: "Oui, viens, je te la montre dans le champ.", en: "Yes, come, I will show you in the field." }
+        ],
+        chine: [
+            { scene: "🛃 Scène 2 : Port et douane", role: "client", wo: "Ban papiers lañuy laaj ci douane ?", fr: "Quels documents la douane demande-t-elle ?", en: "Which documents does customs ask for?" },
+            { role: "marchand", wo: "Facture bi, packing list bi ak Bill of Lading bi.", fr: "La facture, la liste de colisage et le connaissement.", en: "The invoice, the packing list and the bill of lading." },
+            { role: "client", wo: "Ñaata la droits de douane yi ?", fr: "Combien sont les droits de douane ?", en: "How much are the customs duties?" },
+            { role: "marchand", wo: "Dafa aju ci xeetu marsandiis bi. Transitaire bi dina la ko wax.", fr: "Ça dépend du type de marchandise. Le transitaire te le dira.", en: "It depends on the type of goods. The freight forwarder will tell you." },
+            { role: "client", wo: "Ndax mën nga ma jox numéro transitaire bi ?", fr: "Peux-tu me donner le numéro du transitaire ?", en: "Can you give me the freight forwarder's number?" },
+            { role: "marchand", wo: "Waaw, dinaa la ko yónnee ci WhatsApp.", fr: "Oui, je te l'envoie sur WhatsApp.", en: "Yes, I will send it to you on WhatsApp." },
+            { scene: "🇨🇳 Scène 3 : Négocier avec le fournisseur chinois", role: "client", wo: "Ñaata la benn pièce ?", fr: "Combien coûte une pièce ?", en: "How much is each piece?" },
+            { role: "marchand", wo: "Fukk dolaar la ci benn.", fr: "Dix dollars l'unité.", en: "Ten dollars each." },
+            { role: "client", wo: "Dafa seer. Dinaa jënd juróom téeméer.", fr: "C'est cher. J'en achète cinq cents.", en: "That is expensive. I will buy five hundred." },
+            { role: "marchand", wo: "Juróom-ñett dolaar ngir juróom téeméer pièces.", fr: "Huit dollars pour cinq cents pièces.", en: "Eight dollars for five hundred pieces." },
+            { role: "client", wo: "Ndax mën nga ko yónnee Dakar ?", fr: "Pouvez-vous expédier à Dakar ?", en: "Can you ship to Dakar?" },
+            { role: "marchand", wo: "Waaw, FOB walla CIF, ban nga bëgg ?", fr: "Oui, FOB ou CIF, lequel voulez-vous ?", en: "Yes, FOB or CIF, which one do you want?" }
+        ]
+    };
+    Object.keys(AJOUTS).forEach(k => {
+        BUSINESS_DIALOGUES[k] = (BUSINESS_DIALOGUES[k] || []).concat(AJOUTS[k]);
+    });
+})();
+
 function renderBusinessPicker() {
     const box = $("business-picker");
     if (!box) return;
@@ -4582,7 +4645,7 @@ function revPool() {
         cles.add(it.cle);
         pool.push(it);
     }
-    GENERAL_THEMES.forEach(t => (t.vocab || []).forEach(w => ajouter({ cle: "gen:" + t.id + ":" + w.en, src: "gen", en: w.en, fr: w.fr, wo: w.wo || "", audio: null })));
+    GENERAL_THEMES.forEach(t => (t.vocab || []).forEach(w => ajouter({ cle: "gen:" + t.id + ":" + w.en, src: "gen", theme: t.id, themeTitre: t.title, en: w.en, fr: w.fr, wo: w.wo || "", audio: null })));
     LEXICON.forEach(w => { if (w.cat !== "wikidata") ajouter({ cle: "wo:" + w.en, src: "wo", en: w.en, fr: w.fr, wo: w.wo || "", audio: w.audio || null }); });
     return pool;
 }
@@ -4615,15 +4678,26 @@ function revClasser(pool) {
     };
 }
 
-/* Choisit les éléments de la séance : jusqu'à 4 à revoir, puis du nouveau, puis le reste */
+/* Thème du jour : le même pour tous, il change chaque jour (decalage 1 = demain) */
+function revThemeDuJour(decalage) {
+    const th = GENERAL_THEMES.filter(t => (t.vocab || []).length >= REV_TAILLE);
+    if (!th.length) return null;
+    const jours = Math.floor(new Date(revAujourdhui()).getTime() / 86400000) + (decalage || 0);
+    return th[((jours % th.length) + th.length) % th.length];
+}
+
+/* Séance cohérente : 2 mots à revoir, puis du nouveau du thème du jour, puis le reste */
 function revChoisir(exclus) {
     const c = revClasser(revPool());
+    const th = revThemeDuJour(0);
+    const dansTheme = it => !th || it.theme === th.id;
     const pris = [];
     const mots = new Set();
-    function prendre(liste, max, strict) {
+    function prendre(liste, max, strict, filtre) {
         for (const it of liste) {
             if (pris.length >= REV_TAILLE || max <= 0) break;
             if (strict && exclus.has(it.cle)) continue;
+            if (filtre && !filtre(it)) continue;
             const m = it.en.trim().toLowerCase();
             if (mots.has(m)) continue;
             mots.add(m);
@@ -4633,12 +4707,15 @@ function revChoisir(exclus) {
     }
     [true, false].forEach(strict => {
         if (pris.length >= REV_TAILLE) return;
-        prendre(c.du, 4, strict);
-        prendre(c.nouveau, REV_TAILLE, strict);
+        prendre(c.du, 2, strict, dansTheme);
+        prendre(c.du, 2 - pris.length, strict);
+        prendre(c.nouveau, REV_TAILLE, strict, dansTheme);
+        prendre(c.plusTard, REV_TAILLE, strict, dansTheme);
         prendre(c.du, REV_TAILLE, strict);
+        prendre(c.nouveau, REV_TAILLE, strict);
         prendre(c.plusTard, REV_TAILLE, strict);
     });
-    return revMelanger(pris);
+    return pris;
 }
 
 /* Fausses réponses de longueur proche, jamais identiques à la bonne */
@@ -4672,7 +4749,7 @@ function revDemarrer() {
     const items = revChoisir(new Set(j.vus));
     if (!items.length) { toast("Aucun mot à réviser pour le moment"); return; }
     const pool = revPool();
-    revSession = { questions: items.map((it, i) => revConstruire(it, REV_ORDRE[i % REV_ORDRE.length], pool)), i: 0, bon: 0, xp: 0, rates: 0 };
+    revSession = { questions: items.map((it, i) => revConstruire(it, REV_ORDRE[i % REV_ORDRE.length], pool)), i: 0, bon: 0, xp: 0, rates: 0, theme: (revThemeDuJour(0) || {}).title || "" };
     changeScreen("screen-revision");
     revAfficher();
 }
@@ -4697,7 +4774,7 @@ function revAfficher() {
     const it = q.it;
     const n = s.questions.length;
     $("rev-bar").style.width = Math.round(s.i / n * 100) + "%";
-    $("rev-etape").textContent = "Question " + (s.i + 1) + " sur " + n;
+    $("rev-etape").textContent = "Question " + (s.i + 1) + " sur " + n + (s.theme ? " · " + s.theme : "");
     const etiquette = it.etat === "du"
         ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold">🔁 À revoir</span>'
         : it.etat === "tard"
@@ -4791,6 +4868,20 @@ function revSuivant() {
     if (s.i >= s.questions.length) revResultat(); else revAfficher();
 }
 
+function revRecapHtml(s) {
+    const demain = revThemeDuJour(1);
+    const serie = (store.get("diisoo_streak") || { count: 0 }).count || 0;
+    return '<div class="bg-[#141A2B] border border-[#1E2740] rounded-2xl p-4 space-y-2">' +
+            '<p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider">À retenir aujourd\'hui' + (s.theme ? ' · ' + esc(s.theme) : '') + '</p>' +
+            s.questions.map(q => '<p class="text-xs text-[#C9BFA8]"><span class="font-semibold text-[#F6F1E7]">' + esc(q.it.en) + '</span> : ' + esc(q.it.fr) + (q.it.wo ? ' <span class="text-[#5FC98F]">(' + esc(q.it.wo) + ')</span>' : '') + '</p>').join("") +
+        '</div>' +
+        '<div class="bg-gradient-to-br from-[#10251A] to-[#141A2B] border border-[#3FAE74]/30 rounded-2xl p-4 text-center space-y-1">' +
+            '<p class="text-[10px] font-bold text-[#5FC98F] uppercase tracking-wider">Rendez-vous demain</p>' +
+            '<p class="text-sm font-bold text-[#F6F1E7]">' + (demain ? esc(demain.title) : 'Nouveaux mots') + '</p>' +
+            '<p class="text-[11px] text-amber-400">🔥 ' + (serie > 0 ? 'Ta série : ' + serie + ' jour' + (serie > 1 ? 's' : '') + '. Reviens demain pour la garder.' : 'Reviens demain pour commencer ta série.') + '</p>' +
+        '</div>';
+}
+
 function revResultat() {
     const s = revSession;
     const n = s.questions.length;
@@ -4811,7 +4902,7 @@ function revResultat() {
             '<p class="text-3xl font-black text-[#5FC98F]">' + s.bon + ' / ' + n + '</p>' +
             '<p class="text-xs text-[#A69C86]">' + message + '</p>' +
             '<p class="text-[11px] text-amber-400">+' + s.xp + ' XP' + (s.rates ? ' · ' + s.rates + ' à revoir demain' : '') + '</p>' +
-        '</div>' +
+        '</div>' + revRecapHtml(s) +
         '<button type="button" onclick="revDemarrer()" class="w-full py-3 btn-primary rounded-xl text-sm font-bold">🔁 Encore ' + REV_TAILLE + ' autres mots</button>';
     if (pct >= 80) celebrate();
     revSession = null;
@@ -4828,10 +4919,10 @@ function renderRevisionCard() {
     const fait = j.series > 0;
     badge.textContent = du > 0 ? du + " à revoir" : fait ? "✅ Fait" : REV_TAILLE + " mots";
     sub.textContent = fait
-        ? "Bravo pour aujourd'hui (" + j.bon + " bonne" + (j.bon > 1 ? "s" : "") + " réponse" + (j.bon > 1 ? "s" : "") + "). Tu peux en refaire " + REV_TAILLE + " autres."
+        ? "Bravo pour aujourd'hui (" + j.bon + " bonne" + (j.bon > 1 ? "s" : "") + " réponse" + (j.bon > 1 ? "s" : "") + "). Demain : " + ((revThemeDuJour(1) || {}).title || "nouveaux mots") + "."
         : du > 0
-            ? "Les mots que tu as ratés reviennent ici, avec quelques nouveaux. Environ 2 minutes."
-            : REV_TAILLE + " mots choisis pour toi, à écouter et à choisir. Environ 2 minutes.";
+            ? "Thème du jour : " + ((revThemeDuJour(0) || {}).title || "") + ". Tes mots à revoir, puis du nouveau. Environ 2 minutes."
+            : "Thème du jour : " + ((revThemeDuJour(0) || {}).title || "") + ". " + REV_TAILLE + " mots à écouter et à choisir. Environ 2 minutes.";
 }
 
 (function () {
