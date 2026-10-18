@@ -235,6 +235,17 @@
         span.block.italic.text-\[\#A69C86\],
         span.block.italic.text-\[\#5FC98F\] { margin-top: 3px; }
 </style>
+<style id="dlg-style">
+.dlg-fil{display:flex;flex-direction:column;gap:10px}
+.dlg-bulle{max-width:90%;padding:10px 12px;border-radius:16px;border:1px solid #1E2740;background:#141A2B;transition:background .25s,border-color .25s,box-shadow .25s,transform .25s}
+.dlg-bulle.dlg-a{align-self:flex-start;border-bottom-left-radius:4px}
+.dlg-bulle.dlg-b{align-self:flex-end;border-bottom-right-radius:4px;background:#1A2036}
+.dlg-bulle.dlg-actif{border-color:#E1693F;background:#2A1A14;box-shadow:0 0 0 2px rgba(225,105,63,.4);transform:scale(1.02)}
+.dlg-qui{font-size:10px;font-weight:700;color:#8C8064;margin-bottom:2px}
+.aide-barre{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.aide-chip{padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid #1E2740;background:#141A2B;color:#A69C86}
+.aide-chip.on{background:#1F6B47;border-color:#2C8F5C;color:#fff}
+</style>
 </head>
 <body class="bg-[#0B0F1C] font-sans antialiased text-white">
 <noscript>
@@ -1094,6 +1105,7 @@ async function playSequence(items) {
     refreshPracticeButtons();
     for (const it of items) {
         if (my !== seqToken) return;
+        if (typeof it.onStart === "function") { try { it.onStart(); } catch (e) { console.error(e); } }
         await _speak(it.text, it.lang, it.rate, it.key, true);
         if (my !== seqToken) return;
         await new Promise(r => setTimeout(r, 300));
@@ -2125,11 +2137,79 @@ function setGeneralTheme(id) {
     try { const th = currentGeneralTheme(); prefetchVoix((th.vocab || []).map(v => v.en), "en"); prefetchVoix((th.vocab || []).map(v => v.wo), "wo"); } catch (error) { console.error("Erreur Audio Diisoo :", error); }
 }
 
+/* ---------- Dialogue en bulles : l'écran suit la voix ---------- */
+const DLG_PREFS_STORE = "diisoo_dlg_prefs";
+let dlgJeton = 0;
+function dlgPrefs() {
+    const p = store.get(DLG_PREFS_STORE) || {};
+    return { fr: p.fr !== false, wo: p.wo === true };
+}
+function dlgBasculer(cle) {
+    const p = dlgPrefs();
+    p[cle] = !p[cle];
+    store.set(DLG_PREFS_STORE, p);
+    dlgAppliquer();
+}
+function dlgAppliquer() {
+    const p = dlgPrefs();
+    document.querySelectorAll("#general-content .dlg-fr").forEach(el => { el.style.display = p.fr ? "" : "none"; });
+    document.querySelectorAll("#general-content .dlg-wo, #general-content .voc-wo").forEach(el => { el.style.display = p.wo ? "" : "none"; });
+    const bf = $("aide-fr"), bw = $("aide-wo");
+    if (bf) bf.classList.toggle("on", p.fr);
+    if (bw) bw.classList.toggle("on", p.wo);
+}
+function renderGeneralDialogue(box, theme) {
+    const titre = document.createElement("p");
+    titre.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider pt-2";
+    titre.textContent = "Dialogue : écoute et suis";
+    box.appendChild(titre);
+
+    const tout = document.createElement("button");
+    tout.type = "button";
+    tout.className = "w-full py-3 btn-primary rounded-xl text-xs font-bold";
+    tout.textContent = "▶️ Écouter tout le dialogue";
+    tout.onclick = playFullDialogue;
+    tout.dataset.practice = "dlg-all"; tout.dataset.gate = "0";
+    box.appendChild(tout);
+
+    const fil = document.createElement("div");
+    fil.id = "dlg-fil";
+    fil.className = "dlg-fil";
+    theme.dialogue.forEach((line, i) => {
+        const b = document.createElement("div");
+        b.id = "dlg-l-" + i;
+        b.className = "dlg-bulle " + (line.who === "B" ? "dlg-b" : "dlg-a");
+        b.innerHTML =
+            '<p class="dlg-qui">' + esc(line.who || "") + '</p>' +
+            '<p class="text-sm font-semibold text-[#F6F1E7]">' + esc(line.en) +
+                ' <button type="button" onclick="speakDialogueLine(' + i + ')" data-practice="dlg-line" data-gate="0" class="text-[#F0906B] text-xs align-middle">🔊</button></p>' +
+            (line.fr ? '<p class="dlg-fr text-[11px] text-[#A69C86] italic mt-1">🇫🇷 ' + esc(line.fr) + '</p>' : '') +
+            (line.wo ? '<p class="dlg-wo text-[11px] text-[#5FC98F] italic mt-1">🗣️ ' + esc(line.wo) + '</p>' : '');
+        fil.appendChild(b);
+    });
+    box.appendChild(fil);
+}
+function dlgSuivre(i, defiler) {
+    document.querySelectorAll("#dlg-fil .dlg-bulle").forEach(el => el.classList.remove("dlg-actif"));
+    if (i < 0) return;
+    const el = $("dlg-l-" + i);
+    if (!el) return;
+    el.classList.add("dlg-actif");
+    if (defiler) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 function renderGeneralContent() {
     const theme = currentGeneralTheme();
     const box = $("general-content");
     box.innerHTML = "";
     const stats = getWordStats();
+
+    const barre = document.createElement("div");
+    barre.className = "aide-barre";
+    barre.innerHTML = '<span class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider">Aides</span>' +
+        '<button type="button" id="aide-fr" class="aide-chip" onclick="dlgBasculer(\'fr\')">🇫🇷 Français</button>' +
+        '<button type="button" id="aide-wo" class="aide-chip" onclick="dlgBasculer(\'wo\')">🗣️ Wolof</button>';
+    box.appendChild(barre);
 
     const vocTitle = document.createElement("p");
     vocTitle.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider";
@@ -2146,7 +2226,7 @@ function renderGeneralContent() {
               '<p class="text-base font-bold text-[#F6F1E7]">' + w.en + '</p>' +
               '<div class="text-right">' +
                 '<p class="text-xs text-[#8C8064]">' + w.fr + '</p>' +
-                (w.wo ? '<p class="text-[10px] text-[#5FC98F] italic">🗣️ ' + esc(w.wo) + '</p>' : '') +
+                (w.wo ? '<p class="voc-wo text-[10px] text-[#5FC98F] italic">🗣️ ' + esc(w.wo) + '</p>' : '') +
                 (due ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full">🔁 À revoir</span>' : '') +
               '</div>' +
             '</div>' +
@@ -2158,28 +2238,7 @@ function renderGeneralContent() {
         box.appendChild(card);
     });
 
-    const dlgTitle = document.createElement("p");
-    dlgTitle.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider pt-2";
-    dlgTitle.textContent = "Petit dialogue";
-    box.appendChild(dlgTitle);
-    const dlgCard = document.createElement("div");
-    dlgCard.className = "bg-[#141A2B] border border-[#1E2740] rounded-2xl p-4 space-y-2";
-    theme.dialogue.forEach((line, i) => {
-        const p = document.createElement("p");
-        p.className = "text-sm text-[#E4DCC9]";
-        p.innerHTML = "<b>" + line.who + ":</b> " + esc(line.en) +
-            ' <button onclick="speakDialogueLine(' + i + ')" data-practice="dlg-line" data-gate="0" class="text-[#F0906B] text-xs align-middle">🔊</button>' +
-            (line.fr ? '<span class="block text-[11px] text-[#A69C86] italic">🇫🇷 ' + esc(line.fr) + '</span>' : '') +
-            (line.wo ? '<span class="block text-[11px] text-[#5FC98F] italic">🗣️ ' + esc(line.wo) + '</span>' : '');
-        dlgCard.appendChild(p);
-    });
-    const playAll = document.createElement("button");
-    playAll.className = "w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold mt-2";
-    playAll.textContent = "🔊 Écouter tout le dialogue";
-    playAll.onclick = playFullDialogue;
-    playAll.dataset.practice = "dlg-all"; playAll.dataset.gate = "0";
-    dlgCard.appendChild(playAll);
-    box.appendChild(dlgCard);
+    renderGeneralDialogue(box, theme);
 
     const quizTitle = document.createElement("p");
     quizTitle.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider pt-2";
@@ -2190,6 +2249,7 @@ function renderGeneralContent() {
     quizBox.className = "space-y-3";
     box.appendChild(quizBox);
     renderGeneralQuiz();
+    dlgAppliquer();
     refreshPracticeButtons();
 }
 
@@ -2221,9 +2281,16 @@ async function practiceGeneralWord(i) {
     }
 }
 
-function speakDialogueLine(i) { speak(currentGeneralTheme().dialogue[i].en, "en-GB", 0.85); }
+function speakDialogueLine(i) {
+    const mon = ++dlgJeton;
+    dlgSuivre(i, false);
+    const fin = () => { if (mon === dlgJeton) dlgSuivre(-1); };
+    return speak(currentGeneralTheme().dialogue[i].en, "en-GB", 0.85).then(fin, fin);
+}
 function playFullDialogue() {
-    return playSequence(currentGeneralTheme().dialogue.map(line => ({ text: line.en, lang: "en-GB", rate: 0.85 })));
+    const mon = ++dlgJeton;
+    const fin = () => { if (mon === dlgJeton) dlgSuivre(-1); };
+    return playSequence(currentGeneralTheme().dialogue.map((line, i) => ({ text: line.en, lang: "en-GB", rate: 0.85, onStart: () => dlgSuivre(i, true) }))).then(fin, fin);
 }
 
 function renderGeneralQuiz() {
