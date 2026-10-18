@@ -1,4 +1,14 @@
+# Directives d'indexation pour Google, Safari et les IA
 User-agent: *
+User-agent: Googlebot
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: PerplexityBot
 Allow: /
+Disallow: /api/
 
+# Plan du site
 Sitemap: https://diisoo.sn/sitemap.xml
