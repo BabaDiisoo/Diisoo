@@ -710,7 +710,7 @@
         <!-- ======================================================== -->
         <div id="screen-test-simulation" class="hidden flex flex-col justify-between h-full min-h-[85vh]">
             <div class="flex justify-between items-center border-b border-[#141A2B] pb-4">
-                <div><span id="test-phase-label" class="text-[10px] font-bold text-[#F0906B] uppercase tracking-wider">3 tests complets</span><h3 id="test-topic-label" class="text-base font-bold text-[#E4DCC9]">Simulateur IELTS Life Skills A1</h3></div>
+                <div><span id="test-phase-label" class="text-[10px] font-bold text-[#F0906B] uppercase tracking-wider">18 tests complets</span><h3 id="test-topic-label" class="text-base font-bold text-[#E4DCC9]">Simulateur IELTS Life Skills A1</h3></div>
                 <div id="test-timer" class="text-2xl font-mono font-black text-[#6B604A]">--</div>
             </div>
 
@@ -3582,6 +3582,268 @@ const TEST_PHOTOS = {
     health: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#eef6f5"/><rect x="60" y="140" width="180" height="60" fill="#ffffff" stroke="#c9c9c9" stroke-width="2"/><rect x="90" y="150" width="120" height="14" fill="#dfe9e8"/><circle cx="280" cy="150" r="16" fill="#f2c39c"/><rect x="264" y="166" width="32" height="40" fill="#ffffff" stroke="#3b6ea5" stroke-width="2"/><rect x="272" y="120" width="16" height="4" fill="#c0442f"/><rect x="278" y="114" width="4" height="16" fill="#c0442f"/></svg>',
     food: '<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#f4e9d8"/><ellipse cx="200" cy="180" rx="110" ry="22" fill="#3b3b3b"/><ellipse cx="200" cy="170" rx="100" ry="18" fill="#c0442f"/><circle cx="170" cy="165" r="8" fill="#e8c96b"/><circle cx="220" cy="160" r="8" fill="#4a8f5c"/><circle cx="120" cy="110" r="10" fill="#e0b98a"/><rect x="104" y="126" width="32" height="30" fill="#3b6ea5"/><circle cx="280" cy="110" r="10" fill="#f2c39c"/><rect x="264" y="126" width="32" height="30" fill="#4a8f5c"/></svg>'
 };
+/* 6 tests supplémentaires (ajout) : mêmes 4 phases que les premiers */
+TEST_BANK.push(
+{
+ "id": "home",
+ "topic": "My Home",
+ "phases": [
+  {
+   "id": "1a",
+   "label": "Personal Information",
+   "questions": [
+    "What is your name?",
+    "Where do you live?",
+    "Who do you live with?"
+   ]
+  },
+  {
+   "id": "1b",
+   "label": "Topic Questioning",
+   "questions": [
+    "Do you live in a house or an apartment?",
+    "How many rooms are there in your home?",
+    "What is your favourite room?",
+    "Do you have a garden or a yard?",
+    "Is your home near the market?"
+   ]
+  },
+  {
+   "id": "2a",
+   "label": "Photograph Discussion",
+   "introFR": "Imaginez une photo d'une cour avec une maison, des enfants qui jouent et une femme qui prépare le repas.",
+   "questions": [
+    "What can you see in this picture?",
+    "What is the woman doing?"
+   ]
+  },
+  {
+   "id": "2b",
+   "label": "Further Discussion",
+   "questions": [
+    "Is it important to have a clean home? Why?",
+    "What would you like to change in your home?"
+   ]
+  }
+ ]
+},
+{
+ "id": "daily",
+ "topic": "Daily Routine",
+ "phases": [
+  {
+   "id": "1a",
+   "label": "Personal Information",
+   "questions": [
+    "What is your name?",
+    "How old are you?",
+    "What do you do?"
+   ]
+  },
+  {
+   "id": "1b",
+   "label": "Topic Questioning",
+   "questions": [
+    "What time do you wake up?",
+    "What do you eat in the morning?",
+    "How do you go to work or school?",
+    "What do you do in the evening?",
+    "What time do you go to bed?"
+   ]
+  },
+  {
+   "id": "2a",
+   "label": "Photograph Discussion",
+   "introFR": "Imaginez une photo d'un homme qui se prépare le matin et part au travail.",
+   "questions": [
+    "What can you see in this picture?",
+    "What time do you think it is? Why?"
+   ]
+  },
+  {
+   "id": "2b",
+   "label": "Further Discussion",
+   "questions": [
+    "Do you prefer the morning or the evening? Why?",
+    "What would you change in your daily routine?"
+   ]
+  }
+ ]
+},
+{
+ "id": "weather",
+ "topic": "Weather & Seasons",
+ "phases": [
+  {
+   "id": "1a",
+   "label": "Personal Information",
+   "questions": [
+    "What is your name?",
+    "Where are you from?",
+    "What is your job?"
+   ]
+  },
+  {
+   "id": "1b",
+   "label": "Topic Questioning",
+   "questions": [
+    "What is the weather like today?",
+    "Do you like the rainy season?",
+    "What do you wear when it is hot?",
+    "What is your favourite season?",
+    "Is it hot in your town in April?"
+   ]
+  },
+  {
+   "id": "2a",
+   "label": "Photograph Discussion",
+   "introFR": "Imaginez une photo de personnes qui marchent sous la pluie avec des parapluies.",
+   "questions": [
+    "What can you see in this picture?",
+    "How do you think the people feel?"
+   ]
+  },
+  {
+   "id": "2b",
+   "label": "Further Discussion",
+   "questions": [
+    "How does the weather change your day?",
+    "What do you do when it rains a lot?"
+   ]
+  }
+ ]
+},
+{
+ "id": "holidays",
+ "topic": "Holidays",
+ "phases": [
+  {
+   "id": "1a",
+   "label": "Personal Information",
+   "questions": [
+    "What is your name?",
+    "Where are you from?",
+    "How old are you?"
+   ]
+  },
+  {
+   "id": "1b",
+   "label": "Topic Questioning",
+   "questions": [
+    "Do you like holidays?",
+    "Where do you go on holiday?",
+    "Who do you go with?",
+    "What do you do on holiday?",
+    "Do you prefer the beach or the city?"
+   ]
+  },
+  {
+   "id": "2a",
+   "label": "Photograph Discussion",
+   "introFR": "Imaginez une photo d'une famille sur une plage avec des valises.",
+   "questions": [
+    "What can you see in this picture?",
+    "Do you think they are happy? Why?"
+   ]
+  },
+  {
+   "id": "2b",
+   "label": "Further Discussion",
+   "questions": [
+    "Why are holidays important?",
+    "Where would you like to go next year? Why?"
+   ]
+  }
+ ]
+},
+{
+ "id": "learning",
+ "topic": "Learning English",
+ "phases": [
+  {
+   "id": "1a",
+   "label": "Personal Information",
+   "questions": [
+    "What is your name?",
+    "Where do you live?",
+    "What do you do?"
+   ]
+  },
+  {
+   "id": "1b",
+   "label": "Topic Questioning",
+   "questions": [
+    "Why do you learn English?",
+    "How long do you study every day?",
+    "Do you practise with friends?",
+    "Do you watch English videos or listen to English songs?",
+    "What is difficult for you in English?"
+   ]
+  },
+  {
+   "id": "2a",
+   "label": "Photograph Discussion",
+   "introFR": "Imaginez une photo de personnes dans une salle de classe avec un professeur au tableau.",
+   "questions": [
+    "What can you see in this picture?",
+    "What is the teacher doing?"
+   ]
+  },
+  {
+   "id": "2b",
+   "label": "Further Discussion",
+   "questions": [
+    "Is English important for your job? Why?",
+    "How can you improve your English?"
+   ]
+  }
+ ]
+},
+{
+ "id": "town",
+ "topic": "Town & Directions",
+ "phases": [
+  {
+   "id": "1a",
+   "label": "Personal Information",
+   "questions": [
+    "What is your name?",
+    "Where are you from?",
+    "Where do you live?"
+   ]
+  },
+  {
+   "id": "1b",
+   "label": "Topic Questioning",
+   "questions": [
+    "What is the name of your town?",
+    "Is your town big or small?",
+    "What can you find in your town?",
+    "How do you go to the market?",
+    "Is there a hospital near your home?"
+   ]
+  },
+  {
+   "id": "2a",
+   "label": "Photograph Discussion",
+   "introFR": "Imaginez une photo d'une rue avec un marché, une banque et une station de bus.",
+   "questions": [
+    "What can you see in this picture?",
+    "What are the people doing?"
+   ]
+  },
+  {
+   "id": "2b",
+   "label": "Further Discussion",
+   "questions": [
+    "What do you like about your town?",
+    "What would you add to your town?"
+   ]
+  }
+ ]
+}
+);
+Object.assign(TEST_PHOTOS, {"home": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#bcdff5\"/><rect y=\"190\" width=\"400\" height=\"70\" fill=\"#d9c08a\"/><rect x=\"60\" y=\"90\" width=\"170\" height=\"110\" fill=\"#f0e2c4\"/><polygon points=\"50,92 145,35 240,92\" fill=\"#b5532d\"/><rect x=\"125\" y=\"140\" width=\"38\" height=\"60\" fill=\"#7a5230\"/><rect x=\"80\" y=\"115\" width=\"30\" height=\"28\" fill=\"#9ec9e8\"/><rect x=\"180\" y=\"115\" width=\"30\" height=\"28\" fill=\"#9ec9e8\"/><circle cx=\"285\" cy=\"170\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"275\" y=\"182\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#c2542d\"/><circle cx=\"325\" cy=\"185\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"315\" y=\"197\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2fa38e\"/><circle cx=\"255\" cy=\"200\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"245\" y=\"212\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#e1b24a\"/><circle cx=\"350\" cy=\"45\" r=\"22\" fill=\"#f6d25a\"/></svg>", "daily": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#f8d9a8\"/><circle cx=\"330\" cy=\"70\" r=\"30\" fill=\"#f6b84a\"/><rect y=\"200\" width=\"400\" height=\"60\" fill=\"#c9b07a\"/><rect x=\"40\" y=\"110\" width=\"110\" height=\"90\" fill=\"#e8dcc0\"/><rect x=\"62\" y=\"132\" width=\"26\" height=\"68\" fill=\"#7a5230\"/><circle cx=\"215\" cy=\"150\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"205\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#c2542d\"/><rect x=\"238\" y=\"165\" width=\"26\" height=\"20\" rx=\"4\" fill=\"#3b3b3b\"/><rect x=\"300\" y=\"150\" width=\"70\" height=\"50\" rx=\"8\" fill=\"#2fa38e\"/><circle cx=\"318\" cy=\"205\" r=\"9\" fill=\"#333\"/><circle cx=\"352\" cy=\"205\" r=\"9\" fill=\"#333\"/></svg>", "weather": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#9aa8b5\"/><ellipse cx=\"110\" cy=\"50\" rx=\"70\" ry=\"26\" fill=\"#6d7a86\"/><ellipse cx=\"280\" cy=\"40\" rx=\"80\" ry=\"28\" fill=\"#6d7a86\"/><rect y=\"200\" width=\"400\" height=\"60\" fill=\"#5c6670\"/><line x1=\"30\" y1=\"90\" x2=\"24\" y2=\"106\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"80\" y1=\"120\" x2=\"74\" y2=\"136\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"140\" y1=\"80\" x2=\"134\" y2=\"96\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"200\" y1=\"110\" x2=\"194\" y2=\"126\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"260\" y1=\"85\" x2=\"254\" y2=\"101\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"330\" y1=\"115\" x2=\"324\" y2=\"131\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"370\" y1=\"80\" x2=\"364\" y2=\"96\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"110\" y1=\"150\" x2=\"104\" y2=\"166\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><line x1=\"300\" y1=\"150\" x2=\"294\" y2=\"166\" stroke=\"#d7e6f2\" stroke-width=\"2\"/><path d=\"M105 120 q40 -45 80 0 z\" fill=\"#e1693f\"/><line x1=\"145\" y1=\"120\" x2=\"145\" y2=\"175\" stroke=\"#333\" stroke-width=\"2\"/><circle cx=\"145\" cy=\"155\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"135\" y=\"167\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><path d=\"M255 125 q40 -45 80 0 z\" fill=\"#e1b24a\"/><line x1=\"295\" y1=\"125\" x2=\"295\" y2=\"180\" stroke=\"#333\" stroke-width=\"2\"/><circle cx=\"295\" cy=\"160\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"285\" y=\"172\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#a33f6b\"/></svg>", "holidays": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#bfe6f5\"/><rect y=\"130\" width=\"400\" height=\"60\" fill=\"#3aa6d6\"/><rect y=\"180\" width=\"400\" height=\"80\" fill=\"#f1dcA0\"/><circle cx=\"340\" cy=\"50\" r=\"26\" fill=\"#f6d25a\"/><rect x=\"60\" y=\"150\" width=\"5\" height=\"60\" fill=\"#7a5230\"/><path d=\"M30 150 q30 -40 70 0 z\" fill=\"#e1693f\"/><circle cx=\"160\" cy=\"175\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"150\" y=\"187\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#c2542d\"/><circle cx=\"200\" cy=\"185\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"190\" y=\"197\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2fa38e\"/><circle cx=\"235\" cy=\"195\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"225\" y=\"207\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#e1b24a\"/><rect x=\"290\" y=\"190\" width=\"40\" height=\"30\" rx=\"4\" fill=\"#a33f3f\"/><rect x=\"335\" y=\"198\" width=\"32\" height=\"24\" rx=\"4\" fill=\"#2f5ca3\"/></svg>", "learning": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#efe6d2\"/><rect y=\"200\" width=\"400\" height=\"60\" fill=\"#c9b07a\"/><rect x=\"40\" y=\"40\" width=\"200\" height=\"90\" fill=\"#2f5b46\"/><text x=\"60\" y=\"90\" font-family=\"sans-serif\" font-size=\"26\" fill=\"#f4f0e0\">Hello! A B C</text><circle cx=\"280\" cy=\"95\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"270\" y=\"107\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#a33f6b\"/><circle cx=\"90\" cy=\"150\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"80\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><circle cx=\"150\" cy=\"150\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"140\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><circle cx=\"210\" cy=\"150\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"200\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><rect x=\"70\" y=\"190\" width=\"170\" height=\"10\" fill=\"#7a5230\"/></svg>", "town": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#bcdff5\"/><rect y=\"190\" width=\"400\" height=\"70\" fill=\"#8d8d8d\"/><rect x=\"15\" y=\"100\" width=\"100\" height=\"90\" fill=\"#e8c9a0\"/><polygon points=\"10,100 65,62 120,100\" fill=\"#b5532d\"/><rect x=\"130\" y=\"85\" width=\"105\" height=\"105\" fill=\"#d8d3c4\"/><rect x=\"150\" y=\"105\" width=\"22\" height=\"22\" fill=\"#9ec9e8\"/><rect x=\"190\" y=\"105\" width=\"22\" height=\"22\" fill=\"#9ec9e8\"/><text x=\"145\" y=\"80\" font-family=\"sans-serif\" font-size=\"14\" fill=\"#333\">BANK</text><rect x=\"255\" y=\"110\" width=\"40\" height=\"80\" fill=\"#2fa38e\"/><rect x=\"250\" y=\"95\" width=\"60\" height=\"18\" fill=\"#e1693f\"/><rect x=\"320\" y=\"120\" width=\"70\" height=\"40\" rx=\"6\" fill=\"#e1b24a\"/><circle cx=\"338\" cy=\"165\" r=\"8\" fill=\"#333\"/><circle cx=\"374\" cy=\"165\" r=\"8\" fill=\"#333\"/><circle cx=\"110\" cy=\"205\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"100\" y=\"217\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#c2542d\"/><circle cx=\"160\" cy=\"210\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"150\" y=\"222\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#a33f6b\"/></svg>"});
 const TEST_MODES = {
     entrainement: { seconds: 30, retry: true, label: "Entraînement" },
     examen: { seconds: 30, retry: false, label: "Examen" }
