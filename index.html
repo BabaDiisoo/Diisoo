@@ -340,7 +340,7 @@
                     <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">📚</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Anglais Général :</b> écoutez un mot, répétez-le au micro, puis testez votre grammaire.</p></div>
                     <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">🇸🇳</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Anglais Wolof :</b> apprenez les deux langues ensemble, 100% à l'oral.</p></div>
                     <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">💼</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Outils Business :</b> vocabulaire et dialogues authentiques par métier (Colobane, Sandaga, Chine...), avec écoute et entraînement au micro.</p></div>
-                    <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">⏱️</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Simulateur IELTS :</b> entraînez-vous dans les conditions réelles du test de visa, avec écoute et discussion en binôme intégrées.</p></div>
+                    <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">⏱️</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Examens et visa :</b> simulateur IELTS Life Skills A1 disponible, dans les conditions réelles, avec écoute et discussion en binôme. TOEFL, TOEIC, Cambridge, Duolingo et PTE arrivent bientôt.</p></div>
                     <div class="flex items-start space-x-3 bg-[#0B0F1C]/60 rounded-xl p-3"><span class="text-xl">🔥</span><p class="text-xs text-[#C9BFA8]"><b class="text-[#F6F1E7]">Série & badges :</b> revenez chaque jour pour garder votre série active et débloquer des badges.</p></div>
                 </div>
                 <button onclick="closeTutorial()" class="w-full py-3.5 btn-primary rounded-2xl text-sm font-bold shadow-lg shadow-[#C2542D]/30">C'est parti ! 🚀</button>
@@ -570,8 +570,8 @@
                 <div class="grid grid-cols-2 gap-3">
                 <button onclick="startTestSimulation()" class="text-left bg-[#141A2B] p-3.5 rounded-2xl border border-[#1E2740] hover:border-[#2FC2AC]/50 transition shadow-md">
                     <span class="text-2xl block mb-1">✈️</span>
-                    <h3 class="text-[13px] font-bold text-[#F6F1E7] leading-tight">Visa &amp; IELTS</h3>
-                    <p class="text-[10px] text-[#A69C86] mt-0.5 leading-snug">Simulateur chronométré</p>
+                    <h3 class="text-[13px] font-bold text-[#F6F1E7] leading-tight">Examens &amp; visa</h3>
+                    <p class="text-[10px] text-[#A69C86] mt-0.5 leading-snug">IELTS dispo, autres bientôt</p>
                 </button>
                 <button onclick="openBusinessModule()" class="text-left bg-[#141A2B] p-3.5 rounded-2xl border border-[#1E2740] hover:border-[#B26FE0]/50 transition shadow-md">
                     <span class="text-2xl block mb-1">💼</span>
@@ -719,6 +719,18 @@
                 <div id="test-picker" class="space-y-4">
                     <p class="text-xs text-[#A69C86] text-center leading-relaxed">Comme le vrai test : informations personnelles, questions sur un thème, une photo à décrire, puis une discussion.</p>
                     <div id="test-topic-buttons" class="grid grid-cols-1 gap-2"></div>
+
+                    <div id="autres-examens" class="rounded-2xl border border-[#1E2740] bg-[#141A2B] p-3 space-y-2">
+                        <p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider text-center">Autres examens d'anglais</p>
+                        <div class="flex flex-wrap justify-center gap-1.5">
+                            <span class="px-2.5 py-1 rounded-full bg-[#0B0F1C] border border-[#1E2740] text-[10px] text-[#A69C86]">TOEFL · bientôt</span>
+                            <span class="px-2.5 py-1 rounded-full bg-[#0B0F1C] border border-[#1E2740] text-[10px] text-[#A69C86]">TOEIC · bientôt</span>
+                            <span class="px-2.5 py-1 rounded-full bg-[#0B0F1C] border border-[#1E2740] text-[10px] text-[#A69C86]">Cambridge English · bientôt</span>
+                            <span class="px-2.5 py-1 rounded-full bg-[#0B0F1C] border border-[#1E2740] text-[10px] text-[#A69C86]">Duolingo English Test · bientôt</span>
+                            <span class="px-2.5 py-1 rounded-full bg-[#0B0F1C] border border-[#1E2740] text-[10px] text-[#A69C86]">PTE Academic · bientôt</span>
+                        </div>
+                        <p class="text-[10px] text-[#6B604A] text-center leading-relaxed">Préparation indépendante : Diisoo et ABC-GLOBAL ne sont ni affiliés, ni approuvés, ni sponsorisés par les organismes d'examen. Aucune garantie de score ni de visa.</p>
+                    </div>
 
                     <div class="pt-2 space-y-2">
                         <p class="text-[10px] font-bold text-[#8C8064] uppercase tracking-wider text-center">Complétez votre préparation</p>
