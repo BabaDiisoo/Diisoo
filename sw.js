@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v12";
+const VERSION = "diisoo-cache-v13";
 const SHELL = [
   "./",
   "./index.html",
@@ -12,12 +12,13 @@ const SHELL = [
   "./pwa-install.js",
   "./diisoo-step4.js",
   "./diisoo-whatsapp.js",
+  "./diisoo-autoupdate.js",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm",
   "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js",
   "https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
 ];
-const EXCLUS = ["supabase.co", "supabase.in", "query.wikidata.org", "hf.space", "huggingface.co", "gradio.live", "paytech.sn", "soynade"];
+const EXCLUS = ["version.json", "supabase.co", "supabase.in", "query.wikidata.org", "hf.space", "huggingface.co", "gradio.live", "paytech.sn", "soynade"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
