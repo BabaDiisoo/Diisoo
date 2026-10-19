@@ -1,0 +1,79 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keep-supabase-alive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    name: Ping Supabase REST API
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      KEEPALIVE_TABLE: diisoo_phrases
+    steps:
+      - name: Verify secrets and key role
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "::error::Secrets SUPABASE_URL and SUPABASE_ANON_KEY must be set in Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          case "$SUPABASE_URL" in
+            https://*.supabase.co|https://*.supabase.co/) ;;
+            *) echo "::error::SUPABASE_URL must look like https://<project-ref>.supabase.co"; exit 1 ;;
+          esac
+          ROLE=$(python3 - <<'PY'
+          import base64, json, os, sys
+          key = os.environ["SUPABASE_ANON_KEY"].strip()
+          try:
+              payload = key.split(".")[1]
+              payload += "=" * (-len(payload) % 4)
+              print(json.loads(base64.urlsafe_b64decode(payload)).get("role", "unknown"))
+          except Exception:
+              print("unknown")
+          PY
+          )
+          echo "Key role: $ROLE"
+          if [ "$ROLE" = "service_role" ]; then
+            echo "::error::SUPABASE_ANON_KEY contains a service_role key. Use the public anon key only."
+            exit 1
+          fi
+
+      - name: Ping REST root and one table query
+        shell: bash
+        run: |
+          set -uo pipefail
+          BASE="${SUPABASE_URL%/}"
+          request() {
+            curl --silent --show-error --output /dev/null \
+              --write-out "%{http_code}" \
+              --connect-timeout 15 --max-time 30 \
+              --retry 3 --retry-delay 5 --retry-all-errors \
+              -H "apikey: ${SUPABASE_ANON_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+              -H "Accept: application/json" \
+              "$1" || echo "000"
+          }
+          CODE_ROOT=$(request "${BASE}/rest/v1/")
+          CODE_TABLE=$(request "${BASE}/rest/v1/${KEEPALIVE_TABLE}?select=*&limit=1")
+          echo "GET /rest/v1/ -> HTTP ${CODE_ROOT}"
+          echo "GET /rest/v1/${KEEPALIVE_TABLE} -> HTTP ${CODE_TABLE}"
+          ok() { case "$1" in 2??) return 0 ;; *) return 1 ;; esac; }
+          if ok "$CODE_TABLE" || ok "$CODE_ROOT"; then
+            echo "Supabase is reachable and active."
+            exit 0
+          fi
+          echo "::error::Supabase did not answer with a 2xx status (root=${CODE_ROOT}, table=${CODE_TABLE}). The project may be paused: open the Supabase dashboard and restore it."
+          exit 1
