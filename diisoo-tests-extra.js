@@ -1,7 +1,7 @@
 /* Tests IELTS supplementaires de Diisoo. Fichier de donnees uniquement (aucun code).
    Il est lu au demarrage ; s'il est absent ou invalide, l'application ignore ce fichier. */
 window.DIISOO_TESTS_EXTRA = {
- "version": "2026-10-19-lot1",
+ "version": "2026-10-19-lot2",
  "tests": [
   {
    "id": "airport",
@@ -263,6 +263,270 @@ window.DIISOO_TESTS_EXTRA = {
      "questions": [
       "Is the phone useful for learning? Why?",
       "Do you think people use their phones too much?"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "jobs",
+   "topic": "Jobs & Professions",
+   "photo": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#e6e2d8\"/><rect y=\"205\" width=\"400\" height=\"55\" fill=\"#8d8d8d\"/><rect x=\"170\" y=\"130\" width=\"190\" height=\"60\" rx=\"14\" fill=\"#2f5ca3\"/><circle cx=\"205\" cy=\"195\" r=\"16\" fill=\"#333\"/><circle cx=\"325\" cy=\"195\" r=\"16\" fill=\"#333\"/><circle cx=\"110\" cy=\"150\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"100\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#e1693f\"/><rect x=\"130\" y=\"160\" width=\"40\" height=\"8\" fill=\"#9a9a9a\"/></svg>",
+   "phases": [
+    {
+     "id": "1a",
+     "label": "Personal Information",
+     "questions": [
+      "What is your name?",
+      "Where are you from?",
+      "What is your job?"
+     ]
+    },
+    {
+     "id": "1b",
+     "label": "Topic Questioning",
+     "questions": [
+      "Do you like your job?",
+      "What time do you start work?",
+      "Who do you work with?",
+      "Do you work on Saturdays?",
+      "What job do you want in the future?"
+     ]
+    },
+    {
+     "id": "2a",
+     "label": "Photograph Discussion",
+     "introFR": "Imaginez une photo d'un mécanicien qui répare une voiture dans un garage.",
+     "questions": [
+      "What can you see in this picture?",
+      "What is the man doing?"
+     ]
+    },
+    {
+     "id": "2b",
+     "label": "Further Discussion",
+     "questions": [
+      "Which job is the most important in your town? Why?",
+      "Would you like to work in an office? Why?"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "restaurant",
+   "topic": "At the Restaurant",
+   "photo": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#f1e4c8\"/><rect y=\"205\" width=\"400\" height=\"55\" fill=\"#c9b07a\"/><ellipse cx=\"170\" cy=\"170\" rx=\"95\" ry=\"26\" fill=\"#7a5230\"/><circle cx=\"140\" cy=\"162\" r=\"10\" fill=\"#fff\"/><circle cx=\"200\" cy=\"162\" r=\"10\" fill=\"#fff\"/><circle cx=\"110\" cy=\"120\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"100\" y=\"132\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#c2542d\"/><circle cx=\"225\" cy=\"120\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"215\" y=\"132\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2fa38e\"/><circle cx=\"330\" cy=\"130\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"320\" y=\"142\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#222\"/><rect x=\"300\" y=\"165\" width=\"26\" height=\"8\" fill=\"#fff\"/></svg>",
+   "phases": [
+    {
+     "id": "1a",
+     "label": "Personal Information",
+     "questions": [
+      "What is your name?",
+      "How old are you?",
+      "Where do you live?"
+     ]
+    },
+    {
+     "id": "1b",
+     "label": "Topic Questioning",
+     "questions": [
+      "Do you like eating in a restaurant?",
+      "What is your favourite food?",
+      "Do you eat at home or outside?",
+      "Who do you eat with?",
+      "Do you drink tea or juice with your meal?"
+     ]
+    },
+    {
+     "id": "2a",
+     "label": "Photograph Discussion",
+     "introFR": "Imaginez une photo d'une famille assise à une table dans un restaurant, avec un serveur.",
+     "questions": [
+      "What can you see in this picture?",
+      "What is the waiter doing?"
+     ]
+    },
+    {
+     "id": "2b",
+     "label": "Further Discussion",
+     "questions": [
+      "Is it better to eat at home or in a restaurant? Why?",
+      "What is a good restaurant for you?"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "weekend",
+   "topic": "Weekend Plans",
+   "photo": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#bcdff5\"/><rect y=\"120\" width=\"400\" height=\"140\" fill=\"#cfa86a\"/><circle cx=\"330\" cy=\"45\" r=\"24\" fill=\"#f6d25a\"/><rect x=\"20\" y=\"130\" width=\"12\" height=\"80\" fill=\"#fff\"/><rect x=\"368\" y=\"130\" width=\"12\" height=\"80\" fill=\"#fff\"/><circle cx=\"110\" cy=\"150\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"100\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#c2542d\"/><circle cx=\"170\" cy=\"170\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"160\" y=\"182\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2fa38e\"/><circle cx=\"240\" cy=\"150\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"230\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#e1b24a\"/><circle cx=\"290\" cy=\"175\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"280\" y=\"187\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><circle cx=\"205\" cy=\"215\" r=\"9\" fill=\"#fff\" stroke=\"#333\"/></svg>",
+   "phases": [
+    {
+     "id": "1a",
+     "label": "Personal Information",
+     "questions": [
+      "What is your name?",
+      "Where are you from?",
+      "What do you do?"
+     ]
+    },
+    {
+     "id": "1b",
+     "label": "Topic Questioning",
+     "questions": [
+      "What do you do on Saturday?",
+      "Do you go out on Sunday?",
+      "Do you visit your family at the weekend?",
+      "What do you cook at the weekend?",
+      "Do you sleep late on Sunday?"
+     ]
+    },
+    {
+     "id": "2a",
+     "label": "Photograph Discussion",
+     "introFR": "Imaginez une photo d'amis qui jouent au football sur un terrain en terre le samedi.",
+     "questions": [
+      "What can you see in this picture?",
+      "Do you think they are having fun? Why?"
+     ]
+    },
+    {
+     "id": "2b",
+     "label": "Further Discussion",
+     "questions": [
+      "Why is the weekend important?",
+      "What would be your perfect weekend?"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "festivals",
+   "topic": "Festivals & Traditions",
+   "photo": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#f6e2b8\"/><rect y=\"200\" width=\"400\" height=\"60\" fill=\"#d9c08a\"/><ellipse cx=\"200\" cy=\"185\" rx=\"110\" ry=\"22\" fill=\"#7a5230\"/><circle cx=\"110\" cy=\"130\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"100\" y=\"142\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#e1b24a\"/><circle cx=\"175\" cy=\"120\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"165\" y=\"132\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#a33f6b\"/><circle cx=\"240\" cy=\"125\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"230\" y=\"137\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2fa38e\"/><circle cx=\"300\" cy=\"135\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"290\" y=\"147\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><polygon points=\"30,40 70,20 110,40\" fill=\"#e1693f\"/><polygon points=\"290,40 330,20 370,40\" fill=\"#5fc98f\"/></svg>",
+   "phases": [
+    {
+     "id": "1a",
+     "label": "Personal Information",
+     "questions": [
+      "What is your name?",
+      "Where do you live?",
+      "What is your job?"
+     ]
+    },
+    {
+     "id": "1b",
+     "label": "Topic Questioning",
+     "questions": [
+      "Do you like festivals?",
+      "What is your favourite festival?",
+      "What do you wear for a festival?",
+      "What do you eat at a festival?",
+      "Do you visit your family for a festival?"
+     ]
+    },
+    {
+     "id": "2a",
+     "label": "Photograph Discussion",
+     "introFR": "Imaginez une photo d'une famille en tenues de fête qui partage un repas dehors.",
+     "questions": [
+      "What can you see in this picture?",
+      "How do you think the people feel?"
+     ]
+    },
+    {
+     "id": "2b",
+     "label": "Further Discussion",
+     "questions": [
+      "Why are traditions important?",
+      "What do you like about festivals in Senegal?"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "farming",
+   "topic": "Farming & Animals",
+   "photo": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#cfe6f5\"/><rect y=\"130\" width=\"400\" height=\"130\" fill=\"#7aa85a\"/><rect x=\"30\" y=\"165\" width=\"40\" height=\"8\" fill=\"#4c7a38\"/><circle cx=\"40\" cy=\"158\" r=\"7\" fill=\"#e1693f\"/><circle cx=\"60\" cy=\"158\" r=\"7\" fill=\"#5fc98f\"/><rect x=\"100\" y=\"165\" width=\"40\" height=\"8\" fill=\"#4c7a38\"/><circle cx=\"110\" cy=\"158\" r=\"7\" fill=\"#e1693f\"/><circle cx=\"130\" cy=\"158\" r=\"7\" fill=\"#5fc98f\"/><rect x=\"170\" y=\"165\" width=\"40\" height=\"8\" fill=\"#4c7a38\"/><circle cx=\"180\" cy=\"158\" r=\"7\" fill=\"#e1693f\"/><circle cx=\"200\" cy=\"158\" r=\"7\" fill=\"#5fc98f\"/><circle cx=\"280\" cy=\"150\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"270\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><rect x=\"250\" y=\"190\" width=\"30\" height=\"8\" fill=\"#3aa6d6\"/><ellipse cx=\"340\" cy=\"215\" rx=\"16\" ry=\"11\" fill=\"#f4f4f4\"/><circle cx=\"352\" cy=\"205\" r=\"6\" fill=\"#f4f4f4\"/><ellipse cx=\"85\" cy=\"225\" rx=\"16\" ry=\"11\" fill=\"#c9a24e\"/></svg>",
+   "phases": [
+    {
+     "id": "1a",
+     "label": "Personal Information",
+     "questions": [
+      "What is your name?",
+      "Where are you from?",
+      "What do you do?"
+     ]
+    },
+    {
+     "id": "1b",
+     "label": "Topic Questioning",
+     "questions": [
+      "Do you have animals at home?",
+      "Do you like animals?",
+      "What fruits and vegetables grow in your region?",
+      "Does your family have a field or a garden?",
+      "What animal do you like the most?"
+     ]
+    },
+    {
+     "id": "2a",
+     "label": "Photograph Discussion",
+     "introFR": "Imaginez une photo d'un agriculteur qui arrose des légumes à côté de quelques poules.",
+     "questions": [
+      "What can you see in this picture?",
+      "What is the farmer doing?"
+     ]
+    },
+    {
+     "id": "2b",
+     "label": "Further Discussion",
+     "questions": [
+      "Is farming a good job? Why?",
+      "How can young people help farming in Senegal?"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "bank",
+   "topic": "Bank & Post Office",
+   "photo": "<svg viewBox=\"0 0 400 260\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"400\" height=\"260\" fill=\"#e8e4d8\"/><rect y=\"205\" width=\"400\" height=\"55\" fill=\"#b9b19a\"/><rect x=\"170\" y=\"130\" width=\"200\" height=\"12\" fill=\"#7a5230\"/><rect x=\"170\" y=\"142\" width=\"200\" height=\"60\" fill=\"#d8d3c4\"/><text x=\"200\" y=\"90\" font-family=\"sans-serif\" font-size=\"24\" fill=\"#2f5ca3\">BANK</text><circle cx=\"110\" cy=\"150\" r=\"11\" fill=\"#8a5a3c\"/><rect x=\"100\" y=\"162\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#a33f6b\"/><circle cx=\"300\" cy=\"105\" r=\"11\" fill=\"#6e4a30\"/><rect x=\"290\" y=\"117\" width=\"20\" height=\"34\" rx=\"6\" fill=\"#2f5ca3\"/><rect x=\"215\" y=\"120\" width=\"30\" height=\"10\" fill=\"#5fc98f\"/></svg>",
+   "phases": [
+    {
+     "id": "1a",
+     "label": "Personal Information",
+     "questions": [
+      "What is your name?",
+      "How old are you?",
+      "What do you do?"
+     ]
+    },
+    {
+     "id": "1b",
+     "label": "Topic Questioning",
+     "questions": [
+      "Do you have a bank account?",
+      "Do you use Wave or Orange Money?",
+      "Where is the post office in your town?",
+      "Do you send money to your family?",
+      "Do you save money every month?"
+     ]
+    },
+    {
+     "id": "2a",
+     "label": "Photograph Discussion",
+     "introFR": "Imaginez une photo d'une personne qui parle à un employé derrière un guichet de banque.",
+     "questions": [
+      "What can you see in this picture?",
+      "What is the woman asking for?"
+     ]
+    },
+    {
+     "id": "2b",
+     "label": "Further Discussion",
+     "questions": [
+      "Is it important to save money? Why?",
+      "What is easier: a bank or a mobile phone? Why?"
      ]
     }
    ]
