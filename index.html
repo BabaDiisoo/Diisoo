@@ -4777,6 +4777,61 @@ function openPostTestHelp() {
 })();
 
 /* ==========================================================
+   CONSEILS APRÈS CHAQUE RÉPONSE (ajout, n'altère pas analyzeAnswer)
+   Repère les erreurs les plus fréquentes des francophones et
+   wolophones. La reconnaissance vocale corrige parfois d'elle-même :
+   ce sont des conseils, pas une correction officielle.
+   ========================================================== */
+const CONSEILS_REGLES = [
+    [/\bi have \d+ years?( old)?\b/i, "L'âge : « I am 25 years old », pas « I have »."],
+    [/\bi am agree\b/i, "Dites « I agree », sans « am »."],
+    [/\bi am (live|work|go|like|study|come)\b/i, "Pas de « am » devant ce verbe : « I live in... », « I work in... »."],
+    [/\bi am (teacher|doctor|driver|student|trader|nurse|farmer|tailor|mechanic|engineer|seller|merchant|cook|cleaner|baker|builder)\b/i, "Ajoutez « a » : « I am a teacher »."],
+    [/\b(he|she|it) (have|do|go|like|work|live|want|need|speak|study)\b/i, "Avec he, she, it : ajoutez -s (« she works », « he has », « it goes »)."],
+    [/\b(people|children|women|men) (is|was)\b/i, "Pluriel : « people are », « children are »."],
+    [/\b(we|they|you) was\b/i, "Avec we, you, they : « were » (« we were »)."],
+    [/\bfrom the (senegal|france|gambia|mali|guinea|mauritania|cote d'ivoire)\b/i, "Pas de « the » devant le pays : « from Senegal »."],
+    [/\bi born\b/i, "Dites « I was born in... »."],
+    [/\bmy name (is called|are|am)\b/i, "Dites simplement « My name is... »."],
+    [/\b(didn't|did not) (went|saw|ate|had|made|took|came|gave)\b/i, "Après « didn't », le verbe reste à la base : « I didn't go »."],
+    [/\bi am (very )?agree\b/i, "Dites « I agree » ou « I totally agree »."]
+];
+function conseilsReponse(text, fb) {
+    const t = (text || "").trim();
+    if (!t) return [];
+    const out = [];
+    CONSEILS_REGLES.forEach(r => { if (out.length < 2 && r[0].test(t)) out.push(r[1]); });
+    const nb = t.split(/\s+/).filter(Boolean).length;
+    if (!out.length && fb && fb.ok && nb < 8 && !/\bbecause\b/i.test(t)) {
+        out.push("Astuce : ajoutez « because... » (parce que) pour une réponse plus complète.");
+    }
+    return out;
+}
+(function () {
+    const _a = analyzeAnswer;
+    analyzeAnswer = function (text, questionText) {
+        const r = _a.apply(this, arguments);
+        try { r.tips = conseilsReponse(text, r); } catch (e) { r.tips = []; }
+        return r;
+    };
+    const _r = renderCorrection;
+    renderCorrection = function (fb) {
+        _r.apply(this, arguments);
+        try {
+            const box = $("test-correction");
+            const old = box.querySelector(".conseils-rep"); if (old) old.remove();
+            if (fb && fb.tips && fb.tips.length) {
+                const d = document.createElement("div");
+                d.className = "conseils-rep";
+                d.style.cssText = "margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.12);font-size:11px;line-height:1.5;color:#E4DCC9";
+                fb.tips.forEach(tip => { const p = document.createElement("p"); p.textContent = "💡 " + tip; d.appendChild(p); });
+                box.appendChild(d);
+            }
+        } catch (e) { console.error(e); }
+    };
+})();
+
+/* ==========================================================
    RÉCAPITULATIF DU TEST IELTS (ajout, n'altère pas finishTest)
    Par partie : barre de progression et état, comparaison avec l'essai
    précédent du même test, et la partie à retravailler en priorité.
