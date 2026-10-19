@@ -5039,6 +5039,106 @@ function openPostTestHelp() {
 })();
 
 /* ==========================================================
+   CONFORT DU SIMULATEUR (ajout) : barre sous le chrono, état plus lisible,
+   aide si le micro est bloqué, bouton "Tester mon micro".
+   ========================================================== */
+(function () {
+    try {
+        const st = document.createElement("style");
+        st.textContent = "#test-status{font-size:13px!important;font-weight:600;color:#E4DCC9!important}" +
+            "#timer-bar{height:5px;border-radius:999px;background:#141A2B;overflow:hidden;margin:4px auto 8px;max-width:220px}" +
+            "#timer-bar>div{height:100%;border-radius:999px;width:0;transition:width .9s linear,background .3s}";
+        document.head.appendChild(st);
+        const t = $("test-timer");
+        if (t && !$("timer-bar")) {
+            const bar = document.createElement("div");
+            bar.id = "timer-bar"; bar.setAttribute("aria-hidden", "true");
+            bar.appendChild(document.createElement("div"));
+            t.insertAdjacentElement("afterend", bar);
+        }
+    } catch (e) { console.error(e); }
+    const _st = setTimer;
+    setTimer = function (sec, urgent, calm) {
+        const r = _st.apply(this, arguments);
+        try {
+            const inner = document.querySelector("#timer-bar>div");
+            if (inner) {
+                if (sec === null || sec === undefined || calm) { inner.style.width = "0"; }
+                else {
+                    const total = (TEST_MODES[currentMode] && TEST_MODES[currentMode].seconds) || 30;
+                    inner.style.width = Math.max(0, Math.min(100, sec / total * 100)) + "%";
+                    inner.style.background = sec >= 10 ? "#25D366" : "#FF4D4D";
+                }
+            }
+        } catch (e) {}
+        return r;
+    };
+    /* Micro bloqué : explications précises selon le téléphone */
+    const ts = $("test-status");
+    if (ts && window.MutationObserver) {
+        let busy = false;
+        new MutationObserver(function () {
+            if (busy || !/^Micro bloqué/.test(ts.textContent) || /cadenas|Réglages/.test(ts.textContent)) return;
+            busy = true;
+            const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+            ts.textContent = "Micro bloqué. " + (ios
+                ? "iPhone : Réglages, Safari, Micro, choisissez « Autoriser ». Si vous êtes dans WhatsApp, ouvrez le lien dans Safari."
+                : "Android : touchez le cadenas à côté de l'adresse, Autorisations, Micro, « Autoriser ». Puis recommencez.");
+            busy = false;
+        }).observe(ts, { childList: true, characterData: true, subtree: true });
+    }
+    /* Bouton "Tester mon micro" dans le choix du test */
+    const picker = $("test-picker");
+    if (picker && !$("btn-mic-check")) {
+        const wrap = document.createElement("div");
+        wrap.className = "space-y-2 text-center pt-2";
+        wrap.innerHTML = '<button id="btn-mic-check" type="button" class="px-4 py-2 rounded-xl text-xs font-bold border-2 border-[#1E2740] bg-[#141A2B] text-[#C9BFA8]">🎤 Tester mon micro</button>' +
+            '<div id="mic-meter" style="height:6px;border-radius:999px;background:#141A2B;overflow:hidden;max-width:220px;margin:0 auto"><div style="height:100%;width:0;background:#25D366;transition:width .1s"></div></div>' +
+            '<p id="mic-check-msg" class="text-[11px] text-[#A69C86]"></p>';
+        picker.appendChild(wrap);
+        $("btn-mic-check").onclick = testerMicro;
+    }
+})();
+async function testerMicro() {
+    const msg = $("mic-check-msg"), lvl = document.querySelector("#mic-meter>div");
+    msg.textContent = "Parlez maintenant pendant 4 secondes...";
+    let stream = null, ctx = null;
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const AC = window.AudioContext || window.webkitAudioContext;
+        ctx = new AC();
+        const an = ctx.createAnalyser(); an.fftSize = 512;
+        ctx.createMediaStreamSource(stream).connect(an);
+        const buf = new Uint8Array(an.fftSize);
+        let max = 0;
+        const fin = Date.now() + 4000;
+        while (Date.now() < fin) {
+            an.getByteTimeDomainData(buf);
+            let sum = 0;
+            for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; sum += v * v; }
+            const rms = Math.sqrt(sum / buf.length);
+            if (rms > max) max = rms;
+            if (lvl) lvl.style.width = Math.min(100, rms * 400) + "%";
+            await new Promise(r => setTimeout(r, 100));
+        }
+        msg.textContent = max > 0.02
+            ? "✅ Votre micro fonctionne. Vous pouvez commencer le test."
+            : "⚠️ Le micro est ouvert mais je n'entends presque rien. Parlez plus fort ou rapprochez le téléphone.";
+    } catch (e) {
+        const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        msg.textContent = (e && e.name === "NotFoundError")
+            ? "⚠️ Aucun micro trouvé sur cet appareil."
+            : "⚠️ Micro refusé. " + (ios
+                ? "iPhone : Réglages, Safari, Micro, « Autoriser ». Dans WhatsApp, ouvrez le lien dans Safari."
+                : "Android : touchez le cadenas à côté de l'adresse, Autorisations, Micro, « Autoriser ».");
+    } finally {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        if (ctx && ctx.close) { try { ctx.close(); } catch (e) {} }
+        if (lvl) lvl.style.width = "0";
+    }
+}
+
+/* ==========================================================
    CONSEILS APRÈS CHAQUE RÉPONSE (ajout, n'altère pas analyzeAnswer)
    Repère les erreurs les plus fréquentes des francophones et
    wolophones. La reconnaissance vocale corrige parfois d'elle-même :
