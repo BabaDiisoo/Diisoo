@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v13";
+const VERSION = "diisoo-cache-v14";
 const SHELL = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const SHELL = [
   "./diisoo-step4.js",
   "./diisoo-whatsapp.js",
   "./diisoo-autoupdate.js",
+  "./diisoo-tests-extra.js",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm",
   "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js",
