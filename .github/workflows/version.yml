@@ -1,0 +1,25 @@
+name: Version
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "version.json"
+permissions:
+  contents: write
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Calculer la version
+        run: |
+          V=$(cat index.html sw.js diisoo-*.js pwa-install.js synchro.js manifest.json landing.css *.html 2>/dev/null | sha256sum | cut -c1-12)
+          echo "{\"v\":\"$V\",\"t\":\"$(date -u +%FT%TZ)\"}" > version.json
+          cat version.json
+      - name: Sauvegarder
+        run: |
+          git config user.name "version-bot"
+          git config user.email "version-bot@users.noreply.github.com"
+          git add version.json
+          git commit -m "version" || echo "inchange"
+          git push || true
