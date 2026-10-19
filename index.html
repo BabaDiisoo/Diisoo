@@ -4777,6 +4777,78 @@ function openPostTestHelp() {
 })();
 
 /* ==========================================================
+   RÉCAPITULATIF DU TEST IELTS (ajout, n'altère pas finishTest)
+   Par partie : barre de progression et état, comparaison avec l'essai
+   précédent du même test, et la partie à retravailler en priorité.
+   Estimation d'entraînement : ce n'est pas un score officiel.
+   ========================================================== */
+(function () {
+    const _f2 = finishTest;
+    finishTest = function () {
+        const p = _f2.apply(this, arguments);
+        try {
+            const box = $("test-result");
+            if (!box || box.classList.contains("hidden") || testAnswers.some(a => a.unsupported) || $("recap-test")) return p;
+            const parts = [];
+            testAnswers.forEach(a => {
+                let g = parts.find(x => x.id === a.phaseId);
+                if (!g) { g = { id: a.phaseId, label: a.phaseLabel, ok: 0, n: 0 }; parts.push(g); }
+                g.n++; if (analyzeAnswer(a.text).ok) g.ok++;
+            });
+            if (!parts.length) return p;
+            const card = document.createElement("div");
+            card.id = "recap-test";
+            card.className = "bg-[#141A2B] border border-[#1E2740] rounded-2xl p-3 space-y-2";
+            const titre = document.createElement("p");
+            titre.className = "text-[10px] font-bold text-[#8C8064] uppercase tracking-wider text-center";
+            titre.textContent = "Votre résultat par partie";
+            card.appendChild(titre);
+            let faible = null;
+            parts.forEach(g => {
+                const pct = Math.round(g.ok / g.n * 100);
+                if (!faible || pct < faible.pct) faible = { label: g.label, pct: pct, id: g.id };
+                const couleur = pct >= 80 ? "#5FC98F" : pct >= 50 ? "#F3A94E" : "#E5628A";
+                const row = document.createElement("div");
+                const ligne = document.createElement("div");
+                ligne.style.cssText = "display:flex;justify-content:space-between;font-size:11px;color:#C9BFA8;margin-bottom:3px";
+                const l1 = document.createElement("span"); l1.textContent = "Phase " + g.id + " · " + g.label;
+                const l2 = document.createElement("span"); l2.style.fontWeight = "700"; l2.style.color = couleur; l2.textContent = g.ok + " / " + g.n;
+                ligne.append(l1, l2);
+                const fond = document.createElement("div");
+                fond.style.cssText = "height:8px;border-radius:999px;background:#0B0F1C;overflow:hidden";
+                const barre = document.createElement("div");
+                barre.style.cssText = "height:100%;border-radius:999px;width:" + pct + "%;background:" + couleur;
+                fond.appendChild(barre);
+                row.append(ligne, fond);
+                card.appendChild(row);
+            });
+            const hist = (store.get("diisoo_tests") || []).filter(h => currentTest && h.topic === currentTest.topic && h.mode === currentMode);
+            if (hist.length >= 2) {
+                const avant = hist[hist.length - 2], now = hist[hist.length - 1];
+                const diff = now.score - avant.score;
+                const c = document.createElement("p");
+                c.className = "text-[11px] text-center text-[#A69C86]";
+                c.textContent = "Essai précédent : " + avant.score + " / " + avant.total + (diff > 0 ? " · vous progressez de +" + diff + " 🎉" : diff < 0 ? " · un peu moins, réessayez, c'est normal" : " · même résultat, continuez");
+                card.appendChild(c);
+            }
+            if (faible && faible.pct < 80) {
+                const c = document.createElement("p");
+                c.className = "text-[11px] text-center text-[#F0906B] font-semibold";
+                c.textContent = "À retravailler en priorité : " + faible.label + ". Refaites ce test en mode Entraînement.";
+                card.appendChild(c);
+            }
+            const note = document.createElement("p");
+            note.className = "text-[10px] text-center text-[#6B604A]";
+            note.textContent = "Estimation d'entraînement, ce n'est pas un score officiel.";
+            card.appendChild(note);
+            const premier = box.firstElementChild;
+            if (premier) premier.insertAdjacentElement("afterend", card); else box.appendChild(card);
+        } catch (e) { console.error(e); }
+        return p;
+    };
+})();
+
+/* ==========================================================
    MA RÉVISION DU JOUR
    Chaque jour, 6 éléments choisis pour l'utilisateur parmi tout le
    vocabulaire (Anglais Général + Anglais Wolof), sans répétition inutile :
