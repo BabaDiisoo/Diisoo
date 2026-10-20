@@ -22,48 +22,36 @@ jobs:
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       KEEPALIVE_TABLE: diisoo_phrases
     steps:
-      - name: Verify secrets and key role
+      - name: Verify secrets
         shell: bash
         run: |
           set -euo pipefail
           if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
-            echo "::error::Secrets SUPABASE_URL and SUPABASE_ANON_KEY must be set in Settings > Secrets and variables > Actions."
+            echo "::error::Secrets SUPABASE_URL and SUPABASE_ANON_KEY must be set."
             exit 1
           fi
           case "$SUPABASE_URL" in
             https://*.supabase.co|https://*.supabase.co/) ;;
             *) echo "::error::SUPABASE_URL must look like https://<project-ref>.supabase.co"; exit 1 ;;
           esac
-          ROLE=$(python3 - <<'PY'
-          import base64, json, os, sys
-          key = os.environ["SUPABASE_ANON_KEY"].strip()
-          try:
-              payload = key.split(".")[1]
-              payload += "=" * (-len(payload) % 4)
-              print(json.loads(base64.urlsafe_b64decode(payload)).get("role", "unknown"))
-          except Exception:
-              print("unknown")
-          PY
-          )
-          echo "Key role: $ROLE"
-          if [ "$ROLE" = "service_role" ]; then
-            echo "::error::SUPABASE_ANON_KEY contains a service_role key. Use the public anon key only."
-            exit 1
-          fi
-
-      - name: Ping REST root and one table query
+          case "$SUPABASE_ANON_KEY" in
+            sb_secret_*) echo "::error::Secret key detected. Use the publishable key only."; exit 1 ;;
+          esac
+                - name: Ping REST root and one table query
         shell: bash
         run: |
           set -uo pipefail
           BASE="${SUPABASE_URL%/}"
+          HDRS=(-H "apikey: ${SUPABASE_ANON_KEY}" -H "Accept: application/json")
+          case "$SUPABASE_ANON_KEY" in
+            eyJ*) HDRS+=(-H "Authorization: Bearer ${SUPABASE_ANON_KEY}") ;;
+          esac
           request() {
             curl --silent --show-error --output /dev/null \
               --write-out "%{http_code}" \
               --connect-timeout 15 --max-time 30 \
               --retry 3 --retry-delay 5 --retry-all-errors \
-              -H "apikey: ${SUPABASE_ANON_KEY}" \
-              -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
-              -H "Accept: application/json" \
+              "${HDRS[@]}" \
               "$1" || echo "000"
           }
           CODE_ROOT=$(request "${BASE}/rest/v1/")
