@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v16";
+const VERSION = "diisoo-cache-v18";
 const SHELL = [
   "./",
   "./index.html",
@@ -12,7 +12,7 @@ const SHELL = [
   "./pwa-install.js",
   "./diisoo-step4.js",
   "./diisoo-whatsapp.js",
-  "./diisoo-autoupdate.js", "./diisoo-field.js",
+  "./diisoo-autoupdate.js", "./diisoo-field.js", "./diisoo-ai.js", "./diisoo-audio-cache.js",
   "./diisoo-tests-extra.js",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm",
@@ -34,7 +34,7 @@ self.addEventListener("message", (e) => {
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys()
-      .then((ks) => Promise.all(ks.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
+      .then((ks) => Promise.all(ks.filter((k) => k !== VERSION && !k.startsWith("diisoo-audio-")).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
