@@ -1,0 +1,470 @@
+﻿id,locale,french_text,wolof_current,context_usage,audio_status,audio_url,review_status
+WO_001,wo,Bonjour,Salaam aleekum,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_001.mp3,pending
+WO_002,wo,Comment vas-tu ?,Nanga def ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_002.mp3,pending
+WO_003,wo,Je vais bien,Maa ngi fi,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_003.mp3,pending
+WO_004,wo,Merci,Jërëjëf,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_004.mp3,pending
+WO_005,wo,Oui,Waaw,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_005.mp3,pending
+WO_006,wo,Non,Déedéet,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_006.mp3,pending
+WO_007,wo,À demain,Ba ëllëg,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_007.mp3,pending
+WO_008,wo,Comment t'appelles-tu ?,Noo tudd ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_008.mp3,pending
+WO_009,wo,Je m'appelle Fatou,Fatou laa tudd,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_009.mp3,pending
+WO_010,wo,Bonne nuit,Fanaanal jàmm,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_010.mp3,pending
+WO_011,wo,Comment allez-vous ?,Nangeen def ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_011.mp3,pending
+WO_012,wo,"Je vais bien, merci","Maa ngi fi rekk, jërëjëf",salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_012.mp3,pending
+WO_013,wo,Famille,Njaboot,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_013.mp3,pending
+WO_014,wo,Père,Baay,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_014.mp3,pending
+WO_015,wo,Mère,Yaay,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_015.mp3,pending
+WO_016,wo,Frère/sœur aîné(e),Mag,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_016.mp3,pending
+WO_017,wo,Frère/sœur cadet(te),Rakk,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_017.mp3,pending
+WO_018,wo,Enfant,Doom,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_018.mp3,pending
+WO_019,wo,J'ai une grande famille,Am naa njaboot bu réy,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_019.mp3,pending
+WO_020,wo,Ma mère est à la maison,Sama yaay mi ngi ci kër gi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_020.mp3,pending
+WO_021,wo,J'aime mes enfants,Bëgg naa sama doom yi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_021.mp3,pending
+WO_022,wo,Combien d'enfants as-tu ?,Ñaata doom nga am ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_022.mp3,pending
+WO_023,wo,As-tu un frère/une sœur ?,Ndax am nga rakk ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_023.mp3,pending
+WO_024,wo,Ma mère,Sama yaay,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_024.mp3,pending
+WO_025,wo,Mon père,Sama baay,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_025.mp3,pending
+WO_026,wo,Agriculteur,Beykat,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_026.mp3,pending
+WO_027,wo,Maison,Kër,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_027.mp3,pending
+WO_028,wo,Voisin,Dëkkandoo,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_028.mp3,pending
+WO_029,wo,Eau,Ndox,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_029.mp3,pending
+WO_030,wo,Travail,Liggéey,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_030.mp3,pending
+WO_031,wo,Ami,Xarit,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_031.mp3,pending
+WO_032,wo,Maintenant,Léegi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_032.mp3,pending
+WO_033,wo,Nourriture,Ñam,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_033.mp3,pending
+WO_034,wo,Je rentre à la maison,Maa ngi dem kër,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_034.mp3,pending
+WO_035,wo,J'ai besoin d'eau,Soxla naa ndox,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_035.mp3,pending
+WO_036,wo,Je suis fatigué(e) aujourd'hui,Sonn naa tey,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_036.mp3,pending
+WO_037,wo,Où habites-tu ?,Foo dëkk ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_037.mp3,pending
+WO_038,wo,Où travailles-tu ?,Fan nga liggéey ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_038.mp3,pending
+WO_039,wo,Je travaille dans une boutique,Maa ngi liggéey ci butik,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_039.mp3,pending
+WO_040,wo,Champ,Tool bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_040.mp3,pending
+WO_041,wo,Agriculture,Mbay,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_041.mp3,pending
+WO_042,wo,Vache,Nag,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_042.mp3,pending
+WO_043,wo,Mouton,Xar,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_043.mp3,pending
+WO_044,wo,Chèvre,Bëy,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_044.mp3,pending
+WO_045,wo,Argent,Xaalis,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_045.mp3,pending
+WO_046,wo,Prix,Njëg,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_046.mp3,pending
+WO_047,wo,C'est combien ?,Ñaata la ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_047.mp3,pending
+WO_048,wo,Acheter,Jënd,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_048.mp3,pending
+WO_049,wo,Vendre,Jaay,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_049.mp3,pending
+WO_050,wo,Boutique,Butik,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_050.mp3,pending
+WO_051,wo,C'est cher,Dafa seer,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_051.mp3,pending
+WO_052,wo,"Baisse le prix, s'il te plaît","Wàññi njëg li, su la neexee",commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_052.mp3,pending
+WO_053,wo,Je veux acheter du riz,Bëgg naa jënd ceeb,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_053.mp3,pending
+WO_054,wo,Je n'ai pas d'argent maintenant,Amuma xaalis léegi,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_054.mp3,pending
+WO_055,wo,Baisse un peu le prix,Wàññi ko tuuti,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_055.mp3,pending
+WO_056,wo,Vendeur ambulant,Baana-baana,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_056.mp3,pending
+WO_057,wo,Vendeur,Jaaykat,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_057.mp3,pending
+WO_058,wo,Acheteur,Jëndkat,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_058.mp3,pending
+WO_059,wo,C'est bon marché,Dafa yomb,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_059.mp3,pending
+WO_060,wo,Aller,Dem,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_060.mp3,pending
+WO_061,wo,Venir,Ñëw,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_061.mp3,pending
+WO_062,wo,Route / chemin,Yoon,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_062.mp3,pending
+WO_063,wo,Voiture,Oto,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_063.mp3,pending
+WO_064,wo,Près,Jege,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_064.mp3,pending
+WO_065,wo,Loin,Sore,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_065.mp3,pending
+WO_066,wo,Je vais à Dakar,Maa ngi dem Dakar,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_066.mp3,pending
+WO_067,wo,Où vas-tu ?,Foo jëm ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_067.mp3,pending
+WO_068,wo,Le marché est près d'ici,Marse bi jege na fi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_068.mp3,pending
+WO_069,wo,"Viens ici, s'il te plaît","Kaay fi, su la neexee",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_069.mp3,pending
+WO_070,wo,Le bus,Kaar bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_070.mp3,pending
+WO_071,wo,D'où part le bus ?,Fan la kaar bi jóge ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_071.mp3,pending
+WO_072,wo,Camion,Kamiyon,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_072.mp3,pending
+WO_073,wo,Corps,Yaram,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_073.mp3,pending
+WO_074,wo,Tête,Bopp,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_074.mp3,pending
+WO_075,wo,Main,Loxo,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_075.mp3,pending
+WO_076,wo,Pied,Tank,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_076.mp3,pending
+WO_077,wo,Maladie,Feebar,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_077.mp3,pending
+WO_078,wo,Se soigner,Faju,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_078.mp3,pending
+WO_079,wo,Je suis malade,Feebar naa,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_079.mp3,pending
+WO_080,wo,J'ai mal à la tête,Sama bopp dafay metti,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_080.mp3,pending
+WO_081,wo,J'ai besoin de voir un médecin,Soxla naa gis doktoor,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_081.mp3,pending
+WO_082,wo,Je me sens mieux maintenant,Dama gën a baax léegi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_082.mp3,pending
+WO_083,wo,Qu'est-ce qui te fait mal ?,Lu la metti ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_083.mp3,pending
+WO_084,wo,Où est le médecin ?,Fan la doktoor bi ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_084.mp3,pending
+WO_085,wo,Fatigué,Sonn,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_085.mp3,pending
+WO_086,wo,Chaud,Tàng,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_086.mp3,pending
+WO_087,wo,Riz,Ceeb,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_087.mp3,pending
+WO_088,wo,Poisson,Jën,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_088.mp3,pending
+WO_089,wo,Viande,Yàpp,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_089.mp3,pending
+WO_090,wo,Pain,Mburu,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_090.mp3,pending
+WO_091,wo,Lait,Meew,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_091.mp3,pending
+WO_092,wo,Délicieux,Neex,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_092.mp3,pending
+WO_093,wo,J'ai faim,Dama xiif,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_093.mp3,pending
+WO_094,wo,Ce repas est délicieux,Ñam bi neex na,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_094.mp3,pending
+WO_095,wo,Je veux manger du riz et du poisson,Bëgg naa lekk ceeb ak jën,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_095.mp3,pending
+WO_096,wo,Mangeons ensemble,Nanu lekk ànd,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_096.mp3,pending
+WO_097,wo,L'eau,Ndox mi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_097.mp3,pending
+WO_098,wo,Œuf,Nen,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_098.mp3,pending
+WO_099,wo,Oignon,Sooble,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_099.mp3,pending
+WO_100,wo,Arachide,Gerte,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_100.mp3,pending
+WO_101,wo,Poulet,Ginaar,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_101.mp3,pending
+WO_102,wo,Un,Benn,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_102.mp3,pending
+WO_103,wo,Deux,Ñaar,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_103.mp3,pending
+WO_104,wo,Trois,Ñett,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_104.mp3,pending
+WO_105,wo,Demain,Ëllëg,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_105.mp3,pending
+WO_106,wo,Hier,Démb,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_106.mp3,pending
+WO_107,wo,Où ?,Fan ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_107.mp3,pending
+WO_108,wo,Quelle heure est-il ?,Ban waxtu la ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_108.mp3,pending
+WO_109,wo,Je viendrai demain,Dinaa ñëw ëllëg,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_109.mp3,pending
+WO_110,wo,"Hier, j'étais occupé(e)","Démb, dama am liggéey bu bari",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_110.mp3,pending
+WO_111,wo,Combien de personnes y a-t-il ?,Ñaata nit ñoo fi nekk ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_111.mp3,pending
+WO_112,wo,Matin,Suba,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_112.mp3,pending
+WO_113,wo,Nuit,Guddi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_113.mp3,pending
+WO_114,wo,Saison des pluies,Nawet,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_114.mp3,pending
+WO_115,wo,Je cherche une maison,Maa ngi wut kër,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_115.mp3,pending
+WO_116,wo,Quel est le montant du loyer ?,Ñaata la loyer bi ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_116.mp3,pending
+WO_117,wo,Propriétaire,Boroom kër,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_117.mp3,pending
+WO_118,wo,Chambre,Néeg,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_118.mp3,pending
+WO_119,wo,Cuisine,Néegu togg,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_119.mp3,pending
+WO_120,wo,Puis-je visiter la maison ?,Ndax mën naa xool kër gi ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_120.mp3,pending
+WO_121,wo,L'électricité ne fonctionne pas,Kuraŋ bi du liggéey,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_121.mp3,pending
+WO_122,wo,Le quartier est calme,Gox bi dafa dal,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_122.mp3,pending
+WO_123,wo,Je dois signer le bail,Dama war a sinye kontra kër gi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_123.mp3,pending
+WO_124,wo,Je m'appelle...,Maa ngi tudd ...,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_124.mp3,pending
+WO_125,wo,Je viens du Sénégal,Senegaal laa jóge,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_125.mp3,pending
+WO_126,wo,Enchanté(e),Neex na ma xam la,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_126.mp3,pending
+WO_127,wo,Je suis étudiant(e),Ndongo laa,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_127.mp3,pending
+WO_128,wo,Quel âge as-tu ?,Ñaata at nga am ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_128.mp3,pending
+WO_129,wo,J'ai trente ans,Am naa fanweer at,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_129.mp3,pending
+WO_130,wo,J'habite à Thiès,Maa ngi dëkk Cees,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_130.mp3,pending
+WO_131,wo,Que fais-tu dans la vie ?,Ban liggéey nga def ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_131.mp3,pending
+WO_132,wo,Je parle anglais et français,Damay wax angale ak farañse,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_132.mp3,pending
+WO_133,wo,Peux-tu épeler ton nom ?,Mën nga wax sa tur araf ci araf ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_133.mp3,pending
+WO_134,wo,F-A-T-O-U (épellation),F-A-T-O-U (araf ci araf),salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_134.mp3,pending
+WO_135,wo,Je suis vendeur ambulant,Baana-baana laa,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_135.mp3,pending
+WO_136,wo,Je travaille dans l'agriculture,Mbay laa def,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_136.mp3,pending
+WO_137,wo,Je dirige ma propre petite entreprise,Damay yor sama njaay bu ndaw,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_137.mp3,pending
+WO_138,wo,"Bonjour, comment vous appelez-vous ?","Salaam aleekum, noo tudd ?",salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_138.mp3,pending
+WO_139,wo,Je m'appelle Fatou. Enchantée.,Maa ngi tudd Fatou. Neex na ma xam la.,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_139.mp3,pending
+WO_140,wo,Enchanté aussi. D'où venez-vous ?,Neex na ma it. Fu nga jóge ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_140.mp3,pending
+WO_141,wo,"Je viens de Thiès, au Sénégal.","Thiès laa jóge, ci Senegaal.",salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_141.mp3,pending
+WO_142,wo,"Pouvez-vous épeler votre nom, s'il vous plaît ?",Mën nga wax sa tur araf ci araf ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_142.mp3,pending
+WO_143,wo,Oui : F-A-T-O-U.,Waaw : F-A-T-O-U.,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_143.mp3,pending
+WO_144,wo,Que faites-vous dans la vie ?,Ban liggéey nga def ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_144.mp3,pending
+WO_145,wo,"Je suis agricultrice, et je vends aussi mes légumes au marché.","Beykat laa, te maa ngi jaay sama légumes ci marse bi.",salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_145.mp3,pending
+WO_146,wo,Vous les vendez vous-même ?,Yaa ko jaay ci sa bopp ?,salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_146.mp3,pending
+WO_147,wo,"Oui, je suis ma propre patronne.","Waaw, man laa boroom sama liggéey.",salutation,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_147.mp3,pending
+WO_148,wo,Frère,Mag bu góor (grand frère) / Rakk bu góor (petit frère),quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_148.mp3,pending
+WO_149,wo,Sœur,Mag bu jigéen (grande sœur) / Rakk bu jigéen (petite sœur),quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_149.mp3,pending
+WO_150,wo,J'ai trois enfants,Am naa ñett doom,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_150.mp3,pending
+WO_151,wo,Ma mère habite avec nous,Sama yaay dafay dëkk ak nun,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_151.mp3,pending
+WO_152,wo,Nous mangeons ensemble chaque soir,"Danuy lekk ànd ci ngoon, bés bu nekk",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_152.mp3,pending
+WO_153,wo,Mon père est chauffeur,Sama baay chauffeur la,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_153.mp3,pending
+WO_154,wo,J'aime beaucoup ma famille,Dama bëgg sama njaboot lool,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_154.mp3,pending
+WO_155,wo,Qui est le/la plus âgé(e) de ta famille ?,Kan moo gëna mag ci sa njaboot ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_155.mp3,pending
+WO_156,wo,Ma grand-mère est la plus âgée,Sama maam bu jigéen moo gëna mag,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_156.mp3,pending
+WO_157,wo,Ma famille travaille aux champs,Sama njaboot dafay liggéey ci tool yi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_157.mp3,pending
+WO_158,wo,Mon frère vend des fruits au marché,Sama rakk bu góor dafay jaay meññeef ci marse bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_158.mp3,pending
+WO_159,wo,Avez-vous une grande famille ?,Ndax am nga njaboot bu mag ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_159.mp3,pending
+WO_160,wo,"Oui, j'ai deux frères et une sœur.","Waaw, am naa ñaar rakk bu góor ak benn rakk bu jigéen.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_160.mp3,pending
+WO_161,wo,Vivez-vous tous ensemble ?,Ndax dangeen dëkk ànd ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_161.mp3,pending
+WO_162,wo,"Oui, nous vivons dans la même maison avec nos parents.","Waaw, danuy dëkk ci benn kër ak sunu waajur.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_162.mp3,pending
+WO_163,wo,Qui est le plus âgé de votre famille ?,Kan moo gëna mag ci sa njaboot ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_163.mp3,pending
+WO_164,wo,Ma grand-mère ; elle a 78 ans.,Sama maam bu jigéen ; am na juróom ñaar fukk ak juróom ñett at.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_164.mp3,pending
+WO_165,wo,Votre famille a-t-elle une ferme ?,Ndax sa njaboot am na tool ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_165.mp3,pending
+WO_166,wo,"Oui, mes parents cultivent du mil et des arachides.","Waaw, sama waajur yi dañuy ji dugub ak gerte.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_166.mp3,pending
+WO_167,wo,Et votre frère ?,Sa rakk bu góor nag ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_167.mp3,pending
+WO_168,wo,Il est commerçant ambulant à Thiès.,Baana-baana la ci Thiès.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_168.mp3,pending
+WO_169,wo,Emploi,Liggéey bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_169.mp3,pending
+WO_170,wo,Chaque jour,Bés bu nekk,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_170.mp3,pending
+WO_171,wo,Occupé(e),Dama am liggéey bu bari,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_171.mp3,pending
+WO_172,wo,Collègue,Xarit ci liggéey,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_172.mp3,pending
+WO_173,wo,Je commence le travail à huit heures,Damay tàmbali liggéey ci juróom ñett,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_173.mp3,pending
+WO_174,wo,Je termine le travail à dix-sept heures,Damay noppi liggéey ci juróom,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_174.mp3,pending
+WO_175,wo,Je travaille dans un bureau,Damay liggéey ci bureau bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_175.mp3,pending
+WO_176,wo,Mon travail est difficile mais intéressant,Sama liggéey dafa sonn waaye dafay neex ma,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_176.mp3,pending
+WO_177,wo,Je cherche un nouvel emploi,Maa ngi seet liggéey bu bees,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_177.mp3,pending
+WO_178,wo,J'aime aider les clients,Dama bëgg dimbali kiliyaan yi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_178.mp3,pending
+WO_179,wo,Je fais une courte pause à midi,Damay noppalu tuuti ci digg-bëccëg,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_179.mp3,pending
+WO_180,wo,Je commence à travailler à six heures du matin,Damay tàmbali liggéey ci juróom benn ci suba,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_180.mp3,pending
+WO_181,wo,J'arrose les plantes chaque jour,Damay sotti ndox ci gàncax yi bés bu nekk,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_181.mp3,pending
+WO_182,wo,Je vends mes marchandises dans la rue,Damay jaay sama yëf ci mbedd mi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_182.mp3,pending
+WO_183,wo,Que faites-vous comme travail ?,Ban liggéey nga def ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_183.mp3,pending
+WO_184,wo,Je travaille dans une boutique tous les jours.,Damay liggéey ci butik bi bés bu nekk.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_184.mp3,pending
+WO_185,wo,À quelle heure commencez-vous le travail ?,Ci ban waxtu nga tàmbali liggéey ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_185.mp3,pending
+WO_186,wo,Je commence à huit heures et je finis à six heures.,Damay tàmbali ci juróom ñett te noppi ci juróom benn.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_186.mp3,pending
+WO_187,wo,Qu'aimez-vous dans votre travail ?,Lan nga bëgg ci sa liggéey ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_187.mp3,pending
+WO_188,wo,J'aime aider les clients chaque jour.,Dama bëgg dimbali kiliyaan yi bés bu nekk.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_188.mp3,pending
+WO_189,wo,"À six heures. J'arrose d'abord mes légumes, puis je vais au marché.","Ci juróom benn. Damay sotti ndox ci sama légumes yi njëkk, ba noppi dem ci marse bi.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_189.mp3,pending
+WO_190,wo,Combien d'heures travaillez-vous ?,Ñaata waxtu nga liggéey ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_190.mp3,pending
+WO_191,wo,Environ dix heures par jour.,Ni fukki waxtu ci bés bu nekk.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_191.mp3,pending
+WO_192,wo,Marché,Marse bi,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_192.mp3,pending
+WO_193,wo,Bon marché,Dafa yomb,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_193.mp3,pending
+WO_194,wo,Combien ça coûte ?,Ñaata la ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_194.mp3,pending
+WO_195,wo,C'est trop cher,Dafa seer lool,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_195.mp3,pending
+WO_196,wo,Peux-tu baisser le prix ?,Mën nga wàññi njëg li ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_196.mp3,pending
+WO_197,wo,Je voudrais acheter du riz,Dama bëgg jënd ceeb,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_197.mp3,pending
+WO_198,wo,Acceptez-vous le paiement mobile ?,Ndax nangu ngeen Wave ak Orange Money ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_198.mp3,pending
+WO_199,wo,Combien coûtent les tomates ?,Ñaata la tamaate yi ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_199.mp3,pending
+WO_200,wo,Pourriez-vous me faire une réduction ?,Mën nga ma wàññil ci njëg li ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_200.mp3,pending
+WO_201,wo,Combien coûte ceci ?,Ñaata la ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_201.mp3,pending
+WO_202,wo,C'est trop cher,Dafa seer,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_202.mp3,pending
+WO_203,wo,Pouvez-vous baisser un peu le prix ?,Wàññil ma tuuti,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_203.mp3,pending
+WO_204,wo,Je veux acheter dix kilos d'oignons,Dama bëgg jënd fukki kilo sooble,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_204.mp3,pending
+WO_205,wo,Combien coûte ce sac ?,Ñaata la sac bi ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_205.mp3,pending
+WO_206,wo,Il coûte cinq mille francs.,Juróom junni franc la.,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_206.mp3,pending
+WO_207,wo,C'est trop cher. Pouvez-vous baisser le prix ?,Dafa seer lool. Mën nga wàññi njëg li ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_207.mp3,pending
+WO_208,wo,"D'accord, quatre mille francs pour vous.","Waaw, ñeent junni franc ngir yaw.",commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_208.mp3,pending
+WO_209,wo,"Merci, j'en prends deux.","Jërëjëf, dinaa jël ñaar.",commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_209.mp3,pending
+WO_210,wo,Bonjour. Combien coûtent les tomates ?,Salaam aleekum. Ñaata la tamaate yi ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_210.mp3,pending
+WO_211,wo,Cinq cents francs le kilo.,Juróom téeméer franc la ci kilo bi.,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_211.mp3,pending
+WO_212,wo,C'est trop cher. Pouvez-vous baisser le prix ?,Dafa seer. Mën nga wàññi njëg li ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_212.mp3,pending
+WO_213,wo,"Pour vous, quatre cents. Elles viennent de la ferme ce matin.","Ngir yaw, ñeent téeméer. Ñu ngi jóge ci tool bi tey ci suba.",commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_213.mp3,pending
+WO_214,wo,"D'accord, je veux trois kilos.","Baax na, bëgg naa ñett kilo.",commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_214.mp3,pending
+WO_215,wo,Aéroport,Ayropoor bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_215.mp3,pending
+WO_216,wo,Billet,Bilee bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_216.mp3,pending
+WO_217,wo,Passeport,Paspoor bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_217.mp3,pending
+WO_218,wo,Vol,Tukki bu avion,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_218.mp3,pending
+WO_219,wo,Bus,Bus bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_219.mp3,pending
+WO_220,wo,Je voudrais réserver un billet,Dama bëgg reserve benn bilee,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_220.mp3,pending
+WO_221,wo,À quelle heure part le bus ?,Ci ban waxtu la bus bi di dem ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_221.mp3,pending
+WO_222,wo,Où est l'arrêt de bus le plus proche ?,Ana arre bu gëna jege ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_222.mp3,pending
+WO_223,wo,Je voyage pour rendre visite à ma famille,Maa ngi tukki ngir gis sama njaboot,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_223.mp3,pending
+WO_224,wo,Ai-je besoin d'un visa pour ce pays ?,Ndax war naa am visa ngir réew mii ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_224.mp3,pending
+WO_225,wo,Comment vas-tu au travail ?,Naka nga di dem liggéey ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_225.mp3,pending
+WO_226,wo,Je prends le bus chaque matin,Damay jël bus bi suba su nekk,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_226.mp3,pending
+WO_227,wo,Je transporte des marchandises à Dakar,Damay yóbbu marsandiis ci Ndakaaru,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_227.mp3,pending
+WO_228,wo,Le camion part à sept heures,Kamiyon bi dafay dem ci juróom ñaar,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_228.mp3,pending
+WO_229,wo,Combien coûte le billet pour le marché ?,Ñaata la bilee bi ngir dem marse bi ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_229.mp3,pending
+WO_230,wo,Où est l'aéroport ?,Fan la ayropoor bi nekk ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_230.mp3,pending
+WO_231,wo,C'est à dix minutes d'ici en taxi.,Fukki minut la ci taksi bu jóge fii.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_231.mp3,pending
+WO_232,wo,À quelle heure part mon vol ?,Ci ban waxtu la sama tukki avion di dem ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_232.mp3,pending
+WO_233,wo,Votre vol part à huit heures du matin.,Sa tukki avion bi dafay dem ci juróom ñett ci suba.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_233.mp3,pending
+WO_234,wo,Comment allez-vous d'habitude au travail ?,Naka nga di dem liggéey ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_234.mp3,pending
+WO_235,wo,Je prends le bus tous les matins.,Damay jël bus bi suba su nekk.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_235.mp3,pending
+WO_236,wo,Est-ce que ce camion va au marché de Thiès ?,Ndax kamiyon bii dafay dem marse bu Thiès ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_236.mp3,pending
+WO_237,wo,"Oui, il part à sept heures avec des légumes frais.","Waaw, dafay dem ci juróom ñaar ak légumes yu bees.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_237.mp3,pending
+WO_238,wo,Combien pour mes bagages ?,Ñaata la sama bagaas yi ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_238.mp3,pending
+WO_239,wo,Deux mille francs.,Ñaar junni franc la.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_239.mp3,pending
+WO_240,wo,Médecin,Doktoor bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_240.mp3,pending
+WO_241,wo,Hôpital,Opitaal bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_241.mp3,pending
+WO_242,wo,Malade,Feebar,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_242.mp3,pending
+WO_243,wo,Médicament,Garab gi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_243.mp3,pending
+WO_244,wo,Aide,Dimbali,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_244.mp3,pending
+WO_245,wo,J'ai besoin de voir un médecin,Dama war a gis doktoor,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_245.mp3,pending
+WO_246,wo,Où est l'hôpital le plus proche ?,Ana opitaal bu gëna jege ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_246.mp3,pending
+WO_247,wo,Je me sens mieux aujourd'hui,Dama gën a baax tey,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_247.mp3,pending
+WO_248,wo,Appelez une ambulance s'il vous plaît,"Wool ambilaas bi, su la neexee",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_248.mp3,pending
+WO_249,wo,Prenez un comprimé deux fois par jour,Naanal benn comprimé ñaari yoon ci bés bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_249.mp3,pending
+WO_250,wo,Depuis quand te sens-tu malade ?,Kañ nga tàmbali feebar ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_250.mp3,pending
+WO_251,wo,"J'ai besoin de me reposer, j'ai travaillé au soleil toute la journée","Dama war a noppalu, liggéey naa ci jant bi bés bi bépp",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_251.mp3,pending
+WO_252,wo,Buvez beaucoup d'eau quand il fait chaud,Naanal ndox bu bari bu tàngee,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_252.mp3,pending
+WO_253,wo,Ça va ?,Yaa ngi ci jàmm ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_253.mp3,pending
+WO_254,wo,"Non, je me sens malade. J'ai besoin d'un médecin.","Déedéet, dama feebar. Dama war a gis doktoor.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_254.mp3,pending
+WO_255,wo,Qu'est-ce qui ne va pas ?,Lan la ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_255.mp3,pending
+WO_256,wo,J'ai mal à la tête et de la fièvre.,Sama bopp dafay metti te dama am tàngoor.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_256.mp3,pending
+WO_257,wo,Depuis quand vous sentez-vous comme ça ?,Kañ nga tàmbali feebar ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_257.mp3,pending
+WO_258,wo,Depuis hier soir.,Démb ci ngoon.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_258.mp3,pending
+WO_259,wo,Vous avez l'air fatigué.,Dafa mel ni yaa ngi sonn.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_259.mp3,pending
+WO_260,wo,"J'ai travaillé dans le champ toute la journée, et je n'ai pas bu d'eau.",Liggéey naa ci tool bi bés bi bépp te naanul ndox.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_260.mp3,pending
+WO_261,wo,Vous devez boire de l'eau et vous reposer.,War nga naan ndox te noppalu.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_261.mp3,pending
+WO_262,wo,"Vous avez raison, merci.","Dëgg nga, jërëjëf.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_262.mp3,pending
+WO_263,wo,Restaurant,Restoraan bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_263.mp3,pending
+WO_264,wo,Menu,Menu bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_264.mp3,pending
+WO_265,wo,Eau,Ndox mi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_265.mp3,pending
+WO_266,wo,Délicieux,Dafa neex lool,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_266.mp3,pending
+WO_267,wo,Addition,Addition bi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_267.mp3,pending
+WO_268,wo,J'ai faim,Xiif na ma,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_268.mp3,pending
+WO_269,wo,Que recommandez-vous ?,Lan nga ma digal ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_269.mp3,pending
+WO_270,wo,Je voudrais du riz et du poisson,Dama bëgg ceeb ak jën,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_270.mp3,pending
+WO_271,wo,Ce repas est très savoureux,Lekk bii dafa neex lool,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_271.mp3,pending
+WO_272,wo,"Puis-je avoir l'addition, s'il vous plaît ?","Mën naa am addition bi, su la neexee ?",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_272.mp3,pending
+WO_273,wo,Quel est ton plat préféré ?,Ban lekk nga gëna bëgg ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_273.mp3,pending
+WO_274,wo,J'aime le thiéboudienne,Dama bëgg ceebu jën,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_274.mp3,pending
+WO_275,wo,Légumes et fruits frais,Légumes yu bees ak meññeef,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_275.mp3,pending
+WO_276,wo,"Je voudrais du riz au poulet, s'il vous plaît","Dama bëgg ceeb ak ginaar, su la neexee",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_276.mp3,pending
+WO_277,wo,Un œuf,Benn nen,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_277.mp3,pending
+WO_278,wo,"Puis-je avoir le menu, s'il vous plaît ?","Mën naa am menu bi, su la neexee ?",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_278.mp3,pending
+WO_279,wo,"Bien sûr, voici.","Waaw, jël ko.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_279.mp3,pending
+WO_280,wo,Que recommandez-vous aujourd'hui ?,Lan nga ma digal tey ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_280.mp3,pending
+WO_281,wo,Le poisson avec du riz est délicieux aujourd'hui.,Jën wu ñu def ak ceeb neex na lool tey.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_281.mp3,pending
+WO_282,wo,Que voulez-vous boire ?,Lan nga bëgg a naan ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_282.mp3,pending
+WO_283,wo,"Juste de l'eau, s'il vous plaît.","Ndox rekk, su la neexee.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_283.mp3,pending
+WO_284,wo,Que désirez-vous ?,Lan nga bëgg ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_284.mp3,pending
+WO_285,wo,"Du riz au poulet, s'il vous plaît.","Ceeb ak ginaar, su la neexee.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_285.mp3,pending
+WO_286,wo,Voulez-vous des légumes ?,Ndax bëgg nga légumes ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_286.mp3,pending
+WO_287,wo,"Oui, et de l'eau.","Waaw, ak ndox.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_287.mp3,pending
+WO_288,wo,Aujourd'hui,Tey,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_288.mp3,pending
+WO_289,wo,Nombre,Lim,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_289.mp3,pending
+WO_290,wo,Heure / temps,Waxtu,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_290.mp3,pending
+WO_291,wo,Quelle heure est-il maintenant ?,Ban waxtu la léegi ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_291.mp3,pending
+WO_292,wo,Je te verrai demain matin,Dinaa la gis ëllëg ci suba,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_292.mp3,pending
+WO_293,wo,La réunion commence à dix heures,Ndaje mi dafay tàmbali ci fukk,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_293.mp3,pending
+WO_294,wo,J'étais occupé(e) hier,Dama am liggéey bu bari démb,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_294.mp3,pending
+WO_295,wo,Combien de personnes viennent ?,Ñaata nit ñu ngi ñëw ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_295.mp3,pending
+WO_296,wo,À quelle heure te réveilles-tu ?,Ci ban waxtu nga di jóg ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_296.mp3,pending
+WO_297,wo,Je me réveille à six heures chaque matin,Damay jóg ci juróom benn suba su nekk,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_297.mp3,pending
+WO_298,wo,La saison des pluies commence en juillet,Nawet dafay tàmbali ci sulet,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_298.mp3,pending
+WO_299,wo,Le marché ouvre à six heures,Marse bi dafay ubbeeku ci juróom benn,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_299.mp3,pending
+WO_300,wo,Cinq cents francs,Juróom téeméer franc,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_300.mp3,pending
+WO_301,wo,Il est trois heures.,Ñett waxtu la.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_301.mp3,pending
+WO_302,wo,À quelle heure commence la réunion ?,Ci ban waxtu la ndaje mi di tàmbali ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_302.mp3,pending
+WO_303,wo,Elle commence demain à dix heures.,Dafay tàmbali ëllëg ci fukk.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_303.mp3,pending
+WO_304,wo,À quelle heure vous réveillez-vous d'habitude ?,Ci ban waxtu nga di jóg ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_304.mp3,pending
+WO_305,wo,Je me réveille à six heures tous les matins.,Damay jóg ci juróom benn suba su nekk.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_305.mp3,pending
+WO_306,wo,Quand commence la saison des pluies ?,Kañ la nawet di tàmbali ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_306.mp3,pending
+WO_307,wo,En juillet. Nous plantons les arachides après la première pluie.,Ci sulet. Danuy ji gerte gannaaw taw bi njëkk.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_307.mp3,pending
+WO_308,wo,À quelle heure ouvre le marché ?,Ci ban waxtu la marse bi di ubbeeku ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_308.mp3,pending
+WO_309,wo,À six heures.,Ci juróom benn.,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_309.mp3,pending
+WO_310,wo,Demande de visa,Ñaan visa,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_310.mp3,pending
+WO_311,wo,Motif du séjour,Sabab bu tukki bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_311.mp3,pending
+WO_312,wo,Je rends visite à ma famille,Maa ngi dem gis sama njaboot,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_312.mp3,pending
+WO_313,wo,Billet retour,Bilee bu délsi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_313.mp3,pending
+WO_314,wo,Combien de temps allez-vous rester ?,Ñaata bés ngay toog ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_314.mp3,pending
+WO_315,wo,Je vais rester deux semaines,Dinaa toog ñaari ayubés,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_315.mp3,pending
+WO_316,wo,Qui finance votre voyage ?,Kan moo di fay sa tukki ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_316.mp3,pending
+WO_317,wo,Je finance moi-même mon voyage,Man laa koy fay sama bopp,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_317.mp3,pending
+WO_318,wo,Avez-vous un hébergement réservé ?,Ndax am nga bérab bu nga di nelaw bu nga reserve ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_318.mp3,pending
+WO_319,wo,Je possède une petite entreprise au Sénégal,Am naa sama njaay bu ndaw ci Senegaal,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_319.mp3,pending
+WO_320,wo,Je rentrerai chez moi après mon voyage,Dinaa délsi sama kër gannaaw tukki bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_320.mp3,pending
+WO_321,wo,J'achète des marchandises à vendre dans ma boutique,Damay jënd marsandiis ngir jaay ko ci sama butik,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_321.mp3,pending
+WO_322,wo,Quel est le motif de votre visite ?,Lan moo tax nga di tukki ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_322.mp3,pending
+WO_323,wo,Je rends visite à ma famille pendant deux semaines.,Maa ngi dem gis sama njaboot ñaari ayubés.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_323.mp3,pending
+WO_324,wo,Avez-vous un billet retour ?,Ndax am nga bilee bu délsi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_324.mp3,pending
+WO_325,wo,"Oui, j'ai mon billet retour et ma réservation d'hôtel.","Waaw, am naa sama bilee bu délsi ak sama reservation bu otel.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_325.mp3,pending
+WO_326,wo,Pourquoi voulez-vous voyager ?,Lu tax nga bëgg a tukki ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_326.mp3,pending
+WO_327,wo,Je veux acheter des marchandises pour mon commerce.,Dama bëgg jënd marsandiis ngir sama njaay.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_327.mp3,pending
+WO_328,wo,Reviendrez-vous au Sénégal ?,Ndax dinga délsi Senegaal ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_328.mp3,pending
+WO_329,wo,"Oui, ma famille et ma boutique y sont.","Waaw, sama njaboot ak sama butik ñu ngi fa.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_329.mp3,pending
+WO_330,wo,Je cherche un appartement,Maa ngi seet apartema,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_330.mp3,pending
+WO_331,wo,La caution est-elle incluse ?,Ndax caution bi mu ngi ci ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_331.mp3,pending
+WO_332,wo,Propriétaire,Boroom kër gi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_332.mp3,pending
+WO_333,wo,Locataire,Kiraayekat,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_333.mp3,pending
+WO_334,wo,Puis-je visiter la maison ?,Mën naa gis kër gi ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_334.mp3,pending
+WO_335,wo,Combien de pièces y a-t-il ?,Ñaata pièce la am ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_335.mp3,pending
+WO_336,wo,J'ai un petit jardin derrière la maison,Am naa tool bu ndaw ci gannaaw kër gi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_336.mp3,pending
+WO_337,wo,Le loyer est de trente mille francs par mois,Loyer bi fanweer junni franc la ci weer wi,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_337.mp3,pending
+WO_338,wo,Combien coûte le loyer de cet appartement ?,Ñaata la loyer apartema bii ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_338.mp3,pending
+WO_339,wo,"C'est cinquante mille francs, caution comprise.","Juróom fukk junni franc la, ak caution bi.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_339.mp3,pending
+WO_340,wo,Puis-je visiter avant de décider ?,Mën naa gis balaa may tànn ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_340.mp3,pending
+WO_341,wo,"Oui, bien sûr, venez demain matin.","Waaw, dëgg la, ñëwal ëllëg ci suba.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_341.mp3,pending
+WO_342,wo,Avez-vous un jardin ?,Ndax am nga tool ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_342.mp3,pending
+WO_343,wo,"Oui, je cultive des tomates et des oignons derrière la maison.","Waaw, damay ji tamaate ak sooble ci gannaaw kër gi.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_343.mp3,pending
+WO_344,wo,Le loyer est-il cher ?,Ndax loyer bi dafa seer ?,quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_344.mp3,pending
+WO_345,wo,"Non, il est bon marché.","Déedéet, dafa yomb.",quotidien,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_345.mp3,pending
+WO_346,wo,Semences,Semences yi,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_346.mp3,pending
+WO_347,wo,Engrais,Engrais bi,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_347.mp3,pending
+WO_348,wo,Récolte,Ngóob mi,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_348.mp3,pending
+WO_349,wo,Agriculteur,Beykat bi,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_349.mp3,pending
+WO_350,wo,J'ai besoin de semences pour mon champ,Dama soxla semences ngir sama tool,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_350.mp3,pending
+WO_351,wo,Combien coûte un sac d'engrais ?,Ñaata la benn saaku engrais ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_351.mp3,pending
+WO_352,wo,Ces semences poussent-elles bien pendant la saison des pluies ?,Ndax semences yii dañuy sax bu baax ci nawet ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_352.mp3,pending
+WO_353,wo,J'arrose mes cultures chaque matin,Damay sotti ndox ci sama gàncax yi suba su nekk,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_353.mp3,pending
+WO_354,wo,La récolte a été bonne cette année,Ngóob mi baax na at mii,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_354.mp3,pending
+WO_355,wo,Je vends mes légumes au marché de Thiès,Damay jaay sama légumes ci marse bu Thiès,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_355.mp3,pending
+WO_356,wo,Pouvez-vous livrer à ma ferme ?,Mën nga ko yóbbu ci sama tool ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_356.mp3,pending
+WO_357,wo,Bonjour. J'ai besoin de semences pour mon champ.,Salaam aleekum. Dama soxla semences ngir sama tool.,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_357.mp3,pending
+WO_358,wo,Que voulez-vous cultiver ?,Lan nga bëgg a ji ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_358.mp3,pending
+WO_359,wo,Des tomates et des oignons.,Tamaate ak sooble.,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_359.mp3,pending
+WO_360,wo,Ces semences sont bonnes pour la saison des pluies.,Semences yii baax nañu ci nawet.,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_360.mp3,pending
+WO_361,wo,Combien coûte un petit sac ?,Ñaata la saaku bu ndaw ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_361.mp3,pending
+WO_362,wo,Deux mille cinq cents francs.,Ñaari junni ak juróom téeméer franc.,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_362.mp3,pending
+WO_363,wo,Avez-vous aussi de l'engrais ?,Ndax am ngeen engrais itam ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_363.mp3,pending
+WO_364,wo,"Oui, dix mille francs pour un grand sac.","Waaw, fukki junni franc ngir saaku bu mag.",commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_364.mp3,pending
+WO_365,wo,Pouvez-vous livrer à ma ferme à Thiès ?,Mën nga ko yóbbu ci sama tool ci Thiès ?,commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_365.mp3,pending
+WO_366,wo,"Oui, demain matin.","Waaw, ëllëg ci suba.",commerce,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_366.mp3,pending
+WO_367,wo,Quelle est la référence de cette pièce ?,Ban référans la pièce bii am ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_367.mp3,pending
+WO_368,wo,Frein / plaquettes,Fren,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_368.mp3,pending
+WO_369,wo,Amortisseur,Amortisëer,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_369.mp3,pending
+WO_370,wo,Est-ce une pièce d'origine ou une copie ?,Ndax pièce bii original la walla copie la ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_370.mp3,pending
+WO_371,wo,Combien coûte cette pièce ?,Ñaata la pièce bii ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_371.mp3,pending
+WO_372,wo,Avez-vous la garantie ?,Ndax am nga garanti ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_372.mp3,pending
+WO_373,wo,C'est une pièce OEM ou aftermarket ?,Ndax pièce bii OEM la walla aftermarket ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_373.mp3,pending
+WO_374,wo,Je cherche un fournisseur direct usine,Maa ngi wut fournisseur bu jóge fabrik bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_374.mp3,pending
+WO_375,wo,Combien pour une commande de gros ?,Ñaata la ngir commande gros ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_375.mp3,pending
+WO_376,wo,Je verse un acompte de combien ?,Ñaata acompte laa war a fey ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_376.mp3,pending
+WO_377,wo,Payez-vous en Yuan ou en dollars ?,Ndax fey nga ci Yuan walla dollar ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_377.mp3,pending
+WO_378,wo,Cette pièce a combien de mois de garantie ?,Ñaata weer garanti pièce bii am ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_378.mp3,pending
+WO_379,wo,Le prix inclut-il le montage ?,Ndax prix bi dafa bokk montage bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_379.mp3,pending
+WO_380,wo,Je reviendrai si le prix ne me convient pas,Dinaa dellusi bu prix bi neexul ma,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_380.mp3,pending
+WO_381,wo,Pouvez-vous me faire une facture ?,Ndax mën nga ma jox facture ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_381.mp3,pending
+WO_382,wo,Cette pièce est compatible avec quelle marque de véhicule ?,Pièce bii dafa yem ak ban marque oto ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_382.mp3,pending
+WO_383,wo,Quelle taille avez-vous ?,Ban taille nga am ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_383.mp3,pending
+WO_384,wo,Prix de gros / prix de détail,Prix gros / prix détail,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_384.mp3,pending
+WO_385,wo,Ce tissu est-il de bonne qualité ?,Ndax tissu bii baax na ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_385.mp3,pending
+WO_386,wo,Avez-vous d'autres couleurs ?,Am nga yeneen couleur ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_386.mp3,pending
+WO_387,wo,Je voudrais acheter en gros,Bëgg naa jënd ci gros,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_387.mp3,pending
+WO_388,wo,Combien pour dix pièces ?,Ñaata la ngir fukk pièce ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_388.mp3,pending
+WO_389,wo,Est-ce que ce tissu déteint au lavage ?,Ndax tissu bii dafay soppi couleur bu ñu ko raxasee ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_389.mp3,pending
+WO_390,wo,Quel est le minimum de commande ?,Ñaata la minimum commande bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_390.mp3,pending
+WO_391,wo,Pouvez-vous m'envoyer un échantillon ?,Ndax mën nga ma yónnee échantillon ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_391.mp3,pending
+WO_392,wo,Le tissu est-il en coton pur ?,Ndax tissu bii coton pur la ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_392.mp3,pending
+WO_393,wo,Avez-vous un ticket de caisse ?,Am nga ticket bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_393.mp3,pending
+WO_394,wo,Puis-je échanger si ça ne convient pas ?,Ndax mën naa ko soppi su neexul ma ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_394.mp3,pending
+WO_395,wo,Quel est le délai de réapprovisionnement ?,Ñaata fan ngir am beneen stock ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_395.mp3,pending
+WO_396,wo,Vendez-vous en ligne aussi ?,Ndax jaay nga itam ci internet ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_396.mp3,pending
+WO_397,wo,Cet appareil fonctionne en 220V ?,Ndax jumtukaay bii dafay dox ci 220V ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_397.mp3,pending
+WO_398,wo,Y a-t-il une garantie constructeur ?,Ndax am na garanti bu fabrikaan bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_398.mp3,pending
+WO_399,wo,Pouvez-vous tester l'appareil devant moi ?,Ndax mën nga ma ko testeel ci sama kanam ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_399.mp3,pending
+WO_400,wo,Est-ce compatible avec le voltage sénégalais ?,Ndax dafa yem ak voltage bu Senegaal ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_400.mp3,pending
+WO_401,wo,Avez-vous la facture d'origine ?,Ndax am nga facture bu njëkk bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_401.mp3,pending
+WO_402,wo,Quel est le prix pour un carton entier ?,Ñaata la ngir carton bu mat ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_402.mp3,pending
+WO_403,wo,Le chargeur est-il inclus ?,Ndax chargeur bi dafa bokk ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_403.mp3,pending
+WO_404,wo,Quelle est la capacité de la batterie ?,Ñaata la capacité batterie bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_404.mp3,pending
+WO_405,wo,Puis-je payer par mobile money ?,Ndax mën naa fey ci mobile money ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_405.mp3,pending
+WO_406,wo,Avez-vous un service après-vente ?,Am nga service après-vente ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_406.mp3,pending
+WO_407,wo,Ce meuble est-il démontable ?,Ndax meuble bii mën nañ ko wàcce ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_407.mp3,pending
+WO_408,wo,Quelle matière est utilisée ?,Lan matière lañu jëfandikoo ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_408.mp3,pending
+WO_409,wo,Livrez-vous à domicile ?,Ndax dinañ ko yónnee ci kër gi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_409.mp3,pending
+WO_410,wo,Combien pour l'ensemble du salon ?,Ñaata la ngir ensemble bi bépp ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_410.mp3,pending
+WO_411,wo,Puis-je payer en plusieurs fois ?,Ndax mën naa fey ci plusieurs fois ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_411.mp3,pending
+WO_412,wo,Le meuble est-il traité contre les termites ?,Ndax meuble bii dafa traité ci termites ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_412.mp3,pending
+WO_413,wo,Quel est le délai de fabrication sur commande ?,Ñaata fan ngir fabriquer commande bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_413.mp3,pending
+WO_414,wo,Proposez-vous un service de montage ?,Am nga service montage ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_414.mp3,pending
+WO_415,wo,Puis-je voir un catalogue de modèles ?,Ndax mën naa xool catalogue modèles yi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_415.mp3,pending
+WO_416,wo,Combien coûte le transport par conteneur ?,Ñaata la transport bu conteneur ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_416.mp3,pending
+WO_417,wo,Quel est le délai de livraison ?,Ñaata fan ngir livraison bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_417.mp3,pending
+WO_418,wo,Avez-vous besoin d'un visa d'affaires ?,Ndax soxla nga visa d'affaires ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_418.mp3,pending
+WO_419,wo,Où est le bureau de douane ?,Fan la bureau douane bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_419.mp3,pending
+WO_420,wo,Je cherche un fournisseur fiable,Maa ngi wut fournisseur bu wóor,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_420.mp3,pending
+WO_421,wo,Quel est le prix FOB ?,Ñaata la prix FOB bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_421.mp3,pending
+WO_422,wo,Je préfère un envoi groupé,Bëgg naa envoi bu bokk ak yeneen,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_422.mp3,pending
+WO_423,wo,Combien de CBM fait ma marchandise ?,Ñaata CBM la sama marsandiis am ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_423.mp3,pending
+WO_424,wo,J'ai besoin du connaissement (Bill of Lading),Soxla naa Bill of Lading bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_424.mp3,pending
+WO_425,wo,Où est la liste de colisage (packing list) ?,Fan la packing list bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_425.mp3,pending
+WO_426,wo,Combien de jours pour dédouaner au Port de Dakar ?,Ñaata fan ngir dédouaner ci Port Dakar ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_426.mp3,pending
+WO_427,wo,Quel Incoterm utilisez-vous ?,Ban Incoterm nga jëfandikoo ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_427.mp3,pending
+WO_428,wo,Acceptez-vous un paiement par acompte puis solde ?,"Ndax nangu nga fey ci acompte, topp solde bi ?",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_428.mp3,pending
+WO_429,wo,Quelle est la durée de validité du devis ?,Ñaata fan la devis bi dox ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_429.mp3,pending
+WO_430,wo,Avez-vous une assurance transport ?,Am nga assurance transport ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_430.mp3,pending
+WO_431,wo,"Dis, combien coûte cette pièce ?","Boy, ñaata la pièce bii ?",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_431.mp3,pending
+WO_432,wo,"Dix-neuf mille francs, mon frère.","Fukk ak juróom-ñeent junni la, waay.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_432.mp3,pending
+WO_433,wo,"D'accord, mais tu peux baisser un peu ?","Waaw waaw, ndax mën nga wàññi tuuti ?",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_433.mp3,pending
+WO_434,wo,"Pour toi, je te la fais à dix-sept mille.","Ci sa ndigël, dinaa la ko jox ci fukk ak juróom-ñaar junni.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_434.mp3,pending
+WO_435,wo,Cette pièce est d'origine ou c'est une copie ?,"Ndax pièce bii dafa bokk ci fabrik bi, walla copie la ?",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_435.mp3,pending
+WO_436,wo,"Elle est d'origine, il n'y a aucun doute.","Dafa bokk ci fabrik bi, wóor na ko.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_436.mp3,pending
+WO_437,wo,Quelle taille avez-vous pour ce tissu ?,Ban taille nga am ci tissu bii ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_437.mp3,pending
+WO_438,wo,"J'ai du L et du XL, ou je peux le faire sur mesure.","Am naa L ak XL, walla mën naa la ko def ci sa mesure.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_438.mp3,pending
+WO_439,wo,"Combien pour dix pièces, si j'achète en gros ?","Ñaata la ngir fukk pièces, bu ma jëndee ci gros ?",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_439.mp3,pending
+WO_440,wo,"En gros, je te fais une remise, seulement quarante mille.","Ci gros, dinaa la ko wàññi, ñeent fukk junni rekk.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_440.mp3,pending
+WO_441,wo,Peux-tu d'abord m'envoyer un échantillon ?,Ndax mën nga ma yónnee échantillon bu njëkk ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_441.mp3,pending
+WO_442,wo,"Oui, je te l'envoie tout de suite.","Waaw, dinaa la ko yónnee léegi léegi.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_442.mp3,pending
+WO_443,wo,Cet appareil fonctionne-t-il en 220V ?,Ndax jumtukaay bii dafay dox ci 220V ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_443.mp3,pending
+WO_444,wo,"Oui, il est compatible avec le voltage sénégalais.","Waaw, dafa yem ak voltage bu Senegaal.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_444.mp3,pending
+WO_445,wo,Peux-tu le tester devant moi ?,Ndax mën nga ma ko testeel ci sama kanam ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_445.mp3,pending
+WO_446,wo,"Oui, tout de suite, je vais le brancher sur la prise.","Waaw, léegi léegi, dinaa ko tàbbal ci prise bi.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_446.mp3,pending
+WO_447,wo,Y a-t-il une garantie du fabricant ?,Ndax am na garanti bu fabrikaan bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_447.mp3,pending
+WO_448,wo,"Oui, une garantie d'un an, avec la facture d'origine.","Waaw, benn at garanti, ak facture bu njëkk.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_448.mp3,pending
+WO_449,wo,"Oui, on peut le démonter pour faciliter la livraison.","Waaw, mën nañ ko wàcce ngir livraison bi yomb.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_449.mp3,pending
+WO_450,wo,Est-ce que vous livrez à domicile ?,Ndax dinañ ko yónnee ci kër gi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_450.mp3,pending
+WO_451,wo,"Oui, la livraison est en plus, ça fait vingt mille.","Waaw, livraison bi bokkul ci njëg bi, ñaar fukk junni la.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_451.mp3,pending
+WO_452,wo,"Oui, tu peux payer en trois fois, sur trois mois.","Waaw, mën nga fey ñetti yoon, ci ñetti weer.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_452.mp3,pending
+WO_453,wo,Combien coûte le transport par conteneur ?,Ñaata la transport bu conteneur bi ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_453.mp3,pending
+WO_454,wo,Ça dépend du nombre de CBM de ta marchandise.,Dafa aju ci ñaata CBM la sa marsandiis am.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_454.mp3,pending
+WO_455,wo,Combien de jours pour la livraison au Port de Dakar ?,Ñaata fan ngir livraison bi ci Port Dakar ?,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_455.mp3,pending
+WO_456,wo,"Environ trente jours, si le dédouanement se passe bien.","Tollu na ci fanweer, bu dédouanement bi yomb.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_456.mp3,pending
+WO_457,wo,J'ai besoin du connaissement et de la liste de colisage.,Soxla naa Bill of Lading bi ak packing list bi.,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_457.mp3,pending
+WO_458,wo,"Oui, je te les envoie dès que la marchandise est prise en charge.","Waaw, dinaa la ko yónnee bu ñu jëlee marsandiis bi.",business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_458.mp3,pending
+WO_459,wo,Pompe à eau pour le champ,Pompu ndox ngir tool bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_459.mp3,pending
+WO_460,wo,Pièces détachées de tracteur,Pièces détachées yu tracteur,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_460.mp3,pending
+WO_461,wo,Prix de gros pour vendeurs ambulants,Prix gros ngir baana-baana yi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_461.mp3,pending
+WO_462,wo,Je vends à crédit,Damay jaay ci crédit,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_462.mp3,pending
+WO_463,wo,Panneau solaire pour la ferme,Panneau solaire ngir ferme bi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_463.mp3,pending
+WO_464,wo,Paiement par mobile money,Fey ci mobile money,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_464.mp3,pending
+WO_465,wo,Caisses de stockage pour légumes,Caisse ngir denc légumes yi,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_465.mp3,pending
+WO_466,wo,Tomates et oignons frais,Tamaate ak sooble yu bees,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_466.mp3,pending
+WO_467,wo,Matériel d'irrigation,Jumtukaay yu irrigation,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_467.mp3,pending
+WO_468,wo,Conteneur d'expédition,Conteneur ngir yónnee marsandiis,business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_468.mp3,pending
+WO_469,wo,Dédouanement,Dédouanement (fay douane bi),business,synthetic,https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_469.mp3,pending

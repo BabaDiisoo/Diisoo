@@ -1,0 +1,4692 @@
+[
+  {
+    "id": "WO_001",
+    "locale": "wo",
+    "french_text": "Bonjour",
+    "wolof_current": "Salaam aleekum",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_001.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_002",
+    "locale": "wo",
+    "french_text": "Comment vas-tu ?",
+    "wolof_current": "Nanga def ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_002.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_003",
+    "locale": "wo",
+    "french_text": "Je vais bien",
+    "wolof_current": "Maa ngi fi",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_003.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_004",
+    "locale": "wo",
+    "french_text": "Merci",
+    "wolof_current": "Jërëjëf",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_004.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_005",
+    "locale": "wo",
+    "french_text": "Oui",
+    "wolof_current": "Waaw",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_005.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_006",
+    "locale": "wo",
+    "french_text": "Non",
+    "wolof_current": "Déedéet",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_006.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_007",
+    "locale": "wo",
+    "french_text": "À demain",
+    "wolof_current": "Ba ëllëg",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_007.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_008",
+    "locale": "wo",
+    "french_text": "Comment t'appelles-tu ?",
+    "wolof_current": "Noo tudd ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_008.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_009",
+    "locale": "wo",
+    "french_text": "Je m'appelle Fatou",
+    "wolof_current": "Fatou laa tudd",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_009.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_010",
+    "locale": "wo",
+    "french_text": "Bonne nuit",
+    "wolof_current": "Fanaanal jàmm",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_010.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_011",
+    "locale": "wo",
+    "french_text": "Comment allez-vous ?",
+    "wolof_current": "Nangeen def ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_011.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_012",
+    "locale": "wo",
+    "french_text": "Je vais bien, merci",
+    "wolof_current": "Maa ngi fi rekk, jërëjëf",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_012.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_013",
+    "locale": "wo",
+    "french_text": "Famille",
+    "wolof_current": "Njaboot",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_013.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_014",
+    "locale": "wo",
+    "french_text": "Père",
+    "wolof_current": "Baay",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_014.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_015",
+    "locale": "wo",
+    "french_text": "Mère",
+    "wolof_current": "Yaay",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_015.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_016",
+    "locale": "wo",
+    "french_text": "Frère/sœur aîné(e)",
+    "wolof_current": "Mag",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_016.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_017",
+    "locale": "wo",
+    "french_text": "Frère/sœur cadet(te)",
+    "wolof_current": "Rakk",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_017.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_018",
+    "locale": "wo",
+    "french_text": "Enfant",
+    "wolof_current": "Doom",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_018.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_019",
+    "locale": "wo",
+    "french_text": "J'ai une grande famille",
+    "wolof_current": "Am naa njaboot bu réy",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_019.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_020",
+    "locale": "wo",
+    "french_text": "Ma mère est à la maison",
+    "wolof_current": "Sama yaay mi ngi ci kër gi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_020.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_021",
+    "locale": "wo",
+    "french_text": "J'aime mes enfants",
+    "wolof_current": "Bëgg naa sama doom yi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_021.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_022",
+    "locale": "wo",
+    "french_text": "Combien d'enfants as-tu ?",
+    "wolof_current": "Ñaata doom nga am ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_022.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_023",
+    "locale": "wo",
+    "french_text": "As-tu un frère/une sœur ?",
+    "wolof_current": "Ndax am nga rakk ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_023.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_024",
+    "locale": "wo",
+    "french_text": "Ma mère",
+    "wolof_current": "Sama yaay",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_024.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_025",
+    "locale": "wo",
+    "french_text": "Mon père",
+    "wolof_current": "Sama baay",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_025.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_026",
+    "locale": "wo",
+    "french_text": "Agriculteur",
+    "wolof_current": "Beykat",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_026.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_027",
+    "locale": "wo",
+    "french_text": "Maison",
+    "wolof_current": "Kër",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_027.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_028",
+    "locale": "wo",
+    "french_text": "Voisin",
+    "wolof_current": "Dëkkandoo",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_028.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_029",
+    "locale": "wo",
+    "french_text": "Eau",
+    "wolof_current": "Ndox",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_029.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_030",
+    "locale": "wo",
+    "french_text": "Travail",
+    "wolof_current": "Liggéey",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_030.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_031",
+    "locale": "wo",
+    "french_text": "Ami",
+    "wolof_current": "Xarit",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_031.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_032",
+    "locale": "wo",
+    "french_text": "Maintenant",
+    "wolof_current": "Léegi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_032.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_033",
+    "locale": "wo",
+    "french_text": "Nourriture",
+    "wolof_current": "Ñam",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_033.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_034",
+    "locale": "wo",
+    "french_text": "Je rentre à la maison",
+    "wolof_current": "Maa ngi dem kër",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_034.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_035",
+    "locale": "wo",
+    "french_text": "J'ai besoin d'eau",
+    "wolof_current": "Soxla naa ndox",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_035.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_036",
+    "locale": "wo",
+    "french_text": "Je suis fatigué(e) aujourd'hui",
+    "wolof_current": "Sonn naa tey",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_036.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_037",
+    "locale": "wo",
+    "french_text": "Où habites-tu ?",
+    "wolof_current": "Foo dëkk ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_037.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_038",
+    "locale": "wo",
+    "french_text": "Où travailles-tu ?",
+    "wolof_current": "Fan nga liggéey ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_038.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_039",
+    "locale": "wo",
+    "french_text": "Je travaille dans une boutique",
+    "wolof_current": "Maa ngi liggéey ci butik",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_039.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_040",
+    "locale": "wo",
+    "french_text": "Champ",
+    "wolof_current": "Tool bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_040.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_041",
+    "locale": "wo",
+    "french_text": "Agriculture",
+    "wolof_current": "Mbay",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_041.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_042",
+    "locale": "wo",
+    "french_text": "Vache",
+    "wolof_current": "Nag",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_042.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_043",
+    "locale": "wo",
+    "french_text": "Mouton",
+    "wolof_current": "Xar",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_043.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_044",
+    "locale": "wo",
+    "french_text": "Chèvre",
+    "wolof_current": "Bëy",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_044.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_045",
+    "locale": "wo",
+    "french_text": "Argent",
+    "wolof_current": "Xaalis",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_045.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_046",
+    "locale": "wo",
+    "french_text": "Prix",
+    "wolof_current": "Njëg",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_046.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_047",
+    "locale": "wo",
+    "french_text": "C'est combien ?",
+    "wolof_current": "Ñaata la ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_047.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_048",
+    "locale": "wo",
+    "french_text": "Acheter",
+    "wolof_current": "Jënd",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_048.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_049",
+    "locale": "wo",
+    "french_text": "Vendre",
+    "wolof_current": "Jaay",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_049.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_050",
+    "locale": "wo",
+    "french_text": "Boutique",
+    "wolof_current": "Butik",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_050.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_051",
+    "locale": "wo",
+    "french_text": "C'est cher",
+    "wolof_current": "Dafa seer",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_051.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_052",
+    "locale": "wo",
+    "french_text": "Baisse le prix, s'il te plaît",
+    "wolof_current": "Wàññi njëg li, su la neexee",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_052.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_053",
+    "locale": "wo",
+    "french_text": "Je veux acheter du riz",
+    "wolof_current": "Bëgg naa jënd ceeb",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_053.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_054",
+    "locale": "wo",
+    "french_text": "Je n'ai pas d'argent maintenant",
+    "wolof_current": "Amuma xaalis léegi",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_054.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_055",
+    "locale": "wo",
+    "french_text": "Baisse un peu le prix",
+    "wolof_current": "Wàññi ko tuuti",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_055.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_056",
+    "locale": "wo",
+    "french_text": "Vendeur ambulant",
+    "wolof_current": "Baana-baana",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_056.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_057",
+    "locale": "wo",
+    "french_text": "Vendeur",
+    "wolof_current": "Jaaykat",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_057.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_058",
+    "locale": "wo",
+    "french_text": "Acheteur",
+    "wolof_current": "Jëndkat",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_058.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_059",
+    "locale": "wo",
+    "french_text": "C'est bon marché",
+    "wolof_current": "Dafa yomb",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_059.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_060",
+    "locale": "wo",
+    "french_text": "Aller",
+    "wolof_current": "Dem",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_060.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_061",
+    "locale": "wo",
+    "french_text": "Venir",
+    "wolof_current": "Ñëw",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_061.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_062",
+    "locale": "wo",
+    "french_text": "Route / chemin",
+    "wolof_current": "Yoon",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_062.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_063",
+    "locale": "wo",
+    "french_text": "Voiture",
+    "wolof_current": "Oto",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_063.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_064",
+    "locale": "wo",
+    "french_text": "Près",
+    "wolof_current": "Jege",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_064.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_065",
+    "locale": "wo",
+    "french_text": "Loin",
+    "wolof_current": "Sore",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_065.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_066",
+    "locale": "wo",
+    "french_text": "Je vais à Dakar",
+    "wolof_current": "Maa ngi dem Dakar",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_066.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_067",
+    "locale": "wo",
+    "french_text": "Où vas-tu ?",
+    "wolof_current": "Foo jëm ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_067.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_068",
+    "locale": "wo",
+    "french_text": "Le marché est près d'ici",
+    "wolof_current": "Marse bi jege na fi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_068.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_069",
+    "locale": "wo",
+    "french_text": "Viens ici, s'il te plaît",
+    "wolof_current": "Kaay fi, su la neexee",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_069.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_070",
+    "locale": "wo",
+    "french_text": "Le bus",
+    "wolof_current": "Kaar bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_070.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_071",
+    "locale": "wo",
+    "french_text": "D'où part le bus ?",
+    "wolof_current": "Fan la kaar bi jóge ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_071.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_072",
+    "locale": "wo",
+    "french_text": "Camion",
+    "wolof_current": "Kamiyon",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_072.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_073",
+    "locale": "wo",
+    "french_text": "Corps",
+    "wolof_current": "Yaram",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_073.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_074",
+    "locale": "wo",
+    "french_text": "Tête",
+    "wolof_current": "Bopp",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_074.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_075",
+    "locale": "wo",
+    "french_text": "Main",
+    "wolof_current": "Loxo",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_075.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_076",
+    "locale": "wo",
+    "french_text": "Pied",
+    "wolof_current": "Tank",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_076.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_077",
+    "locale": "wo",
+    "french_text": "Maladie",
+    "wolof_current": "Feebar",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_077.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_078",
+    "locale": "wo",
+    "french_text": "Se soigner",
+    "wolof_current": "Faju",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_078.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_079",
+    "locale": "wo",
+    "french_text": "Je suis malade",
+    "wolof_current": "Feebar naa",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_079.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_080",
+    "locale": "wo",
+    "french_text": "J'ai mal à la tête",
+    "wolof_current": "Sama bopp dafay metti",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_080.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_081",
+    "locale": "wo",
+    "french_text": "J'ai besoin de voir un médecin",
+    "wolof_current": "Soxla naa gis doktoor",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_081.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_082",
+    "locale": "wo",
+    "french_text": "Je me sens mieux maintenant",
+    "wolof_current": "Dama gën a baax léegi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_082.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_083",
+    "locale": "wo",
+    "french_text": "Qu'est-ce qui te fait mal ?",
+    "wolof_current": "Lu la metti ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_083.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_084",
+    "locale": "wo",
+    "french_text": "Où est le médecin ?",
+    "wolof_current": "Fan la doktoor bi ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_084.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_085",
+    "locale": "wo",
+    "french_text": "Fatigué",
+    "wolof_current": "Sonn",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_085.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_086",
+    "locale": "wo",
+    "french_text": "Chaud",
+    "wolof_current": "Tàng",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_086.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_087",
+    "locale": "wo",
+    "french_text": "Riz",
+    "wolof_current": "Ceeb",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_087.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_088",
+    "locale": "wo",
+    "french_text": "Poisson",
+    "wolof_current": "Jën",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_088.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_089",
+    "locale": "wo",
+    "french_text": "Viande",
+    "wolof_current": "Yàpp",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_089.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_090",
+    "locale": "wo",
+    "french_text": "Pain",
+    "wolof_current": "Mburu",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_090.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_091",
+    "locale": "wo",
+    "french_text": "Lait",
+    "wolof_current": "Meew",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_091.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_092",
+    "locale": "wo",
+    "french_text": "Délicieux",
+    "wolof_current": "Neex",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_092.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_093",
+    "locale": "wo",
+    "french_text": "J'ai faim",
+    "wolof_current": "Dama xiif",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_093.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_094",
+    "locale": "wo",
+    "french_text": "Ce repas est délicieux",
+    "wolof_current": "Ñam bi neex na",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_094.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_095",
+    "locale": "wo",
+    "french_text": "Je veux manger du riz et du poisson",
+    "wolof_current": "Bëgg naa lekk ceeb ak jën",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_095.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_096",
+    "locale": "wo",
+    "french_text": "Mangeons ensemble",
+    "wolof_current": "Nanu lekk ànd",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_096.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_097",
+    "locale": "wo",
+    "french_text": "L'eau",
+    "wolof_current": "Ndox mi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_097.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_098",
+    "locale": "wo",
+    "french_text": "Œuf",
+    "wolof_current": "Nen",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_098.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_099",
+    "locale": "wo",
+    "french_text": "Oignon",
+    "wolof_current": "Sooble",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_099.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_100",
+    "locale": "wo",
+    "french_text": "Arachide",
+    "wolof_current": "Gerte",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_100.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_101",
+    "locale": "wo",
+    "french_text": "Poulet",
+    "wolof_current": "Ginaar",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_101.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_102",
+    "locale": "wo",
+    "french_text": "Un",
+    "wolof_current": "Benn",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_102.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_103",
+    "locale": "wo",
+    "french_text": "Deux",
+    "wolof_current": "Ñaar",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_103.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_104",
+    "locale": "wo",
+    "french_text": "Trois",
+    "wolof_current": "Ñett",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_104.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_105",
+    "locale": "wo",
+    "french_text": "Demain",
+    "wolof_current": "Ëllëg",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_105.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_106",
+    "locale": "wo",
+    "french_text": "Hier",
+    "wolof_current": "Démb",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_106.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_107",
+    "locale": "wo",
+    "french_text": "Où ?",
+    "wolof_current": "Fan ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_107.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_108",
+    "locale": "wo",
+    "french_text": "Quelle heure est-il ?",
+    "wolof_current": "Ban waxtu la ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_108.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_109",
+    "locale": "wo",
+    "french_text": "Je viendrai demain",
+    "wolof_current": "Dinaa ñëw ëllëg",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_109.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_110",
+    "locale": "wo",
+    "french_text": "Hier, j'étais occupé(e)",
+    "wolof_current": "Démb, dama am liggéey bu bari",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_110.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_111",
+    "locale": "wo",
+    "french_text": "Combien de personnes y a-t-il ?",
+    "wolof_current": "Ñaata nit ñoo fi nekk ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_111.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_112",
+    "locale": "wo",
+    "french_text": "Matin",
+    "wolof_current": "Suba",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_112.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_113",
+    "locale": "wo",
+    "french_text": "Nuit",
+    "wolof_current": "Guddi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_113.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_114",
+    "locale": "wo",
+    "french_text": "Saison des pluies",
+    "wolof_current": "Nawet",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_114.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_115",
+    "locale": "wo",
+    "french_text": "Je cherche une maison",
+    "wolof_current": "Maa ngi wut kër",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_115.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_116",
+    "locale": "wo",
+    "french_text": "Quel est le montant du loyer ?",
+    "wolof_current": "Ñaata la loyer bi ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_116.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_117",
+    "locale": "wo",
+    "french_text": "Propriétaire",
+    "wolof_current": "Boroom kër",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_117.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_118",
+    "locale": "wo",
+    "french_text": "Chambre",
+    "wolof_current": "Néeg",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_118.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_119",
+    "locale": "wo",
+    "french_text": "Cuisine",
+    "wolof_current": "Néegu togg",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_119.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_120",
+    "locale": "wo",
+    "french_text": "Puis-je visiter la maison ?",
+    "wolof_current": "Ndax mën naa xool kër gi ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_120.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_121",
+    "locale": "wo",
+    "french_text": "L'électricité ne fonctionne pas",
+    "wolof_current": "Kuraŋ bi du liggéey",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_121.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_122",
+    "locale": "wo",
+    "french_text": "Le quartier est calme",
+    "wolof_current": "Gox bi dafa dal",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_122.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_123",
+    "locale": "wo",
+    "french_text": "Je dois signer le bail",
+    "wolof_current": "Dama war a sinye kontra kër gi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_123.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_124",
+    "locale": "wo",
+    "french_text": "Je m'appelle...",
+    "wolof_current": "Maa ngi tudd ...",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_124.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_125",
+    "locale": "wo",
+    "french_text": "Je viens du Sénégal",
+    "wolof_current": "Senegaal laa jóge",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_125.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_126",
+    "locale": "wo",
+    "french_text": "Enchanté(e)",
+    "wolof_current": "Neex na ma xam la",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_126.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_127",
+    "locale": "wo",
+    "french_text": "Je suis étudiant(e)",
+    "wolof_current": "Ndongo laa",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_127.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_128",
+    "locale": "wo",
+    "french_text": "Quel âge as-tu ?",
+    "wolof_current": "Ñaata at nga am ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_128.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_129",
+    "locale": "wo",
+    "french_text": "J'ai trente ans",
+    "wolof_current": "Am naa fanweer at",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_129.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_130",
+    "locale": "wo",
+    "french_text": "J'habite à Thiès",
+    "wolof_current": "Maa ngi dëkk Cees",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_130.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_131",
+    "locale": "wo",
+    "french_text": "Que fais-tu dans la vie ?",
+    "wolof_current": "Ban liggéey nga def ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_131.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_132",
+    "locale": "wo",
+    "french_text": "Je parle anglais et français",
+    "wolof_current": "Damay wax angale ak farañse",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_132.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_133",
+    "locale": "wo",
+    "french_text": "Peux-tu épeler ton nom ?",
+    "wolof_current": "Mën nga wax sa tur araf ci araf ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_133.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_134",
+    "locale": "wo",
+    "french_text": "F-A-T-O-U (épellation)",
+    "wolof_current": "F-A-T-O-U (araf ci araf)",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_134.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_135",
+    "locale": "wo",
+    "french_text": "Je suis vendeur ambulant",
+    "wolof_current": "Baana-baana laa",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_135.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_136",
+    "locale": "wo",
+    "french_text": "Je travaille dans l'agriculture",
+    "wolof_current": "Mbay laa def",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_136.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_137",
+    "locale": "wo",
+    "french_text": "Je dirige ma propre petite entreprise",
+    "wolof_current": "Damay yor sama njaay bu ndaw",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_137.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_138",
+    "locale": "wo",
+    "french_text": "Bonjour, comment vous appelez-vous ?",
+    "wolof_current": "Salaam aleekum, noo tudd ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_138.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_139",
+    "locale": "wo",
+    "french_text": "Je m'appelle Fatou. Enchantée.",
+    "wolof_current": "Maa ngi tudd Fatou. Neex na ma xam la.",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_139.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_140",
+    "locale": "wo",
+    "french_text": "Enchanté aussi. D'où venez-vous ?",
+    "wolof_current": "Neex na ma it. Fu nga jóge ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_140.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_141",
+    "locale": "wo",
+    "french_text": "Je viens de Thiès, au Sénégal.",
+    "wolof_current": "Thiès laa jóge, ci Senegaal.",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_141.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_142",
+    "locale": "wo",
+    "french_text": "Pouvez-vous épeler votre nom, s'il vous plaît ?",
+    "wolof_current": "Mën nga wax sa tur araf ci araf ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_142.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_143",
+    "locale": "wo",
+    "french_text": "Oui : F-A-T-O-U.",
+    "wolof_current": "Waaw : F-A-T-O-U.",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_143.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_144",
+    "locale": "wo",
+    "french_text": "Que faites-vous dans la vie ?",
+    "wolof_current": "Ban liggéey nga def ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_144.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_145",
+    "locale": "wo",
+    "french_text": "Je suis agricultrice, et je vends aussi mes légumes au marché.",
+    "wolof_current": "Beykat laa, te maa ngi jaay sama légumes ci marse bi.",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_145.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_146",
+    "locale": "wo",
+    "french_text": "Vous les vendez vous-même ?",
+    "wolof_current": "Yaa ko jaay ci sa bopp ?",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_146.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_147",
+    "locale": "wo",
+    "french_text": "Oui, je suis ma propre patronne.",
+    "wolof_current": "Waaw, man laa boroom sama liggéey.",
+    "context_usage": "salutation",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_147.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_148",
+    "locale": "wo",
+    "french_text": "Frère",
+    "wolof_current": "Mag bu góor (grand frère) / Rakk bu góor (petit frère)",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_148.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_149",
+    "locale": "wo",
+    "french_text": "Sœur",
+    "wolof_current": "Mag bu jigéen (grande sœur) / Rakk bu jigéen (petite sœur)",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_149.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_150",
+    "locale": "wo",
+    "french_text": "J'ai trois enfants",
+    "wolof_current": "Am naa ñett doom",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_150.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_151",
+    "locale": "wo",
+    "french_text": "Ma mère habite avec nous",
+    "wolof_current": "Sama yaay dafay dëkk ak nun",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_151.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_152",
+    "locale": "wo",
+    "french_text": "Nous mangeons ensemble chaque soir",
+    "wolof_current": "Danuy lekk ànd ci ngoon, bés bu nekk",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_152.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_153",
+    "locale": "wo",
+    "french_text": "Mon père est chauffeur",
+    "wolof_current": "Sama baay chauffeur la",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_153.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_154",
+    "locale": "wo",
+    "french_text": "J'aime beaucoup ma famille",
+    "wolof_current": "Dama bëgg sama njaboot lool",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_154.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_155",
+    "locale": "wo",
+    "french_text": "Qui est le/la plus âgé(e) de ta famille ?",
+    "wolof_current": "Kan moo gëna mag ci sa njaboot ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_155.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_156",
+    "locale": "wo",
+    "french_text": "Ma grand-mère est la plus âgée",
+    "wolof_current": "Sama maam bu jigéen moo gëna mag",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_156.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_157",
+    "locale": "wo",
+    "french_text": "Ma famille travaille aux champs",
+    "wolof_current": "Sama njaboot dafay liggéey ci tool yi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_157.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_158",
+    "locale": "wo",
+    "french_text": "Mon frère vend des fruits au marché",
+    "wolof_current": "Sama rakk bu góor dafay jaay meññeef ci marse bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_158.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_159",
+    "locale": "wo",
+    "french_text": "Avez-vous une grande famille ?",
+    "wolof_current": "Ndax am nga njaboot bu mag ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_159.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_160",
+    "locale": "wo",
+    "french_text": "Oui, j'ai deux frères et une sœur.",
+    "wolof_current": "Waaw, am naa ñaar rakk bu góor ak benn rakk bu jigéen.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_160.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_161",
+    "locale": "wo",
+    "french_text": "Vivez-vous tous ensemble ?",
+    "wolof_current": "Ndax dangeen dëkk ànd ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_161.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_162",
+    "locale": "wo",
+    "french_text": "Oui, nous vivons dans la même maison avec nos parents.",
+    "wolof_current": "Waaw, danuy dëkk ci benn kër ak sunu waajur.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_162.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_163",
+    "locale": "wo",
+    "french_text": "Qui est le plus âgé de votre famille ?",
+    "wolof_current": "Kan moo gëna mag ci sa njaboot ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_163.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_164",
+    "locale": "wo",
+    "french_text": "Ma grand-mère ; elle a 78 ans.",
+    "wolof_current": "Sama maam bu jigéen ; am na juróom ñaar fukk ak juróom ñett at.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_164.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_165",
+    "locale": "wo",
+    "french_text": "Votre famille a-t-elle une ferme ?",
+    "wolof_current": "Ndax sa njaboot am na tool ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_165.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_166",
+    "locale": "wo",
+    "french_text": "Oui, mes parents cultivent du mil et des arachides.",
+    "wolof_current": "Waaw, sama waajur yi dañuy ji dugub ak gerte.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_166.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_167",
+    "locale": "wo",
+    "french_text": "Et votre frère ?",
+    "wolof_current": "Sa rakk bu góor nag ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_167.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_168",
+    "locale": "wo",
+    "french_text": "Il est commerçant ambulant à Thiès.",
+    "wolof_current": "Baana-baana la ci Thiès.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_168.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_169",
+    "locale": "wo",
+    "french_text": "Emploi",
+    "wolof_current": "Liggéey bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_169.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_170",
+    "locale": "wo",
+    "french_text": "Chaque jour",
+    "wolof_current": "Bés bu nekk",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_170.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_171",
+    "locale": "wo",
+    "french_text": "Occupé(e)",
+    "wolof_current": "Dama am liggéey bu bari",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_171.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_172",
+    "locale": "wo",
+    "french_text": "Collègue",
+    "wolof_current": "Xarit ci liggéey",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_172.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_173",
+    "locale": "wo",
+    "french_text": "Je commence le travail à huit heures",
+    "wolof_current": "Damay tàmbali liggéey ci juróom ñett",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_173.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_174",
+    "locale": "wo",
+    "french_text": "Je termine le travail à dix-sept heures",
+    "wolof_current": "Damay noppi liggéey ci juróom",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_174.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_175",
+    "locale": "wo",
+    "french_text": "Je travaille dans un bureau",
+    "wolof_current": "Damay liggéey ci bureau bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_175.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_176",
+    "locale": "wo",
+    "french_text": "Mon travail est difficile mais intéressant",
+    "wolof_current": "Sama liggéey dafa sonn waaye dafay neex ma",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_176.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_177",
+    "locale": "wo",
+    "french_text": "Je cherche un nouvel emploi",
+    "wolof_current": "Maa ngi seet liggéey bu bees",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_177.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_178",
+    "locale": "wo",
+    "french_text": "J'aime aider les clients",
+    "wolof_current": "Dama bëgg dimbali kiliyaan yi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_178.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_179",
+    "locale": "wo",
+    "french_text": "Je fais une courte pause à midi",
+    "wolof_current": "Damay noppalu tuuti ci digg-bëccëg",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_179.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_180",
+    "locale": "wo",
+    "french_text": "Je commence à travailler à six heures du matin",
+    "wolof_current": "Damay tàmbali liggéey ci juróom benn ci suba",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_180.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_181",
+    "locale": "wo",
+    "french_text": "J'arrose les plantes chaque jour",
+    "wolof_current": "Damay sotti ndox ci gàncax yi bés bu nekk",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_181.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_182",
+    "locale": "wo",
+    "french_text": "Je vends mes marchandises dans la rue",
+    "wolof_current": "Damay jaay sama yëf ci mbedd mi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_182.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_183",
+    "locale": "wo",
+    "french_text": "Que faites-vous comme travail ?",
+    "wolof_current": "Ban liggéey nga def ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_183.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_184",
+    "locale": "wo",
+    "french_text": "Je travaille dans une boutique tous les jours.",
+    "wolof_current": "Damay liggéey ci butik bi bés bu nekk.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_184.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_185",
+    "locale": "wo",
+    "french_text": "À quelle heure commencez-vous le travail ?",
+    "wolof_current": "Ci ban waxtu nga tàmbali liggéey ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_185.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_186",
+    "locale": "wo",
+    "french_text": "Je commence à huit heures et je finis à six heures.",
+    "wolof_current": "Damay tàmbali ci juróom ñett te noppi ci juróom benn.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_186.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_187",
+    "locale": "wo",
+    "french_text": "Qu'aimez-vous dans votre travail ?",
+    "wolof_current": "Lan nga bëgg ci sa liggéey ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_187.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_188",
+    "locale": "wo",
+    "french_text": "J'aime aider les clients chaque jour.",
+    "wolof_current": "Dama bëgg dimbali kiliyaan yi bés bu nekk.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_188.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_189",
+    "locale": "wo",
+    "french_text": "À six heures. J'arrose d'abord mes légumes, puis je vais au marché.",
+    "wolof_current": "Ci juróom benn. Damay sotti ndox ci sama légumes yi njëkk, ba noppi dem ci marse bi.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_189.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_190",
+    "locale": "wo",
+    "french_text": "Combien d'heures travaillez-vous ?",
+    "wolof_current": "Ñaata waxtu nga liggéey ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_190.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_191",
+    "locale": "wo",
+    "french_text": "Environ dix heures par jour.",
+    "wolof_current": "Ni fukki waxtu ci bés bu nekk.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_191.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_192",
+    "locale": "wo",
+    "french_text": "Marché",
+    "wolof_current": "Marse bi",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_192.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_193",
+    "locale": "wo",
+    "french_text": "Bon marché",
+    "wolof_current": "Dafa yomb",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_193.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_194",
+    "locale": "wo",
+    "french_text": "Combien ça coûte ?",
+    "wolof_current": "Ñaata la ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_194.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_195",
+    "locale": "wo",
+    "french_text": "C'est trop cher",
+    "wolof_current": "Dafa seer lool",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_195.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_196",
+    "locale": "wo",
+    "french_text": "Peux-tu baisser le prix ?",
+    "wolof_current": "Mën nga wàññi njëg li ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_196.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_197",
+    "locale": "wo",
+    "french_text": "Je voudrais acheter du riz",
+    "wolof_current": "Dama bëgg jënd ceeb",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_197.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_198",
+    "locale": "wo",
+    "french_text": "Acceptez-vous le paiement mobile ?",
+    "wolof_current": "Ndax nangu ngeen Wave ak Orange Money ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_198.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_199",
+    "locale": "wo",
+    "french_text": "Combien coûtent les tomates ?",
+    "wolof_current": "Ñaata la tamaate yi ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_199.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_200",
+    "locale": "wo",
+    "french_text": "Pourriez-vous me faire une réduction ?",
+    "wolof_current": "Mën nga ma wàññil ci njëg li ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_200.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_201",
+    "locale": "wo",
+    "french_text": "Combien coûte ceci ?",
+    "wolof_current": "Ñaata la ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_201.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_202",
+    "locale": "wo",
+    "french_text": "C'est trop cher",
+    "wolof_current": "Dafa seer",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_202.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_203",
+    "locale": "wo",
+    "french_text": "Pouvez-vous baisser un peu le prix ?",
+    "wolof_current": "Wàññil ma tuuti",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_203.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_204",
+    "locale": "wo",
+    "french_text": "Je veux acheter dix kilos d'oignons",
+    "wolof_current": "Dama bëgg jënd fukki kilo sooble",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_204.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_205",
+    "locale": "wo",
+    "french_text": "Combien coûte ce sac ?",
+    "wolof_current": "Ñaata la sac bi ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_205.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_206",
+    "locale": "wo",
+    "french_text": "Il coûte cinq mille francs.",
+    "wolof_current": "Juróom junni franc la.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_206.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_207",
+    "locale": "wo",
+    "french_text": "C'est trop cher. Pouvez-vous baisser le prix ?",
+    "wolof_current": "Dafa seer lool. Mën nga wàññi njëg li ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_207.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_208",
+    "locale": "wo",
+    "french_text": "D'accord, quatre mille francs pour vous.",
+    "wolof_current": "Waaw, ñeent junni franc ngir yaw.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_208.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_209",
+    "locale": "wo",
+    "french_text": "Merci, j'en prends deux.",
+    "wolof_current": "Jërëjëf, dinaa jël ñaar.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_209.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_210",
+    "locale": "wo",
+    "french_text": "Bonjour. Combien coûtent les tomates ?",
+    "wolof_current": "Salaam aleekum. Ñaata la tamaate yi ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_210.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_211",
+    "locale": "wo",
+    "french_text": "Cinq cents francs le kilo.",
+    "wolof_current": "Juróom téeméer franc la ci kilo bi.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_211.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_212",
+    "locale": "wo",
+    "french_text": "C'est trop cher. Pouvez-vous baisser le prix ?",
+    "wolof_current": "Dafa seer. Mën nga wàññi njëg li ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_212.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_213",
+    "locale": "wo",
+    "french_text": "Pour vous, quatre cents. Elles viennent de la ferme ce matin.",
+    "wolof_current": "Ngir yaw, ñeent téeméer. Ñu ngi jóge ci tool bi tey ci suba.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_213.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_214",
+    "locale": "wo",
+    "french_text": "D'accord, je veux trois kilos.",
+    "wolof_current": "Baax na, bëgg naa ñett kilo.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_214.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_215",
+    "locale": "wo",
+    "french_text": "Aéroport",
+    "wolof_current": "Ayropoor bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_215.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_216",
+    "locale": "wo",
+    "french_text": "Billet",
+    "wolof_current": "Bilee bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_216.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_217",
+    "locale": "wo",
+    "french_text": "Passeport",
+    "wolof_current": "Paspoor bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_217.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_218",
+    "locale": "wo",
+    "french_text": "Vol",
+    "wolof_current": "Tukki bu avion",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_218.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_219",
+    "locale": "wo",
+    "french_text": "Bus",
+    "wolof_current": "Bus bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_219.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_220",
+    "locale": "wo",
+    "french_text": "Je voudrais réserver un billet",
+    "wolof_current": "Dama bëgg reserve benn bilee",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_220.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_221",
+    "locale": "wo",
+    "french_text": "À quelle heure part le bus ?",
+    "wolof_current": "Ci ban waxtu la bus bi di dem ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_221.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_222",
+    "locale": "wo",
+    "french_text": "Où est l'arrêt de bus le plus proche ?",
+    "wolof_current": "Ana arre bu gëna jege ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_222.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_223",
+    "locale": "wo",
+    "french_text": "Je voyage pour rendre visite à ma famille",
+    "wolof_current": "Maa ngi tukki ngir gis sama njaboot",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_223.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_224",
+    "locale": "wo",
+    "french_text": "Ai-je besoin d'un visa pour ce pays ?",
+    "wolof_current": "Ndax war naa am visa ngir réew mii ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_224.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_225",
+    "locale": "wo",
+    "french_text": "Comment vas-tu au travail ?",
+    "wolof_current": "Naka nga di dem liggéey ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_225.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_226",
+    "locale": "wo",
+    "french_text": "Je prends le bus chaque matin",
+    "wolof_current": "Damay jël bus bi suba su nekk",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_226.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_227",
+    "locale": "wo",
+    "french_text": "Je transporte des marchandises à Dakar",
+    "wolof_current": "Damay yóbbu marsandiis ci Ndakaaru",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_227.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_228",
+    "locale": "wo",
+    "french_text": "Le camion part à sept heures",
+    "wolof_current": "Kamiyon bi dafay dem ci juróom ñaar",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_228.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_229",
+    "locale": "wo",
+    "french_text": "Combien coûte le billet pour le marché ?",
+    "wolof_current": "Ñaata la bilee bi ngir dem marse bi ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_229.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_230",
+    "locale": "wo",
+    "french_text": "Où est l'aéroport ?",
+    "wolof_current": "Fan la ayropoor bi nekk ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_230.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_231",
+    "locale": "wo",
+    "french_text": "C'est à dix minutes d'ici en taxi.",
+    "wolof_current": "Fukki minut la ci taksi bu jóge fii.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_231.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_232",
+    "locale": "wo",
+    "french_text": "À quelle heure part mon vol ?",
+    "wolof_current": "Ci ban waxtu la sama tukki avion di dem ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_232.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_233",
+    "locale": "wo",
+    "french_text": "Votre vol part à huit heures du matin.",
+    "wolof_current": "Sa tukki avion bi dafay dem ci juróom ñett ci suba.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_233.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_234",
+    "locale": "wo",
+    "french_text": "Comment allez-vous d'habitude au travail ?",
+    "wolof_current": "Naka nga di dem liggéey ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_234.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_235",
+    "locale": "wo",
+    "french_text": "Je prends le bus tous les matins.",
+    "wolof_current": "Damay jël bus bi suba su nekk.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_235.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_236",
+    "locale": "wo",
+    "french_text": "Est-ce que ce camion va au marché de Thiès ?",
+    "wolof_current": "Ndax kamiyon bii dafay dem marse bu Thiès ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_236.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_237",
+    "locale": "wo",
+    "french_text": "Oui, il part à sept heures avec des légumes frais.",
+    "wolof_current": "Waaw, dafay dem ci juróom ñaar ak légumes yu bees.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_237.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_238",
+    "locale": "wo",
+    "french_text": "Combien pour mes bagages ?",
+    "wolof_current": "Ñaata la sama bagaas yi ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_238.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_239",
+    "locale": "wo",
+    "french_text": "Deux mille francs.",
+    "wolof_current": "Ñaar junni franc la.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_239.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_240",
+    "locale": "wo",
+    "french_text": "Médecin",
+    "wolof_current": "Doktoor bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_240.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_241",
+    "locale": "wo",
+    "french_text": "Hôpital",
+    "wolof_current": "Opitaal bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_241.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_242",
+    "locale": "wo",
+    "french_text": "Malade",
+    "wolof_current": "Feebar",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_242.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_243",
+    "locale": "wo",
+    "french_text": "Médicament",
+    "wolof_current": "Garab gi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_243.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_244",
+    "locale": "wo",
+    "french_text": "Aide",
+    "wolof_current": "Dimbali",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_244.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_245",
+    "locale": "wo",
+    "french_text": "J'ai besoin de voir un médecin",
+    "wolof_current": "Dama war a gis doktoor",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_245.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_246",
+    "locale": "wo",
+    "french_text": "Où est l'hôpital le plus proche ?",
+    "wolof_current": "Ana opitaal bu gëna jege ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_246.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_247",
+    "locale": "wo",
+    "french_text": "Je me sens mieux aujourd'hui",
+    "wolof_current": "Dama gën a baax tey",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_247.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_248",
+    "locale": "wo",
+    "french_text": "Appelez une ambulance s'il vous plaît",
+    "wolof_current": "Wool ambilaas bi, su la neexee",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_248.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_249",
+    "locale": "wo",
+    "french_text": "Prenez un comprimé deux fois par jour",
+    "wolof_current": "Naanal benn comprimé ñaari yoon ci bés bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_249.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_250",
+    "locale": "wo",
+    "french_text": "Depuis quand te sens-tu malade ?",
+    "wolof_current": "Kañ nga tàmbali feebar ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_250.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_251",
+    "locale": "wo",
+    "french_text": "J'ai besoin de me reposer, j'ai travaillé au soleil toute la journée",
+    "wolof_current": "Dama war a noppalu, liggéey naa ci jant bi bés bi bépp",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_251.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_252",
+    "locale": "wo",
+    "french_text": "Buvez beaucoup d'eau quand il fait chaud",
+    "wolof_current": "Naanal ndox bu bari bu tàngee",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_252.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_253",
+    "locale": "wo",
+    "french_text": "Ça va ?",
+    "wolof_current": "Yaa ngi ci jàmm ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_253.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_254",
+    "locale": "wo",
+    "french_text": "Non, je me sens malade. J'ai besoin d'un médecin.",
+    "wolof_current": "Déedéet, dama feebar. Dama war a gis doktoor.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_254.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_255",
+    "locale": "wo",
+    "french_text": "Qu'est-ce qui ne va pas ?",
+    "wolof_current": "Lan la ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_255.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_256",
+    "locale": "wo",
+    "french_text": "J'ai mal à la tête et de la fièvre.",
+    "wolof_current": "Sama bopp dafay metti te dama am tàngoor.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_256.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_257",
+    "locale": "wo",
+    "french_text": "Depuis quand vous sentez-vous comme ça ?",
+    "wolof_current": "Kañ nga tàmbali feebar ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_257.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_258",
+    "locale": "wo",
+    "french_text": "Depuis hier soir.",
+    "wolof_current": "Démb ci ngoon.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_258.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_259",
+    "locale": "wo",
+    "french_text": "Vous avez l'air fatigué.",
+    "wolof_current": "Dafa mel ni yaa ngi sonn.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_259.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_260",
+    "locale": "wo",
+    "french_text": "J'ai travaillé dans le champ toute la journée, et je n'ai pas bu d'eau.",
+    "wolof_current": "Liggéey naa ci tool bi bés bi bépp te naanul ndox.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_260.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_261",
+    "locale": "wo",
+    "french_text": "Vous devez boire de l'eau et vous reposer.",
+    "wolof_current": "War nga naan ndox te noppalu.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_261.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_262",
+    "locale": "wo",
+    "french_text": "Vous avez raison, merci.",
+    "wolof_current": "Dëgg nga, jërëjëf.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_262.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_263",
+    "locale": "wo",
+    "french_text": "Restaurant",
+    "wolof_current": "Restoraan bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_263.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_264",
+    "locale": "wo",
+    "french_text": "Menu",
+    "wolof_current": "Menu bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_264.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_265",
+    "locale": "wo",
+    "french_text": "Eau",
+    "wolof_current": "Ndox mi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_265.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_266",
+    "locale": "wo",
+    "french_text": "Délicieux",
+    "wolof_current": "Dafa neex lool",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_266.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_267",
+    "locale": "wo",
+    "french_text": "Addition",
+    "wolof_current": "Addition bi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_267.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_268",
+    "locale": "wo",
+    "french_text": "J'ai faim",
+    "wolof_current": "Xiif na ma",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_268.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_269",
+    "locale": "wo",
+    "french_text": "Que recommandez-vous ?",
+    "wolof_current": "Lan nga ma digal ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_269.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_270",
+    "locale": "wo",
+    "french_text": "Je voudrais du riz et du poisson",
+    "wolof_current": "Dama bëgg ceeb ak jën",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_270.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_271",
+    "locale": "wo",
+    "french_text": "Ce repas est très savoureux",
+    "wolof_current": "Lekk bii dafa neex lool",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_271.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_272",
+    "locale": "wo",
+    "french_text": "Puis-je avoir l'addition, s'il vous plaît ?",
+    "wolof_current": "Mën naa am addition bi, su la neexee ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_272.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_273",
+    "locale": "wo",
+    "french_text": "Quel est ton plat préféré ?",
+    "wolof_current": "Ban lekk nga gëna bëgg ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_273.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_274",
+    "locale": "wo",
+    "french_text": "J'aime le thiéboudienne",
+    "wolof_current": "Dama bëgg ceebu jën",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_274.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_275",
+    "locale": "wo",
+    "french_text": "Légumes et fruits frais",
+    "wolof_current": "Légumes yu bees ak meññeef",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_275.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_276",
+    "locale": "wo",
+    "french_text": "Je voudrais du riz au poulet, s'il vous plaît",
+    "wolof_current": "Dama bëgg ceeb ak ginaar, su la neexee",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_276.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_277",
+    "locale": "wo",
+    "french_text": "Un œuf",
+    "wolof_current": "Benn nen",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_277.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_278",
+    "locale": "wo",
+    "french_text": "Puis-je avoir le menu, s'il vous plaît ?",
+    "wolof_current": "Mën naa am menu bi, su la neexee ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_278.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_279",
+    "locale": "wo",
+    "french_text": "Bien sûr, voici.",
+    "wolof_current": "Waaw, jël ko.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_279.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_280",
+    "locale": "wo",
+    "french_text": "Que recommandez-vous aujourd'hui ?",
+    "wolof_current": "Lan nga ma digal tey ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_280.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_281",
+    "locale": "wo",
+    "french_text": "Le poisson avec du riz est délicieux aujourd'hui.",
+    "wolof_current": "Jën wu ñu def ak ceeb neex na lool tey.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_281.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_282",
+    "locale": "wo",
+    "french_text": "Que voulez-vous boire ?",
+    "wolof_current": "Lan nga bëgg a naan ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_282.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_283",
+    "locale": "wo",
+    "french_text": "Juste de l'eau, s'il vous plaît.",
+    "wolof_current": "Ndox rekk, su la neexee.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_283.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_284",
+    "locale": "wo",
+    "french_text": "Que désirez-vous ?",
+    "wolof_current": "Lan nga bëgg ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_284.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_285",
+    "locale": "wo",
+    "french_text": "Du riz au poulet, s'il vous plaît.",
+    "wolof_current": "Ceeb ak ginaar, su la neexee.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_285.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_286",
+    "locale": "wo",
+    "french_text": "Voulez-vous des légumes ?",
+    "wolof_current": "Ndax bëgg nga légumes ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_286.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_287",
+    "locale": "wo",
+    "french_text": "Oui, et de l'eau.",
+    "wolof_current": "Waaw, ak ndox.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_287.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_288",
+    "locale": "wo",
+    "french_text": "Aujourd'hui",
+    "wolof_current": "Tey",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_288.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_289",
+    "locale": "wo",
+    "french_text": "Nombre",
+    "wolof_current": "Lim",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_289.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_290",
+    "locale": "wo",
+    "french_text": "Heure / temps",
+    "wolof_current": "Waxtu",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_290.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_291",
+    "locale": "wo",
+    "french_text": "Quelle heure est-il maintenant ?",
+    "wolof_current": "Ban waxtu la léegi ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_291.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_292",
+    "locale": "wo",
+    "french_text": "Je te verrai demain matin",
+    "wolof_current": "Dinaa la gis ëllëg ci suba",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_292.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_293",
+    "locale": "wo",
+    "french_text": "La réunion commence à dix heures",
+    "wolof_current": "Ndaje mi dafay tàmbali ci fukk",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_293.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_294",
+    "locale": "wo",
+    "french_text": "J'étais occupé(e) hier",
+    "wolof_current": "Dama am liggéey bu bari démb",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_294.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_295",
+    "locale": "wo",
+    "french_text": "Combien de personnes viennent ?",
+    "wolof_current": "Ñaata nit ñu ngi ñëw ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_295.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_296",
+    "locale": "wo",
+    "french_text": "À quelle heure te réveilles-tu ?",
+    "wolof_current": "Ci ban waxtu nga di jóg ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_296.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_297",
+    "locale": "wo",
+    "french_text": "Je me réveille à six heures chaque matin",
+    "wolof_current": "Damay jóg ci juróom benn suba su nekk",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_297.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_298",
+    "locale": "wo",
+    "french_text": "La saison des pluies commence en juillet",
+    "wolof_current": "Nawet dafay tàmbali ci sulet",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_298.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_299",
+    "locale": "wo",
+    "french_text": "Le marché ouvre à six heures",
+    "wolof_current": "Marse bi dafay ubbeeku ci juróom benn",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_299.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_300",
+    "locale": "wo",
+    "french_text": "Cinq cents francs",
+    "wolof_current": "Juróom téeméer franc",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_300.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_301",
+    "locale": "wo",
+    "french_text": "Il est trois heures.",
+    "wolof_current": "Ñett waxtu la.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_301.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_302",
+    "locale": "wo",
+    "french_text": "À quelle heure commence la réunion ?",
+    "wolof_current": "Ci ban waxtu la ndaje mi di tàmbali ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_302.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_303",
+    "locale": "wo",
+    "french_text": "Elle commence demain à dix heures.",
+    "wolof_current": "Dafay tàmbali ëllëg ci fukk.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_303.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_304",
+    "locale": "wo",
+    "french_text": "À quelle heure vous réveillez-vous d'habitude ?",
+    "wolof_current": "Ci ban waxtu nga di jóg ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_304.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_305",
+    "locale": "wo",
+    "french_text": "Je me réveille à six heures tous les matins.",
+    "wolof_current": "Damay jóg ci juróom benn suba su nekk.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_305.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_306",
+    "locale": "wo",
+    "french_text": "Quand commence la saison des pluies ?",
+    "wolof_current": "Kañ la nawet di tàmbali ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_306.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_307",
+    "locale": "wo",
+    "french_text": "En juillet. Nous plantons les arachides après la première pluie.",
+    "wolof_current": "Ci sulet. Danuy ji gerte gannaaw taw bi njëkk.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_307.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_308",
+    "locale": "wo",
+    "french_text": "À quelle heure ouvre le marché ?",
+    "wolof_current": "Ci ban waxtu la marse bi di ubbeeku ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_308.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_309",
+    "locale": "wo",
+    "french_text": "À six heures.",
+    "wolof_current": "Ci juróom benn.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_309.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_310",
+    "locale": "wo",
+    "french_text": "Demande de visa",
+    "wolof_current": "Ñaan visa",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_310.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_311",
+    "locale": "wo",
+    "french_text": "Motif du séjour",
+    "wolof_current": "Sabab bu tukki bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_311.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_312",
+    "locale": "wo",
+    "french_text": "Je rends visite à ma famille",
+    "wolof_current": "Maa ngi dem gis sama njaboot",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_312.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_313",
+    "locale": "wo",
+    "french_text": "Billet retour",
+    "wolof_current": "Bilee bu délsi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_313.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_314",
+    "locale": "wo",
+    "french_text": "Combien de temps allez-vous rester ?",
+    "wolof_current": "Ñaata bés ngay toog ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_314.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_315",
+    "locale": "wo",
+    "french_text": "Je vais rester deux semaines",
+    "wolof_current": "Dinaa toog ñaari ayubés",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_315.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_316",
+    "locale": "wo",
+    "french_text": "Qui finance votre voyage ?",
+    "wolof_current": "Kan moo di fay sa tukki ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_316.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_317",
+    "locale": "wo",
+    "french_text": "Je finance moi-même mon voyage",
+    "wolof_current": "Man laa koy fay sama bopp",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_317.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_318",
+    "locale": "wo",
+    "french_text": "Avez-vous un hébergement réservé ?",
+    "wolof_current": "Ndax am nga bérab bu nga di nelaw bu nga reserve ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_318.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_319",
+    "locale": "wo",
+    "french_text": "Je possède une petite entreprise au Sénégal",
+    "wolof_current": "Am naa sama njaay bu ndaw ci Senegaal",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_319.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_320",
+    "locale": "wo",
+    "french_text": "Je rentrerai chez moi après mon voyage",
+    "wolof_current": "Dinaa délsi sama kër gannaaw tukki bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_320.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_321",
+    "locale": "wo",
+    "french_text": "J'achète des marchandises à vendre dans ma boutique",
+    "wolof_current": "Damay jënd marsandiis ngir jaay ko ci sama butik",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_321.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_322",
+    "locale": "wo",
+    "french_text": "Quel est le motif de votre visite ?",
+    "wolof_current": "Lan moo tax nga di tukki ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_322.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_323",
+    "locale": "wo",
+    "french_text": "Je rends visite à ma famille pendant deux semaines.",
+    "wolof_current": "Maa ngi dem gis sama njaboot ñaari ayubés.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_323.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_324",
+    "locale": "wo",
+    "french_text": "Avez-vous un billet retour ?",
+    "wolof_current": "Ndax am nga bilee bu délsi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_324.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_325",
+    "locale": "wo",
+    "french_text": "Oui, j'ai mon billet retour et ma réservation d'hôtel.",
+    "wolof_current": "Waaw, am naa sama bilee bu délsi ak sama reservation bu otel.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_325.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_326",
+    "locale": "wo",
+    "french_text": "Pourquoi voulez-vous voyager ?",
+    "wolof_current": "Lu tax nga bëgg a tukki ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_326.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_327",
+    "locale": "wo",
+    "french_text": "Je veux acheter des marchandises pour mon commerce.",
+    "wolof_current": "Dama bëgg jënd marsandiis ngir sama njaay.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_327.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_328",
+    "locale": "wo",
+    "french_text": "Reviendrez-vous au Sénégal ?",
+    "wolof_current": "Ndax dinga délsi Senegaal ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_328.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_329",
+    "locale": "wo",
+    "french_text": "Oui, ma famille et ma boutique y sont.",
+    "wolof_current": "Waaw, sama njaboot ak sama butik ñu ngi fa.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_329.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_330",
+    "locale": "wo",
+    "french_text": "Je cherche un appartement",
+    "wolof_current": "Maa ngi seet apartema",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_330.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_331",
+    "locale": "wo",
+    "french_text": "La caution est-elle incluse ?",
+    "wolof_current": "Ndax caution bi mu ngi ci ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_331.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_332",
+    "locale": "wo",
+    "french_text": "Propriétaire",
+    "wolof_current": "Boroom kër gi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_332.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_333",
+    "locale": "wo",
+    "french_text": "Locataire",
+    "wolof_current": "Kiraayekat",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_333.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_334",
+    "locale": "wo",
+    "french_text": "Puis-je visiter la maison ?",
+    "wolof_current": "Mën naa gis kër gi ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_334.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_335",
+    "locale": "wo",
+    "french_text": "Combien de pièces y a-t-il ?",
+    "wolof_current": "Ñaata pièce la am ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_335.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_336",
+    "locale": "wo",
+    "french_text": "J'ai un petit jardin derrière la maison",
+    "wolof_current": "Am naa tool bu ndaw ci gannaaw kër gi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_336.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_337",
+    "locale": "wo",
+    "french_text": "Le loyer est de trente mille francs par mois",
+    "wolof_current": "Loyer bi fanweer junni franc la ci weer wi",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_337.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_338",
+    "locale": "wo",
+    "french_text": "Combien coûte le loyer de cet appartement ?",
+    "wolof_current": "Ñaata la loyer apartema bii ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_338.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_339",
+    "locale": "wo",
+    "french_text": "C'est cinquante mille francs, caution comprise.",
+    "wolof_current": "Juróom fukk junni franc la, ak caution bi.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_339.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_340",
+    "locale": "wo",
+    "french_text": "Puis-je visiter avant de décider ?",
+    "wolof_current": "Mën naa gis balaa may tànn ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_340.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_341",
+    "locale": "wo",
+    "french_text": "Oui, bien sûr, venez demain matin.",
+    "wolof_current": "Waaw, dëgg la, ñëwal ëllëg ci suba.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_341.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_342",
+    "locale": "wo",
+    "french_text": "Avez-vous un jardin ?",
+    "wolof_current": "Ndax am nga tool ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_342.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_343",
+    "locale": "wo",
+    "french_text": "Oui, je cultive des tomates et des oignons derrière la maison.",
+    "wolof_current": "Waaw, damay ji tamaate ak sooble ci gannaaw kër gi.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_343.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_344",
+    "locale": "wo",
+    "french_text": "Le loyer est-il cher ?",
+    "wolof_current": "Ndax loyer bi dafa seer ?",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_344.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_345",
+    "locale": "wo",
+    "french_text": "Non, il est bon marché.",
+    "wolof_current": "Déedéet, dafa yomb.",
+    "context_usage": "quotidien",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_345.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_346",
+    "locale": "wo",
+    "french_text": "Semences",
+    "wolof_current": "Semences yi",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_346.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_347",
+    "locale": "wo",
+    "french_text": "Engrais",
+    "wolof_current": "Engrais bi",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_347.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_348",
+    "locale": "wo",
+    "french_text": "Récolte",
+    "wolof_current": "Ngóob mi",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_348.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_349",
+    "locale": "wo",
+    "french_text": "Agriculteur",
+    "wolof_current": "Beykat bi",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_349.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_350",
+    "locale": "wo",
+    "french_text": "J'ai besoin de semences pour mon champ",
+    "wolof_current": "Dama soxla semences ngir sama tool",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_350.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_351",
+    "locale": "wo",
+    "french_text": "Combien coûte un sac d'engrais ?",
+    "wolof_current": "Ñaata la benn saaku engrais ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_351.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_352",
+    "locale": "wo",
+    "french_text": "Ces semences poussent-elles bien pendant la saison des pluies ?",
+    "wolof_current": "Ndax semences yii dañuy sax bu baax ci nawet ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_352.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_353",
+    "locale": "wo",
+    "french_text": "J'arrose mes cultures chaque matin",
+    "wolof_current": "Damay sotti ndox ci sama gàncax yi suba su nekk",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_353.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_354",
+    "locale": "wo",
+    "french_text": "La récolte a été bonne cette année",
+    "wolof_current": "Ngóob mi baax na at mii",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_354.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_355",
+    "locale": "wo",
+    "french_text": "Je vends mes légumes au marché de Thiès",
+    "wolof_current": "Damay jaay sama légumes ci marse bu Thiès",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_355.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_356",
+    "locale": "wo",
+    "french_text": "Pouvez-vous livrer à ma ferme ?",
+    "wolof_current": "Mën nga ko yóbbu ci sama tool ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_356.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_357",
+    "locale": "wo",
+    "french_text": "Bonjour. J'ai besoin de semences pour mon champ.",
+    "wolof_current": "Salaam aleekum. Dama soxla semences ngir sama tool.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_357.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_358",
+    "locale": "wo",
+    "french_text": "Que voulez-vous cultiver ?",
+    "wolof_current": "Lan nga bëgg a ji ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_358.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_359",
+    "locale": "wo",
+    "french_text": "Des tomates et des oignons.",
+    "wolof_current": "Tamaate ak sooble.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_359.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_360",
+    "locale": "wo",
+    "french_text": "Ces semences sont bonnes pour la saison des pluies.",
+    "wolof_current": "Semences yii baax nañu ci nawet.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_360.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_361",
+    "locale": "wo",
+    "french_text": "Combien coûte un petit sac ?",
+    "wolof_current": "Ñaata la saaku bu ndaw ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_361.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_362",
+    "locale": "wo",
+    "french_text": "Deux mille cinq cents francs.",
+    "wolof_current": "Ñaari junni ak juróom téeméer franc.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_362.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_363",
+    "locale": "wo",
+    "french_text": "Avez-vous aussi de l'engrais ?",
+    "wolof_current": "Ndax am ngeen engrais itam ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_363.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_364",
+    "locale": "wo",
+    "french_text": "Oui, dix mille francs pour un grand sac.",
+    "wolof_current": "Waaw, fukki junni franc ngir saaku bu mag.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_364.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_365",
+    "locale": "wo",
+    "french_text": "Pouvez-vous livrer à ma ferme à Thiès ?",
+    "wolof_current": "Mën nga ko yóbbu ci sama tool ci Thiès ?",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_365.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_366",
+    "locale": "wo",
+    "french_text": "Oui, demain matin.",
+    "wolof_current": "Waaw, ëllëg ci suba.",
+    "context_usage": "commerce",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_366.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_367",
+    "locale": "wo",
+    "french_text": "Quelle est la référence de cette pièce ?",
+    "wolof_current": "Ban référans la pièce bii am ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_367.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_368",
+    "locale": "wo",
+    "french_text": "Frein / plaquettes",
+    "wolof_current": "Fren",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_368.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_369",
+    "locale": "wo",
+    "french_text": "Amortisseur",
+    "wolof_current": "Amortisëer",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_369.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_370",
+    "locale": "wo",
+    "french_text": "Est-ce une pièce d'origine ou une copie ?",
+    "wolof_current": "Ndax pièce bii original la walla copie la ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_370.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_371",
+    "locale": "wo",
+    "french_text": "Combien coûte cette pièce ?",
+    "wolof_current": "Ñaata la pièce bii ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_371.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_372",
+    "locale": "wo",
+    "french_text": "Avez-vous la garantie ?",
+    "wolof_current": "Ndax am nga garanti ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_372.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_373",
+    "locale": "wo",
+    "french_text": "C'est une pièce OEM ou aftermarket ?",
+    "wolof_current": "Ndax pièce bii OEM la walla aftermarket ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_373.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_374",
+    "locale": "wo",
+    "french_text": "Je cherche un fournisseur direct usine",
+    "wolof_current": "Maa ngi wut fournisseur bu jóge fabrik bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_374.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_375",
+    "locale": "wo",
+    "french_text": "Combien pour une commande de gros ?",
+    "wolof_current": "Ñaata la ngir commande gros ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_375.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_376",
+    "locale": "wo",
+    "french_text": "Je verse un acompte de combien ?",
+    "wolof_current": "Ñaata acompte laa war a fey ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_376.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_377",
+    "locale": "wo",
+    "french_text": "Payez-vous en Yuan ou en dollars ?",
+    "wolof_current": "Ndax fey nga ci Yuan walla dollar ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_377.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_378",
+    "locale": "wo",
+    "french_text": "Cette pièce a combien de mois de garantie ?",
+    "wolof_current": "Ñaata weer garanti pièce bii am ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_378.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_379",
+    "locale": "wo",
+    "french_text": "Le prix inclut-il le montage ?",
+    "wolof_current": "Ndax prix bi dafa bokk montage bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_379.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_380",
+    "locale": "wo",
+    "french_text": "Je reviendrai si le prix ne me convient pas",
+    "wolof_current": "Dinaa dellusi bu prix bi neexul ma",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_380.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_381",
+    "locale": "wo",
+    "french_text": "Pouvez-vous me faire une facture ?",
+    "wolof_current": "Ndax mën nga ma jox facture ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_381.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_382",
+    "locale": "wo",
+    "french_text": "Cette pièce est compatible avec quelle marque de véhicule ?",
+    "wolof_current": "Pièce bii dafa yem ak ban marque oto ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_382.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_383",
+    "locale": "wo",
+    "french_text": "Quelle taille avez-vous ?",
+    "wolof_current": "Ban taille nga am ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_383.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_384",
+    "locale": "wo",
+    "french_text": "Prix de gros / prix de détail",
+    "wolof_current": "Prix gros / prix détail",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_384.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_385",
+    "locale": "wo",
+    "french_text": "Ce tissu est-il de bonne qualité ?",
+    "wolof_current": "Ndax tissu bii baax na ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_385.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_386",
+    "locale": "wo",
+    "french_text": "Avez-vous d'autres couleurs ?",
+    "wolof_current": "Am nga yeneen couleur ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_386.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_387",
+    "locale": "wo",
+    "french_text": "Je voudrais acheter en gros",
+    "wolof_current": "Bëgg naa jënd ci gros",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_387.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_388",
+    "locale": "wo",
+    "french_text": "Combien pour dix pièces ?",
+    "wolof_current": "Ñaata la ngir fukk pièce ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_388.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_389",
+    "locale": "wo",
+    "french_text": "Est-ce que ce tissu déteint au lavage ?",
+    "wolof_current": "Ndax tissu bii dafay soppi couleur bu ñu ko raxasee ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_389.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_390",
+    "locale": "wo",
+    "french_text": "Quel est le minimum de commande ?",
+    "wolof_current": "Ñaata la minimum commande bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_390.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_391",
+    "locale": "wo",
+    "french_text": "Pouvez-vous m'envoyer un échantillon ?",
+    "wolof_current": "Ndax mën nga ma yónnee échantillon ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_391.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_392",
+    "locale": "wo",
+    "french_text": "Le tissu est-il en coton pur ?",
+    "wolof_current": "Ndax tissu bii coton pur la ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_392.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_393",
+    "locale": "wo",
+    "french_text": "Avez-vous un ticket de caisse ?",
+    "wolof_current": "Am nga ticket bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_393.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_394",
+    "locale": "wo",
+    "french_text": "Puis-je échanger si ça ne convient pas ?",
+    "wolof_current": "Ndax mën naa ko soppi su neexul ma ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_394.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_395",
+    "locale": "wo",
+    "french_text": "Quel est le délai de réapprovisionnement ?",
+    "wolof_current": "Ñaata fan ngir am beneen stock ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_395.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_396",
+    "locale": "wo",
+    "french_text": "Vendez-vous en ligne aussi ?",
+    "wolof_current": "Ndax jaay nga itam ci internet ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_396.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_397",
+    "locale": "wo",
+    "french_text": "Cet appareil fonctionne en 220V ?",
+    "wolof_current": "Ndax jumtukaay bii dafay dox ci 220V ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_397.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_398",
+    "locale": "wo",
+    "french_text": "Y a-t-il une garantie constructeur ?",
+    "wolof_current": "Ndax am na garanti bu fabrikaan bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_398.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_399",
+    "locale": "wo",
+    "french_text": "Pouvez-vous tester l'appareil devant moi ?",
+    "wolof_current": "Ndax mën nga ma ko testeel ci sama kanam ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_399.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_400",
+    "locale": "wo",
+    "french_text": "Est-ce compatible avec le voltage sénégalais ?",
+    "wolof_current": "Ndax dafa yem ak voltage bu Senegaal ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_400.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_401",
+    "locale": "wo",
+    "french_text": "Avez-vous la facture d'origine ?",
+    "wolof_current": "Ndax am nga facture bu njëkk bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_401.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_402",
+    "locale": "wo",
+    "french_text": "Quel est le prix pour un carton entier ?",
+    "wolof_current": "Ñaata la ngir carton bu mat ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_402.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_403",
+    "locale": "wo",
+    "french_text": "Le chargeur est-il inclus ?",
+    "wolof_current": "Ndax chargeur bi dafa bokk ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_403.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_404",
+    "locale": "wo",
+    "french_text": "Quelle est la capacité de la batterie ?",
+    "wolof_current": "Ñaata la capacité batterie bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_404.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_405",
+    "locale": "wo",
+    "french_text": "Puis-je payer par mobile money ?",
+    "wolof_current": "Ndax mën naa fey ci mobile money ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_405.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_406",
+    "locale": "wo",
+    "french_text": "Avez-vous un service après-vente ?",
+    "wolof_current": "Am nga service après-vente ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_406.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_407",
+    "locale": "wo",
+    "french_text": "Ce meuble est-il démontable ?",
+    "wolof_current": "Ndax meuble bii mën nañ ko wàcce ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_407.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_408",
+    "locale": "wo",
+    "french_text": "Quelle matière est utilisée ?",
+    "wolof_current": "Lan matière lañu jëfandikoo ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_408.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_409",
+    "locale": "wo",
+    "french_text": "Livrez-vous à domicile ?",
+    "wolof_current": "Ndax dinañ ko yónnee ci kër gi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_409.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_410",
+    "locale": "wo",
+    "french_text": "Combien pour l'ensemble du salon ?",
+    "wolof_current": "Ñaata la ngir ensemble bi bépp ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_410.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_411",
+    "locale": "wo",
+    "french_text": "Puis-je payer en plusieurs fois ?",
+    "wolof_current": "Ndax mën naa fey ci plusieurs fois ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_411.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_412",
+    "locale": "wo",
+    "french_text": "Le meuble est-il traité contre les termites ?",
+    "wolof_current": "Ndax meuble bii dafa traité ci termites ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_412.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_413",
+    "locale": "wo",
+    "french_text": "Quel est le délai de fabrication sur commande ?",
+    "wolof_current": "Ñaata fan ngir fabriquer commande bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_413.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_414",
+    "locale": "wo",
+    "french_text": "Proposez-vous un service de montage ?",
+    "wolof_current": "Am nga service montage ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_414.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_415",
+    "locale": "wo",
+    "french_text": "Puis-je voir un catalogue de modèles ?",
+    "wolof_current": "Ndax mën naa xool catalogue modèles yi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_415.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_416",
+    "locale": "wo",
+    "french_text": "Combien coûte le transport par conteneur ?",
+    "wolof_current": "Ñaata la transport bu conteneur ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_416.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_417",
+    "locale": "wo",
+    "french_text": "Quel est le délai de livraison ?",
+    "wolof_current": "Ñaata fan ngir livraison bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_417.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_418",
+    "locale": "wo",
+    "french_text": "Avez-vous besoin d'un visa d'affaires ?",
+    "wolof_current": "Ndax soxla nga visa d'affaires ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_418.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_419",
+    "locale": "wo",
+    "french_text": "Où est le bureau de douane ?",
+    "wolof_current": "Fan la bureau douane bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_419.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_420",
+    "locale": "wo",
+    "french_text": "Je cherche un fournisseur fiable",
+    "wolof_current": "Maa ngi wut fournisseur bu wóor",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_420.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_421",
+    "locale": "wo",
+    "french_text": "Quel est le prix FOB ?",
+    "wolof_current": "Ñaata la prix FOB bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_421.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_422",
+    "locale": "wo",
+    "french_text": "Je préfère un envoi groupé",
+    "wolof_current": "Bëgg naa envoi bu bokk ak yeneen",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_422.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_423",
+    "locale": "wo",
+    "french_text": "Combien de CBM fait ma marchandise ?",
+    "wolof_current": "Ñaata CBM la sama marsandiis am ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_423.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_424",
+    "locale": "wo",
+    "french_text": "J'ai besoin du connaissement (Bill of Lading)",
+    "wolof_current": "Soxla naa Bill of Lading bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_424.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_425",
+    "locale": "wo",
+    "french_text": "Où est la liste de colisage (packing list) ?",
+    "wolof_current": "Fan la packing list bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_425.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_426",
+    "locale": "wo",
+    "french_text": "Combien de jours pour dédouaner au Port de Dakar ?",
+    "wolof_current": "Ñaata fan ngir dédouaner ci Port Dakar ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_426.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_427",
+    "locale": "wo",
+    "french_text": "Quel Incoterm utilisez-vous ?",
+    "wolof_current": "Ban Incoterm nga jëfandikoo ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_427.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_428",
+    "locale": "wo",
+    "french_text": "Acceptez-vous un paiement par acompte puis solde ?",
+    "wolof_current": "Ndax nangu nga fey ci acompte, topp solde bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_428.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_429",
+    "locale": "wo",
+    "french_text": "Quelle est la durée de validité du devis ?",
+    "wolof_current": "Ñaata fan la devis bi dox ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_429.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_430",
+    "locale": "wo",
+    "french_text": "Avez-vous une assurance transport ?",
+    "wolof_current": "Am nga assurance transport ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_430.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_431",
+    "locale": "wo",
+    "french_text": "Dis, combien coûte cette pièce ?",
+    "wolof_current": "Boy, ñaata la pièce bii ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_431.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_432",
+    "locale": "wo",
+    "french_text": "Dix-neuf mille francs, mon frère.",
+    "wolof_current": "Fukk ak juróom-ñeent junni la, waay.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_432.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_433",
+    "locale": "wo",
+    "french_text": "D'accord, mais tu peux baisser un peu ?",
+    "wolof_current": "Waaw waaw, ndax mën nga wàññi tuuti ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_433.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_434",
+    "locale": "wo",
+    "french_text": "Pour toi, je te la fais à dix-sept mille.",
+    "wolof_current": "Ci sa ndigël, dinaa la ko jox ci fukk ak juróom-ñaar junni.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_434.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_435",
+    "locale": "wo",
+    "french_text": "Cette pièce est d'origine ou c'est une copie ?",
+    "wolof_current": "Ndax pièce bii dafa bokk ci fabrik bi, walla copie la ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_435.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_436",
+    "locale": "wo",
+    "french_text": "Elle est d'origine, il n'y a aucun doute.",
+    "wolof_current": "Dafa bokk ci fabrik bi, wóor na ko.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_436.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_437",
+    "locale": "wo",
+    "french_text": "Quelle taille avez-vous pour ce tissu ?",
+    "wolof_current": "Ban taille nga am ci tissu bii ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_437.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_438",
+    "locale": "wo",
+    "french_text": "J'ai du L et du XL, ou je peux le faire sur mesure.",
+    "wolof_current": "Am naa L ak XL, walla mën naa la ko def ci sa mesure.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_438.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_439",
+    "locale": "wo",
+    "french_text": "Combien pour dix pièces, si j'achète en gros ?",
+    "wolof_current": "Ñaata la ngir fukk pièces, bu ma jëndee ci gros ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_439.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_440",
+    "locale": "wo",
+    "french_text": "En gros, je te fais une remise, seulement quarante mille.",
+    "wolof_current": "Ci gros, dinaa la ko wàññi, ñeent fukk junni rekk.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_440.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_441",
+    "locale": "wo",
+    "french_text": "Peux-tu d'abord m'envoyer un échantillon ?",
+    "wolof_current": "Ndax mën nga ma yónnee échantillon bu njëkk ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_441.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_442",
+    "locale": "wo",
+    "french_text": "Oui, je te l'envoie tout de suite.",
+    "wolof_current": "Waaw, dinaa la ko yónnee léegi léegi.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_442.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_443",
+    "locale": "wo",
+    "french_text": "Cet appareil fonctionne-t-il en 220V ?",
+    "wolof_current": "Ndax jumtukaay bii dafay dox ci 220V ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_443.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_444",
+    "locale": "wo",
+    "french_text": "Oui, il est compatible avec le voltage sénégalais.",
+    "wolof_current": "Waaw, dafa yem ak voltage bu Senegaal.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_444.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_445",
+    "locale": "wo",
+    "french_text": "Peux-tu le tester devant moi ?",
+    "wolof_current": "Ndax mën nga ma ko testeel ci sama kanam ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_445.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_446",
+    "locale": "wo",
+    "french_text": "Oui, tout de suite, je vais le brancher sur la prise.",
+    "wolof_current": "Waaw, léegi léegi, dinaa ko tàbbal ci prise bi.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_446.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_447",
+    "locale": "wo",
+    "french_text": "Y a-t-il une garantie du fabricant ?",
+    "wolof_current": "Ndax am na garanti bu fabrikaan bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_447.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_448",
+    "locale": "wo",
+    "french_text": "Oui, une garantie d'un an, avec la facture d'origine.",
+    "wolof_current": "Waaw, benn at garanti, ak facture bu njëkk.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_448.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_449",
+    "locale": "wo",
+    "french_text": "Oui, on peut le démonter pour faciliter la livraison.",
+    "wolof_current": "Waaw, mën nañ ko wàcce ngir livraison bi yomb.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_449.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_450",
+    "locale": "wo",
+    "french_text": "Est-ce que vous livrez à domicile ?",
+    "wolof_current": "Ndax dinañ ko yónnee ci kër gi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_450.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_451",
+    "locale": "wo",
+    "french_text": "Oui, la livraison est en plus, ça fait vingt mille.",
+    "wolof_current": "Waaw, livraison bi bokkul ci njëg bi, ñaar fukk junni la.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_451.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_452",
+    "locale": "wo",
+    "french_text": "Oui, tu peux payer en trois fois, sur trois mois.",
+    "wolof_current": "Waaw, mën nga fey ñetti yoon, ci ñetti weer.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_452.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_453",
+    "locale": "wo",
+    "french_text": "Combien coûte le transport par conteneur ?",
+    "wolof_current": "Ñaata la transport bu conteneur bi ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_453.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_454",
+    "locale": "wo",
+    "french_text": "Ça dépend du nombre de CBM de ta marchandise.",
+    "wolof_current": "Dafa aju ci ñaata CBM la sa marsandiis am.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_454.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_455",
+    "locale": "wo",
+    "french_text": "Combien de jours pour la livraison au Port de Dakar ?",
+    "wolof_current": "Ñaata fan ngir livraison bi ci Port Dakar ?",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_455.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_456",
+    "locale": "wo",
+    "french_text": "Environ trente jours, si le dédouanement se passe bien.",
+    "wolof_current": "Tollu na ci fanweer, bu dédouanement bi yomb.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_456.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_457",
+    "locale": "wo",
+    "french_text": "J'ai besoin du connaissement et de la liste de colisage.",
+    "wolof_current": "Soxla naa Bill of Lading bi ak packing list bi.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_457.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_458",
+    "locale": "wo",
+    "french_text": "Oui, je te les envoie dès que la marchandise est prise en charge.",
+    "wolof_current": "Waaw, dinaa la ko yónnee bu ñu jëlee marsandiis bi.",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_458.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_459",
+    "locale": "wo",
+    "french_text": "Pompe à eau pour le champ",
+    "wolof_current": "Pompu ndox ngir tool bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_459.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_460",
+    "locale": "wo",
+    "french_text": "Pièces détachées de tracteur",
+    "wolof_current": "Pièces détachées yu tracteur",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_460.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_461",
+    "locale": "wo",
+    "french_text": "Prix de gros pour vendeurs ambulants",
+    "wolof_current": "Prix gros ngir baana-baana yi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_461.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_462",
+    "locale": "wo",
+    "french_text": "Je vends à crédit",
+    "wolof_current": "Damay jaay ci crédit",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_462.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_463",
+    "locale": "wo",
+    "french_text": "Panneau solaire pour la ferme",
+    "wolof_current": "Panneau solaire ngir ferme bi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_463.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_464",
+    "locale": "wo",
+    "french_text": "Paiement par mobile money",
+    "wolof_current": "Fey ci mobile money",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_464.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_465",
+    "locale": "wo",
+    "french_text": "Caisses de stockage pour légumes",
+    "wolof_current": "Caisse ngir denc légumes yi",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_465.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_466",
+    "locale": "wo",
+    "french_text": "Tomates et oignons frais",
+    "wolof_current": "Tamaate ak sooble yu bees",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_466.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_467",
+    "locale": "wo",
+    "french_text": "Matériel d'irrigation",
+    "wolof_current": "Jumtukaay yu irrigation",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_467.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_468",
+    "locale": "wo",
+    "french_text": "Conteneur d'expédition",
+    "wolof_current": "Conteneur ngir yónnee marsandiis",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_468.mp3",
+    "review_status": "pending"
+  },
+  {
+    "id": "WO_469",
+    "locale": "wo",
+    "french_text": "Dédouanement",
+    "wolof_current": "Dédouanement (fay douane bi)",
+    "context_usage": "business",
+    "audio_status": "synthetic",
+    "audio_url": "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/wo_469.mp3",
+    "review_status": "pending"
+  }
+]
