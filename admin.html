@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<script>if(window.top!==window.self){document.documentElement.style.display="none";try{window.top.location.href=window.self.location.href}catch(e){}}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0B0F1C">
+<title>Diisoo Admin</title>
+<style>
+:root{--bg:#0B0F1C;--card:#141A2B;--line:#1E2740;--tx:#F6F1E7;--mut:#A69C86;--ok:#3FAE74;--warn:#F3A94E;--bad:#E1693F}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+header b{font-size:17px}header b i{color:var(--ok);font-style:normal}
+#who{font-size:12px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45vw}
+main{max-width:720px;margin:0 auto;padding:12px 16px 80px}
+.panel{display:none}.panel.on{display:block}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:16px 0;text-align:center}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;min-height:44px;padding:10px 14px;color:var(--bg);background:var(--ok);font-weight:700;touch-action:manipulation}
+button.sec{background:var(--line);color:var(--tx)}button.bad{background:var(--bad)}button:disabled{opacity:.5}
+.tabs{display:flex;gap:6px;margin:8px 0}
+.tabs button{flex:1;background:var(--card);color:var(--mut);border:1px solid var(--line);font-size:13px;padding:8px 4px}
+.tabs button.on{border-color:var(--ok);color:var(--tx)}
+.tabs span{display:block;font-size:18px;font-weight:800;color:var(--tx)}
+.filters{display:flex;gap:8px;margin:8px 0}
+select,input[type=search],textarea{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--tx);padding:10px;font:inherit;min-height:44px}
+textarea{resize:vertical;min-height:70px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--mut);margin-bottom:8px}
+.tag{border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+.tag.ok{color:var(--ok);border-color:var(--ok)}.tag.warn{color:var(--warn);border-color:var(--warn)}.tag.bad{color:var(--bad);border-color:var(--bad)}
+.src{font-size:13px;color:var(--mut);margin:4px 0 8px}
+.src q{color:var(--tx);quotes:none}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.act .full{grid-column:1/-1}
+.note{font-size:12px;color:var(--warn);margin:6px 0 0}
+#toast{position:fixed;left:16px;right:16px;bottom:16px;max-width:480px;margin:0 auto;background:var(--card);border:1px solid var(--ok);border-radius:12px;padding:12px;text-align:center;display:none;z-index:20}
+#toast.err{border-color:var(--bad)}
+.empty{text-align:center;color:var(--mut);padding:32px 0}
+</style>
+</head>
+<body>
+<header><b>Dii<i>soo</i> Admin</b><span id="who"></span><button class="sec" id="logout" style="display:none;min-height:36px;padding:4px 10px;font-size:13px">Sortir</button></header>
+<main>
+  <section id="p-load" class="panel on"><div class="box">Chargement…</div></section>
+  <section id="p-login" class="panel"><div class="box"><p>Connecte-toi avec le compte Google administrateur.</p><button id="btn-google">Se connecter avec Google</button><p class="note" style="color:var(--mut)">Si tu es déjà connecté dans l'application Diisoo avec Google, recharge cette page.</p></div></section>
+  <section id="p-denied" class="panel"><div class="box"><p><b>Accès refusé</b></p><p id="denied-mail" style="color:var(--mut)"></p><button class="sec" id="btn-out2">Changer de compte</button></div></section>
+  <section id="p-app" class="panel">
+    <div class="tabs" id="tabs">
+      <button data-t="pending" class="on">À valider<span id="c-pending">0</span></button>
+      <button data-t="approved">Validés<span id="c-approved">0</span></button>
+      <button data-t="rejected">Rejetés<span id="c-rejected">0</span></button>
+    </div>
+    <div class="filters">
+      <select id="f-locale" aria-label="Langue"><option value="">Toutes les langues</option><option value="wo">Wolof</option><option value="ff">Pulaar</option><option value="srr">Seereer</option><option value="dyu">Joola</option><option value="mnk">Mandinka</option><option value="fr">Français</option><option value="en">Anglais</option></select>
+      <input type="search" id="f-q" placeholder="Rechercher" aria-label="Rechercher">
+    </div>
+    <div id="list"></div>
+    <div style="text-align:center"><button class="sec" id="more" style="display:none">Charger plus</button></div>
+  </section>
+</main>
+<div id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  var SUPABASE_URL = "https://jkwtyoefqvafnlqkhium.supabase.co";
+  var SUPABASE_KEY = "sb_publishable__lzrlmMaJdFC_kav6DkfEA_UbH6DiTC";
+  var PAGE = 20;
+  var $ = function (id) { return document.getElementById(id); };
+  var db = null, me = "", tab = "pending", page = 0, busy = false;
+
+  function show(name) {
+    ["load", "login", "denied", "app"].forEach(function (n) { $("p-" + n).classList.toggle("on", n === name); });
+    $("logout").style.display = (name === "app" || name === "denied") ? "" : "none";
+  }
+  var toastTimer = null;
+  function toast(msg, err) {
+    var t = $("toast");
+    t.textContent = msg; t.className = err ? "err" : ""; t.style.display = "block";
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.style.display = "none"; }, 3500);
+  }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  async function signOut() { try { await db.auth.signOut(); } catch (e) {} location.reload(); }
+
+  async function counts() {
+    ["pending", "approved", "rejected"].forEach(async function (s) {
+      var r = await db.from("cache_dict").select("id", { count: "exact", head: true }).eq("review_status", s);
+      if (!r.error) $("c-" + s).textContent = String(r.count || 0);
+    });
+  }
+
+  async function load(reset) {
+    if (busy) return;
+    busy = true;
+    if (reset) { page = 0; $("list").textContent = ""; }
+    var q = db.from("cache_dict").select("id,response_json,locale,review_status,created_at")
+      .eq("review_status", tab).order("created_at", { ascending: false }).range(page * PAGE, page * PAGE + PAGE - 1);
+    var loc = $("f-locale").value;
+    if (loc) q = q.eq("locale", loc);
+    var s = $("f-q").value.replace(/[%,()*]/g, " ").trim();
+    if (s) q = q.ilike("response_json->>text", "%" + s + "%");
+    var r = await q;
+    busy = false;
+    if (r.error) { toast("Erreur de chargement : " + r.error.message, true); return; }
+    var rows = r.data || [];
+    rows.forEach(function (row) { $("list").appendChild(card(row)); });
+    if (reset && !rows.length) $("list").appendChild(el("div", "empty", "Rien à afficher."));
+    $("more").style.display = rows.length === PAGE ? "" : "none";
+    page++;
+  }
+
+  function confTag(c) {
+    var n = Number(c);
+    if (!isFinite(n) || c == null) return el("span", "tag", "confiance ?");
+    var t = el("span", "tag " + (n >= 0.8 ? "ok" : n >= 0.6 ? "warn" : "bad"), "confiance " + Math.round(n * 100) + " %");
+    return t;
+  }
+
+  function card(row) {
+    var rj = row.response_json || {};
+    var box = el("div", "item");
+    var meta = el("div", "meta");
+    meta.appendChild(el("span", "tag", row.locale));
+    meta.appendChild(el("span", "tag", rj.task || "?"));
+    meta.appendChild(confTag(rj.confidence_score));
+    if (rj.model) meta.appendChild(el("span", "tag", rj.model));
+    meta.appendChild(el("span", "", new Date(row.created_at).toLocaleString("fr-FR")));
+    box.appendChild(meta);
+    var src = el("div", "src"); src.appendChild(document.createTextNode("Texte source : ")); src.appendChild(el("q", "", rj.text || "")); box.appendChild(src);
+    var ta = el("textarea"); ta.value = rj.answer || ""; ta.setAttribute("aria-label", "Réponse"); box.appendChild(ta);
+    if (row.locale !== "fr" && row.locale !== "en") box.appendChild(el("p", "note", "Langue nationale : relecture par un locuteur obligatoire avant validation."));
+    var act = el("div", "act");
+
+    function patch(status, label) {
+      return async function () {
+        var btns = box.querySelectorAll("button"); btns.forEach(function (b) { b.disabled = true; });
+        var edited = ta.value.trim();
+        var next = Object.assign({}, rj, { answer: edited || rj.answer });
+        if (status === "approved") {
+          next.reviewed_by = me; next.reviewed_at = new Date().toISOString();
+          if (edited && edited !== rj.answer) { next.corrected = true; next.original_answer = rj.answer; }
+        }
+        var r = await db.from("cache_dict").update({ review_status: status, response_json: next }).eq("id", row.id).select("id");
+        if (r.error || !r.data || r.data.length !== 1) {
+          btns.forEach(function (b) { b.disabled = false; });
+          toast("Échec : " + (r.error ? r.error.message : "droits insuffisants"), true); return;
+        }
+        box.remove(); toast(label); counts();
+        if (!$("list").children.length) load(true);
+      };
+    }
+    if (tab !== "approved") {
+      var ok = el("button", "", (tab === "pending" ? "✅ Valider" : "✅ Valider"));
+      ok.onclick = patch("approved", "Validé et publié");
+      act.appendChild(ok);
+    } else {
+      var back = el("button", "sec", "↩ Remettre à valider"); back.onclick = patch("pending", "Remis à valider"); act.appendChild(back);
+    }
+    if (tab !== "rejected") { var no = el("button", "bad", "❌ Rejeter"); no.onclick = patch("rejected", "Rejeté"); act.appendChild(no); }
+    else { var re = el("button", "sec", "↩ Remettre à valider"); re.onclick = patch("pending", "Remis à valider"); act.appendChild(re); }
+    var del = el("button", "sec full", "🗑 Supprimer définitivement");
+    del.onclick = async function () {
+      if (!confirm("Supprimer cette entrée ?")) return;
+      var r = await db.from("cache_dict").delete().eq("id", row.id).select("id");
+      if (r.error || !r.data || r.data.length !== 1) { toast("Échec de la suppression", true); return; }
+      box.remove(); toast("Supprimé"); counts();
+    };
+    act.appendChild(del);
+    box.appendChild(act);
+    return box;
+  }
+
+  async function start() {
+    if (!window.supabase) { $("p-load").textContent = "Bibliothèque Supabase indisponible. Vérifie ta connexion."; return; }
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+    $("logout").onclick = signOut; $("btn-out2").onclick = signOut;
+    $("btn-google").onclick = function () { db.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + "/admin.html" } }); };
+    var s = await db.auth.getSession();
+    var session = s && s.data && s.data.session;
+    if (!session) { show("login"); return; }
+    me = (session.user && session.user.email) || "";
+    $("who").textContent = me;
+    var a = await db.rpc("is_admin");
+    if (a.error || a.data !== true) { $("denied-mail").textContent = me; show("denied"); return; }
+    $("tabs").addEventListener("click", function (ev) {
+      var b = ev.target.closest("button[data-t]"); if (!b) return;
+      tab = b.getAttribute("data-t");
+      document.querySelectorAll("#tabs button").forEach(function (x) { x.classList.toggle("on", x === b); });
+      load(true);
+    });
+    $("f-locale").onchange = function () { load(true); };
+    var t = null; $("f-q").oninput = function () { clearTimeout(t); t = setTimeout(function () { load(true); }, 400); };
+    $("more").onclick = function () { load(false); };
+    show("app"); counts(); load(true);
+  }
+  start().catch(function (e) { $("p-load").textContent = "Erreur : " + (e && e.message); });
+})();
+</script>
+</body>
+</html>
