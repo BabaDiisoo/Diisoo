@@ -18,7 +18,8 @@ const INDEX = path.resolve(process.argv[2] || path.join(ROOT, "index.html"));
 const OUT_DIR = path.resolve(process.argv[3] || ROOT);
 const OUT_JSON = path.join(OUT_DIR, "wolof_extraction_v1.json");
 const OUT_CSV = path.join(OUT_DIR, "wolof_extraction_v1.csv");
-const BUCKET_URL = "https://vvonahhvqmkwyjsocrnx.supabase.co/storage/v1/object/public/audio-wolof/";
+let BUCKET_URL;
+const FALLBACK_SUPABASE = "https://jkwtyoefqvafnlqkhium.supabase.co";
 const LOCALE = "wo";
 const SOURCES = ["GENERAL_THEMES", "GENERAL_EXTRA", "WOLOF_THEMES", "WOLOF_EXTRA", "CHINA_TRADE_WOLOF", "BUSINESS_DIALOGUES", "BIZ_EXTRA"];
 
@@ -148,6 +149,9 @@ const csvCell = v => {
 
 function main() {
   const src = fs.readFileSync(INDEX, "utf8");
+  // Le projet Supabase est lu dans index.html (source de verite) pour que les URL audio pointent vers le bon projet.
+  const mu = /const\s+SUPABASE_URL\s*=\s*["'](https:\/\/[a-z0-9]+\.supabase\.co)["']/.exec(src);
+  BUCKET_URL = (mu ? mu[1] : FALLBACK_SUPABASE) + "/storage/v1/object/public/audio-wolof/";
   const data = {};
   SOURCES.forEach(n => { data[n] = loadConst(src, n); });
   const entries = build(collect(data), readPrevious());
