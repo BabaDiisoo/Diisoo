@@ -22,12 +22,12 @@ jobs:
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       KEEPALIVE_TABLE: diisoo_phrases
     steps:
-      - name: Verify secrets
+      - name: Verify secrets and key role
         shell: bash
         run: |
           set -euo pipefail
           if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
-            echo "::error::Secrets SUPABASE_URL and SUPABASE_ANON_KEY must be set."
+            echo "::error::Secrets SUPABASE_URL and SUPABASE_ANON_KEY must be set in Settings > Secrets and variables > Actions."
             exit 1
           fi
           case "$SUPABASE_URL" in
@@ -35,9 +35,10 @@ jobs:
             *) echo "::error::SUPABASE_URL must look like https://<project-ref>.supabase.co"; exit 1 ;;
           esac
           case "$SUPABASE_ANON_KEY" in
-            sb_secret_*) echo "::error::Secret key detected. Use the publishable key only."; exit 1 ;;
+            sb_secret_*) echo "::error::SUPABASE_ANON_KEY contains a secret key. Use the publishable key only."; exit 1 ;;
           esac
-                - name: Ping REST root and one table query
+
+      - name: Ping REST root and one table query
         shell: bash
         run: |
           set -uo pipefail
