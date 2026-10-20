@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v14";
+const VERSION = "diisoo-cache-v15";
 const SHELL = [
   "./",
   "./index.html",
@@ -12,7 +12,7 @@ const SHELL = [
   "./pwa-install.js",
   "./diisoo-step4.js",
   "./diisoo-whatsapp.js",
-  "./diisoo-autoupdate.js",
+  "./diisoo-autoupdate.js", "./diisoo-field.js",
   "./diisoo-tests-extra.js",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm",
