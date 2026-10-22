@@ -94,3 +94,18 @@
     setInterval(verifier, INTERVALLE);
     window.DiisooAutoUpdate = { verifier: verifier, etat: function () { return { connue: lire(CLE), nouvelle: nouvelle, pret: pret, accueil: surAccueil() }; } };
 })();
+;(function () {
+    /* Confidentialité : les nouveaux enregistrements ne portent plus de numéro ni d'e-mail dans leur nom. */
+    if (typeof uploadTestAudio !== "function") return;
+    window.uploadTestAudio = async function (blob) {
+        if (!db || !blob || blob.size === 0) return null;
+        try {
+            var id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2);
+            var path = "r/" + id + "." + recExt();
+            var res = await db.storage.from("recordings").upload(path, blob, { contentType: (recMime || "audio/webm").split(";")[0] });
+            if (res.error) return null;
+            var pub = db.storage.from("recordings").getPublicUrl(path);
+            return pub && pub.data ? pub.data.publicUrl : null;
+        } catch (e) { return null; }
+    };
+})();
