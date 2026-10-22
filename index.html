@@ -2354,7 +2354,7 @@ async function practiceGeneralWord(i) {
     if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur."; return; }
     if (!r.text) { res.textContent = "Rien entendu. Maintenez le bouton enfoncé pendant que vous parlez."; return; }
     const heard = normalize(r.text), target = normalize(w.en);
-    if (heard.includes(target) || target.includes(heard)) {
+    if (voixJuste(heard, target)) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
         bumpStat("diisoo_word_stats", key, "correct");
         addXP(3); bumpDailyGoal(1); checkOrateurBadge();
@@ -3335,6 +3335,13 @@ function playEnglish(i) {
 }
 
 function normalize(s) { return s.toLowerCase().replace(/[^a-z\s']/g, " ").replace(/\s+/g, " ").trim(); }
+/* Validation vocale stricte : la cible doit être entendue en mots entiers, ou à 80 % de ressemblance au moins. */
+function voixJuste(heard, target) {
+    if (!heard || !target) return false;
+    if ((" " + heard + " ").indexOf(" " + target + " ") > -1) return true;
+    const L = Math.max(heard.length, target.length);
+    return L > 0 && (1 - levenshtein(heard, target) / L) >= 0.8;
+}
 
 async function practiceWord(i) {
     const w = LEXICON[i];
