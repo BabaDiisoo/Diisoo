@@ -1,0 +1,55 @@
+{
+  "id": "guangzhou-import-export-debutant",
+  "version": "2026.10",
+  "marche": "Guangzhou / Chine",
+  "theme": "Import/export, conteneurs, douane",
+  "niveau": "debutant",
+  "duree_min": 4,
+  "xp": 30,
+  "accents": ["UK", "US", "Chine commercial"],
+  "accroche": {
+    "en": "Hello, I want to ship a container to Dakar.",
+    "fr": "Bonjour, je veux expédier un conteneur vers Dakar."
+  },
+  "vocabulaire": [
+    { "en": "container", "fr": "conteneur" },
+    { "en": "shipment", "fr": "expédition" },
+    { "en": "invoice", "fr": "facture" },
+    { "en": "customs", "fr": "douane" },
+    { "en": "freight", "fr": "fret" },
+    { "en": "minimum order", "fr": "commande minimum" }
+  ],
+  "pont_wolof": [
+    { "wo": "Ñaata la?", "en": "How much is it?" },
+    { "wo": "Kontaneer", "en": "Container" },
+    { "wo": "Dowaan", "en": "Customs" },
+    { "wo": "Ndank", "en": "Slowly / Take it easy" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Hello. What is your minimum order?" },
+    { "role": "fournisseur", "en": "One hundred pieces." },
+    { "role": "client", "en": "What is the price per piece?" },
+    { "role": "fournisseur", "en": "Five dollars each." },
+    { "role": "client", "en": "Can you give me a discount for five hundred pieces?" },
+    { "role": "fournisseur", "en": "Yes. Four dollars fifty each." },
+    { "role": "client", "en": "How long is the shipment to Dakar?" },
+    { "role": "fournisseur", "en": "About thirty-five days by sea. I will send the invoice today." }
+  ],
+  "pratique_micro": [
+    "What is your minimum order?",
+    "How long is the shipment to Dakar?",
+    "Please send me the invoice."
+  ],
+  "defi": {
+    "en": "Ask the price for 500 pieces, the shipping time and the payment terms.",
+    "fr": "Demande le prix pour 500 pièces, le délai d'expédition et les conditions de paiement, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'customs' mean?", "choix": ["douane", "facture", "fret"], "reponse": "douane" },
+    { "q": "How do you ask the smallest quantity?", "choix": ["What is your minimum order?", "Where is the port?", "Is it new?"], "reponse": "What is your minimum order?" },
+    { "q": "Please send me the ___.", "choix": ["invoice", "weather", "chair"], "reponse": "invoice" }
+  ],
+  "recap": "Tu sais demander une commande minimum, négocier un prix par quantité et obtenir un délai d'expédition.",
+  "suivant": null,
+  "relecture_wolof_requise": true
+}
