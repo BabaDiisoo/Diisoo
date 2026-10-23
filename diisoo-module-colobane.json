@@ -1,0 +1,54 @@
+{
+  "id": "colobane-pieces-auto-debutant",
+  "version": "2026.10",
+  "marche": "Colobane",
+  "theme": "Pièces auto",
+  "niveau": "debutant",
+  "duree_min": 4,
+  "xp": 30,
+  "accroche": {
+    "en": "Hello, I need brake pads for a Toyota Corolla.",
+    "fr": "Bonjour, il me faut des plaquettes de frein pour une Toyota Corolla."
+  },
+  "vocabulaire": [
+    { "en": "brake pads", "fr": "plaquettes de frein" },
+    { "en": "spare part", "fr": "pièce détachée" },
+    { "en": "price", "fr": "prix" },
+    { "en": "warranty", "fr": "garantie" },
+    { "en": "wholesale", "fr": "gros" },
+    { "en": "discount", "fr": "remise" }
+  ],
+  "pont_wolof": [
+    { "wo": "Ñaata la?", "en": "How much is it?" },
+    { "wo": "Dafa seer", "en": "It's expensive" },
+    { "wo": "Ndank", "en": "Slowly / Take it easy" },
+    { "wo": "Jënd", "en": "Buy" },
+    { "wo": "Jaay", "en": "Sell" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Good morning. Do you have brake pads for a Corolla?" },
+    { "role": "vendeur", "en": "Yes. Original or used?" },
+    { "role": "client", "en": "Original. How much is it?" },
+    { "role": "vendeur", "en": "25,000 CFA." },
+    { "role": "client", "en": "It's expensive. What is your best price?" },
+    { "role": "vendeur", "en": "For you, 22,000 CFA, with one month warranty." },
+    { "role": "client", "en": "Deal. I'll take two." }
+  ],
+  "pratique_micro": [
+    "How much is it?",
+    "What is your best price?",
+    "Do you have a warranty?"
+  ],
+  "defi": {
+    "en": "Ask the price of a battery and negotiate a 10% discount.",
+    "fr": "Demande le prix d'une batterie et négocie 10 % de remise, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'warranty' mean?", "choix": ["garantie", "remise", "prix"], "reponse": "garantie" },
+    { "q": "How do you say 'c'est cher'?", "choix": ["It's expensive", "It's cheap", "It's original"], "reponse": "It's expensive" },
+    { "q": "What is your best ___?", "choix": ["price", "part", "pad"], "reponse": "price" }
+  ],
+  "recap": "Tu sais demander un prix, négocier et exiger une garantie.",
+  "suivant": "sandaga-mode-textiles-debutant",
+  "relecture_wolof_requise": true
+}
