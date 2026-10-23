@@ -2254,6 +2254,7 @@ function renderGeneralDialogue(box, theme) {
     tout.onclick = playFullDialogue;
     tout.dataset.practice = "dlg-all"; tout.dataset.gate = "0";
     box.appendChild(tout);
+    box.appendChild(jdrBouton());
 
     const fil = document.createElement("div");
     fil.id = "dlg-fil";
@@ -2279,6 +2280,116 @@ function dlgSuivre(i, defiler) {
     if (!el) return;
     el.classList.add("dlg-actif");
     if (defiler) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+/* ---------- Mode 2 : jeu de rôle. L'application joue l'autre personnage, tu réponds au micro. ---------- */
+let jdrJeton = 0;
+function jdrBoutonDans(zone) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "w-full py-3 bg-[#141A2B] border border-[#3FAE74]/50 text-[#5FC98F] rounded-xl text-xs font-bold";
+    b.textContent = "🎭 Jeu de rôle : tu réponds au micro";
+    b.onclick = () => jdrChoisir(zone);
+    zone.appendChild(b);
+}
+function jdrBouton() {
+    const zone = document.createElement("div");
+    zone.id = "jdr-zone";
+    zone.className = "space-y-2 mt-2";
+    jdrBoutonDans(zone);
+    return zone;
+}
+function jdrQui(l, i) { return l.who || (i % 2 ? "B" : "A"); }
+function jdrChoisir(zone) {
+    if (!SR) { toast("Reconnaissance vocale indisponible. Utilise Chrome."); return; }
+    zone.innerHTML = '<p class="text-xs text-[#C9BFA8] text-center">Choisis ton rôle. L\'application joue l\'autre personnage.</p>' +
+        '<div class="grid grid-cols-2 gap-2"><button type="button" data-r="A" class="py-3 btn-primary rounded-xl text-xs font-bold">Je suis A</button>' +
+        '<button type="button" data-r="B" class="py-3 btn-primary rounded-xl text-xs font-bold">Je suis B</button></div>' +
+        '<button type="button" data-r="" class="w-full py-2 bg-[#141A2B] text-[#A69C86] rounded-xl text-[11px]">Annuler</button>';
+    zone.querySelectorAll("button[data-r]").forEach(b => {
+        b.onclick = () => { const r = b.getAttribute("data-r"); if (r) jdrLancer(r); else { zone.innerHTML = ""; jdrBoutonDans(zone); } };
+    });
+}
+function jdrTour(en, vivant) {
+    return new Promise(resolve => {
+        const act = $("jdr-action"), res = $("jdr-res");
+        const target = normalize(en);
+        let essais = 0, h = null, ecoute = false, fini = false;
+        act.innerHTML = '<button type="button" id="jdr-mic" class="w-full py-3 btn-primary rounded-xl text-xs font-bold">🎤 À TOI DE RÉPONDRE</button>' +
+            '<button type="button" id="jdr-skip" class="w-full py-2 mt-2 bg-[#141A2B] text-[#A69C86] rounded-xl text-[11px]">Passer ▶</button>';
+        res.innerHTML = "";
+        const arreter = () => { try { h && h.stop(); } catch (e) {} };
+        const sortir = (ok) => { if (fini) return; fini = true; currentStop = null; act.innerHTML = ""; resolve({ ok }); };
+        currentStop = () => { arreter(); sortir(false); };
+        $("jdr-skip").onclick = () => { arreter(); sortir(false); };
+        const mic = $("jdr-mic");
+        mic.onclick = async () => {
+            if (ecoute) { arreter(); return; }
+            ecoute = true; mic.textContent = "✋ Terminer";
+            res.innerHTML = '<span class="text-[#F0906B]">🎤 Parle maintenant...</span>';
+            let silence = null;
+            h = startListening("en-US", 12000, true, () => {
+                clearTimeout(silence);
+                silence = setTimeout(arreter, 1800);
+            });
+            const r = await h.promise;
+            clearTimeout(silence); ecoute = false;
+            if (fini || !vivant()) return;
+            mic.textContent = "🎤 À TOI DE RÉPONDRE";
+            if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorise le micro dans le navigateur."; return; }
+            if (!r.text) { res.textContent = "Rien entendu. Touche le bouton et parle."; return; }
+            const heard = normalize(r.text); essais++;
+            if (voixJuste(heard, target)) {
+                res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + '</span>' + voixHeatmap(heard, target);
+                addXP(3); bumpDailyGoal(1);
+                setTimeout(() => sortir(true), 1200);
+            } else {
+                res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + esc(heard) + ' ». Réessaie.</span>' + voixHeatmap(heard, target) +
+                    (essais >= 2 ? '<p class="text-[11px] text-[#A69C86] mt-1">Modèle : ' + esc(en) + '</p>' : '');
+            }
+        };
+    });
+}
+async function jdrLancer(role) {
+    const lines = currentGeneralTheme().dialogue, zone = $("jdr-zone");
+    if (!zone) return;
+    stopAllAudio();
+    const my = ++seqToken, jt = ++jdrJeton;
+    sequenceActive = true;
+    refreshPracticeButtons();
+    const vivant = () => my === seqToken && jt === jdrJeton && document.body.contains(zone);
+    const mes = lines.map((l, i) => i).filter(i => jdrQui(lines[i], i) === role);
+    mes.forEach(i => {
+        const p = document.querySelector("#dlg-l-" + i + " p.text-sm");
+        if (p) { p.dataset.jdr = p.innerHTML; p.innerHTML = '🎤 <span style="color:#F3A94E">À toi de répondre...</span>'; }
+        document.querySelectorAll("#dlg-l-" + i + " .dlg-fr").forEach(e => { e.style.display = ""; });
+    });
+    zone.innerHTML = '<p id="jdr-etat" class="text-xs text-[#C9BFA8] text-center"></p><div id="jdr-action"></div><div id="jdr-res" class="text-xs"></div>';
+    const etat = (t) => { const e = $("jdr-etat"); if (e) e.textContent = t; };
+    let juste = 0;
+    for (let i = 0; i < lines.length && vivant(); i++) {
+        dlgSuivre(i, true);
+        if (jdrQui(lines[i], i) !== role) {
+            etat("🔊 " + jdrQui(lines[i], i) + " parle...");
+            await _speak(lines[i].en, "en-GB", 0.85, undefined, true);
+            if (vivant()) await new Promise(r => setTimeout(r, 300));
+            continue;
+        }
+        etat("🎤 À toi (" + role + ") : " + (lines[i].fr || ""));
+        const r = await jdrTour(lines[i].en, vivant);
+        if (!vivant()) break;
+        if (r.ok) juste++;
+        const p = document.querySelector("#dlg-l-" + i + " p.text-sm");
+        if (p && p.dataset.jdr != null) { p.innerHTML = p.dataset.jdr; delete p.dataset.jdr; }
+    }
+    const fini = vivant();
+    document.querySelectorAll("#general-content p.text-sm[data-jdr]").forEach(p => { p.innerHTML = p.dataset.jdr; delete p.dataset.jdr; });
+    dlgAppliquer(); dlgSuivre(-1);
+    if (my === seqToken) { sequenceActive = false; refreshPracticeButtons(); }
+    if (fini) {
+        zone.innerHTML = '<p class="text-sm font-bold text-[#5FC98F] text-center">🎭 Terminé : ' + juste + ' / ' + mes.length + ' répliques réussies</p>';
+        jdrBoutonDans(zone);
+    }
 }
 
 function renderGeneralContent() {
