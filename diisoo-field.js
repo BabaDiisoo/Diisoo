@@ -215,3 +215,100 @@
     }
   };
 })();
+
+/* ---------- 3. Bouton « Revenir » universel + bouton Retour du telephone (correctif n°3) ----------
+ * Additif : n'enleve aucun bouton existant, n'altere aucune fonction. Un seul bouton fixe en haut a gauche
+ * sur tous les ecrans sauf l'accueil et l'inscription, et le bouton Retour d'Android/iPhone ramene a l'ecran
+ * precedent au lieu de quitter l'application. */
+(function () {
+  "use strict";
+  if (window.DiisooNav) return;
+  var HOME = "screen-dashboard";
+  var NO_BACK = { "screen-dashboard": 1, "screen-onboarding": 1 };
+  var btn = null, pushed = false, ignorePop = false, planned = false;
+
+  var css =
+    "#dnav-back{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:12px;z-index:999;display:none;align-items:center;gap:6px;min-height:40px;padding:9px 14px;border-radius:999px;border:1px solid #1E2740;background:rgba(20,26,43,.96);color:#F6F1E7;font:700 13px/1 system-ui,sans-serif;touch-action:manipulation;box-shadow:0 2px 10px rgba(0,0,0,.35)}" +
+    "#dnav-back.on{display:inline-flex}" +
+    "body.dnav-on{padding-top:56px}" +
+    "body.dnav-on #df-mic{top:calc(env(safe-area-inset-top,0px) + 58px)}";
+  var st = document.createElement("style");
+  st.id = "diisoo-nav-css";
+  st.textContent = css;
+  (document.head || document.documentElement).appendChild(st);
+
+  function etat() {
+    var els = document.querySelectorAll('[id^="screen-"]'), cur = null, overlay = false;
+    for (var i = 0; i < els.length; i++) {
+      var e = els[i];
+      if (e.classList.contains("hidden")) continue;
+      if (e.classList.contains("fixed")) overlay = true;
+      else if (!cur) cur = e.id;
+    }
+    return { cur: cur, overlay: overlay };
+  }
+
+  function retour(depuisSysteme) {
+    var s = etat().cur;
+    if (!s || NO_BACK[s]) return false;
+    if (s === "screen-business") {
+      var d = document.getElementById("btn-business-back");
+      if (d && !d.classList.contains("hidden") && typeof window.closeBusinessDetail === "function") { window.closeBusinessDetail(); return true; }
+    }
+    var dest = (s === "screen-listening" || s === "screen-pairs") ? "screen-test-simulation" : HOME;
+    if (depuisSysteme && s === "screen-test-simulation") {
+      var ok = true;
+      try { ok = window.confirm("Quitter le test en cours ?"); } catch (e) {}
+      if (!ok) { try { history.pushState({ dnav: 1 }, ""); pushed = true; } catch (e2) {} return true; }
+    }
+    if (typeof window.changeScreen === "function") window.changeScreen(dest);
+    return true;
+  }
+
+  function maj() {
+    planned = false;
+    if (!btn) return;
+    var e = etat();
+    var away = !!e.cur && !NO_BACK[e.cur];
+    var show = away && !e.overlay;
+    btn.classList.toggle("on", show);
+    if (document.body) document.body.classList.toggle("dnav-on", show);
+    if (away && !pushed) {
+      try { history.pushState({ dnav: 1 }, ""); pushed = true; } catch (x) {}
+    } else if (!away && pushed) {
+      pushed = false;
+      ignorePop = true;
+      try { history.back(); } catch (x2) { ignorePop = false; }
+    }
+  }
+  function planifier() {
+    if (planned) return;
+    planned = true;
+    (window.requestAnimationFrame || setTimeout)(maj);
+  }
+
+  function init() {
+    if (btn || !document.body) return;
+    btn = document.createElement("button");
+    btn.id = "dnav-back";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Revenir");
+    btn.textContent = "⬅️ Revenir";
+    btn.addEventListener("click", function () { retour(false); });
+    document.body.appendChild(btn);
+    try {
+      new MutationObserver(planifier).observe(document.body, { attributes: true, attributeFilter: ["class"], subtree: true });
+    } catch (e) {}
+    window.addEventListener("popstate", function () {
+      if (ignorePop) { ignorePop = false; return; }
+      if (!pushed) return;
+      pushed = false;
+      retour(true);
+      planifier();
+    });
+    maj();
+  }
+
+  window.DiisooNav = { retour: function () { return retour(false); }, majour: maj };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
