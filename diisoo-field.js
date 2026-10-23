@@ -312,3 +312,74 @@
   window.DiisooNav = { retour: function () { return retour(false); }, majour: maj };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
+
+/* ---------- 4. Badge « Micro » dans la barre d'etat du tableau de bord (correctif n°5) ----------
+ * Additif. Vert « Micro actif » quand le micro est autorise, « Autoriser » quand il reste a autoriser
+ * (un toucher demande l'acces), « Micro bloque » quand il est refuse (un toucher affiche le guide).
+ * Invisible si le navigateur ne permet pas de connaitre l'etat du micro. */
+(function () {
+  "use strict";
+  if (window.DiisooMicBadge) return;
+  var chip = null, perm = null;
+
+  var st = document.createElement("style");
+  st.id = "diisoo-micbadge-css";
+  st.textContent =
+    "#dmic-chip{display:none;align-items:center;gap:4px;min-height:32px;padding:6px 12px;border-radius:999px;border:1px solid #1E2740;background:rgba(20,26,43,.6);color:#A69C86;font:700 11px/1 system-ui,sans-serif;touch-action:manipulation;white-space:nowrap}" +
+    "#dmic-chip.show{display:inline-flex}" +
+    "#dmic-chip.granted{color:#3DFFA0;border-color:#25D366;background:rgba(37,211,102,.1);box-shadow:0 0 8px rgba(37,211,102,.45)}" +
+    "#dmic-chip.prompt{color:#F3A94E;border-color:#F3A94E}" +
+    "#dmic-chip.denied{color:#E1693F;border-color:#E1693F}";
+  (document.head || document.documentElement).appendChild(st);
+
+  function ensure() {
+    var s = document.getElementById("streak-counter");
+    if (!s || !s.parentNode) return null;
+    var c = document.getElementById("dmic-chip");
+    if (!c) {
+      c = document.createElement("button");
+      c.id = "dmic-chip";
+      c.type = "button";
+      s.parentNode.insertBefore(c, s.nextSibling);
+      c.addEventListener("click", onClick);
+    }
+    return c;
+  }
+
+  function render() {
+    chip = ensure();
+    if (!chip) return;
+    var state = perm ? perm.state : null;
+    chip.className = state ? "show " + state : "";
+    if (state === "granted") { chip.textContent = "🎤 Micro actif"; chip.setAttribute("aria-label", "Micro autorisé"); }
+    else if (state === "prompt") { chip.textContent = "🎤 Autoriser"; chip.setAttribute("aria-label", "Autoriser le micro"); }
+    else if (state === "denied") { chip.textContent = "🔇 Micro bloqué"; chip.setAttribute("aria-label", "Micro bloqué, toucher pour l'aide"); }
+  }
+
+  function onClick() {
+    var state = perm ? perm.state : null;
+    if (state === "denied") {
+      try { window.DiisooField && window.DiisooField.explain({ name: "NotAllowedError" }); } catch (e) {}
+    } else if (state === "prompt") {
+      try {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
+          setTimeout(function () { s.getTracks().forEach(function (t) { t.stop(); }); }, 300);
+        }, function () {});
+      } catch (e) {}
+    }
+  }
+
+  function init() {
+    try {
+      if (!navigator.permissions || !navigator.permissions.query || !navigator.mediaDevices) return;
+      navigator.permissions.query({ name: "microphone" }).then(function (ps) {
+        perm = ps;
+        ps.addEventListener("change", render);
+        render();
+      }, function () {});
+    } catch (e) {}
+  }
+
+  window.DiisooMicBadge = { majour: render };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
