@@ -1,0 +1,54 @@
+{
+  "id": "centenaire-electronique-debutant",
+  "version": "2026.10",
+  "marche": "Centenaire",
+  "theme": "Électronique et reconditionné",
+  "niveau": "debutant",
+  "duree_min": 4,
+  "xp": 30,
+  "accroche": {
+    "en": "Hello, do you have a refurbished phone with a warranty?",
+    "fr": "Bonjour, avez-vous un téléphone reconditionné avec garantie ?"
+  },
+  "vocabulaire": [
+    { "en": "refurbished", "fr": "reconditionné" },
+    { "en": "battery", "fr": "batterie" },
+    { "en": "charger", "fr": "chargeur" },
+    { "en": "screen", "fr": "écran" },
+    { "en": "warranty", "fr": "garantie" },
+    { "en": "mobile money", "fr": "paiement mobile (Wave, Orange Money)" }
+  ],
+  "pont_wolof": [
+    { "wo": "Ñaata la?", "en": "How much is it?" },
+    { "wo": "Dafa baax", "en": "It's good" },
+    { "wo": "Dafa ñaaw", "en": "It's bad / damaged" },
+    { "wo": "Fey", "en": "Pay" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Hello. Do you have a refurbished Samsung phone?" },
+    { "role": "vendeur", "en": "Yes. This one is very good. The screen is perfect." },
+    { "role": "client", "en": "How is the battery?" },
+    { "role": "vendeur", "en": "The battery is new. Three months warranty." },
+    { "role": "client", "en": "How much is it?" },
+    { "role": "vendeur", "en": "60,000 CFA." },
+    { "role": "client", "en": "Can I pay by mobile money?" },
+    { "role": "vendeur", "en": "Yes. Wave or Orange Money." }
+  ],
+  "pratique_micro": [
+    "How is the battery?",
+    "Is there a warranty?",
+    "Can I pay by mobile money?"
+  ],
+  "defi": {
+    "en": "Ask for a charger and a phone case, then negotiate one price for both.",
+    "fr": "Demande un chargeur et une coque, puis négocie un seul prix pour les deux, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'refurbished' mean?", "choix": ["reconditionné", "cassé", "neuf"], "reponse": "reconditionné" },
+    { "q": "How do you ask about the battery?", "choix": ["How is the battery?", "Where is the screen?", "Who is the seller?"], "reponse": "How is the battery?" },
+    { "q": "Can I pay by ___ money?", "choix": ["mobile", "heavy", "blue"], "reponse": "mobile" }
+  ],
+  "recap": "Tu sais vérifier un téléphone, demander une garantie et payer par mobile money.",
+  "suivant": "guangzhou-import-export-debutant",
+  "relecture_wolof_requise": true
+}
