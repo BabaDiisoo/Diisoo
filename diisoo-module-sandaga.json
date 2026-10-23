@@ -1,0 +1,54 @@
+{
+  "id": "sandaga-mode-textiles-debutant",
+  "version": "2026.10",
+  "marche": "Sandaga",
+  "theme": "Mode et textiles",
+  "niveau": "debutant",
+  "duree_min": 4,
+  "xp": 30,
+  "accroche": {
+    "en": "Good afternoon, I'm looking for a size medium dress.",
+    "fr": "Bonjour, je cherche une robe taille M."
+  },
+  "vocabulaire": [
+    { "en": "fabric", "fr": "tissu" },
+    { "en": "size", "fr": "taille" },
+    { "en": "dress", "fr": "robe" },
+    { "en": "tailor", "fr": "tailleur / couturier" },
+    { "en": "supplier", "fr": "grossiste / fournisseur" },
+    { "en": "fitting room", "fr": "cabine d'essayage" }
+  ],
+  "pont_wolof": [
+    { "wo": "Ñaata la?", "en": "How much is it?" },
+    { "wo": "Dafa rafet", "en": "It's beautiful" },
+    { "wo": "Dafa ndaw", "en": "It's too small" },
+    { "wo": "Dafa mag", "en": "It's too big" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Good afternoon. Do you have this dress in medium?" },
+    { "role": "vendeur", "en": "Yes. This fabric is very good quality." },
+    { "role": "client", "en": "Can I try it on?" },
+    { "role": "vendeur", "en": "Of course. The fitting room is there." },
+    { "role": "client", "en": "It's a little big. Do you have a smaller size?" },
+    { "role": "vendeur", "en": "Yes, size small. 15,000 CFA." },
+    { "role": "client", "en": "If I buy three, what is your wholesale price?" },
+    { "role": "vendeur", "en": "For three, 12,000 CFA each." }
+  ],
+  "pratique_micro": [
+    "Do you have this in medium?",
+    "Can I try it on?",
+    "What is your wholesale price?"
+  ],
+  "defi": {
+    "en": "Ask for a smaller size and negotiate a wholesale price for five pieces.",
+    "fr": "Demande une taille en dessous et négocie un prix de gros pour cinq pièces, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'fabric' mean?", "choix": ["tissu", "taille", "robe"], "reponse": "tissu" },
+    { "q": "How do you ask to try clothes?", "choix": ["Can I try it on?", "Can I pay now?", "Is it new?"], "reponse": "Can I try it on?" },
+    { "q": "It's a little ___. (trop grand)", "choix": ["big", "cheap", "blue"], "reponse": "big" }
+  ],
+  "recap": "Tu sais demander une taille, essayer un vêtement et négocier un prix de gros.",
+  "suivant": "centenaire-electronique-debutant",
+  "relecture_wolof_requise": true
+}
