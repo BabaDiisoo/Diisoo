@@ -231,7 +231,9 @@
     "#dnav-back{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:12px;z-index:999;display:none;align-items:center;gap:6px;min-height:40px;padding:9px 14px;border-radius:999px;border:1px solid #1E2740;background:rgba(20,26,43,.96);color:#F6F1E7;font:700 13px/1 system-ui,sans-serif;touch-action:manipulation;box-shadow:0 2px 10px rgba(0,0,0,.35)}" +
     "#dnav-back.on{display:inline-flex}" +
     "body.dnav-on{padding-top:56px}" +
-    "body.dnav-on #df-mic{top:calc(env(safe-area-inset-top,0px) + 58px)}";
+    /* Micro actif : petite pastille a droite, dans la bande du haut (a cote du bouton Revenir), sans couvrir le contenu */
+    "body.dnav-on #df-mic{top:calc(env(safe-area-inset-top,0px) + 12px);left:auto;right:12px;transform:none;max-width:calc(100vw - 150px);padding:6px 10px}" +
+    "body.dnav-on #df-mic:not(.quiet) .df-txt{display:none}";
   var st = document.createElement("style");
   st.id = "diisoo-nav-css";
   st.textContent = css;
