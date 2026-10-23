@@ -2362,6 +2362,7 @@ async function practiceGeneralWord(i) {
         res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessayez.</span>';
         bumpStat("diisoo_word_stats", key, "wrong");
     }
+    res.innerHTML += voixHeatmap(heard, target);
 }
 
 function speakDialogueLine(i) {
@@ -3162,6 +3163,7 @@ async function practiceBusinessPhrase(sectionKey, idx) {
     } else {
         res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + v.en + ' ». Réessayez.</span>';
     }
+    res.innerHTML += voixHeatmap(heard, target);
 }
 
 function closeBusinessDetail() {
@@ -3342,6 +3344,28 @@ function voixJuste(heard, target) {
     const L = Math.max(heard.length, target.length);
     return L > 0 && (1 - levenshtein(heard, target) / L) >= 0.8;
 }
+/* Heatmap de prononciation : chaque mot de la cible est noté 🟢 juste, 🟡 proche, 🔴 manquant ou différent. */
+function voixHeatmap(heard, target) {
+    if (!target) return "";
+    const T = target.split(" ").filter(Boolean), H = (heard || "").split(" ").filter(Boolean);
+    const used = new Array(H.length).fill(false);
+    let total = 0;
+    const out = T.map(function (word) {
+        let best = 0, bi = -1;
+        for (let i = 0; i < H.length; i++) {
+            if (used[i]) continue;
+            const L = Math.max(word.length, H[i].length);
+            const s = L ? 1 - levenshtein(word, H[i]) / L : 0;
+            if (s > best) { best = s; bi = i; }
+        }
+        if (best >= 0.5 && bi > -1) used[bi] = true;
+        total += best >= 0.85 ? 1 : best >= 0.5 ? 0.5 : 0;
+        const c = best >= 0.85 ? ["🟢", "#5FC98F", ""] : best >= 0.5 ? ["🟡", "#F3A94E", "text-decoration:underline wavy;"] : ["🔴", "#E1693F", "text-decoration:underline;font-weight:800;"];
+        return '<span style="color:' + c[1] + ';' + c[2] + '">' + c[0] + ' ' + word + '</span>';
+    });
+    const pct = T.length ? Math.round(total / T.length * 100) : 0;
+    return '<div style="margin-top:6px;font-size:12px;line-height:1.9">' + out.join(" &nbsp;") + '<div style="color:#A69C86;font-size:11px">Prononciation : ' + pct + ' %</div></div>';
+}
 
 async function practiceWord(i) {
     const w = LEXICON[i];
@@ -3371,6 +3395,7 @@ async function practiceWord(i) {
         res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessayez.</span>';
         bumpWordStat(w.en, "wrong");
     }
+    res.innerHTML += voixHeatmap(heard, target);
 }
 
 /* ==========================================================
