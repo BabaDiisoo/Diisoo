@@ -1,8 +1,7 @@
-const VERSION = "diisoo-cache-v20";
+const VERSION = "diisoo-cache-v21";
 const SHELL = [
   "./",
   "./index.html",
-  "./commerce.html",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
@@ -14,6 +13,10 @@ const SHELL = [
   "./diisoo-whatsapp.js",
   "./diisoo-autoupdate.js", "./diisoo-field.js", "./diisoo-ai.js", "./diisoo-audio-cache.js",
   "./diisoo-tests-extra.js",
+  "./diisoo-piliers-1-2.js",
+  "./diisoo-pilier3-business.js",
+  "./diisoo-pilier4-ielts.js",
+  "./wolof_extraction_v1.json",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
   "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm",
   "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js",
