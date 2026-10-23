@@ -2310,19 +2310,20 @@ function jdrChoisir(zone) {
         b.onclick = () => { const r = b.getAttribute("data-r"); if (r) jdrLancer(r); else { zone.innerHTML = ""; jdrBoutonDans(zone); } };
     });
 }
-function jdrTour(en, vivant) {
+function jdrTour(en, vivant, pre) {
+    pre = pre || "jdr";
     return new Promise(resolve => {
-        const act = $("jdr-action"), res = $("jdr-res");
+        const act = $(pre + "-action"), res = $(pre + "-res");
         const target = normalize(en);
         let essais = 0, h = null, ecoute = false, fini = false;
-        act.innerHTML = '<button type="button" id="jdr-mic" class="w-full py-3 btn-primary rounded-xl text-xs font-bold">🎤 À TOI DE RÉPONDRE</button>' +
-            '<button type="button" id="jdr-skip" class="w-full py-2 mt-2 bg-[#141A2B] text-[#A69C86] rounded-xl text-[11px]">Passer ▶</button>';
+        act.innerHTML = '<button type="button" id="' + pre + '-mic" class="w-full py-3 btn-primary rounded-xl text-xs font-bold">🎤 À TOI DE RÉPONDRE</button>' +
+            '<button type="button" id="' + pre + '-skip" class="w-full py-2 mt-2 bg-[#141A2B] text-[#A69C86] rounded-xl text-[11px]">Passer ▶</button>';
         res.innerHTML = "";
         const arreter = () => { try { h && h.stop(); } catch (e) {} };
         const sortir = (ok) => { if (fini) return; fini = true; currentStop = null; act.innerHTML = ""; resolve({ ok }); };
         currentStop = () => { arreter(); sortir(false); };
-        $("jdr-skip").onclick = () => { arreter(); sortir(false); };
-        const mic = $("jdr-mic");
+        $(pre + "-skip").onclick = () => { arreter(); sortir(false); };
+        const mic = $(pre + "-mic");
         mic.onclick = async () => {
             if (ecoute) { arreter(); return; }
             ecoute = true; mic.textContent = "✋ Terminer";
@@ -3236,13 +3237,68 @@ function renderBusinessDialogue(sectionKey) {
     const d = BUSINESS_DIALOGUES[sectionKey];
     return '<div class="mt-4 bg-[#141A2B] border border-[#1E2740] rounded-xl p-3">' +
         '<h5 class="text-xs font-bold text-[#F0906B] mb-2">💬 Dialogue authentique</h5>' +
-        d.map(l =>
+        d.map((l, i) =>
             (l.scene ? '<p class="text-[11px] font-bold text-[#F0906B] mt-3 mb-1">' + l.scene + '</p>' : '') +
-            '<p class="text-xs mb-1"><span class="font-semibold text-[#5FC98F]">' + (l.role === "client" ? "Client" : "Marchand") + ' :</span> ' + l.wo + ' <span class="text-[#6B604A]">(' + l.fr + ')</span>' +
-            (l.en ? ' <span class="text-[#C9BFA8] italic">' + esc(l.en) + '</span>' : '') + '</p>'
+            '<p id="bdl-' + sectionKey + '-' + i + '" class="text-xs mb-1"><span class="font-semibold text-[#5FC98F]">' + (l.role === "client" ? "Client" : "Marchand") + ' :</span> ' + l.wo + ' <span class="text-[#6B604A]">(' + l.fr + ')</span>' +
+            (l.en ? ' <span class="bdl-en text-[#C9BFA8] italic">' + esc(l.en) + '</span>' : '') + '</p>'
         ).join("") +
         '<button onclick="playBusinessDialogue(\'' + sectionKey + '\')" data-practice="biz-dlg" data-gate="0" class="mt-2 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter le dialogue</button>' +
+        jdrBizBouton(sectionKey) +
         '</div>';
+}
+
+/* ---------- Jeu de rôle Business : l'application joue l'autre personnage, tu réponds en anglais. ---------- */
+function jdrBizBouton(sk) {
+    return '<div id="jdrb-zone-' + sk + '" class="space-y-2 mt-2"><button type="button" onclick="jdrBizChoisir(\'' + sk + '\')" class="w-full py-2 bg-[#141A2B] border border-[#3FAE74]/50 text-[#5FC98F] rounded-lg text-[11px] font-semibold">🎭 Jeu de rôle : tu réponds au micro</button></div>';
+}
+function jdrBizChoisir(sk) {
+    if (!SR) { toast("Reconnaissance vocale indisponible. Utilise Chrome."); return; }
+    const z = $("jdrb-zone-" + sk);
+    if (!z) return;
+    z.innerHTML = '<p class="text-xs text-[#C9BFA8] text-center">Choisis ton rôle. L\'application joue l\'autre personnage.</p>' +
+        '<div class="grid grid-cols-2 gap-2"><button type="button" onclick="jdrBizLancer(\'' + sk + '\',\'client\')" class="py-3 btn-primary rounded-xl text-xs font-bold">Je suis le client</button>' +
+        '<button type="button" onclick="jdrBizLancer(\'' + sk + '\',\'marchand\')" class="py-3 btn-primary rounded-xl text-xs font-bold">Je suis le marchand</button></div>' +
+        '<button type="button" onclick="$(\'jdrb-zone-' + sk + '\').outerHTML = jdrBizBouton(\'' + sk + '\')" class="w-full py-2 bg-[#141A2B] text-[#A69C86] rounded-xl text-[11px]">Annuler</button>';
+}
+async function jdrBizLancer(sk, role) {
+    const lines = BUSINESS_DIALOGUES[sk], zone = $("jdrb-zone-" + sk);
+    if (!zone) return;
+    stopAllAudio();
+    const my = ++seqToken, jt = ++jdrJeton;
+    sequenceActive = true;
+    refreshPracticeButtons();
+    const vivant = () => my === seqToken && jt === jdrJeton && document.body.contains(zone);
+    const mes = lines.map((l, i) => i).filter(i => lines[i].role === role && lines[i].en);
+    const masquer = (i) => { const s = document.querySelector("#bdl-" + sk + "-" + i + " .bdl-en"); if (s) { s.dataset.jdr = s.innerHTML; s.innerHTML = "🎤 à toi de répondre"; } };
+    const demasquer = (i) => { const s = document.querySelector("#bdl-" + sk + "-" + i + " .bdl-en"); if (s && s.dataset.jdr != null) { s.innerHTML = s.dataset.jdr; delete s.dataset.jdr; } };
+    mes.forEach(masquer);
+    zone.innerHTML = '<p id="jdrb-etat" class="text-xs text-[#C9BFA8] text-center"></p><div id="jdrb-action"></div><div id="jdrb-res" class="text-xs"></div>';
+    const etat = (t) => { const e = $("jdrb-etat"); if (e) e.textContent = t; };
+    let juste = 0;
+    for (let i = 0; i < lines.length && vivant(); i++) {
+        const l = lines[i], el = $("bdl-" + sk + "-" + i);
+        if (el) { el.style.background = "rgba(63,174,116,.12)"; if (el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "center" }); }
+        if (l.role !== role) {
+            etat("🔊 " + (l.role === "client" ? "Client" : "Marchand") + " parle...");
+            await _speak(l.wo, "wo", 0.8, undefined, true);
+            if (vivant() && l.en) await _speak(l.en, "en-US", 0.85, undefined, true);
+        } else if (l.en) {
+            etat("🎤 À toi : " + (l.fr || ""));
+            const r = await jdrTour(l.en, vivant, "jdrb");
+            if (!vivant()) break;
+            if (r.ok) juste++;
+            demasquer(i);
+        }
+        if (el) el.style.background = "";
+        if (vivant()) await new Promise(r => setTimeout(r, 300));
+    }
+    const fini = vivant();
+    mes.forEach(demasquer);
+    document.querySelectorAll("[id^='bdl-" + sk + "-']").forEach(e => { e.style.background = ""; });
+    if (my === seqToken) { sequenceActive = false; refreshPracticeButtons(); }
+    if (fini) {
+        zone.innerHTML = '<p class="text-sm font-bold text-[#5FC98F] text-center">🎭 Terminé : ' + juste + ' / ' + mes.length + ' répliques réussies</p>' + jdrBizBouton(sk).replace(/^<div[^>]*>/, "").replace(/<\/div>$/, "");
+    }
 }
 
 function playBusinessDialogue(sectionKey) {
