@@ -58,122 +58,74 @@
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
     <link rel="sitemap" type="application/xml" href="https://diisoo.sn/sitemap.xml">
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
     {
-      "@type": "Organization",
-      "@id": "https://diisoo.sn/#org",
-      "legalName": "ABC-GLOBAL (Africain Business Consulting)",
-      "alternateName": "ABC-GLOBAL",
-      "identifier": { "@type": "PropertyValue", "propertyID": "RCCM", "value": "SN.THS.2022.A.2153" },
-      "foundingDate": "2022-05-16",
-      "areaServed": { "@type": "Country", "name": "Sénégal" },
-      "contactPoint": [{
-        "@type": "ContactPoint",
-        "contactType": "customer support",
-        "telephone": "+221768426961",
-        "availableLanguage": ["fr", "en", "wo"],
-        "areaServed": "SN"
-      }],
-      "sameAs": ["https://wa.me/221768426961"]
-    },
-    {
-      "@type": "SoftwareApplication",
-      "@id": "https://diisoo.sn/#software",
-      "name": "Diisoo",
-      "alternateName": "Diisoo.sn",
-      "url": "https://diisoo.sn/",
-      "image": "https://diisoo.sn/og-image.png",
-      "applicationCategory": "EducationalApplication",
-      "applicationSubCategory": "Language learning",
-      "operatingSystem": "Android, iOS, Windows, macOS (PWA)",
-      "installUrl": "https://diisoo.sn/",
-      "downloadUrl": "https://diisoo.sn/",
-      "isAccessibleForFree": true,
-      "inLanguage": ["fr", "en", "wo"],
-      "description": "Application pour apprendre l'anglais et le wolof au Sénégal : voix wolof, dialogues de marché (Sandaga, Colobane), anglais business Chine-Dakar et simulateur indépendant au format IELTS Life Skills. Installable sans store.",
-      "featureList": ["Anglais général", "Anglais-Wolof 100% oral", "Anglais business et métiers", "Simulateur IELTS Life Skills A1", "Mode hors ligne", "Révision quotidienne"],
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "XOF", "validThrough": "2027-01-01", "description": "Gratuit jusqu'au 1er janvier 2027, puis Premium et packs métiers" },
-      "publisher": { "@id": "https://diisoo.sn/#org" },
-      "isPartOf": { "@id": "https://diisoo.sn/#website" }
-    }
-  ]
-}
-    </script>
-    <!-- Données structurées (Google) -->
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": "https://diisoo.sn/#website",
-      "url": "https://diisoo.sn/",
-      "name": "Diisoo",
-      "description": "Apprenez l'anglais et le wolof avec Diisoo : voix wolof, dialogues de marché, simulateur IELTS Life Skills. Learn Wolof and English online from your phone.",
-      "inLanguage": [
-        "fr",
-        "en",
-        "wo"
-      ],
-      "publisher": {
-        "@id": "https://diisoo.sn/#org"
-      }
-    },
-    {
-      "@type": "Organization",
-      "@id": "https://diisoo.sn/#org",
-      "name": "ABC-GLOBAL (Africain Business Consulting)",
-      "url": "https://diisoo.sn/",
-      "logo": "https://diisoo.sn/icon-512.png",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Thiès",
-        "addressCountry": "SN"
-      }
-    },
-    {
-      "@type": "WebApplication",
-      "@id": "https://diisoo.sn/#app",
-      "name": "Diisoo",
-      "url": "https://diisoo.sn/",
-      "applicationCategory": "EducationalApplication",
-      "operatingSystem": "Any (navigateur web, Android, iOS)",
-      "browserRequirements": "Requires JavaScript",
-      "description": "Application pour apprendre l'anglais (général, business, IELTS Life Skills) et le wolof, avec voix wolof, dialogues de marché et exercices d'écoute et d'oral.",
-      "inLanguage": [
-        "fr",
-        "en",
-        "wo"
-      ],
-      "audience": [
+      "@context": "https://schema.org",
+      "@graph": [
         {
-          "@type": "Audience",
-          "audienceType": "Sénégalais qui apprennent l'anglais pour le travail, le commerce, le voyage et le visa",
-          "geographicArea": {
-            "@type": "Country",
-            "name": "Sénégal"
-          }
+          "@type": "Organization",
+          "@id": "https://diisoo.sn/#org",
+          "name": "ABC-GLOBAL (Africain Business Consulting)",
+          "legalName": "ABC-GLOBAL (Africain Business Consulting)",
+          "alternateName": "ABC-GLOBAL",
+          "url": "https://diisoo.sn/",
+          "logo": "https://diisoo.sn/icon-512.png",
+          "identifier": { "@type": "PropertyValue", "propertyID": "RCCM", "value": "SN.THS.2022.A.2153" },
+          "foundingDate": "2022-05-16",
+          "address": { "@type": "PostalAddress", "addressLocality": "Thiès", "addressCountry": "SN" },
+          "areaServed": { "@type": "Country", "name": "Sénégal" },
+          "contactPoint": [{
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "telephone": "+221768426961",
+            "availableLanguage": ["fr", "en", "wo"],
+            "areaServed": "SN"
+          }],
+          "sameAs": ["https://wa.me/221768426961"]
         },
         {
-          "@type": "Audience",
-          "audienceType": "Foreign learners of Wolof (diaspora, expatriates, travellers)"
+          "@type": "WebSite",
+          "@id": "https://diisoo.sn/#website",
+          "url": "https://diisoo.sn/",
+          "name": "Diisoo",
+          "description": "Apprenez l'anglais et le wolof avec Diisoo : voix wolof, dialogues de marché, simulateur IELTS Life Skills. Learn Wolof and English online from your phone.",
+          "inLanguage": ["fr", "en", "wo"],
+          "publisher": { "@id": "https://diisoo.sn/#org" }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://diisoo.sn/#software",
+          "name": "Diisoo",
+          "alternateName": "Diisoo.sn",
+          "url": "https://diisoo.sn/",
+          "image": "https://diisoo.sn/og-image.png",
+          "applicationCategory": "EducationalApplication",
+          "applicationSubCategory": "Language learning",
+          "operatingSystem": "Android, iOS, Windows, macOS (PWA)",
+          "browserRequirements": "Requires JavaScript",
+          "installUrl": "https://diisoo.sn/",
+          "downloadUrl": "https://diisoo.sn/",
+          "isAccessibleForFree": true,
+          "inLanguage": ["fr", "en", "wo"],
+          "description": "Application pour apprendre l'anglais (général, business, IELTS Life Skills) et le wolof, avec voix wolof, dialogues de marché (Sandaga, Colobane), anglais business Chine-Dakar, exercices d'écoute et d'oral.",
+          "featureList": ["Anglais général", "Anglais-Wolof 100% oral", "Anglais business et métiers", "Simulateur IELTS Life Skills A1", "Mode hors ligne", "Révision quotidienne"],
+          "audience": [
+            {
+              "@type": "Audience",
+              "audienceType": "Sénégalais qui apprennent l'anglais pour le travail, le commerce, le voyage et le visa",
+              "geographicArea": { "@type": "Country", "name": "Sénégal" }
+            },
+            {
+              "@type": "Audience",
+              "audienceType": "Foreign learners of Wolof (diaspora, expatriates, travellers)"
+            }
+          ],
+          "areaServed": { "@type": "Country", "name": "Sénégal" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "XOF", "validThrough": "2027-01-01", "description": "Gratuit jusqu'au 1er janvier 2027, puis Premium et packs métiers" },
+          "publisher": { "@id": "https://diisoo.sn/#org" },
+          "isPartOf": { "@id": "https://diisoo.sn/#website" }
         }
-      ],
-      "areaServed": {
-        "@type": "Country",
-        "name": "Sénégal"
-      },
-      "publisher": {
-        "@id": "https://diisoo.sn/#org"
-      },
-      "isPartOf": {
-        "@id": "https://diisoo.sn/#website"
-      }
+      ]
     }
-  ]
-}
     </script>
     <!-- Tailwind CSS (lien corrigé) -->
     <script src="diisoo-tests-extra.js"></script>
