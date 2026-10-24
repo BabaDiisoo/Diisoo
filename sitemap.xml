@@ -1,44 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://diisoo.sn/</loc>
-    <lastmod>2026-10-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://diisoo.sn/anglais-senegal.html</loc>
-    <lastmod>2026-10-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://diisoo.sn/apprendre-wolof.html</loc>
-    <lastmod>2026-10-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://diisoo.sn/anglais-commercants-import-chine.html</loc>
-    <lastmod>2026-10-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://diisoo.sn/ielts-visa-senegal.html</loc>
-    <lastmod>2026-10-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://diisoo.sn/confidentialite</loc>
-    <lastmod>2026-10-18</lastmod>
-    <priority>0.3</priority>
-  </url>
-    <url>
-    <loc>https://diisoo.sn/anglais-des-marches-senegal</loc>
-    <lastmod>2026-10-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+<url><loc>https://diisoo.sn/</loc><lastmod>2026-10-24</lastmod><priority>1.0</priority></url>
+<url><loc>https://diisoo.sn/anglais-senegal.html</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/apprendre-wolof.html</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/anglais-commercants-import-chine.html</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/ielts-visa-senegal.html</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/anglais-des-marches-senegal</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/apprendre-anglais-au-senegal</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/apprendre-le-wolof</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/learn-wolof</loc><lastmod>2026-10-24</lastmod><priority>0.8</priority></url>
+<url><loc>https://diisoo.sn/salutations-en-wolof</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/wolof-greetings</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/nombres-en-wolof</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/wolof-numbers</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/wolof-au-marche</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/wolof-market-phrases</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/phrases-wolof-voyageurs</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/wolof-phrases-for-travelers</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/parler-wolof-en-famille</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/speak-wolof-with-family</loc><lastmod>2026-10-24</lastmod><priority>0.7</priority></url>
+<url><loc>https://diisoo.sn/confidentialite</loc><lastmod>2026-10-24</lastmod><priority>0.3</priority></url>
+<url><loc>https://diisoo.sn/privacy</loc><lastmod>2026-10-24</lastmod><priority>0.3</priority></url>
 </urlset>
