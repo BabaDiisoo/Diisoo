@@ -1,0 +1,56 @@
+{
+  "id": "guangzhou-import-export-intermediaire",
+  "version": "2026.10",
+  "marche": "Guangzhou / Chine",
+  "theme": "Import/export : incoterms, paiement et transit",
+  "niveau": "intermediaire",
+  "pack": "commercants",
+  "duree_min": 5,
+  "xp": 50,
+  "accents": ["UK", "US", "Chine commercial"],
+  "accroche": {
+    "en": "Can you quote me a price FOB Guangzhou for one twenty-foot container?",
+    "fr": "Pouvez-vous me donner un prix FOB Guangzhou pour un conteneur de vingt pieds ?"
+  },
+  "vocabulaire": [
+    { "en": "FOB (free on board)", "fr": "FOB (franco à bord)" },
+    { "en": "CIF (cost, insurance, freight)", "fr": "CIF (coût, assurance, fret)" },
+    { "en": "bill of lading", "fr": "connaissement" },
+    { "en": "payment terms", "fr": "conditions de paiement" },
+    { "en": "freight forwarder", "fr": "transitaire" },
+    { "en": "inspection", "fr": "inspection" }
+  ],
+  "pont_wolof": [
+    { "wo": "Ndank", "en": "Slowly / Take it easy" },
+    { "wo": "Xaalis", "en": "Money" },
+    { "wo": "Wàññi ko tuuti", "en": "Reduce it a little" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Hello. Can you quote me a price FOB Guangzhou for one twenty-foot container of plastic chairs?" },
+    { "role": "fournisseur", "en": "Yes. FOB Guangzhou is 4,800 dollars for the full container." },
+    { "role": "client", "en": "What are your payment terms?" },
+    { "role": "fournisseur", "en": "Thirty percent deposit, and seventy percent against the bill of lading." },
+    { "role": "client", "en": "Can my freight forwarder do an inspection before shipping?" },
+    { "role": "fournisseur", "en": "Yes. Inspection is possible one week before loading." },
+    { "role": "client", "en": "What is the price CIF Dakar?" },
+    { "role": "fournisseur", "en": "5,900 dollars. Transit time is about thirty-five days." },
+    { "role": "client", "en": "Please send me the proforma invoice. I will compare with my freight forwarder." }
+  ],
+  "pratique_micro": [
+    "Can you quote me a price FOB?",
+    "What are your payment terms?",
+    "Can my freight forwarder do an inspection?"
+  ],
+  "defi": {
+    "en": "Ask for a CIF Dakar price for a forty-foot container. Negotiate the deposit down to twenty percent and ask for an inspection.",
+    "fr": "Demande un prix CIF Dakar pour un conteneur de quarante pieds. Négocie l'acompte à vingt pour cent et demande une inspection, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'bill of lading' mean?", "choix": ["connaissement", "facture", "douane"], "reponse": "connaissement" },
+    { "q": "Which term includes cost, insurance and freight?", "choix": ["CIF", "FOB", "VIP"], "reponse": "CIF" },
+    { "q": "What are your payment ___?", "choix": ["terms", "colors", "chairs"], "reponse": "terms" }
+  ],
+  "recap": "Tu sais demander un prix FOB ou CIF, négocier les conditions de paiement et organiser une inspection avec ton transitaire.",
+  "suivant": null,
+  "relecture_wolof_requise": true
+}

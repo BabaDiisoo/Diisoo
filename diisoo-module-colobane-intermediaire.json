@@ -1,0 +1,56 @@
+{
+  "id": "colobane-pieces-auto-intermediaire",
+  "version": "2026.10",
+  "marche": "Colobane",
+  "theme": "Pièces auto : commande en gros et retours",
+  "niveau": "intermediaire",
+  "pack": "commercants",
+  "duree_min": 5,
+  "xp": 50,
+  "accroche": {
+    "en": "I want to order twenty sets of brake pads. What is your best wholesale price?",
+    "fr": "Je veux commander vingt jeux de plaquettes de frein. Quel est votre meilleur prix de gros ?"
+  },
+  "vocabulaire": [
+    { "en": "compatible with", "fr": "compatible avec" },
+    { "en": "original / aftermarket", "fr": "d'origine / adaptable" },
+    { "en": "delivery time", "fr": "délai de livraison" },
+    { "en": "return policy", "fr": "politique de retour" },
+    { "en": "defective", "fr": "défectueux" },
+    { "en": "deposit", "fr": "acompte" }
+  ],
+  "pont_wolof": [
+    { "wo": "Wàññi ko tuuti", "en": "Reduce it a little" },
+    { "wo": "Xaalis", "en": "Money" },
+    { "wo": "Dafa seer", "en": "It's expensive" },
+    { "wo": "Dafa baax", "en": "It's good" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Good morning. I need twenty sets of brake pads for Toyota Corolla and Hyundai Accent." },
+    { "role": "vendeur", "en": "Original or aftermarket? Original is 25,000 CFA, aftermarket is 15,000 CFA." },
+    { "role": "client", "en": "Are the aftermarket ones compatible with both models?" },
+    { "role": "vendeur", "en": "Yes, they are compatible. For twenty sets, I can do 13,000 CFA each." },
+    { "role": "client", "en": "What is the delivery time to Thies?" },
+    { "role": "vendeur", "en": "Three days. I need a deposit of 30 percent." },
+    { "role": "client", "en": "And if some pieces are defective?" },
+    { "role": "vendeur", "en": "You can return them within seven days. I will give you an invoice." },
+    { "role": "client", "en": "Deal. I will send the deposit by Wave today." }
+  ],
+  "pratique_micro": [
+    "Are they compatible with this model?",
+    "What is the delivery time?",
+    "What is your return policy for defective parts?"
+  ],
+  "defi": {
+    "en": "Order ten batteries. Ask for compatibility, a wholesale price, a deposit amount and the return policy.",
+    "fr": "Commande dix batteries. Demande la compatibilité, un prix de gros, le montant de l'acompte et la politique de retour, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'defective' mean?", "choix": ["défectueux", "d'origine", "en gros"], "reponse": "défectueux" },
+    { "q": "How do you ask about the time before you receive the goods?", "choix": ["What is the delivery time?", "What is the discount?", "Is it original?"], "reponse": "What is the delivery time?" },
+    { "q": "I need a ___ of 30 percent before delivery.", "choix": ["deposit", "weather", "brake"], "reponse": "deposit" }
+  ],
+  "recap": "Tu sais vérifier la compatibilité, négocier une commande en gros, fixer un acompte et exiger une politique de retour.",
+  "suivant": "sandaga-mode-textiles-intermediaire",
+  "relecture_wolof_requise": true
+}

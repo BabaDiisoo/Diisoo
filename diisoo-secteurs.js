@@ -10,7 +10,11 @@
     "diisoo-module-colobane.json",
     "diisoo-module-sandaga.json",
     "diisoo-module-centenaire.json",
-    "diisoo-module-guangzhou.json"
+    "diisoo-module-guangzhou.json",
+    "diisoo-module-colobane-intermediaire.json",
+    "diisoo-module-sandaga-intermediaire.json",
+    "diisoo-module-centenaire-intermediaire.json",
+    "diisoo-module-guangzhou-intermediaire.json"
   ];
   var KEY = "diisoo_secteurs_v1";
   var cache = {};
