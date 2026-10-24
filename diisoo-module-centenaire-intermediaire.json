@@ -1,0 +1,56 @@
+{
+  "id": "centenaire-electronique-intermediaire",
+  "version": "2026.10",
+  "marche": "Centenaire",
+  "theme": "Électronique : revente et garantie",
+  "niveau": "intermediaire",
+  "pack": "commercants",
+  "duree_min": 5,
+  "xp": 50,
+  "accroche": {
+    "en": "I want to buy ten refurbished phones to resell in my shop.",
+    "fr": "Je veux acheter dix téléphones reconditionnés pour les revendre dans ma boutique."
+  },
+  "vocabulaire": [
+    { "en": "to resell", "fr": "revendre" },
+    { "en": "battery health", "fr": "état de la batterie" },
+    { "en": "unlocked", "fr": "débloqué" },
+    { "en": "original box", "fr": "boîte d'origine" },
+    { "en": "to test", "fr": "tester" },
+    { "en": "receipt", "fr": "reçu" }
+  ],
+  "pont_wolof": [
+    { "wo": "Dafa baax", "en": "It's good" },
+    { "wo": "Dafa ñaaw", "en": "It's bad / damaged" },
+    { "wo": "Fey", "en": "Pay" },
+    { "wo": "Wàññi ko tuuti", "en": "Reduce it a little" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Hello. I want ten refurbished phones to resell in my shop." },
+    { "role": "vendeur", "en": "Which brand? I have Samsung and Tecno." },
+    { "role": "client", "en": "Samsung. What is the battery health?" },
+    { "role": "vendeur", "en": "Above 85 percent. All phones are unlocked." },
+    { "role": "client", "en": "Can I test three phones before I pay?" },
+    { "role": "vendeur", "en": "Of course. Test them here." },
+    { "role": "client", "en": "What is your price for ten, with the original box?" },
+    { "role": "vendeur", "en": "55,000 CFA each without box, 58,000 CFA with the original box." },
+    { "role": "client", "en": "I will take ten without box. Please give me a receipt and a three months warranty." }
+  ],
+  "pratique_micro": [
+    "What is the battery health?",
+    "Can I test the phones before I pay?",
+    "Please give me a receipt and a warranty."
+  ],
+  "defi": {
+    "en": "Buy five phones to resell. Ask about battery health, testing, the original box, the price for five and the warranty.",
+    "fr": "Achète cinq téléphones à revendre. Demande l'état de la batterie, le test, la boîte d'origine, le prix pour cinq et la garantie, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'unlocked' mean for a phone?", "choix": ["débloqué", "cassé", "neuf"], "reponse": "débloqué" },
+    { "q": "How do you ask to check the phone before paying?", "choix": ["Can I test it before I pay?", "Can I pay later?", "Is it blue?"], "reponse": "Can I test it before I pay?" },
+    { "q": "I want to buy ten phones to ___ in my shop.", "choix": ["resell", "repair", "forget"], "reponse": "resell" }
+  ],
+  "recap": "Tu sais acheter des téléphones à revendre, vérifier la batterie, tester avant de payer et exiger un reçu et une garantie.",
+  "suivant": "guangzhou-import-export-intermediaire",
+  "relecture_wolof_requise": true
+}

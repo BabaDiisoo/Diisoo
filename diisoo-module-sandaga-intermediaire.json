@@ -1,0 +1,56 @@
+{
+  "id": "sandaga-mode-textiles-intermediaire",
+  "version": "2026.10",
+  "marche": "Sandaga",
+  "theme": "Mode et textiles : commande et confection",
+  "niveau": "intermediaire",
+  "pack": "commercants",
+  "duree_min": 5,
+  "xp": 50,
+  "accroche": {
+    "en": "I want to order fifty shirts in three sizes and two colors.",
+    "fr": "Je veux commander cinquante chemises en trois tailles et deux couleurs."
+  },
+  "vocabulaire": [
+    { "en": "bulk order", "fr": "commande en gros" },
+    { "en": "color / pattern", "fr": "couleur / motif" },
+    { "en": "sample", "fr": "échantillon" },
+    { "en": "custom-made", "fr": "sur mesure" },
+    { "en": "lead time", "fr": "délai de fabrication" },
+    { "en": "quality control", "fr": "contrôle qualité" }
+  ],
+  "pont_wolof": [
+    { "wo": "Wàññi ko tuuti", "en": "Reduce it a little" },
+    { "wo": "Dafa rafet", "en": "It's beautiful" },
+    { "wo": "Dafa ndaw", "en": "It's too small" },
+    { "wo": "Dafa mag", "en": "It's too big" }
+  ],
+  "dialogue": [
+    { "role": "client", "en": "Good afternoon. I want fifty shirts, sizes small, medium and large." },
+    { "role": "fournisseur", "en": "Which colors and which fabric?" },
+    { "role": "client", "en": "Blue and white, in cotton. Can I see a sample first?" },
+    { "role": "fournisseur", "en": "Yes. The sample is 5,000 CFA, and I will deduct it from the order." },
+    { "role": "client", "en": "What is the price for fifty pieces?" },
+    { "role": "fournisseur", "en": "8,000 CFA each. If you want it custom-made with your logo, it is 9,500 CFA." },
+    { "role": "client", "en": "What is the lead time for custom-made shirts?" },
+    { "role": "fournisseur", "en": "Ten days. We do quality control before delivery." },
+    { "role": "client", "en": "Good. I will pay half now and half at delivery." }
+  ],
+  "pratique_micro": [
+    "Can I see a sample first?",
+    "What is the lead time?",
+    "Do you do quality control before delivery?"
+  ],
+  "defi": {
+    "en": "Order thirty dresses custom-made with your logo. Ask for a sample, the lead time and a price for thirty pieces.",
+    "fr": "Commande trente robes sur mesure avec ton logo. Demande un échantillon, le délai de fabrication et un prix pour trente pièces, en anglais."
+  },
+  "evaluation": [
+    { "q": "What does 'sample' mean?", "choix": ["échantillon", "taille", "couleur"], "reponse": "échantillon" },
+    { "q": "How do you ask how long the production takes?", "choix": ["What is the lead time?", "What is your size?", "Where is the shop?"], "reponse": "What is the lead time?" },
+    { "q": "I want it ___, with my logo.", "choix": ["custom-made", "second-hand", "broken"], "reponse": "custom-made" }
+  ],
+  "recap": "Tu sais demander un échantillon, commander sur mesure, négocier un prix par quantité et fixer un délai.",
+  "suivant": "centenaire-electronique-intermediaire",
+  "relecture_wolof_requise": true
+}
