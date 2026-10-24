@@ -1,0 +1,21 @@
+name: IndexNow
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sitemap.xml"
+      - "*.html"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Notifier IndexNow (Bing, Yandex, etc.)
+        run: |
+          URLS=$(grep -o '<loc>[^<]*</loc>' sitemap.xml | sed 's/<[^>]*>//g' | sed 's/.*/"&"/' | paste -sd, -)
+          curl -sS -o /dev/null -w "%{http_code}\n" -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{\"host\":\"diisoo.sn\",\"key\":\"6593c70aa673dead282c8d8eb01f54e4\",\"keyLocation\":\"https://diisoo.sn/6593c70aa673dead282c8d8eb01f54e4.txt\",\"urlList\":[$URLS]}" || true
