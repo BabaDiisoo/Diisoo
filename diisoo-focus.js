@@ -372,6 +372,64 @@
     } catch (e) {}
   }
 
+  /* ---------- Anglais des marches : meme apparence que l'app, un module a la fois ---------- */
+  function mountMarches() {
+    var vue = document.getElementById("secteurs-vue");
+    if (!vue || vue.__fxM) return;
+    vue.__fxM = true;
+    if (!document.getElementById("fx-dsx-style")) {
+      var st = document.createElement("style");
+      st.id = "fx-dsx-style";
+      st.textContent =
+        ".dsx{background:#141A2B!important;border:1px solid #1E2740;color:#F6F1E7!important;font-family:inherit!important;border-radius:16px!important}" +
+        ".dsx h2{color:#F6F1E7!important;font-size:1.05rem!important}" +
+        ".dsx .dsx-card{background:#0B0F1C!important;border:1px solid #1E2740}" +
+        ".dsx .dsx-btn{background:#C2542D!important;color:#fff!important;border-radius:12px!important;font-size:.85rem!important;padding:14px!important}" +
+        ".dsx .dsx-btn.sec{background:#1E2740!important;color:#E4DCC9!important;text-align:left}" +
+        ".dsx .dsx-bar i,.dsx .dsx-bar{border-radius:9999px}" +
+        ".dsx .dsx-bar i{background:#E1693F!important}" +
+        ".dsx .dsx-choix{background:#1E2740!important;font-size:.85rem!important}" +
+        ".dsx .dsx-choix.sel{border-color:#E1693F!important}";
+      document.head.appendChild(st);
+    }
+    var busy = false;
+    function apply() {
+      var dsx = vue.querySelector(".dsx");
+      if (!dsx || dsx.querySelector(".fx-nav")) return;
+      var btns = Array.prototype.slice.call(dsx.querySelectorAll("button.dsx-btn.sec[data-id]"));
+      if (btns.length < 2) return;
+      var cur = 0;
+      for (var i = 0; i < btns.length; i++) { if (txt(btns[i]).indexOf("\u2705") === -1) { cur = i; break; } }
+      var nav = document.createElement("div");
+      nav.className = "fx-nav";
+      var row = document.createElement("div"); row.className = "fx-row";
+      var prev = document.createElement("button"); prev.type = "button"; prev.className = "fx-arr"; prev.textContent = "\u2039";
+      var lab = document.createElement("div"); lab.className = "fx-rowlab";
+      var next = document.createElement("button"); next.type = "button"; next.className = "fx-arr"; next.textContent = "\u203A";
+      row.appendChild(prev); row.appendChild(lab); row.appendChild(next);
+      var bar = document.createElement("div"); bar.className = "fx-bar";
+      var fill = document.createElement("div"); fill.className = "fx-fill"; bar.appendChild(fill);
+      nav.appendChild(row); nav.appendChild(bar);
+      dsx.insertBefore(nav, btns[0]);
+      function show(k) {
+        if (k < 0 || k > btns.length - 1) return;
+        cur = k;
+        btns.forEach(function (b, j) { b.style.display = j === k ? "" : "none"; });
+        lab.textContent = "Module " + (k + 1) + " sur " + btns.length;
+        fill.style.width = Math.round((k + 1) / btns.length * 100) + "%";
+      }
+      prev.onclick = function () { show(cur - 1); };
+      next.onclick = function () { show(cur + 1); };
+      show(cur);
+    }
+    new MutationObserver(function () {
+      if (busy) return;
+      busy = true;
+      try { apply(); } catch (e) {} finally { busy = false; }
+    }).observe(vue, { childList: true, subtree: true });
+    try { apply(); } catch (e) {}
+  }
+
   /* ---------- Business : les secteurs et "Anglais des marches" deviennent des onglets, comme les autres menus ---------- */
   function patchBusiness() {
     try {
@@ -418,6 +476,7 @@
         var o = document.getElementById("secteurs-ouvrir");
         if (!o) { setTimeout(function () { var o2 = document.getElementById("secteurs-ouvrir"); if (o2) openMarches(); }, 700); return; }
         marches = true; paint();
+        mountMarches();
         o.click();
         var r = document.getElementById("secteurs-retour");
         if (r) r.classList.add("hidden");
@@ -495,7 +554,7 @@
     try { if (typeof window.renderRevisionCard === "function") window.renderRevisionCard(); } catch (e) {}
   }
 
-  window.DiisooFocus = { version: 7 };
+  window.DiisooFocus = { version: 8 };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
