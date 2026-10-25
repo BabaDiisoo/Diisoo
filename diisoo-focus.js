@@ -74,6 +74,18 @@
     return { hidden: [], keep: keep, steps: steps, key: txt(cards[0]).slice(0, 40) + "|" + cards.length, anchor: keep[keep.length - 1] || null };
   }
 
+  /* Liste simple : chaque <div> est une carte, les <p> sont des messages conserves. */
+  function classifyList(word, compact) {
+    return function (box) {
+      var kids = Array.prototype.slice.call(box.children).filter(function (el) { return !el.classList.contains("fx-nav"); });
+      var cards = kids.filter(function (el) { return el.tagName === "DIV" || el.tagName === "BUTTON"; });
+      var keep = kids.filter(function (el) { return cards.indexOf(el) === -1; });
+      if (cards.length < 2) return null;
+      var steps = cards.map(function (el, i) { return { type: "item", els: [el], label: word + " " + (i + 1) + " sur " + cards.length, res: null }; });
+      return { hidden: [], keep: keep, steps: steps, compact: compact, key: word + "|" + cards.length + "|" + txt(cards[0]).slice(0, 30), anchor: keep[0] || null };
+    };
+  }
+
   function classifyBusiness(box) {
     var kids = Array.prototype.slice.call(box.children).filter(function (el) { return !el.classList.contains("fx-nav"); });
     var keep = [], steps = [], pending = [], nvoc = 0, dlgStep = null;
@@ -226,7 +238,7 @@
         key = c.key;
         if (!same) { cur = 0; doneMap = {}; }
         steps = c.steps;
-        compact = steps.length >= COMPACT_FROM;
+        compact = !!c.compact || steps.length >= COMPACT_FROM;
         c.hidden.forEach(hide);
         c.keep.forEach(show);
         buildNav(c.anchor);
@@ -310,10 +322,12 @@
     mount("general-content", classifyGeneral);
     mount("lexicon-container", classifyWolof);
     mount("business-content", classifyBusiness);
+    mount("test-topic-buttons", classifyList("Test", true));
+    mount("pairs-list", classifyList("R\u00e9ponse", true));
     try { if (typeof window.renderRevisionCard === "function") window.renderRevisionCard(); } catch (e) {}
   }
 
-  window.DiisooFocus = { version: 3 };
+  window.DiisooFocus = { version: 4 };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
