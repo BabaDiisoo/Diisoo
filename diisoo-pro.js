@@ -1659,5 +1659,21 @@ init();
   setTimeout(adapter, 200);
   setTimeout(adapter, 1500);
 })();
-import("./diisoo-pilier3-business.js").catch(function () {});
-import("./diisoo-piliers-1-2.js").catch(function () {});
+(function () {
+  var done = false;
+  function charger() {
+    if (done) return;
+    done = true;
+    import("./diisoo-pilier3-business.js").catch(function () {});
+    import("./diisoo-piliers-1-2.js").catch(function () {});
+  }
+  function planifier() {
+    if (window.requestIdleCallback) requestIdleCallback(charger, { timeout: 3000 });
+    else setTimeout(charger, 2500);
+  }
+  if (document.readyState === "complete") planifier();
+  else window.addEventListener("load", planifier, { once: true });
+  ["pointerdown", "keydown", "touchstart"].forEach(function (ev) {
+    window.addEventListener(ev, charger, { once: true, passive: true });
+  });
+})();
