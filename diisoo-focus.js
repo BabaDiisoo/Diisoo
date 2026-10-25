@@ -1,6 +1,6 @@
 /* Diisoo : mode "une carte a la fois" (Anglais General, Anglais Wolof, Outils Business).
  * Un seul element visible a la fois. Passage automatique apres une bonne reponse.
- * Aucun acces a localStorage ni IndexedDB. Desactivation : retirer la ligne <script> dans index.html,
+ * Lecture seule des cles existantes. Ecrit seulement 2 nouvelles cles : diisoo_fx_theme, diisoo_fx_biz. Desactivation : retirer la ligne <script> dans index.html,
  * ou ouvrir https://diisoo.sn/?focus=0 */
 (function () {
   "use strict";
@@ -141,7 +141,28 @@
     steps.forEach(function (s, i) { s.label = (s.type === "lock" ? "Niveau verrouillé" : "Phrase " + (i + 1) + " sur " + total); });
     if (dlgStep) steps.push(dlgStep);
     if (!steps.length) return null;
-    return { hidden: [], keep: keep, steps: steps, key: txt(steps[0].els[steps[0].els.length - 1]).slice(0, 40) + "|" + steps.length, anchor: keep[0] || null };
+    var rb = { start: 0, done: {} };
+    try {
+      var saved = readStore("diisoo_fx_biz") || {}, sec = null, first = -1;
+      steps.forEach(function (st, i) {
+        var m = st.res && st.res.id ? /^biz-res-(.+)-(\d+)$/.exec(st.res.id) : null;
+        if (!m) return;
+        sec = m[1];
+        var idx = parseInt(m[2], 10);
+        st.onDone = function () {
+          try {
+            var d = readStore("diisoo_fx_biz") || {};
+            var arr = d[m[1]] || [];
+            if (arr.indexOf(idx) === -1) arr.push(idx);
+            d[m[1]] = arr;
+            localStorage.setItem("diisoo_fx_biz", JSON.stringify(d));
+          } catch (e) {}
+        };
+        if ((saved[m[1]] || []).indexOf(idx) > -1) rb.done[i] = true; else if (first < 0) first = i;
+      });
+      rb.start = first >= 0 ? first : (dlgStep ? steps.length - 1 : 0);
+    } catch (e) {}
+    return { hidden: [], keep: keep, steps: steps, start: rb.start, done: rb.done, key: txt(steps[0].els[steps[0].els.length - 1]).slice(0, 40) + "|" + steps.length, anchor: keep[0] || null };
   }
 
   /* ---------- Moteur ---------- */
@@ -233,6 +254,7 @@
         if (doneMap[idx]) return;
         if (st.res.textContent.indexOf("✅") === -1) return;
         doneMap[idx] = true;
+        try { if (st.onDone) st.onDone(); } catch (e) {}
         paintNav();
         later(function () { if (cur === idx) go(idx + 1); }, AUTO_MS);
       }).observe(st.res, { childList: true, subtree: true, characterData: true });
@@ -418,8 +440,50 @@
     } catch (e) {}
   }
 
+  /* ---------- Theme memorise (Anglais, Wolof) et libelle du nombre de tests ---------- */
+  function patchThemes() {
+    try {
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem("diisoo_fx_theme")) || {}; } catch (e) {}
+      function keep(k, v) {
+        try {
+          var d = {}; try { d = JSON.parse(localStorage.getItem("diisoo_fx_theme")) || {}; } catch (e2) {}
+          d[k] = v; localStorage.setItem("diisoo_fx_theme", JSON.stringify(d));
+        } catch (e) {}
+      }
+      if (typeof GENERAL_THEMES !== "undefined" && saved.gen && GENERAL_THEMES.some(function (t) { return t.id === saved.gen; })) generalThemeId = saved.gen;
+      if (typeof WOLOF_THEMES !== "undefined" && saved.wo && (saved.wo === "wikidata" ? false : WOLOF_THEMES.some(function (t) { return t.id === saved.wo; }))) wolofCat = saved.wo;
+      if (typeof window.setGeneralTheme === "function") {
+        var og = window.setGeneralTheme;
+        window.setGeneralTheme = function (id) { var r = og.apply(this, arguments); keep("gen", id); return r; };
+      }
+      if (typeof window.setWolofCat === "function") {
+        var ow = window.setWolofCat;
+        window.setWolofCat = function (c) { var r = ow.apply(this, arguments); keep("wo", c); return r; };
+      }
+    } catch (e) {}
+  }
+  function fixTestsLabel() {
+    try {
+      var lab = document.getElementById("test-phase-label");
+      if (lab && typeof TEST_BANK !== "undefined" && /^\d+ tests complets$/.test(txt(lab))) lab.textContent = TEST_BANK.length + " tests complets";
+      if (typeof window.renderTestPicker === "function" && !window.__fxLab) {
+        window.__fxLab = true;
+        var orp = window.renderTestPicker;
+        window.renderTestPicker = function () {
+          var r = orp.apply(this, arguments);
+          var l = document.getElementById("test-phase-label");
+          if (l && /^\d+ tests complets$/.test(txt(l))) l.textContent = TEST_BANK.length + " tests complets";
+          return r;
+        };
+      }
+    } catch (e) {}
+  }
+
   function init() {
     injectCss();
+    patchThemes();
+    fixTestsLabel();
     patchBusiness();
     injectDashCss();
     patchRevision();
@@ -431,7 +495,7 @@
     try { if (typeof window.renderRevisionCard === "function") window.renderRevisionCard(); } catch (e) {}
   }
 
-  window.DiisooFocus = { version: 6 };
+  window.DiisooFocus = { version: 7 };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
