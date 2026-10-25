@@ -259,14 +259,61 @@
     if (box.children.length) build();
   }
 
+  /* ---------- Tableau de bord : 4 grands menus plus grands ---------- */
+  function injectDashCss() {
+    if (document.getElementById("fx-dash-style")) return;
+    var s = document.createElement("style");
+    s.id = "fx-dash-style";
+    s.textContent =
+      "#screen-dashboard .grid.grid-cols-2>button{display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;min-height:clamp(8.5rem,21vh,12.5rem);padding:1.1rem 1rem}" +
+      "#screen-dashboard .grid.grid-cols-2>button>span{font-size:2.6rem;line-height:1;margin-bottom:.5rem}" +
+      "#screen-dashboard .grid.grid-cols-2>button>h3{font-size:1.05rem;line-height:1.15}" +
+      "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.75rem;margin-top:.3rem}" +
+      "#screen-dashboard .grid.grid-cols-2{gap:.75rem}";
+    document.head.appendChild(s);
+  }
+
+  /* ---------- Revision : concentree sur ce que l'apprenant a travaille la veille ---------- */
+  function dayKey(ts) { var d = new Date(ts); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+  function patchRevision() {
+    try {
+      if (typeof window.revFocus !== "function" || typeof window.revIntro !== "function" || window.__fxRev) return;
+      window.__fxRev = true;
+      var origFocus = window.revFocus;
+      window.revFocus = function () {
+        window.__revVeille = false;
+        try {
+          var f = store.get("diisoo_focus") || {};
+          var now = Date.now(), yest = dayKey(now - 86400000);
+          var veille = Object.keys(f).map(function (k) {
+            var e = f[k];
+            return { cle: k, type: e.type, id: e.id, titre: e.titre, pts: e.pts || 0, last: e.last || 0 };
+          }).filter(function (e) { return e.last && dayKey(e.last) === yest; });
+          veille.sort(function (a, b) { return (b.pts - a.pts) || (b.last - a.last); });
+          if (veille.length) { window.__revVeille = true; return veille[0]; }
+        } catch (e) {}
+        return origFocus.apply(this, arguments);
+      };
+      var origIntro = window.revIntro;
+      window.revIntro = function () {
+        var r = origIntro.apply(this, arguments);
+        if (window.__revVeille) r = r.replace("Pour toi, d'apr\u00e8s ce que tu travailles :", "Pour toi, d'apr\u00e8s ta journ\u00e9e d'hier :");
+        return r;
+      };
+    } catch (e) {}
+  }
+
   function init() {
     injectCss();
+    injectDashCss();
+    patchRevision();
     mount("general-content", classifyGeneral);
     mount("lexicon-container", classifyWolof);
     mount("business-content", classifyBusiness);
+    try { if (typeof window.renderRevisionCard === "function") window.renderRevisionCard(); } catch (e) {}
   }
 
-  window.DiisooFocus = { version: 2 };
+  window.DiisooFocus = { version: 3 };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
