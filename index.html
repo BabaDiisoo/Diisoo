@@ -316,8 +316,8 @@
                 <div id="feedback-form" class="space-y-4">
                     <div class="text-center space-y-1">
                         <span class="text-3xl">⭐</span>
-                        <h2 class="text-lg font-black text-[#F6F1E7]">Votre avis compte</h2>
-                        <p class="text-xs text-[#A69C86]">Comment trouvez-vous l'application ?</p>
+                        <h2 class="text-lg font-black text-[#F6F1E7]">Ton avis compte</h2>
+                        <p class="text-xs text-[#A69C86]">Comment trouves-tu l'application ?</p>
                     </div>
                     <div id="feedback-stars" class="flex items-center justify-center space-x-2 text-3xl"></div>
                     <textarea id="feedback-comment" rows="3" placeholder="Un commentaire (facultatif)" class="w-full bg-[#0B0F1C]/60 border border-[#1E2740] rounded-xl p-3 text-xs text-[#E4DCC9] placeholder-[#6B604A]"></textarea>
@@ -328,7 +328,7 @@
                 </div>
                 <div id="feedback-thanks" class="hidden text-center space-y-3 py-4">
                     <span class="text-4xl">🙏</span>
-                    <p class="text-sm font-bold text-[#F6F1E7]">Merci pour votre retour !</p>
+                    <p class="text-sm font-bold text-[#F6F1E7]">Merci pour ton retour !</p>
                     <button onclick="closeFeedback()" class="w-full py-3 btn-primary rounded-2xl text-sm font-bold">Fermer</button>
                 </div>
             </div>
@@ -395,7 +395,7 @@
             <form id="form-onboarding" class="space-y-4" onsubmit="handleOnboarding(event)">
                 <div class="grid grid-cols-1 gap-3">
                     <div class="space-y-1.5">
-                        <label for="user-firstname" class="text-xs font-semibold text-[#A69C86]">Comment doit-on vous appeler ?</label>
+                        <label for="user-firstname" class="text-xs font-semibold text-[#A69C86]">Comment doit-on t'appeler ?</label>
                         <input type="text" id="user-firstname" required placeholder="Ex : Awa" class="w-full bg-[#141A2B] border border-[#1E2740] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#E1693F]">
                     </div>
                     <div class="hidden space-y-1.5">
@@ -578,7 +578,7 @@
                 <p id="rev-etape" class="text-[10px] text-[#8C8064] text-center"></p>
             </div>
             <div id="rev-contenu" class="space-y-4 pb-2"></div>
-            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Revenir au tableau de bord</button>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Accueil</button>
         </div>
 
         <!-- ======================================================== -->
@@ -588,11 +588,11 @@
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-[#F0906B] uppercase">Bases classiques</span>
                 <h3 class="text-lg font-bold text-[#F6F1E7]">Anglais Général</h3>
-                <p class="text-xs text-[#A69C86] mt-1">8 thèmes de la vie courante : écoutez, répétez, puis testez votre grammaire.</p>
+                <p class="text-xs text-[#A69C86] mt-1">8 thèmes de la vie courante : écoute, répète, puis teste ta grammaire.</p>
             </div>
             <div id="general-tabs" class="flex space-x-2 overflow-x-auto pb-1"></div>
             <div id="general-content" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1 pb-2"></div>
-            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold border-2 border-transparent">⬅️ Revenir au tableau de bord</button>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold border-2 border-transparent">⬅️ Accueil</button>
         </div>
 
         <!-- ======================================================== -->
@@ -602,13 +602,13 @@
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-[#5FC98F] uppercase">Souveraineté Économique</span>
                 <h3 class="text-lg font-bold text-[#F6F1E7]">Anglais Wolof</h3>
-                <p class="text-xs text-[#A69C86] mt-1">8 thèmes de la vie courante, 100% oraux. Écoutez le wolof, puis entraînez-vous au micro en anglais.</p>
+                <p class="text-xs text-[#A69C86] mt-1">8 thèmes de la vie courante, 100% oraux. Écoute le wolof, puis entraîne-toi au micro en anglais.</p>
             </div>
             <div id="wolof-tabs" class="flex space-x-2 overflow-x-auto pb-1"></div>
             <div id="lexicon-container" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1">
                 <!-- Les cartes de vocabulaire sont injectées ici via JS -->
             </div>
-            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Revenir au tableau de bord</button>
+            <button onclick="changeScreen('screen-dashboard')" class="w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Accueil</button>
         </div>
 
         <!-- ======================================================== -->
@@ -618,7 +618,7 @@
             <div class="text-center pt-2">
                 <span class="text-[10px] font-bold tracking-widest text-[#C99CEA] uppercase">Outils Business</span>
                 <h3 class="text-lg font-bold text-[#F6F1E7]">Vocabulaire par secteur</h3>
-                <p class="text-xs text-[#A69C86] mt-1">Choisissez votre secteur d'activité. Dans chaque secteur, les phrases vont du plus simple au plus avancé.</p>
+                <p class="text-xs text-[#A69C86] mt-1">Choisis ton secteur. Dans chaque secteur, les phrases vont du plus simple au plus avancé.</p>
             </div>
             <div id="business-picker" class="grid grid-cols-1 gap-3 overflow-y-auto max-h-[60vh] pr-1">
                 <!-- Les secteurs sont injectés ici par renderBusinessPicker() -->
@@ -626,7 +626,7 @@
             <div id="business-content" class="hidden space-y-3 overflow-y-auto max-h-[55vh] pr-1"></div>
             <div class="flex space-x-2">
                 <button id="btn-business-back" onclick="closeBusinessDetail()" class="hidden flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Changer de secteur</button>
-                <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">Tableau de bord</button>
+                <button onclick="changeScreen('screen-dashboard')" class="flex-1 py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Accueil</button>
             </div>
         </div>
         <div id="screen-listening" class="hidden flex flex-col justify-between h-full space-y-4 my-auto">
@@ -1493,7 +1493,7 @@ function openFeedback() {
 function closeFeedback() { $("screen-feedback").classList.add("hidden"); }
 
 async function submitFeedback() {
-    if (feedbackRating === 0) { toast("Choisissez d'abord une note ⭐"); return; }
+    if (feedbackRating === 0) { toast("Choisis d'abord une note ⭐"); return; }
     const p = getProfile();
     const entry = {
         phone: p ? (p.phone || p.email || null) : null,
@@ -2383,7 +2383,7 @@ function renderGeneralContent() {
               '<button onclick="speakGeneralWord(' + i + ')" data-practice="gen-l:' + theme.id + ':' + i + '" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Écouter</button>' +
               '<button onclick="practiceGeneralWord(' + i + ')" data-practice="' + esc(key) + '" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Répéter</button>' +
             '</div>' +
-            '<div id="gen-res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]">' + (heardKeys.has(key) ? '' : '👂 Écoutez d\'abord, puis répétez.') + '</div>';
+            '<div id="gen-res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]">' + (heardKeys.has(key) ? '' : '👂 Écoute d\'abord, puis répète.') + '</div>';
         box.appendChild(card);
     });
 
@@ -2412,20 +2412,20 @@ async function practiceGeneralWord(i) {
     const w = theme.vocab[i];
     const key = "gen:" + theme.id + ":" + w.en;
     const res = $("gen-res-" + i);
-    if (!SR) { res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome."; return; }
-    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez... relâchez pour valider</span>';
+    if (!SR) { res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilise Chrome."; return; }
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parle... relâche pour valider</span>';
     stopAllAudio();
     const h = startListening("en-US", 15000, true); window.__micHandle = h; if (window.__micReleased) h.stop();
     const r = await h.promise;
-    if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur."; return; }
-    if (!r.text) { res.textContent = "Rien entendu. Maintenez le bouton enfoncé pendant que vous parlez."; return; }
+    if (r.error === "not-allowed" || r.error === "service-not-allowed") { res.textContent = "Micro bloqué. Autorise le micro dans le navigateur."; return; }
+    if (!r.text) { res.textContent = "Rien entendu. Garde le bouton enfoncé pendant que tu parles."; return; }
     const heard = normalize(r.text), target = normalize(w.en);
     if (voixJuste(heard, target)) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
         bumpStat("diisoo_word_stats", key, "correct");
         addXP(3); bumpDailyGoal(1); checkOrateurBadge();
     } else {
-        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessayez.</span>';
+        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessaie.</span>';
         bumpStat("diisoo_word_stats", key, "wrong");
     }
     res.innerHTML += voixHeatmap(heard, target);
@@ -2454,7 +2454,7 @@ function renderGeneralQuiz() {
         const pct = Math.round(generalQuizScore / quiz.length * 100);
         if (pct >= 70) awardBadge("grammairien");
         card.innerHTML = '<p class="text-2xl font-black text-[#F0906B]">' + generalQuizScore + " / " + quiz.length + "</p>" +
-            '<p class="text-xs text-[#A69C86]">' + (pct >= 70 ? "Très bien, continuez comme ça." : "Refaites l'exercice pour progresser.") + "</p>";
+            '<p class="text-xs text-[#A69C86]">' + (pct >= 70 ? "Très bien, continue comme ça." : "Refais l'exercice pour progresser.") + "</p>";
         box.appendChild(card);
         const restartWrap = document.createElement("div");
         restartWrap.className = "sticky-action";
@@ -3180,7 +3180,7 @@ function selectBusinessModule(sectionKey) {
                     (v.wo ? '<button data-biz="wo" data-sec="' + sectionKey + '" data-i="' + i + '" data-practice="biz-wo:' + sectionKey + ':' + i + '" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' : '') +
                 '</div>' +
                 '<button onclick="practiceBusinessPhrase(\'' + sectionKey + '\',' + i + ')" data-practice="biz:' + sectionKey + ':' + i + '" class="mt-1 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🎤 M\'entraîner</button>' +
-                '<p id="biz-res-' + sectionKey + '-' + i + '" class="text-[11px] text-[#A69C86]">👂 Écoutez d\'abord l\'anglais, puis entraînez-vous.</p>' +
+                '<p id="biz-res-' + sectionKey + '-' + i + '" class="text-[11px] text-[#A69C86]">👂 Écoute d\'abord l\'anglais, puis entraîne-toi.</p>' +
             '</div>'
         ); }).join("") +
         (BUSINESS_DIALOGUES[sectionKey] ? renderBusinessDialogue(sectionKey) : "");
@@ -3267,22 +3267,22 @@ function playBusinessDialogue(sectionKey) {
 async function practiceBusinessPhrase(sectionKey, idx) {
     const v = CHINA_TRADE_WOLOF[sectionKey].vocab[idx];
     const res = $("biz-res-" + sectionKey + "-" + idx);
-    if (!SR) { res.textContent = "Reconnaissance vocale indisponible sur ce navigateur. Utilisez Chrome."; return; }
-    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez... relâchez pour valider</span>';
+    if (!SR) { res.textContent = "Reconnaissance vocale indisponible sur ce navigateur. Utilise Chrome."; return; }
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parle... relâche pour valider</span>';
     stopAllAudio();
     const h = startListening("en-US", 15000, true); window.__micHandle = h; if (window.__micReleased) h.stop();
     const r = await h.promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") {
-        res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
+        res.textContent = "Micro bloqué. Autorise le micro dans le navigateur.";
         return;
     }
-    if (!r.text) { res.textContent = "Rien entendu. Maintenez le bouton enfoncé pendant que vous parlez."; return; }
+    if (!r.text) { res.textContent = "Rien entendu. Garde le bouton enfoncé pendant que tu parles."; return; }
     const heard = normalize(r.text), target = normalize(v.en);
     if (heard.includes(target)) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + '</span>';
         addXP(3); bumpDailyGoal(1);
     } else {
-        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + v.en + ' ». Réessayez.</span>';
+        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + v.en + ' ». Réessaie.</span>';
     }
     res.innerHTML += voixHeatmap(heard, target);
 }
@@ -3434,7 +3434,7 @@ function renderLexicon() {
               '<button onclick="playEnglish(' + i + ')" data-practice="w-en" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
               '<button onclick="practiceWord(' + i + ')" data-practice="lex:' + esc(w.cat) + ':' + esc(w.en) + '" class="py-2 btn-primary rounded-lg text-[11px] font-bold">🎤 Parler</button>' +
             '</div>' +
-            '<div id="res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]">' + (heardKeys.has("lex:" + w.cat + ":" + w.en) ? '' : '👂 Écoutez l\'anglais d\'abord, puis parlez.') + '</div>';
+            '<div id="res-' + i + '" class="text-xs text-[#A69C86] min-h-[1rem]">' + (heardKeys.has("lex:" + w.cat + ":" + w.en) ? '' : '👂 Écoute l\'anglais d\'abord, puis parle.') + '</div>';
         box.appendChild(card);
     });
     refreshPracticeButtons();
@@ -3492,18 +3492,18 @@ async function practiceWord(i) {
     const w = LEXICON[i];
     const res = $("res-" + i);
     if (!SR) {
-        res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilisez Chrome.";
+        res.textContent = "La reconnaissance vocale n'est pas disponible sur ce navigateur. Utilise Chrome.";
         return;
     }
-    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parlez... relâchez pour valider</span>';
+    res.innerHTML = '<span class="text-[#F0906B]">🎤 Parle... relâche pour valider</span>';
     stopAllAudio();
     const h = startListening("en-US", 15000, true); window.__micHandle = h; if (window.__micReleased) h.stop();
     const r = await h.promise;
     if (r.error === "not-allowed" || r.error === "service-not-allowed") {
-        res.textContent = "Micro bloqué. Autorisez le micro dans le navigateur.";
+        res.textContent = "Micro bloqué. Autorise le micro dans le navigateur.";
         return;
     }
-    if (!r.text) { res.textContent = "Rien entendu. Maintenez le bouton enfoncé pendant que vous parlez."; return; }
+    if (!r.text) { res.textContent = "Rien entendu. Garde le bouton enfoncé pendant que tu parles."; return; }
     const heard = normalize(r.text), target = normalize(w.en);
     if (heard.includes(target)) {
         res.innerHTML = '<span class="text-[#5FC98F] pop-in">✅ ' + encourageMsg() + ' J\'ai entendu : « ' + heard + ' »</span>';
@@ -3513,7 +3513,7 @@ async function practiceWord(i) {
         res.innerHTML += '<p class="text-[11px] text-[#A69C86] mt-1">💬 ' + fu + '</p>';
         speak(fu, "en-US", 0.85);
     } else {
-        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessayez.</span>';
+        res.innerHTML = '<span class="text-amber-400">J\'ai entendu : « ' + heard + ' ». Objectif : « ' + w.en + ' ». Réessaie.</span>';
         bumpWordStat(w.en, "wrong");
     }
     res.innerHTML += voixHeatmap(heard, target);

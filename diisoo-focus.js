@@ -36,6 +36,25 @@
   function show(el) { el.style.display = ""; }
   function resOf(el) { return el.querySelector ? el.querySelector('[id*="res-"]') : null; }
 
+  /* ---------- Reprise : lecture seule de diisoo_word_stats et diisoo_tests ---------- */
+  function readStore(k) { try { return store.get(k) || null; } catch (e) { return null; } }
+  function statDone(stats, key) { var e = stats && stats[key]; return !!(e && e.correct >= 1); }
+  function resumeSteps(steps, keyOf, afterAll) {
+    var stats = readStore("diisoo_word_stats") || {}, done = {}, start = -1, n = 0;
+    steps.forEach(function (st, i) {
+      if (st.type !== "voc") return;
+      n++;
+      var k = keyOf(st.els[0]);
+      if (k && statDone(stats, k)) done[i] = true; else if (start < 0) start = i;
+    });
+    if (start < 0) start = n && afterAll < steps.length ? afterAll : 0;
+    return { start: start, done: done };
+  }
+  function enOf(card) {
+    var p = card.querySelector("p.text-base.font-bold") || card.querySelector("p");
+    return p ? txt(p) : "";
+  }
+
   /* ---------- Classificateurs : un par ecran. Retournent null si la structure n'est pas reconnue. ---------- */
   function classifyGeneral(box) {
     var kids = Array.prototype.slice.call(box.children).filter(function (el) { return !el.classList.contains("fx-nav"); });
@@ -57,7 +76,9 @@
     });
     if (dlg.length) steps.push({ type: "dlg", els: dlg, label: "Dialogue" });
     if (quiz.length) steps.push({ type: "quiz", els: quiz, label: "Grammaire" });
-    return { hidden: pre, keep: keep, steps: steps, key: txt(vocs[0]).slice(0, 40) + "|" + vocs.length, anchor: keep[0] || null };
+    var rg = { start: 0, done: {} };
+    try { rg = resumeSteps(steps, function (el) { return "gen:" + generalThemeId + ":" + enOf(el); }, vocs.length); } catch (e) {}
+    return { hidden: pre, keep: keep, steps: steps, start: rg.start, done: rg.done, key: txt(vocs[0]).slice(0, 40) + "|" + vocs.length, anchor: keep[0] || null };
   }
 
   function classifyWolof(box) {
@@ -71,18 +92,32 @@
     var steps = cards.map(function (el, i) {
       return { type: "voc", els: [el], label: "Mot " + (i + 1) + " sur " + cards.length, res: resOf(el) };
     });
-    return { hidden: [], keep: keep, steps: steps, key: txt(cards[0]).slice(0, 40) + "|" + cards.length, anchor: keep[keep.length - 1] || null };
+    var rw = { start: 0, done: {} };
+    try { rw = resumeSteps(steps, function (el) { return "wo:" + enOf(el); }, steps.length); } catch (e) {}
+    return { hidden: [], keep: keep, steps: steps, start: rw.start, done: rw.done, key: txt(cards[0]).slice(0, 40) + "|" + cards.length, anchor: keep[keep.length - 1] || null };
   }
 
   /* Liste simple : chaque <div> est une carte, les <p> sont des messages conserves. */
-  function classifyList(word, compact) {
+  function resumeTests(cards) {
+    var hist = readStore("diisoo_tests") || [], seen = {}, done = {}, start = -1;
+    hist.forEach(function (h) { if (h && h.topic) seen[h.topic] = 1; });
+    var bank = (typeof TEST_BANK !== "undefined") ? TEST_BANK : [];
+    cards.forEach(function (el, i) {
+      var t = bank[i];
+      if (t && seen[t.topic]) done[i] = true; else if (start < 0) start = i;
+    });
+    return { start: start < 0 ? 0 : start, done: done, sig: hist.length };
+  }
+  function classifyList(word, compact, resume) {
     return function (box) {
       var kids = Array.prototype.slice.call(box.children).filter(function (el) { return !el.classList.contains("fx-nav"); });
       var cards = kids.filter(function (el) { return el.tagName === "DIV" || el.tagName === "BUTTON"; });
       var keep = kids.filter(function (el) { return cards.indexOf(el) === -1; });
       if (cards.length < 2) return null;
       var steps = cards.map(function (el, i) { return { type: "item", els: [el], label: word + " " + (i + 1) + " sur " + cards.length, res: null }; });
-      return { hidden: [], keep: keep, steps: steps, compact: compact, key: word + "|" + cards.length + "|" + txt(cards[0]).slice(0, 30), anchor: keep[0] || null };
+      var r = { start: 0, done: {}, sig: "" };
+      if (resume) { try { r = resume(cards); } catch (e) {} }
+      return { hidden: [], keep: keep, steps: steps, compact: compact, start: r.start, done: r.done, key: word + "|" + cards.length + "|" + txt(cards[0]).slice(0, 30) + "|" + r.sig, anchor: keep[0] || null };
     };
   }
 
@@ -236,7 +271,7 @@
         clearTimers();
         var same = c.key === key;
         key = c.key;
-        if (!same) { cur = 0; doneMap = {}; }
+        if (!same) { cur = c.start || 0; doneMap = c.done || {}; }
         steps = c.steps;
         compact = !!c.compact || steps.length >= COMPACT_FROM;
         c.hidden.forEach(hide);
@@ -315,19 +350,88 @@
     } catch (e) {}
   }
 
+  /* ---------- Business : les secteurs et "Anglais des marches" deviennent des onglets, comme les autres menus ---------- */
+  function patchBusiness() {
+    try {
+      var picker = document.getElementById("business-picker");
+      if (!picker || window.__fxBiz) return;
+      if (typeof window.selectBusinessModule !== "function" || typeof window.openBusinessModule !== "function") return;
+      if (typeof BUSINESS_SECTORS === "undefined" || typeof CHINA_TRADE_WOLOF === "undefined") return;
+      window.__fxBiz = true;
+      var tabs = document.createElement("div");
+      tabs.id = "business-tabs";
+      tabs.className = "flex space-x-2 overflow-x-auto pb-1";
+      picker.parentNode.insertBefore(tabs, picker);
+      var st = document.createElement("style");
+      st.textContent = "#secteurs-ouvrir,#secteurs-retour{display:none!important}";
+      document.head.appendChild(st);
+      var last = null, marches = false;
+
+      function keys() { return Object.keys(BUSINESS_SECTORS).filter(function (k) { return CHINA_TRADE_WOLOF[k]; }); }
+      function tab(label, on, fn) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition " + (on ? "bg-[#8A4BBF] text-white" : "bg-[#141A2B] text-[#A69C86]");
+        b.textContent = label;
+        b.onclick = fn;
+        tabs.appendChild(b);
+      }
+      function paint() {
+        tabs.innerHTML = "";
+        keys().forEach(function (k) { tab(BUSINESS_SECTORS[k].titre, !marches && k === last, function () { window.selectBusinessModule(k); }); });
+        tab("\ud83d\uded2 Anglais des march\u00e9s", marches, openMarches);
+      }
+      function hideVue() {
+        var v = document.getElementById("secteurs-vue");
+        if (v) { v.classList.add("hidden"); v.innerHTML = ""; }
+        var r = document.getElementById("secteurs-retour");
+        if (r) r.classList.add("hidden");
+      }
+      function chrome() {
+        picker.classList.add("hidden");
+        var bk = document.getElementById("btn-business-back");
+        if (bk) bk.classList.add("hidden");
+      }
+      function openMarches() {
+        var o = document.getElementById("secteurs-ouvrir");
+        if (!o) { setTimeout(function () { var o2 = document.getElementById("secteurs-ouvrir"); if (o2) openMarches(); }, 700); return; }
+        marches = true; paint();
+        o.click();
+        var r = document.getElementById("secteurs-retour");
+        if (r) r.classList.add("hidden");
+      }
+
+      var origSel = window.selectBusinessModule;
+      window.selectBusinessModule = function (k) {
+        hideVue();
+        var r = origSel.apply(this, arguments);
+        last = k; marches = false; paint(); chrome();
+        return r;
+      };
+      var origOpen = window.openBusinessModule;
+      window.openBusinessModule = function () {
+        var r = origOpen.apply(this, arguments);
+        var ks = keys();
+        if (ks.length) window.selectBusinessModule(last && ks.indexOf(last) > -1 ? last : ks[0]);
+        return r;
+      };
+    } catch (e) {}
+  }
+
   function init() {
     injectCss();
+    patchBusiness();
     injectDashCss();
     patchRevision();
     mount("general-content", classifyGeneral);
     mount("lexicon-container", classifyWolof);
     mount("business-content", classifyBusiness);
-    mount("test-topic-buttons", classifyList("Test", true));
+    mount("test-topic-buttons", classifyList("Test", true, resumeTests));
     mount("pairs-list", classifyList("R\u00e9ponse", true));
     try { if (typeof window.renderRevisionCard === "function") window.renderRevisionCard(); } catch (e) {}
   }
 
-  window.DiisooFocus = { version: 4 };
+  window.DiisooFocus = { version: 6 };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
