@@ -1452,13 +1452,17 @@ function renderPremium() {
             const payer = (!actif && (o.id === "premium" || o.id === "commercants") && paiementOuvert())
                 ? '<button type="button" onclick="payerOffre(\'' + o.id + '\')" class="block w-full text-center py-2.5 btn-primary rounded-xl text-xs font-bold">💳 Payer par Wave ou Orange Money</button>'
                 : '';
+            const montant = parseInt(String(o.prix || "").replace(/\s/g, "").replace(/[^0-9]/g, ""), 10) || 0;
+            const carte = (!actif && o.dispo !== false && montant && (o.id === "commercants" || o.id === "visa") && paiementOuvert() && window.DiisooWA)
+                ? '<button type="button" onclick="DiisooWA.payerParCarte(\'' + o.id + '\', \'' + o.titre.replace(/'/g, "") + '\')" class="block w-full text-center py-2.5 bg-[#1E2740] text-[#F6F1E7] rounded-xl text-xs font-bold">💳 Payer par carte (Visa, Mastercard) · ' + DiisooWA.prix(montant) + '</button>'
+                : '';
             return '<div class="bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3 space-y-2">' +
                 '<div class="flex justify-between items-start gap-2">' +
                     '<div class="flex items-center space-x-2"><span class="text-lg">' + o.icone + '</span><h3 class="text-sm font-bold text-[#F6F1E7]">' + o.titre + '</h3></div>' +
                     '<span class="text-[11px] font-bold text-[#F0906B] whitespace-nowrap">' + badge + '</span>' +
                 '</div>' +
                 '<p class="text-[11px] text-[#A69C86] leading-relaxed">' + o.texte + '</p>' +
-                payer + bouton +
+                payer + carte + bouton +
             '</div>';
         }).join("");
     };
@@ -1765,14 +1769,11 @@ function majCarteWhatsApp() {
         return;
     }
     let masque = false;
-    try { masque = sessionStorage.getItem("diisoo_wa_plus_tard") === "1" || Date.now() < Number(localStorage.getItem("diisoo_wa_snooze") || 0); } catch (e) {}
-    /* La demande n'apparait que pour les apprenants qui restent : 3 jours de suite, ou 150 XP. */
-    let pret = false;
-    try { pret = ((store.get("diisoo_streak") || { count: 0 }).count || 0) >= 3 || ((getXP() || {}).total || 0) >= 150; } catch (e) {}
-    box.classList.toggle("hidden", !p || masque || !pret);
+    try { masque = sessionStorage.getItem("diisoo_wa_plus_tard") === "1"; } catch (e) {}
+    box.classList.toggle("hidden", !p || masque);
 }
 function plusTardWhatsApp() {
-    try { sessionStorage.setItem("diisoo_wa_plus_tard", "1"); localStorage.setItem("diisoo_wa_snooze", String(Date.now() + 7 * 86400000)); } catch (e) {}
+    try { sessionStorage.setItem("diisoo_wa_plus_tard", "1"); } catch (e) {}
     $("wa-capture").classList.add("hidden");
 }
 function enregistrerWhatsApp() {

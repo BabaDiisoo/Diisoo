@@ -4,8 +4,8 @@
   "use strict";
   var CFG = {
     numero: "221768426961",
-    cartesActives: false,   /* passer a true quand pay-init est deploye */
-    endpoint: "",           /* ex : https://<projet>.supabase.co/functions/v1/pay-init */
+    cartesActives: true,    /* paiement par carte via la fonction Supabase pay-init ; repli WhatsApp si indisponible */
+    endpoint: "https://jkwtyoefqvafnlqkhium.supabase.co/functions/v1/pay-init",
     usdParEur: 1.1          /* indicatif d'affichage seulement */
   };
   var TAGS = ["PAIEMENT-LOCAL", "PAIEMENT-INTERNATIONAL", "EXAMENS-VISAS", "SUPPORT-TECH"];
@@ -76,10 +76,21 @@
       if (!CFG.cartesActives || !CFG.endpoint) return WA.paiementInternational({ offre: offreTitre || offreId });
       try {
         var p = profil();
-        var r = await fetch(CFG.endpoint, { method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ offre: offreId, email: p.email || "", nom: nom(), ref: ref() }) });
-        var d = await r.json();
-        if (!r.ok || !d.url) throw new Error(d.erreur || "paiement indisponible");
+        var corps = { offre: offreId, email: p.email || "", nom: nom(), ref: ref(), whatsapp: p.phone || "", devise: WA.devise() };
+        var d = null;
+        try {
+          if (typeof db !== "undefined" && db && db.functions) {   /* client Supabase de l'app : envoie la cle d'acces */
+            var rr = await db.functions.invoke("pay-init", { body: corps });
+            if (rr && rr.error) throw rr.error;
+            d = rr && rr.data;
+          }
+        } catch (e0) { d = null; }
+        if (!d) {
+          var r = await fetch(CFG.endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corps) });
+          d = await r.json();
+          if (!r.ok) throw new Error((d && d.erreur) || "paiement indisponible");
+        }
+        if (!d || !d.url || !/^https:\/\//.test(d.url)) throw new Error((d && d.erreur) || "paiement indisponible");
         window.location.href = d.url;
       } catch (e) {
         console.error("[diisoo-wa]", e);
