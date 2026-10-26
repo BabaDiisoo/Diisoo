@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script>if(window.top!==window.self){document.documentElement.style.display="none";try{window.top.location.href=window.self.location.href}catch(e){}}</script>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#0B0F1C">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -271,6 +271,15 @@
 .aide-barre{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .aide-chip{padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid #1E2740;background:#141A2B;color:#A69C86}
 .aide-chip.on{background:#1F6B47;border-color:#2C8F5C;color:#fff}
+</style>
+<style id="diisoo-ios">
+@supports (-webkit-touch-callout:none){
+  input,textarea,select{font-size:16px !important}
+  .min-h-screen{min-height:-webkit-fill-available}
+  body{-webkit-text-size-adjust:100%}
+}
+body{padding-bottom:env(safe-area-inset-bottom)}
+button,[role=button]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 </style>
 </head>
 <body class="bg-[#0B0F1C] font-sans antialiased text-white">
@@ -1188,10 +1197,13 @@ function testSilence(run) {
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-/* Retourne { promise, stop }. La promesse donne { text, error, unsupported } */
+const MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+/* Retourne { promise, stop }. La promesse donne { text, error, unsupported }.
+   Mobile : une session par phrase (continuous=false), relancée tant que le temps n'est pas écoulé,
+   avec une nouvelle instance à chaque fois (réutiliser la même plante sur Android/iOS). */
 function startListening(lang, ms, continuous, onText) {
     let stopFn = () => {};
-    let stopped = false;
     const promise = new Promise(resolve => {
         if (!SR) {
             const t = setTimeout(() => resolve({ text: "", unsupported: true }), ms);
@@ -1199,37 +1211,55 @@ function startListening(lang, ms, continuous, onText) {
             return;
         }
         const deadline = Date.now() + ms;
-        let finalText = "", interim = "", error = null, rec = null;
-        const timer = setTimeout(() => { stopped = true; try { rec && rec.stop(); } catch (e) {} }, ms);
+        let committed = "", live = "", error = null, fatal = null, rec = null;
+        let stopped = false, done = false, quick = 0, startFails = 0, kill = null, begun = false;
+        const full = () => (committed + " " + live).replace(/\s+/g, " ").trim();
+        const finish = () => {
+            if (done) return; done = true;
+            clearTimeout(timer); clearTimeout(kill);
+            resolve({ text: full(), error: fatal || error });
+        };
+        const timer = setTimeout(() => { stopped = true; try { rec && rec.stop(); } catch (e) {} clearTimeout(kill); kill = setTimeout(finish, 1500); }, ms);
 
         function startOnce() {
-            rec = new SR();
-            rec.lang = lang; rec.continuous = !!continuous; rec.interimResults = true;
-            rec.onresult = (e) => {
-                interim = "";
-                for (let i = e.resultIndex; i < e.results.length; i++) {
-                    const t = e.results[i][0].transcript;
-                    if (e.results[i].isFinal) finalText += t + " "; else interim += t;
-                }
-                if (onText) onText((finalText + interim).trim());
+            if (done || stopped) { if (!rec) finish(); return; }
+            let r;
+            try { r = new SR(); } catch (e) { finish(); return; }
+            rec = r; live = "";
+            const t0 = Date.now();
+            r.lang = lang; r.interimResults = true; r.maxAlternatives = 1;
+            r.continuous = MOBILE ? false : !!continuous;
+            r.onresult = (e) => {
+                let s = "";
+                for (let i = 0; i < e.results.length; i++) s += e.results[i][0].transcript + " ";
+                live = s.trim();
+                if (onText) onText(full());
             };
-            rec.onerror = (e) => {
+            r.onerror = (e) => {
                 error = e.error;
-                if (e.error === "not-allowed" || e.error === "service-not-allowed" || e.error === "aborted") stopped = true;
+                if (e.error === "not-allowed" || e.error === "service-not-allowed") { fatal = e.error; stopped = true; }
+                else if (e.error === "aborted") stopped = true;
             };
-            rec.onend = () => {
-                if (stopped || Date.now() >= deadline) {
-                    clearTimeout(timer);
-                    resolve({ text: (finalText + interim).trim(), error });
-                } else {
-                    /* La reconnaissance s'arrête parfois seule sur mobile avant la fin du temps imparti : on la relance. */
-                    try { rec.start(); } catch (e2) { clearTimeout(timer); resolve({ text: (finalText + interim).trim(), error }); }
-                }
+            r.onend = () => {
+                if (rec !== r) return;
+                if (live) { committed = (committed + " " + live).trim(); live = ""; }
+                if (stopped || done || fatal || Date.now() >= deadline - 400) { finish(); return; }
+                /* Fin prématurée (silence, coupure réseau, bip) : on relance une nouvelle session. */
+                quick = (Date.now() - t0 < 700) ? quick + 1 : 0;
+                if (quick >= 5) { finish(); return; }
+                setTimeout(startOnce, 250);
             };
-            try { rec.start(); } catch (e) { clearTimeout(timer); resolve({ text: "", error: "start-failed" }); }
+            try { r.start(); begun = true; }
+            catch (e) { if (++startFails > 3) finish(); else setTimeout(startOnce, 350); }
         }
-        startOnce();
-        stopFn = () => { stopped = true; try { rec && rec.stop(); } catch (e) {} };
+        /* Laisse le temps à la synthèse vocale de libérer le haut-parleur et au micro de se rouvrir. */
+        setTimeout(startOnce, MOBILE ? 350 : 0);
+        stopFn = () => {
+            stopped = true;
+            if (!begun && !rec) { finish(); return; }
+            try { rec && rec.stop(); } catch (e) {}
+            clearTimeout(kill); kill = setTimeout(finish, 1500);
+        };
     });
     return { promise, stop: () => stopFn() };
 }
@@ -4792,6 +4822,7 @@ let micStream = null;
 let recMime = "audio/webm";
 function recExt() { return /mp4|aac/.test(recMime) ? "m4a" : "webm"; }
 async function startAudioCapture() {
+    if (MOBILE) { micStream = null; mediaRecorder = null; return; } /* un 2e accès micro coupe la reconnaissance vocale sur mobile */
     try {
         micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
         audioChunks = [];
