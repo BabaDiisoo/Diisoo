@@ -101,7 +101,7 @@
   function resumeTests(cards) {
     var hist = readStore("diisoo_tests") || [], seen = {}, done = {}, start = -1;
     hist.forEach(function (h) { if (h && h.topic) seen[h.topic] = 1; });
-    var bank = (typeof TEST_BANK !== "undefined") ? TEST_BANK : [];
+    var bank = window.__examList || ((typeof TEST_BANK !== "undefined") ? TEST_BANK : []);
     cards.forEach(function (el, i) {
       var t = bank[i];
       if (t && seen[t.topic]) done[i] = true; else if (start < 0) start = i;
@@ -554,7 +554,7 @@
     try { if (typeof window.renderRevisionCard === "function") window.renderRevisionCard(); } catch (e) {}
   }
 
-  window.DiisooFocus = { version: 8 };
+  window.DiisooFocus = { version: 9 };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
