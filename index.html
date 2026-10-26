@@ -1765,11 +1765,14 @@ function majCarteWhatsApp() {
         return;
     }
     let masque = false;
-    try { masque = sessionStorage.getItem("diisoo_wa_plus_tard") === "1"; } catch (e) {}
-    box.classList.toggle("hidden", !p || masque);
+    try { masque = sessionStorage.getItem("diisoo_wa_plus_tard") === "1" || Date.now() < Number(localStorage.getItem("diisoo_wa_snooze") || 0); } catch (e) {}
+    /* La demande n'apparait que pour les apprenants qui restent : 3 jours de suite, ou 150 XP. */
+    let pret = false;
+    try { pret = ((store.get("diisoo_streak") || { count: 0 }).count || 0) >= 3 || ((getXP() || {}).total || 0) >= 150; } catch (e) {}
+    box.classList.toggle("hidden", !p || masque || !pret);
 }
 function plusTardWhatsApp() {
-    try { sessionStorage.setItem("diisoo_wa_plus_tard", "1"); } catch (e) {}
+    try { sessionStorage.setItem("diisoo_wa_plus_tard", "1"); localStorage.setItem("diisoo_wa_snooze", String(Date.now() + 7 * 86400000)); } catch (e) {}
     $("wa-capture").classList.add("hidden");
 }
 function enregistrerWhatsApp() {

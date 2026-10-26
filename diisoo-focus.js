@@ -26,6 +26,12 @@
       ".fx-rowlab{flex:1;text-align:center;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C8064}" +
       ".fx-bar{width:100%;height:4px;border-radius:9999px;background:#1E2740;margin:6px 0 4px;overflow:hidden}" +
       ".fx-fill{height:100%;background:#E1693F;border-radius:9999px;transition:width .25s}" +
+      ".fx-secs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%;margin-bottom:8px}" +
+      ".fx-sec{background:#141A2B;border:1px solid #1E2740;color:#C9BFA8;border-radius:9999px;padding:7px 12px;font-size:12px;font-weight:700}" +
+      ".fx-sec.on{background:#C2542D;border-color:#E1693F;color:#fff}" +
+      "#test-topic-buttons>button{min-height:86px;padding:18px 16px;font-size:1.05rem;font-weight:800;line-height:1.25;color:#fff;background:linear-gradient(135deg,#C2542D,#E1693F);border:2px solid #F0906B;border-radius:18px;box-shadow:0 6px 18px rgba(226,105,63,.35)}" +
+      "#test-topic-buttons>button::after{content:'Commencer \u25B6';display:block;margin-top:6px;font-size:.78rem;font-weight:700;opacity:.92}" +
+      "#exam-tabs button{padding:10px 16px!important;font-size:13px!important}" +
       ".fx-in{animation:fxin .22s ease-out}" +
       "@keyframes fxin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}";
     document.head.appendChild(s);
@@ -72,10 +78,13 @@
     });
     if (!vocs.length || !box.querySelector("#dlg-fil")) return null;
     var steps = vocs.map(function (el, i) {
-      return { type: "voc", els: [el], label: "Mot " + (i + 1) + " sur " + vocs.length, res: resOf(el) };
+      return { type: "voc", sec: "voc", els: [el], label: "Mot " + (i + 1) + " sur " + vocs.length, res: resOf(el) };
     });
-    if (dlg.length) steps.push({ type: "dlg", els: dlg, label: "Dialogue" });
-    if (quiz.length) steps.push({ type: "quiz", els: quiz, label: "Grammaire" });
+    var jdrEls = dlg.filter(function (el) { return el.id === "jdr-zone"; });
+    var dlgEls = dlg.filter(function (el) { return el.id !== "jdr-zone"; });
+    if (dlgEls.length) steps.push({ type: "dlg", sec: "dlg", els: dlgEls, label: "Dialogue" });
+    if (jdrEls.length) steps.push({ type: "jdr", sec: "jdr", els: jdrEls, label: "Jeu de r\u00f4le" });
+    if (quiz.length) steps.push({ type: "quiz", sec: "quiz", els: quiz, label: "Grammaire" });
     var rg = { start: 0, done: {} };
     try { rg = resumeSteps(steps, function (el) { return "gen:" + generalThemeId + ":" + enOf(el); }, vocs.length); } catch (e) {}
     return { hidden: pre, keep: keep, steps: steps, start: rg.start, done: rg.done, key: txt(vocs[0]).slice(0, 40) + "|" + vocs.length, anchor: keep[0] || null };
@@ -188,6 +197,8 @@
     function paintNav() {
       if (!nav) return;
       var st = steps[cur];
+      var chips = nav.querySelectorAll(".fx-sec");
+      for (var ci = 0; ci < chips.length; ci++) chips[ci].className = "fx-sec" + (st && chips[ci].getAttribute("data-sec") === st.sec ? " on" : "");
       if (compact) {
         var f = nav.querySelector(".fx-fill");
         if (f) f.style.width = Math.round((cur + 1) / steps.length * 100) + "%";
@@ -243,6 +254,24 @@
           d.onclick = function () { go(k); };
           nav.appendChild(d);
         });
+      }
+      var secs = [], seen = {};
+      steps.forEach(function (st, k) { if (st.sec && !seen[st.sec]) { seen[st.sec] = 1; secs.push({ sec: st.sec, idx: k }); } });
+      if (secs.length > 1) {
+        var NAMES = { voc: "\uD83D\uDCD6 Mots", dlg: "\uD83D\uDCAC Dialogue", jdr: "\uD83C\uDFAD Jeu de r\u00f4le", quiz: "\u270D\uFE0F Grammaire" };
+        var sb = document.createElement("div");
+        sb.className = "fx-secs";
+        secs.forEach(function (x) {
+          var c = document.createElement("button");
+          c.type = "button"; c.className = "fx-sec"; c.setAttribute("data-sec", x.sec); c.textContent = NAMES[x.sec] || x.sec;
+          c.onclick = function () {
+            var t = x.idx;
+            if (x.sec === "voc") { var cs = steps[cur]; if (cs && cs.sec === "voc") return; for (var q = 0; q < steps.length; q++) { if (steps[q].sec === "voc" && !doneMap[q]) { t = q; break; } } }
+            go(t);
+          };
+          sb.appendChild(c);
+        });
+        nav.insertBefore(sb, nav.firstChild);
       }
       if (anchor && anchor.parentNode === box) box.insertBefore(nav, anchor.nextSibling);
       else box.insertBefore(nav, box.firstChild);
@@ -554,7 +583,7 @@
     try { if (typeof window.renderRevisionCard === "function") window.renderRevisionCard(); } catch (e) {}
   }
 
-  window.DiisooFocus = { version: 9 };
+  window.DiisooFocus = { version: 10 };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();

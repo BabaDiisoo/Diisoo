@@ -1,199 +1,179 @@
-/* diisoo-secteurs-ui.js
- * Écran d'un module sectoriel (étapes B à G) branché sur DiisooSecteurs.
- * Usage : DiisooSecteursUI.ouvrir("colobane-pieces-auto-debutant", conteneur)
- *         DiisooSecteursUI.menu(conteneur)  // liste des 4 marchés
- * Voix : utilise window.diisooParler(texte, langue) si elle existe (voix Oolel / TTS
- * déjà en place). Sinon, les boutons Écouter sont masqués. Aucun speechSynthesis.
- * Styles injectés avec le préfixe "dsx-" pour ne rien casser.
+/* diisoo-secteurs-ui.js (v2)
+ * Anglais des marches : meme apparence et meme logique que les autres secteurs Business
+ * (un titre, un niveau, une carte a la fois, fleches et barre de progression).
+ * Usage : DiisooSecteursUI.menu(conteneur) ; DiisooSecteursUI.ouvrir(id, conteneur)
+ * Voix : window.diisooParler(texte, langue). Evaluation et XP : DiisooSecteurs (inchange).
  */
 (function () {
   "use strict";
 
   var CSS = [
-    ".dsx{background:#121212;color:#f2f2f2;font-family:system-ui,sans-serif;padding:16px;border-radius:14px;max-width:560px;margin:0 auto}",
-    ".dsx h2{margin:0 0 4px;font-size:20px;color:#f5c542}",
-    ".dsx .dsx-sub{opacity:.7;font-size:13px;margin-bottom:14px}",
-    ".dsx .dsx-card{background:#1e1e1e;border-radius:12px;padding:14px;margin:10px 0}",
-    ".dsx .dsx-big{font-size:20px;line-height:1.4}",
-    ".dsx .dsx-fr{opacity:.65;font-size:14px;margin-top:4px}",
-    ".dsx .dsx-row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #2a2a2a}",
-    ".dsx .dsx-row:last-child{border-bottom:0}",
-    ".dsx .dsx-btn{display:block;width:100%;box-sizing:border-box;background:#f5c542;color:#121212;border:0;border-radius:12px;padding:16px;font-size:17px;font-weight:700;margin-top:12px}",
-    ".dsx .dsx-btn.sec{background:#2a2a2a;color:#f2f2f2}",
-    ".dsx .dsx-ecouter{background:none;border:1px solid #444;color:#f2f2f2;border-radius:8px;padding:4px 10px;font-size:14px}",
-    ".dsx .dsx-choix{display:block;width:100%;box-sizing:border-box;text-align:left;background:#2a2a2a;color:#f2f2f2;border:2px solid transparent;border-radius:10px;padding:14px;margin-top:8px;font-size:16px}",
-    ".dsx .dsx-choix.sel{border-color:#f5c542}",
-    ".dsx .dsx-bar{height:6px;background:#2a2a2a;border-radius:3px;margin-bottom:14px}",
-    ".dsx .dsx-bar i{display:block;height:100%;background:#f5c542;border-radius:3px}",
-    ".dsx .dsx-ok{color:#4cd964}.dsx .dsx-ko{color:#ff6b6b}",
-    ".dsx .dsx-role{font-size:12px;opacity:.6;text-transform:uppercase}"
+    ".mk{display:flex;flex-direction:column;gap:.5rem}",
+    ".mk-h{font-size:.875rem;font-weight:700;color:#F6F1E7;text-align:center;margin:0}",
+    ".mk-lvl{font-size:11px;font-weight:700;color:#C99CEA;padding-top:6px;margin:0}",
+    ".mk-cap{font-size:10px;font-weight:700;color:#8C8064;text-transform:uppercase;letter-spacing:.06em;margin:0}",
+    ".mk-nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;padding:2px 0}",
+    ".mk-row{display:flex;align-items:center;justify-content:center;width:100%}",
+    ".mk-arr{background:#141A2B;border:1px solid #1E2740;color:#C9BFA8;border-radius:9999px;width:34px;height:34px;font-size:16px;line-height:1;padding:0}",
+    ".mk-rowlab{flex:1;text-align:center;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C8064}",
+    ".mk-bar{width:100%;height:4px;border-radius:9999px;background:#1E2740;margin:6px 0 4px;overflow:hidden}",
+    ".mk-fill{height:100%;background:#E1693F;border-radius:9999px;transition:width .25s}",
+    ".mk-card{background:#141A2B;border:1px solid #1E2740;border-radius:.75rem;padding:.75rem;display:flex;flex-direction:column;gap:.25rem;animation:mkin .22s ease-out}",
+    "@keyframes mkin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}",
+    ".mk-en{font-size:.875rem;font-weight:600;color:#F6F1E7}",
+    ".mk-big{font-size:1rem;font-weight:700;color:#F6F1E7;line-height:1.35}",
+    ".mk-fr{font-size:.75rem;color:#A69C86}",
+    ".mk-wo{font-size:.75rem;color:#5FC98F;font-style:italic}",
+    ".mk-role{font-size:10px;font-weight:700;color:#C99CEA;text-transform:uppercase;letter-spacing:.06em}",
+    ".mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.25rem}",
+    ".mk-b{background:#1E2740;color:#E4DCC9;border:0;border-radius:.5rem;padding:.5rem;font-size:11px;font-weight:600}",
+    ".mk-b:active{background:#2A3454}",
+    ".mk-go{width:100%;padding:.8rem;border-radius:.75rem;font-size:.85rem;font-weight:700;margin-top:.25rem}",
+    ".mk-sec{width:100%;padding:.7rem;border-radius:.75rem;background:#141A2B;color:#A69C86;font-size:.75rem;font-weight:600;border:1px solid #1E2740}",
+    ".mk-choix{display:block;width:100%;text-align:left;background:#1E2740;color:#F6F1E7;border:2px solid transparent;border-radius:.75rem;padding:.8rem;margin-top:.4rem;font-size:.85rem}",
+    ".mk-choix:active{border-color:#E1693F}",
+    ".mk-ok{color:#5FC98F}.mk-ko{color:#EE85A3}"
   ].join("");
 
   function injecterCSS() {
-    if (document.getElementById("dsx-css")) return;
+    if (document.getElementById("mk-css")) return;
     var s = document.createElement("style");
-    s.id = "dsx-css";
+    s.id = "mk-css";
     s.textContent = CSS;
     document.head.appendChild(s);
   }
-
   function esc(t) {
-    return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
-    });
+    return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
   }
-
-  function ecouter(texte, langue) {
-    if (typeof window.diisooParler === "function") {
-      try { window.diisooParler(texte, langue || "en"); } catch (e) {}
-    }
+  function parler(texte, langue) {
+    if (typeof window.diisooParler === "function") { try { window.diisooParler(texte, langue || "en"); } catch (e) {} }
   }
-
-  function boutonEcouter(texte, langue) {
-    if (typeof window.diisooParler !== "function") return "";
-    return '<button class="dsx-ecouter" data-say="' + esc(texte) + '" data-lang="' + (langue || "en") + '">🔊 Écouter</button>';
+  function emoji(en) {
+    try { return (window.DiisooImages && window.DiisooImages.emojiFor(en)) || ""; } catch (e) { return ""; }
   }
-
-  function lierEcoute(racine) {
-    var btns = racine.querySelectorAll("[data-say]");
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].addEventListener("click", function () {
-        ecouter(this.getAttribute("data-say"), this.getAttribute("data-lang"));
-      });
-    }
+  function boutons(en, wo) {
+    var h = '<div class="mk-grid" style="' + (wo ? "" : "grid-template-columns:1fr") + '">';
+    if (en) h += '<button type="button" class="mk-b" data-say="' + esc(en) + '" data-lang="en">🔊 English</button>';
+    if (wo) h += '<button type="button" class="mk-b" data-say="' + esc(wo) + '" data-lang="wo">🔊 Wolof</button>';
+    return h + "</div>";
   }
+  function lier(racine) {
+    var b = racine.querySelectorAll("[data-say]");
+    for (var i = 0; i < b.length; i++) b[i].addEventListener("click", function () { parler(this.getAttribute("data-say"), this.getAttribute("data-lang")); });
+  }
+  function nav(lab, pct) {
+    return '<div class="mk-nav"><div class="mk-row"><button type="button" class="mk-arr" data-d="-1" aria-label="Precedent">‹</button>' +
+      '<div class="mk-rowlab">' + esc(lab) + '</div><button type="button" class="mk-arr" data-d="1" aria-label="Suivant">›</button></div>' +
+      '<div class="mk-bar"><div class="mk-fill" style="width:' + pct + '%"></div></div></div>';
+  }
+  var ORDRE_MARCHE = { colobane: 0, sandaga: 1, centenaire: 2, guangzhou: 3 };
+  function niveauLabel(n) { return n === "intermediaire" ? "📈 Intermédiaire" : "🌱 Débutant"; }
 
   function menu(conteneur) {
     injecterCSS();
-    var liste = window.DiisooSecteurs.liste();
-    var h = '<div class="dsx"><h2>Anglais des marchés</h2><div class="dsx-sub">Choisis ton marché</div>';
-    liste.forEach(function (m) {
-      h += '<button class="dsx-btn sec" data-id="' + esc(m.id) + '">' +
-        esc(m.marche) + " : " + esc(m.theme) + (m.fait ? " ✅" : " (+" + m.xp + " XP)") + "</button>";
+    var liste = window.DiisooSecteurs.liste().slice().sort(function (a, b) {
+      var na = a.niveau === "intermediaire" ? 1 : 0, nb = b.niveau === "intermediaire" ? 1 : 0;
+      if (na !== nb) return na - nb;
+      return (ORDRE_MARCHE[String(a.marche).toLowerCase().split(" ")[0]] || 0) - (ORDRE_MARCHE[String(b.marche).toLowerCase().split(" ")[0]] || 0);
     });
-    h += "</div>";
-    conteneur.innerHTML = h;
-    var b = conteneur.querySelectorAll("[data-id]");
-    for (var i = 0; i < b.length; i++) {
-      b[i].addEventListener("click", function () {
-        ouvrir(this.getAttribute("data-id"), conteneur);
+    if (!liste.length) { conteneur.innerHTML = '<p class="mk-fr" style="text-align:center">Modules indisponibles pour le moment.</p>'; return; }
+    var cur = 0;
+    for (var i = 0; i < liste.length; i++) { if (!liste[i].fait) { cur = i; break; } }
+    function rendre() {
+      var m = liste[cur];
+      conteneur.innerHTML = '<div class="mk"><h4 class="mk-h">🛒 Anglais des marchés</h4>' +
+        nav("Module " + (cur + 1) + " sur " + liste.length, Math.round((cur + 1) / liste.length * 100)) +
+        '<p class="mk-lvl">' + niveauLabel(m.niveau) + "</p>" +
+        '<div class="mk-card"><p class="mk-en">' + esc(m.marche) + '</p><p class="mk-fr">' + esc(m.theme) + "</p>" +
+        '<p class="mk-wo" style="font-style:normal">' + (m.fait ? "✅ Terminé" : "+" + m.xp + " XP") + "</p>" +
+        '<button type="button" class="mk-go btn-primary" id="mk-start">' + (m.fait ? "Refaire ▶" : "Commencer ▶") + "</button></div></div>";
+      var arr = conteneur.querySelectorAll(".mk-arr");
+      for (var k = 0; k < arr.length; k++) arr[k].addEventListener("click", function () {
+        var n = cur + parseInt(this.getAttribute("data-d"), 10);
+        if (n >= 0 && n < liste.length) { cur = n; rendre(); }
       });
+      conteneur.querySelector("#mk-start").addEventListener("click", function () { ouvrir(liste[cur].id, conteneur); });
     }
+    rendre();
   }
 
   function ouvrir(id, conteneur) {
     injecterCSS();
     var m = window.DiisooSecteurs.obtenir(id);
-    if (!m) { conteneur.innerHTML = '<div class="dsx">Module introuvable.</div>'; return; }
-
-    var etapes = ["accroche", "vocabulaire", "pont", "dialogue", "pratique", "defi", "quiz"];
-    var pos = 0;
-    var reponses = [];
+    if (!m) { conteneur.innerHTML = '<p class="mk-fr">Module introuvable.</p>'; return; }
+    var cartes = [];
+    cartes.push({ t: "accroche", cap: "Pour commencer", en: m.accroche.en, fr: m.accroche.fr });
+    (m.vocabulaire || []).forEach(function (v) { cartes.push({ t: "voc", cap: "Vocabulaire à écouter et répéter", en: v.en, fr: v.fr }); });
+    (m.pont_wolof || []).forEach(function (p) { cartes.push({ t: "pont", cap: "En wolof, sur le marché", en: p.en, wo: p.wo }); });
+    (m.dialogue || []).forEach(function (d) { cartes.push({ t: "dlg", cap: "Dialogue", role: d.role, en: d.en, fr: d.fr }); });
+    (m.pratique_micro || []).forEach(function (p) { cartes.push({ t: "prat", cap: "Répète 3 fois à voix haute", en: p }); });
+    if (m.defi) cartes.push({ t: "defi", cap: "Défi", en: m.defi.en, fr: m.defi.fr });
+    var nq = (m.evaluation || []).length;
+    (m.evaluation || []).forEach(function (q, i) { cartes.push({ t: "quiz", cap: "Question " + (i + 1) + " sur " + nq, q: q }); });
+    var pos = 0, reponses = [];
 
     function entete() {
-      var pct = Math.round((pos / etapes.length) * 100);
-      return '<h2>' + esc(m.marche) + '</h2><div class="dsx-sub">' + esc(m.theme) +
-        ' · ' + m.duree_min + ' min</div><div class="dsx-bar"><i style="width:' + pct + '%"></i></div>';
+      return '<h4 class="mk-h">🛒 ' + esc(m.marche) + " · " + esc(m.theme) + "</h4>" +
+        nav(pos < cartes.length ? "Étape " + (pos + 1) + " sur " + cartes.length : "Résultat", Math.round((Math.min(pos + 1, cartes.length)) / cartes.length * 100)) +
+        '<p class="mk-lvl">' + niveauLabel(m.niveau) + "</p>";
     }
-
-    function suivant(label) {
-      return '<button class="dsx-btn" id="dsx-next">' + (label || "Continuer") + "</button>";
+    function lierNav() {
+      var arr = conteneur.querySelectorAll(".mk-arr");
+      for (var k = 0; k < arr.length; k++) arr[k].addEventListener("click", function () {
+        var n = pos + parseInt(this.getAttribute("data-d"), 10);
+        var maxLibre = cartes.length - nq;   // les questions ne se sautent pas
+        if (n >= 0 && n <= Math.max(maxLibre, 0) && n < cartes.length) { pos = n; rendre(); }
+      });
     }
-
+    function retour() {
+      return '<button type="button" class="mk-sec" id="mk-back">⬅️ Retour aux marchés</button>';
+    }
     function rendre() {
-      var e = etapes[pos];
-      var h = '<div class="dsx">' + entete();
-
-      if (e === "accroche") {
-        h += '<div class="dsx-card"><div class="dsx-big">' + esc(m.accroche.en) + '</div><div class="dsx-fr">' +
-          esc(m.accroche.fr) + "</div>" + boutonEcouter(m.accroche.en, "en") + "</div>" + suivant("C'est parti");
-      } else if (e === "vocabulaire") {
-        h += '<div class="dsx-card">';
-        m.vocabulaire.forEach(function (v) {
-          h += '<div class="dsx-row"><span>' + esc(v.en) + "</span><span class='dsx-fr'>" + esc(v.fr) + "</span>" +
-            boutonEcouter(v.en, "en") + "</div>";
-        });
-        h += "</div>" + suivant();
-      } else if (e === "pont") {
-        h += '<div class="dsx-card">';
-        m.pont_wolof.forEach(function (p) {
-          h += '<div class="dsx-row"><span>🇸🇳 ' + esc(p.wo) + "</span><span>🇬🇧 " + esc(p.en) + "</span>" +
-            boutonEcouter(p.wo, "wo") + "</div>";
-        });
-        h += "</div>" + suivant();
-      } else if (e === "dialogue") {
-        h += '<div class="dsx-card">';
-        m.dialogue.forEach(function (d) {
-          h += '<div class="dsx-row" style="display:block"><div class="dsx-role">' + esc(d.role) + '</div>' +
-            esc(d.en) + " " + boutonEcouter(d.en, "en") + "</div>";
-        });
-        h += "</div>" + suivant();
-      } else if (e === "pratique") {
-        h += '<div class="dsx-card"><div class="dsx-sub">Répète 3 fois à voix haute</div>';
-        m.pratique_micro.forEach(function (p) {
-          h += '<div class="dsx-row"><span class="dsx-big">' + esc(p) + "</span>" + boutonEcouter(p, "en") + "</div>";
-        });
-        h += "</div>" + suivant();
-      } else if (e === "defi") {
-        h += '<div class="dsx-card"><div class="dsx-sub">Défi victoire</div><div class="dsx-big">' + esc(m.defi.en) +
-          '</div><div class="dsx-fr">' + esc(m.defi.fr) + "</div></div>" + suivant("Défi relevé");
-      } else if (e === "quiz") {
-        h += '<div id="dsx-quiz"></div>';
+      var c = cartes[pos], h = '<div class="mk">' + entete();
+      var em = c.en ? emoji(c.en) : "";
+      if (c.t === "quiz") {
+        h += '<p class="mk-cap">' + esc(c.cap) + '</p><div class="mk-card"><p class="mk-big">' + esc(c.q.q) + "</p>";
+        c.q.choix.forEach(function (x) { h += '<button type="button" class="mk-choix" data-c="' + esc(x) + '">' + esc(x) + "</button>"; });
+        h += "</div>";
+      } else {
+        h += '<p class="mk-cap">' + esc(c.cap) + "</p>";
+        h += '<div class="mk-card' + (em ? " fx-em" : "") + '"' + (em ? ' data-em="' + em + '"' : "") + ">";
+        if (c.role) h += '<p class="mk-role">' + (/vend|march/i.test(c.role) ? "🧑‍💼 " : "🛍️ ") + esc(c.role) + "</p>";
+        h += '<p class="' + (c.t === "accroche" || c.t === "defi" || c.t === "prat" ? "mk-big" : "mk-en") + '">' + esc(c.en) + "</p>";
+        if (c.fr) h += '<p class="mk-fr">' + esc(c.fr) + "</p>";
+        if (c.wo) h += '<p class="mk-wo">🗣️ ' + esc(c.wo) + "</p>";
+        if (c.t !== "defi") h += boutons(c.en, c.wo);
+        var dernier = pos === cartes.length - nq - 1;
+        h += '<button type="button" class="mk-go btn-primary" id="mk-next">' + (dernier && nq ? "Passer aux questions ▶" : "Suivant ▶") + "</button></div>";
       }
-
+      h += retour() + "</div>";
+      conteneur.innerHTML = h;
+      lier(conteneur); lierNav();
+      conteneur.querySelector("#mk-back").addEventListener("click", function () { menu(conteneur); });
+      var n = conteneur.querySelector("#mk-next");
+      if (n) n.addEventListener("click", function () { if (pos < cartes.length - 1) { pos++; rendre(); } });
+      var ch = conteneur.querySelectorAll(".mk-choix");
+      for (var i = 0; i < ch.length; i++) ch[i].addEventListener("click", function () {
+        reponses[pos - (cartes.length - nq)] = this.getAttribute("data-c");
+        if (pos < cartes.length - 1) { pos++; rendre(); } else fin();
+      });
+    }
+    function fin() {
+      var r = window.DiisooSecteurs.evaluer(id, reponses);
+      var h = '<div class="mk"><h4 class="mk-h">🛒 ' + esc(m.marche) + " · " + esc(m.theme) + "</h4>";
+      h += '<div class="mk-card"><p class="mk-big ' + (r.reussi ? "mk-ok" : "mk-ko") + '">' + (r.reussi ? "Bravo ! " : "Presque. ") + r.bonnes + "/" + nq + "</p>";
+      if (r.xp) h += '<p class="mk-wo" style="font-style:normal">+' + r.xp + " XP</p>";
+      h += '<p class="mk-fr">' + esc(r.reussi ? m.recap : "Il faut 2 bonnes réponses sur 3. Réessaie.") + "</p></div>";
+      h += '<button type="button" class="mk-go btn-primary" id="mk-fin">' + (r.reussi && r.suivant ? "Marché suivant ▶" : "Retour aux marchés") + "</button>";
+      if (!r.reussi) h += '<button type="button" class="mk-sec" id="mk-retry">Réessayer</button>';
       h += "</div>";
       conteneur.innerHTML = h;
-      lierEcoute(conteneur);
-
-      if (e === "quiz") { quiz(); return; }
-      var n = conteneur.querySelector("#dsx-next");
-      if (n) n.addEventListener("click", function () { pos++; rendre(); });
+      conteneur.querySelector("#mk-fin").addEventListener("click", function () {
+        if (r.reussi && r.suivant && window.DiisooSecteurs.obtenir(r.suivant)) ouvrir(r.suivant, conteneur); else menu(conteneur);
+      });
+      var rt = conteneur.querySelector("#mk-retry");
+      if (rt) rt.addEventListener("click", function () { reponses = []; pos = cartes.length - nq; rendre(); });
     }
-
-    function quiz() {
-      var q = 0;
-      var zone = conteneur.querySelector("#dsx-quiz");
-
-      function question() {
-        var item = m.evaluation[q];
-        var h = '<div class="dsx-card"><div class="dsx-sub">Question ' + (q + 1) + "/" + m.evaluation.length +
-          '</div><div class="dsx-big">' + esc(item.q) + "</div>";
-        item.choix.forEach(function (c) {
-          h += '<button class="dsx-choix" data-c="' + esc(c) + '">' + esc(c) + "</button>";
-        });
-        h += "</div>";
-        zone.innerHTML = h;
-        var cs = zone.querySelectorAll(".dsx-choix");
-        for (var i = 0; i < cs.length; i++) {
-          cs[i].addEventListener("click", function () {
-            reponses[q] = this.getAttribute("data-c");
-            q++;
-            if (q < m.evaluation.length) question(); else fin();
-          });
-        }
-      }
-
-      function fin() {
-        var r = window.DiisooSecteurs.evaluer(id, reponses);
-        var h = '<div class="dsx-card"><div class="dsx-big ' + (r.reussi ? "dsx-ok" : "dsx-ko") + '">' +
-          (r.reussi ? "Bravo ! " : "Presque. ") + r.bonnes + "/" + m.evaluation.length + "</div>";
-        if (r.xp) h += '<div class="dsx-sub">+' + r.xp + " XP</div>";
-        h += '<div class="dsx-fr">' + esc(r.reussi ? m.recap : "Il faut 2 bonnes réponses sur 3. Réessaie.") + "</div></div>";
-        h += '<button class="dsx-btn" id="dsx-fin">' + (r.reussi && r.suivant ? "Marché suivant" : "Retour aux marchés") + "</button>";
-        if (!r.reussi) h += '<button class="dsx-btn sec" id="dsx-retry">Réessayer</button>';
-        zone.innerHTML = h;
-        var f = zone.querySelector("#dsx-fin");
-        f.addEventListener("click", function () {
-          if (r.reussi && r.suivant && window.DiisooSecteurs.obtenir(r.suivant)) ouvrir(r.suivant, conteneur);
-          else menu(conteneur);
-        });
-        var rt = zone.querySelector("#dsx-retry");
-        if (rt) rt.addEventListener("click", function () { reponses = []; q = 0; question(); });
-      }
-
-      question();
-    }
-
     rendre();
   }
 
