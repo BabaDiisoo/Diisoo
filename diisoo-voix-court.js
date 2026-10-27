@@ -11,7 +11,8 @@
   function avis(m) { try { if (DEBUG && typeof window.toast === "function") window.toast(m); } catch (e) {} }
 
   /* Calcule la duree a jouer (secondes) pour un signal mono et un nombre de lettres */
-  function dureeUtile(data, rate, lettres) {
+  function dureeUtile(data, rate, lettres, mots) {
+    mots = mots || 1;
     var fen = Math.max(1, Math.round(rate * 0.01));
     var n = Math.floor(data.length / fen), rms = new Float32Array(n), max = 0, i, j;
     for (i = 0; i < n; i++) {
@@ -21,7 +22,8 @@
       if (rms[i] > max) max = rms[i];
     }
     var total = data.length / rate;
-    var cap = 0.5 + 0.1 * lettres;
+    var cap = 0.5 + 0.1 * lettres + (mots > 2 ? 0.2 * mots : 0);
+    var silenceMin = mots > 2 ? 30 : 15; /* 300 ms pour une phrase, 150 ms pour un mot */
     if (max <= 0) return total;
     var seuil = max * 0.06, debut = -1;
     for (i = 0; i < n; i++) { if (rms[i] > seuil) { debut = i; break; } }
@@ -31,7 +33,7 @@
       if (rms[i] <= seuil) {
         calme++;
         /* silence d'au moins 150 ms apres au moins 150 ms de voix */
-        if (calme >= 15 && (i - calme + 1 - debut) >= 15) { coupe = (i - calme + 1) * fen / rate + 0.06; break; }
+        if (calme >= silenceMin && (i - calme + 1 - debut) >= 15) { coupe = (i - calme + 1) * fen / rate + 0.06; break; }
       } else calme = 0;
     }
     var fin = coupe > 0 ? coupe : total;
@@ -41,9 +43,9 @@
 
   function motsCourts(texte) {
     var t = String(texte || "").trim();
-    var mots = t.split(/\s+/).filter(Boolean);
+    var mots = t.split(/\s+/).filter(function (m) { return /\p{L}/u.test(m); });
     var lettres = t.replace(/[^\p{L}]/gu, "").length;
-    return (mots.length >= 1 && mots.length <= 2 && lettres <= 12) ? lettres : 0;
+    return (mots.length >= 1 && mots.length <= 4 && lettres <= 24) ? { lettres: lettres, mots: mots.length } : 0;
   }
 
   function patcherStart() {
@@ -53,7 +55,7 @@
     AB.prototype.start = function (when, offset, duration) {
       try {
         if (ACTIF && this.buffer && duration === undefined && !offset) {
-          var d = dureeUtile(this.buffer.getChannelData(0), this.buffer.sampleRate, ACTIF);
+          var d = dureeUtile(this.buffer.getChannelData(0), this.buffer.sampleRate, ACTIF.lettres, ACTIF.mots);
           if (d > 0.2 && d < this.buffer.duration - 0.05) {
             avis("\u2702\uFE0F coupe a " + d.toFixed(1) + "s sur " + this.buffer.duration.toFixed(1) + "s");
             return orig.call(this, when || 0, 0, d);
