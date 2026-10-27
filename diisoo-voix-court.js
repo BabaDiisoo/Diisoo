@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   var ACTIF = false;
-  var DEBUG = true; /* message temporaire a l'ecran, passer a false une fois valide */
+  var DEBUG = false; /* message temporaire a l'ecran, passer a false une fois valide */
   function avis(m) { try { if (DEBUG && typeof window.toast === "function") window.toast(m); } catch (e) {} }
 
   /* Calcule la duree a jouer (secondes) pour un signal mono et un nombre de lettres */
