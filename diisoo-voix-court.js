@@ -7,6 +7,8 @@
 (function () {
   "use strict";
   var ACTIF = false;
+  var DEBUG = true; /* message temporaire a l'ecran, passer a false une fois valide */
+  function avis(m) { try { if (DEBUG && typeof window.toast === "function") window.toast(m); } catch (e) {} }
 
   /* Calcule la duree a jouer (secondes) pour un signal mono et un nombre de lettres */
   function dureeUtile(data, rate, lettres) {
@@ -19,7 +21,7 @@
       if (rms[i] > max) max = rms[i];
     }
     var total = data.length / rate;
-    var cap = 0.6 + 0.11 * lettres;
+    var cap = 0.5 + 0.1 * lettres;
     if (max <= 0) return total;
     var seuil = max * 0.06, debut = -1;
     for (i = 0; i < n; i++) { if (rms[i] > seuil) { debut = i; break; } }
@@ -52,7 +54,11 @@
       try {
         if (ACTIF && this.buffer && duration === undefined && !offset) {
           var d = dureeUtile(this.buffer.getChannelData(0), this.buffer.sampleRate, ACTIF);
-          if (d > 0.2 && d < this.buffer.duration - 0.05) return orig.call(this, when || 0, 0, d);
+          if (d > 0.2 && d < this.buffer.duration - 0.05) {
+            avis("\u2702\uFE0F coupe a " + d.toFixed(1) + "s sur " + this.buffer.duration.toFixed(1) + "s");
+            return orig.call(this, when || 0, 0, d);
+          }
+          avis("mot court, audio de " + this.buffer.duration.toFixed(1) + "s, rien a couper");
         }
       } catch (e) {}
       return orig.apply(this, arguments);
