@@ -4,7 +4,7 @@
  */
 (function () {
   "use strict";
-  var FICHIERS = ["diisoo-secteurs.js", "diisoo-secteurs-ui.js", "diisoo-secteurs-init.js", "diisoo-pron.js", "diisoo-voix-court.js"];
+var FICHIERS = ["diisoo-secteurs.js", "diisoo-secteurs-ui.js", "diisoo-secteurs-init.js", "diisoo-pron.js", "diisoo-voix-court.js", "diisoo-essai.js"];
 
   function charger(i) {
     if (i >= FICHIERS.length) return;
