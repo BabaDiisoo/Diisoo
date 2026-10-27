@@ -5,7 +5,7 @@
   var CFG = {
     numero: "221768426961",
     cartesActives: true,    /* paiement par carte via la fonction Supabase pay-init ; repli WhatsApp si indisponible */
-    endpoint: "https://jkwtyoefqvafnlqkhium.supabase.co/functions/v1/pay-init",
+    endpoint: "https://jkwtyoefqvafnlqkhium.supabase.co/functions/v1/clever-processor",
     usdParEur: 1.1          /* indicatif d'affichage seulement */
   };
   var TAGS = ["PAIEMENT-LOCAL", "PAIEMENT-INTERNATIONAL", "EXAMENS-VISAS", "SUPPORT-TECH"];
@@ -80,7 +80,7 @@
         var d = null;
         try {
           if (typeof db !== "undefined" && db && db.functions) {   /* client Supabase de l'app : envoie la cle d'acces */
-            var rr = await db.functions.invoke("pay-init", { body: corps });
+            var rr = await db.functions.invoke("clever-processor", { body: corps });
             if (rr && rr.error) throw rr.error;
             d = rr && rr.data;
           }
