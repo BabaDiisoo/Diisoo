@@ -4,12 +4,10 @@ arreterVoix = function () {
   try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
   return _arreterVoixOrig();
 };
-jouerVoix = async function (texte, langue, options) {
-  if (langue !== "en") return _jouerVoixOrig(texte, langue, options);
+const _voixTelephone = async function (texte, options) {
   const o = options || {};
   const synth = window.speechSynthesis;
   if (!synth) throw new Error("synthese vocale indisponible");
-  arreterVoix();
   const phrase = String(texte || "").replace(/\s+/g, " ").trim();
   if (!phrase) return true;
   return await new Promise((resolve, reject) => {
@@ -24,6 +22,19 @@ jouerVoix = async function (texte, langue, options) {
     u.onerror = (e) => (e.error === "canceled" || e.error === "interrupted") ? resolve(false) : reject(new Error("voix " + e.error));
     synth.speak(u);
   });
+};
+/* Anglais : voix OpenAI d'abord (plus claire), voix du telephone seulement si OpenAI echoue. */
+jouerVoix = async function (texte, langue, options) {
+  if (langue !== "en") return _jouerVoixOrig(texte, langue, options);
+  const jetonAvant = jetonVoix;
+  try {
+    return await _jouerVoixOrig(texte, langue, options);
+  } catch (erreur) {
+    console.error("Voix OpenAI indisponible, secours telephone :", erreur);
+    if (jetonVoix > jetonAvant + 1) return false;
+    arreterVoix();
+    return await _voixTelephone(texte, options);
+  }
 };
 genererOolel = async function (texte) {
   const rep = await avecDelai(sb.functions.invoke("smart-handler", { body: { texte, lang: "wo" } }), 12e4, "voix wolof");
@@ -767,10 +778,10 @@ async function genererOolel(texte) {
   return { data: await blob.arrayBuffer(), mime: blob.type || "audio/wav" };
 }
 async function genererAnglais(texte, voixNom) {
-  const rep = await avecDelai(sb.functions.invoke("tts-anglais", { body: { texte, voix: voixNom } }), 6e4, "voix anglaise");
+  const rep = await avecDelai(sb.functions.invoke("quick-action", { body: { phrase: texte, context: "general" } }), 6e4, "voix anglaise");
   if (rep.error) throw rep.error;
   if (!rep.data || !rep.data.audio_base64) throw new Error("reponse vocale vide");
-  return depaqueter(rep.data.audio_base64, rep.data.mime);
+  return depaqueter(rep.data.audio_base64, rep.data.mime || "audio/mpeg");
 }
 function slugAudio(t) {
   return String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
