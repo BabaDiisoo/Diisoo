@@ -6,6 +6,8 @@
  */
 (function () {
   "use strict";
+  /* Interrupteur de test : ouvrir https://diisoo.sn/?court=0 desactive ce correctif */
+  try { if (new URLSearchParams(location.search).get("court") === "0") return; } catch (e) {}
   var ACTIF = false;
   var DEBUG = false; /* message temporaire a l'ecran, passer a false une fois valide */
   function avis(m) { try { if (DEBUG && typeof window.toast === "function") window.toast(m); } catch (e) {} }
