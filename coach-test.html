@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Test coach vocal Diisoo</title>
+<style>
+body{margin:0;padding:24px 16px;background:#0B0F1C;color:#f2f5ff;font-family:system-ui,sans-serif}
+button{min-height:56px;width:100%;margin-top:12px;border:0;border-radius:14px;background:#1f6feb;color:#fff;font:600 17px system-ui}
+#info{margin-top:18px;font-size:15px;color:#aab4d4;line-height:1.5}
+</style>
+</head>
+<body>
+<h1>Test coach vocal</h1>
+<button id="b1">How are you ?</button>
+<button id="b2">My name is...</button>
+<button id="b3">How much is this ?</button>
+<div id="info"></div>
+<script src="diisoo-coach.js"></script>
+<script>
+var P=[
+ {en:"How are you?",pron:"Haou ar you ?",wo:"Naka nga def ?",fr:"Comment vas-tu ?"},
+ {en:"My name is Baba.",pron:"Maï néïm iz Baba",wo:"Maa ngi tudd Baba.",fr:"Je m'appelle Baba."},
+ {en:"How much is this?",pron:"Haou meutch iz ziss ?",wo:"Ñaata la ?",fr:"C'est combien ?"}
+];
+["b1","b2","b3"].forEach(function(id,i){document.getElementById(id).onclick=function(){DiisooCoach.ouvrir(P[i]);};});
+var s=DiisooCoach.supporte;
+document.getElementById("info").textContent="Enregistrement : "+(s.enregistrement?"oui":"non")+" | Reconnaissance vocale : "+(s.reconnaissance?"oui":"non");
+</script>
+</body>
+</html>
