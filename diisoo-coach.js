@@ -190,6 +190,7 @@
       var bFin = el("button", BTN2, "Fermer"); bFin.onclick = fermer;
       box.appendChild(bSuiv);
       if (o.suivant) box.appendChild(bFin);
+      box.appendChild(el("div", "margin-top:14px;font-size:12px;color:#6f7aa0;text-align:center;", "Coach v2 : micro séparé"));
     }
     vue();
     return { fermer: fermer };
