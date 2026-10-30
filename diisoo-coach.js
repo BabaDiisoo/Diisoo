@@ -90,6 +90,7 @@
       var bWo = o.wo ? el("button", BTN2, "Écouter en wolof") : null;
       var bRep = el("button", BTN, CAN_REC || SR ? "2. Répéter (micro)" : "2. Répéter à voix haute");
       var bSuiv = el("button", BTN2, o.suivant ? "Phrase suivante" : "Fermer");
+      var bVer = el("button", BTN2, "3. Vérifier ce que j'ai dit");
       var lecteur = el("div", "margin-top:10px;");
 
       bEn.onclick = function () {
@@ -112,78 +113,80 @@
         });
       };
 
+      /* Étape 2 : enregistrement seul (MediaRecorder). Touche encore pour arrêter. Lecture automatique ensuite. */
+      var recTimer = null;
+      function arreterEnreg() { try { if (rec && rec.state !== "inactive") rec.stop(); } catch (e) {} }
       bRep.onclick = function () {
-        if (enCours) return;
-        if (!CAN_REC && !SR) { msg.textContent = "Ton navigateur n'a pas de micro ici. Répète à voix haute, puis réécoute la phrase."; return; }
-        enCours = true; lecteur.innerHTML = "";
-        msg.textContent = "Je t'écoute... parle maintenant (8 secondes).";
-        var morceaux = [], texte = "", fini = 0;
-
-        function bilan() {
-          if (++fini < (CAN_REC ? 1 : 0) + (SR ? 1 : 0)) return;
-          enCours = false;
-          if (audioUrl) { var a = el("audio"); a.controls = true; a.src = audioUrl; a.style.cssText = "width:100%;"; lecteur.appendChild(a); }
-          if (SR && texte) {
-            var s = simil(norm(texte), norm(o.en));
-            msg.textContent = s >= SEUIL
-              ? "Bravo ! Le texte reconnu correspond à la phrase. (Ce n'est pas une note de prononciation.)"
-              : "J'ai compris : « " + texte + " ». Réécoute le modèle et réessaie. (Ce n'est pas une note de prononciation.)";
-          } else if (SR) {
-            msg.textContent = "Je n'ai rien compris. Rapproche-toi du micro et réessaie.";
-          } else {
-            msg.textContent = "Réécoute-toi, puis compare avec le modèle. Ici, c'est toi qui juges, l'application ne note pas ta prononciation.";
-          }
+        if (enCours) { arreterEnreg(); return; }
+        if (!CAN_REC) {
+          if (SR) { bVer.onclick(); return; }
+          msg.textContent = "Ton navigateur n'a pas de micro ici. Répète à voix haute, puis réécoute la phrase.";
+          return;
         }
+        lecteur.innerHTML = "";
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+          flux = st; var morceaux = [];
+          rec = new MediaRecorder(st);
+          rec.ondataavailable = function (e) { if (e.data && e.data.size) morceaux.push(e.data); };
+          rec.onstop = function () {
+            clearTimeout(recTimer);
+            try { st.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+            enCours = false; bRep.textContent = "2. Répéter (micro)";
+            if (audioUrl) URL.revokeObjectURL(audioUrl);
+            audioUrl = morceaux.length ? URL.createObjectURL(new Blob(morceaux, { type: rec.mimeType || "audio/webm" })) : null;
+            if (!audioUrl) { msg.textContent = "Rien enregistré. Rapproche-toi du micro et réessaie."; return; }
+            var a = el("audio"); a.controls = true; a.src = audioUrl; a.style.cssText = "width:100%;";
+            lecteur.appendChild(a);
+            msg.textContent = "Voici ta voix. Compare avec le modèle, ou touche « Vérifier ».";
+            a.play().catch(function () {});
+            if (SR) bVer.style.display = "block";
+          };
+          rec.start(); enCours = true;
+          bRep.textContent = "Arrêter l'enregistrement";
+          msg.textContent = "Je t'enregistre... dis la phrase, puis touche « Arrêter ».";
+          recTimer = setTimeout(arreterEnreg, 10000);
+        }).catch(function () {
+          msg.textContent = "Micro refusé ou indisponible. Autorise-le dans le navigateur, puis réessaie.";
+        });
+      };
 
-        function lancerSR() {
-          if (!SR) return;
-          try {
-            sr = new SR(); sr.lang = "en-US"; sr.interimResults = false; sr.maxAlternatives = 3;
-            sr.onresult = function (e) {
-              var best = ""; var bs = -1;
-              Array.prototype.forEach.call(e.results[0], function (a) {
-                var s = simil(norm(a.transcript), norm(o.en)); if (s > bs) { bs = s; best = a.transcript; }
-              });
-              texte = best;
-            };
-            sr.onerror = function (e) {
-              if (e.error === "not-allowed" || e.error === "service-not-allowed")
-                msg.textContent = "Micro bloqué. Autorise le micro dans le navigateur, puis réessaie.";
-              else if (e.error === "network")
-                msg.textContent = "Connexion trop faible pour la reconnaissance vocale. Réessaie.";
-            };
-            sr.onend = bilan;
-            sr.start();
-            setTimeout(function () { try { sr.stop(); } catch (e) {} }, 8000);
-          } catch (e) { bilan(); }
-        }
-
-        if (CAN_REC) {
-          navigator.mediaDevices.getUserMedia({ audio: true }).then(function (s) {
-            flux = s;
-            rec = new MediaRecorder(s);
-            rec.ondataavailable = function (e) { if (e.data && e.data.size) morceaux.push(e.data); };
-            rec.onstop = function () {
-              try { s.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
-              if (audioUrl) URL.revokeObjectURL(audioUrl);
-              audioUrl = morceaux.length ? URL.createObjectURL(new Blob(morceaux, { type: rec.mimeType || "audio/webm" })) : null;
-              bilan();
-            };
-            rec.start();
-            setTimeout(function () { try { if (rec.state !== "inactive") rec.stop(); } catch (e) {} }, 8000);
-            lancerSR();
-          }).catch(function () {
-            enCours = false; CAN_REC && (msg.textContent = "Micro refusé ou indisponible. Autorise-le dans le navigateur, ou répète à voix haute sans enregistrer.");
-          });
-        } else {
-          lancerSR();
-        }
+      /* Étape 3 : reconnaissance vocale seule (jamais en même temps que l'enregistrement). */
+      bVer.style.display = SR ? "block" : "none";
+      bVer.onclick = function () {
+        if (enCours || !SR) return;
+        enCours = true; var texte = "", erreur = "";
+        msg.textContent = "Je t'écoute... dis la phrase maintenant (8 secondes).";
+        try {
+          sr = new SR(); sr.lang = "en-US"; sr.interimResults = false; sr.maxAlternatives = 3;
+          sr.onresult = function (e) {
+            var best = "", bs = -1;
+            Array.prototype.forEach.call(e.results[0], function (x) {
+              var v = simil(norm(x.transcript), norm(o.en)); if (v > bs) { bs = v; best = x.transcript; }
+            });
+            texte = best;
+          };
+          sr.onerror = function (e) { erreur = e.error || "erreur"; };
+          sr.onend = function () {
+            enCours = false;
+            if (erreur === "not-allowed" || erreur === "service-not-allowed") msg.textContent = "Micro bloqué. Autorise le micro dans le navigateur, puis réessaie.";
+            else if (erreur === "network") msg.textContent = "Connexion trop faible pour la reconnaissance vocale. Réessaie.";
+            else if (erreur === "audio-capture") msg.textContent = "Le micro est occupé. Ferme les autres applications qui l'utilisent, puis réessaie.";
+            else if (texte) {
+              var v = simil(norm(texte), norm(o.en));
+              msg.textContent = v >= SEUIL
+                ? "Bravo ! Le texte reconnu correspond à la phrase. (Ce n'est pas une note de prononciation.)"
+                : "J'ai compris : « " + texte + " ». Réécoute le modèle et réessaie. (Ce n'est pas une note de prononciation.)";
+            } else msg.textContent = "Je n'ai rien compris. Parle plus fort, plus près du micro, et réessaie. [code: " + (erreur || "silence") + "]";
+          };
+          sr.start();
+          setTimeout(function () { try { sr.stop(); } catch (e) {} }, 8000);
+        } catch (e) { enCours = false; msg.textContent = "Reconnaissance vocale indisponible sur ce navigateur."; }
       };
 
       bSuiv.onclick = function () { fermer(); if (o.suivant) o.suivant(); };
 
       box.appendChild(bEn); if (bWo) box.appendChild(bWo); box.appendChild(bRep);
-      box.appendChild(lecteur);
+      box.appendChild(lecteur); box.appendChild(bVer);
       var bFin = el("button", BTN2, "Fermer"); bFin.onclick = fermer;
       box.appendChild(bSuiv);
       if (o.suivant) box.appendChild(bFin);
