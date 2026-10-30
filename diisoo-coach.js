@@ -49,7 +49,10 @@
     });
   }
   function jouerWo(texte) {
-    if (window.Diisoo && window.Diisoo.ecouter) return window.Diisoo.ecouter(texte);
+    if (window.Diisoo && window.Diisoo.ecouter) {
+      try { if (window.Diisoo.voix && window.Diisoo.voix.debloquer) window.Diisoo.voix.debloquer(); } catch (e) {}
+      return window.Diisoo.ecouter(texte);
+    }
     return Promise.resolve("indisponible");
   }
 
@@ -97,7 +100,15 @@
       if (bWo) bWo.onclick = function () {
         msg.textContent = "Écoute...";
         jouerWo(o.wo).then(function (r) {
-          msg.textContent = r === "limite" ? "Limite d'écoutes atteinte." : r === "ok" ? "" : "Son wolof indisponible pour le moment.";
+          var T = {
+            ok: "",
+            limite: "Limite d'écoutes atteinte.",
+            occupe: "Une lecture est déjà en cours. Attends la fin, puis réessaie.",
+            erreur: "La voix wolof ne répond pas (serveur de voix). Réessaie dans une minute. [code: erreur]",
+            vide: "Pas de texte wolof pour cette phrase. [code: vide]",
+            indisponible: "Voix wolof non chargée sur cette page. Recharge la page. [code: non chargé]"
+          };
+          msg.textContent = T[r] != null ? T[r] : "Son wolof indisponible. [code: " + r + "]";
         });
       };
 
