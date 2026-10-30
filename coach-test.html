@@ -17,6 +17,7 @@ button{min-height:56px;width:100%;margin-top:12px;border:0;border-radius:14px;ba
 <button id="b2">My name is...</button>
 <button id="b3">How much is this ?</button>
 <div id="info"></div>
+<script type="module" src="diisoo-pro.js"></script>
 <script src="diisoo-coach.js"></script>
 <script>
 var P=[
@@ -26,7 +27,7 @@ var P=[
 ];
 ["b1","b2","b3"].forEach(function(id,i){document.getElementById(id).onclick=function(){DiisooCoach.ouvrir(P[i]);};});
 var s=DiisooCoach.supporte;
-document.getElementById("info").textContent="Enregistrement : "+(s.enregistrement?"oui":"non")+" | Reconnaissance vocale : "+(s.reconnaissance?"oui":"non");
+document.getElementById("info").textContent="Voix wolof (Diisoo) : "+(window.Diisoo?"oui":"en chargement")+" | Enregistrement : "+(s.enregistrement?"oui":"non")+" | Reconnaissance vocale : "+(s.reconnaissance?"oui":"non");
 </script>
 </body>
 </html>
