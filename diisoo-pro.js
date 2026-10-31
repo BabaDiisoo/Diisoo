@@ -37,7 +37,7 @@ jouerVoix = async function (texte, langue, options) {
   }
 };
 genererOolel = async function (texte) {
-  const rep = await avecDelai(sb.functions.invoke("smart-handler", { body: { texte, lang: "wo" } }), 12e4, "voix wolof");
+  const rep = await avecDelai(sb.functions.invoke("smart-handler", { body: { texte, lang: "wo" } }), 6e4, "voix wolof");
   if (rep.error) throw rep.error;
   if (!rep.data || !rep.data.audio_base64) throw new Error("reponse vocale vide");
   return depaqueter(rep.data.audio_base64, rep.data.mime);
@@ -745,7 +745,7 @@ function clientOolel() {
     promesseClient = (async () => {
       const mod = await avecDelai(import(CLIENT_URL), 3e4, "import gradio");
       if (!mod.Client) throw new Error("Client Gradio absent");
-      return avecDelai(mod.Client.connect(SPACE_OOLEL, { events: ["data", "status"] }), 12e4, "connexion voix");
+      return avecDelai(mod.Client.connect(SPACE_OOLEL, { events: ["data", "status"] }), 6e4, "connexion voix");
     })().catch((e) => {
       promesseClient = null;
       throw e;
@@ -771,14 +771,14 @@ async function genererOolel(texte) {
   const p = Array.isArray(sortie) ? sortie[0] : sortie;
   const url = p && (typeof p === "string" ? p : p.url || p.path);
   if (!url || !/^https:\/\//i.test(url)) throw new Error("reponse du Space sans audio");
-  const rep = await avecDelai(fetch(url), 6e4, "telechargement audio");
+  const rep = await avecDelai(fetch(url), 3e4, "telechargement audio");
   if (!rep.ok) throw new Error("audio HTTP " + rep.status);
   const blob = await rep.blob();
   if (!blob.size) throw new Error("audio vide");
   return { data: await blob.arrayBuffer(), mime: blob.type || "audio/wav" };
 }
 async function genererAnglais(texte, voixNom) {
-  const rep = await avecDelai(sb.functions.invoke("quick-action", { body: { phrase: texte, context: "general" } }), 6e4, "voix anglaise");
+  const rep = await avecDelai(sb.functions.invoke("quick-action", { body: { phrase: texte, context: "general" } }), 3e4, "voix anglaise");
   if (rep.error) throw rep.error;
   if (!rep.data || !rep.data.audio_base64) throw new Error("reponse vocale vide");
   return depaqueter(rep.data.audio_base64, rep.data.mime || "audio/mpeg");
