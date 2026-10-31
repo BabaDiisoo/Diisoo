@@ -7,7 +7,7 @@
  */
 (function () {
   "use strict";
-  var ACTIF_PAR_DEFAUT = false;
+  var ACTIF_PAR_DEFAUT = true;
   var CLE = "diisooUI";
 
   var actif = ACTIF_PAR_DEFAUT;

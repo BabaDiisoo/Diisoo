@@ -6,7 +6,7 @@
   "use strict";
 var FICHIERS = ["diisoo-secteurs.js", "diisoo-secteurs-ui.js", "diisoo-secteurs-init.js", "diisoo-pron.js", "diisoo-voix-court.js", "diisoo-essai.js", "diisoo-accueil.js", "diisoo-partage.js", "diisoo-ui.js", "diisoo-coach.js",  
 "diisoo-themes-extra.js", "diisoo-lecons.js", "diisoo-reseau.js", "diisoo-coach-liens.js", "diisoo-examens-coach.js", "diisoo-pron-business.js", "diisoo-ios-audio.js" ];
-  function charger(i) {"diisoo-ios-audio.js"
+  function charger(i) {
     if (i >= FICHIERS.length) return;
     var s = document.createElement("script");
     s.src = FICHIERS[i];
