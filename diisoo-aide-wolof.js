@@ -1,5 +1,5 @@
 /* diisoo-aide-wolof.js v2 : aide vocale en wolof sur chaque etape
-   - parle tout seul a chaque nouvelle etape (menu, niveau, theme, mots, examens), les 5 premieres fois
+   - parle tout seul UNE SEULE FOIS par etape (menu, niveau, theme, mots, examens), ensuite seul le bouton 🔊 repete
    - ta voix d'abord : si la phrase est enregistree avec l'outil #enregistrer-voix, c'est elle qui est lue (instantane)
    - sinon la voix generee de l'app est utilisee
    - si le telephone bloque le son, le bouton 🔊 clignote et une bulle affiche la phrase
@@ -133,6 +133,7 @@
       return { sig: key + ":mots", l: [P.micro] };
     }
     if (visible("screen-business")) {
+      if (pickerVisible("business")) return { sig: "business:niveau", l: [P.niveau] };
       return visible("business-content") ? { sig: "biz:mots", l: [P.micro] } : { sig: "biz:theme", l: [P.theme] };
     }
     if (visible("screen-test-simulation")) {
@@ -150,7 +151,7 @@
   ["pointerdown", "touchstart", "click", "keydown"].forEach(function (ev) {
     window.addEventListener(ev, function () { geste = Date.now(); }, true);
   });
-  var MAXAUTO = 5;
+  var MAXAUTO = 1;
   function compteurs() { try { return JSON.parse(localStorage.getItem("diisoo_aide_n") || "{}") || {}; } catch (e) { return {}; } }
   function ecrire(o) { try { localStorage.setItem("diisoo_aide_n", JSON.stringify(o)); } catch (e) {} }
 

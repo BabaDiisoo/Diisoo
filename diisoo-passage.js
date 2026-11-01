@@ -40,6 +40,7 @@
   /* ---------- questions a partir du vocabulaire du niveau (meme decoupage que les menus) ---------- */
   function themesDuNiveau(key, niveau) {
     var box = $(TABS[key]), data = key === "general" ? GENERAL_THEMES : WOLOF_THEMES, out = [];
+    if (key === "business") return out;
     if (box) {
       Array.prototype.forEach.call(box.children, function (b) {
         if (+b.dataset.lvl !== niveau) return;
@@ -52,6 +53,16 @@
   }
   function mots(key, niveau) {
     var out = [];
+    if (key === "business") {
+      try {
+        Object.keys(CHINA_TRADE_WOLOF).forEach(function (k) {
+          ((CHINA_TRADE_WOLOF[k] || {}).vocab || []).forEach(function (v) {
+            if (v.niveau === ["debutant", "intermediaire", "avance"][niveau - 1] && v.en && v.fr) out.push({ q: v.en, a: v.fr, lang: "en" });
+          });
+        });
+      } catch (e) {}
+      return out.filter(function (w) { return w.q.length <= 60 && w.a.length <= 70; });
+    }
     themesDuNiveau(key, niveau).forEach(function (t) {
       if (key === "general") (t.vocab || []).forEach(function (w) { if (w.en && w.fr) out.push({ q: w.en, a: w.fr, lang: "en" }); });
       else (t.words || []).forEach(function (w) { if (w.wo && w.en) out.push({ q: w.wo, a: w.en, lang: "wo" }); });
@@ -115,7 +126,7 @@
   }
   function retourMenu(key, L) {
     fermer();
-    try { window[key === "general" ? "openGeneralModule" : "openWolofModule"](); } catch (e) {}
+    try { window[key === "general" ? "openGeneralModule" : key === "wolof" ? "openWolofModule" : "openBusinessModule"](); } catch (e) {}
     if (L) {
       setTimeout(function () {
         var b = document.querySelectorAll("#lvl-" + key + " .lvl-btn")[L - 1];
@@ -279,7 +290,7 @@
   window.addEventListener("click", function (ev) {
     var b = ev.target.closest && ev.target.closest(".lvl-btn.lock");
     if (!b || ev.target.closest(".aide-ic")) return;
-    var box = b.parentNode, key = /lvl-(general|wolof)/.exec(box.id || "");
+    var box = b.parentNode, key = /lvl-(general|wolof|business)/.exec(box.id || "");
     if (!key) return;
     ev.stopImmediatePropagation(); ev.preventDefault();
     var idx = Array.prototype.indexOf.call(box.querySelectorAll(".lvl-btn"), b) + 1;
