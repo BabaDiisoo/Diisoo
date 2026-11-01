@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v48";
+const VERSION = "diisoo-cache-v49";
 const SHELL = [
   "./",
   "./index.html",
@@ -30,6 +30,17 @@ const SHELL = [
   "./diisoo-examens-coach.js",
   "./diisoo-pron-business.js",
   "./diisoo-ios-audio.js",
+  "./diisoo-direct.js",
+  "./diisoo-orga.js",
+  "./diisoo-wamic.js",
+  "./diisoo-aide-wolof.js",
+  "./diisoo-biz.js",
+  "./diisoo-passage.js",
+  "./diisoo-stable.js",
+  "./diisoo-tourisme.js",
+  "./diisoo-son.js",
+  "./diisoo-objectif.js",
+  "./diisoo-installer.js",
   "./supabase-js-2.118.0.js",
   "./diisoo-tests-extra.js",
   "./diisoo-focus.js",
