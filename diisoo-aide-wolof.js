@@ -1,8 +1,9 @@
-/* diisoo-aide-wolof.js : aide vocale en wolof sur chaque menu
-   - bouton rond 🔊 en haut a droite : explique l'ecran en wolof
-   - chaque bouton de niveau a son 🔊 (dit le nom du niveau sans le choisir)
-   - le choix du niveau est dit automatiquement a l'ouverture d'Anglais et de Wolof
-   - niveau verrouille : une phrase explique quoi faire */
+/* diisoo-aide-wolof.js v2 : aide vocale en wolof sur chaque etape
+   - parle tout seul a chaque nouvelle etape (menu, niveau, theme, mots, examens), les 5 premieres fois
+   - ta voix d'abord : si la phrase est enregistree avec l'outil #enregistrer-voix, c'est elle qui est lue (instantane)
+   - sinon la voix generee de l'app est utilisee
+   - si le telephone bloque le son, le bouton 🔊 clignote et une bulle affiche la phrase
+   - bouton rond 🔊 en haut a droite : repete l'aide a tout moment */
 (function () {
   "use strict";
 
@@ -20,60 +21,161 @@
     encore: "Jéemaat.",
     passage: "Tontul ñetti laaj ngir dem ci kanam.",
     examen: "Tànnal sa examen.",
+    test: "Tànnal benn test.",
     retour: "Dellu ginnaaw."
+  };
+  var FR = {
+    menu: "Choisis ce que tu veux.", niveau: "Choisis ton niveau.", debutant: "Facile (Débutant).",
+    inter: "Moyen (Intermédiaire).", avance: "Difficile (Avancé).", verrou: "Étudie d'abord, puis avance.",
+    theme: "Choisis un thème.", micro: "Maintiens, parle, relâche.", annule: "Glisse pour annuler.",
+    bravo: "Bravo !", encore: "Réessaie.", passage: "Réponds aux questions pour passer.",
+    examen: "Choisis ton examen.", test: "Choisis un test.", retour: "Retour."
   };
   window.DiisooAideWolof = { phrases: P };
 
-  var jeton = 0;
+  /* Les phrases apparaissent dans l'outil d'enregistrement #enregistrer-voix (les plus courtes en premier) */
+  try {
+    if (typeof WOLOF_EXTRA === "object" && WOLOF_EXTRA) {
+      WOLOF_EXTRA.__aide = Object.keys(P).map(function (k) { return { wo: P[k], fr: FR[k], en: "" }; });
+    }
+  } catch (e) {}
+
+  /* ---------- lecture ---------- */
+  var jeton = 0, cur = null;
+  function arreter() { try { if (cur) { cur.onended = null; cur.onerror = null; cur.pause(); } } catch (e) {} cur = null; }
+
+  function lireURL(url, jt) {
+    return new Promise(function (resolve) {
+      arreter();
+      var a = new Audio(url);
+      a.setAttribute("playsinline", "");
+      cur = a;
+      a.onended = function () { resolve(true); };
+      a.onerror = function () { resolve(false); };
+      var p = a.play();
+      if (p && p.catch) p.catch(function () { if (jt === jeton) pulser(true); resolve(false); });
+    });
+  }
+
+  async function jouerUne(phrase, jt) {
+    try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+    try {
+      if (window.voixHumaine) {
+        var url = await window.voixHumaine.url(phrase);
+        if (jt !== jeton) return false;
+        if (url) { var ok = await lireURL(url, jt); if (ok) return true; }
+      }
+    } catch (e) {}
+    if (jt !== jeton) return false;
+    if (typeof speakWolofOolel === "function") {
+      try { var r = await speakWolofOolel(phrase); return r !== false; } catch (e) { return false; }
+    }
+    return false;
+  }
+
   function dire(liste) {
     var mon = ++jeton;
-    if (typeof speakWolofOolel !== "function") return;
+    pulser(false);
     (async function () {
       for (var i = 0; i < liste.length; i++) {
         if (mon !== jeton) return;
-        try { await speakWolofOolel(liste[i]); } catch (e) { return; }
+        legende(liste[i]);
+        await jouerUne(liste[i], mon);
       }
     })();
   }
 
-  /* CSS */
+  /* ---------- interface ---------- */
   var st = document.createElement("style");
   st.textContent =
     "#dii-aide-wolof{position:fixed;top:10px;right:12px;z-index:9998;width:44px;height:44px;border-radius:50%;" +
     "border:0;background:#25D366;color:#fff;font-size:20px;display:none;align-items:center;justify-content:center;" +
     "box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
     "#dii-aide-wolof:active{background:#128C7E}" +
-    ".aide-ic{margin-left:auto;flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#25D366;color:#fff;" +
-    "display:flex;align-items:center;justify-content:center;font-size:18px}";
+    "#dii-aide-wolof.pulse{animation:diipulse 1s infinite}" +
+    "@keyframes diipulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(37,211,102,.7)}50%{transform:scale(1.12);box-shadow:0 0 0 12px rgba(37,211,102,0)}}" +
+    "#dii-aide-bulle{position:fixed;top:60px;right:12px;z-index:9998;max-width:72vw;background:#1F2C34;color:#fff;" +
+    "padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.3;display:none;box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
+    "#dii-aide-bulle small{display:block;color:#A8B8C0;font-size:11px;margin-top:2px}" +
+    ".aide-ic{margin-left:auto;flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#25D366;color:#fff;" +
+    "display:flex;align-items:center;justify-content:center;font-size:20px}";
   document.head.appendChild(st);
 
   var btn = document.createElement("button");
   btn.id = "dii-aide-wolof"; btn.type = "button"; btn.setAttribute("aria-label", "Aide en wolof"); btn.textContent = "🔊";
   document.body.appendChild(btn);
+  var bulle = document.createElement("div");
+  bulle.id = "dii-aide-bulle";
+  document.body.appendChild(bulle);
+
+  var tBulle = null;
+  function legende(phrase) {
+    var cle = null;
+    Object.keys(P).forEach(function (k) { if (P[k] === phrase) cle = k; });
+    bulle.innerHTML = phrase.replace(/</g, "&lt;") + (cle ? "<small>" + FR[cle] + "</small>" : "");
+    bulle.style.display = "block";
+    clearTimeout(tBulle);
+    tBulle = setTimeout(function () { bulle.style.display = "none"; }, 3500);
+  }
+  function pulser(on) { btn.classList.toggle("pulse", !!on); }
 
   function visible(id) { var e = document.getElementById(id); return !!(e && e.offsetParent !== null); }
   function pickerVisible(key) { var e = document.getElementById("lvl-" + key); return !!(e && e.style.display !== "none" && e.offsetParent !== null); }
 
-  /* Quelle phrase pour l'ecran actuel ? */
+  /* Quelle aide pour l'etape actuelle ? */
   function phrasesEcran() {
-    if (visible("screen-dashboard")) return [P.menu];
-    if (visible("screen-general")) return pickerVisible("general") ? [P.niveau] : [P.theme, P.micro];
-    if (visible("screen-wolof")) return pickerVisible("wolof") ? [P.niveau] : [P.theme, P.micro];
-    if (visible("screen-business")) return [P.theme, P.micro];
+    if (visible("dii-passage")) return { sig: "passage", l: [P.passage] };
+    if (visible("screen-dashboard")) return { sig: "menu", l: [P.menu] };
+    if (visible("screen-general") || visible("screen-wolof")) {
+      var key = visible("screen-general") ? "general" : "wolof";
+      if (pickerVisible(key)) return { sig: key + ":niveau", l: [P.niveau] };
+      if (document.getElementById("step-" + key)) return { sig: key + ":theme", l: [P.theme] };
+      return { sig: key + ":mots", l: [P.micro] };
+    }
+    if (visible("screen-business")) {
+      return visible("business-content") ? { sig: "biz:mots", l: [P.micro] } : { sig: "biz:theme", l: [P.theme] };
+    }
     if (visible("screen-test-simulation")) {
-      return visible("exam-grid") ? [P.examen] : [P.micro];
+      if (visible("exam-grid")) return { sig: "exam:liste", l: [P.examen] };
+      if (visible("exam-tests")) return { sig: "exam:tests", l: [P.test] };
+      return { sig: "exam:live", l: [P.micro] };
     }
     return null;
   }
 
-  btn.onclick = function () { var l = phrasesEcran(); if (l) dire(l); };
+  btn.onclick = function () { var e = phrasesEcran(); try { localStorage.setItem("diisoo_aide_vu", "1"); } catch (x) {} if (e) dire(e.l); };
 
+  /* ---------- declenchement automatique ---------- */
+  var geste = 0;
+  ["pointerdown", "touchstart", "click", "keydown"].forEach(function (ev) {
+    window.addEventListener(ev, function () { geste = Date.now(); }, true);
+  });
+  var MAXAUTO = 5;
+  function compteurs() { try { return JSON.parse(localStorage.getItem("diisoo_aide_n") || "{}") || {}; } catch (e) { return {}; } }
+  function ecrire(o) { try { localStorage.setItem("diisoo_aide_n", JSON.stringify(o)); } catch (e) {} }
+
+  var derniere = "";
   setInterval(function () {
-    var l = phrasesEcran();
-    btn.style.display = l ? "flex" : "none";
-  }, 500);
+    var e = phrasesEcran();
+    btn.style.display = e ? "flex" : "none";
+    if (!e) { derniere = ""; return; }
+    if (e.sig === derniere) return;
+    derniere = e.sig;
+    var recent = Date.now() - geste < 3000;
+    var c = compteurs(), n = c[e.sig] || 0;
+    if (e.sig === "passage") return;
+    if (recent && n < MAXAUTO) {
+      c[e.sig] = n + 1; ecrire(c);
+      var sig = e.sig;
+      setTimeout(function () { var x = phrasesEcran(); if (x && x.sig === sig) dire(x.l); }, 250);
+    } else if (!recent) {
+      /* pas de geste recent (ouverture de l'app) : le navigateur bloque le son, on attire l'oeil */
+      var vu = false; try { vu = !!localStorage.getItem("diisoo_aide_vu"); } catch (x) {}
+      if (!vu || n < MAXAUTO) pulser(true);
+    }
+  }, 350);
 
-  /* Bouton 🔊 sur chaque niveau */
+  /* ---------- 🔊 sur chaque niveau ---------- */
   var NIV = [P.debutant, P.inter, P.avance];
   function equiper() {
     var btns = document.querySelectorAll(".lvl-btn");
@@ -91,26 +193,11 @@
   }
   try { new MutationObserver(equiper).observe(document.body, { childList: true, subtree: true }); equiper(); } catch (e) {}
 
-  /* Niveau verrouille : on explique quoi faire */
+  /* Niveau verrouille (si le test de passage n'est pas charge) */
   document.addEventListener("click", function (ev) {
     var b = ev.target.closest && ev.target.closest(".lvl-btn.lock");
     if (b && !ev.target.closest(".aide-ic")) dire([P.verrou]);
   }, true);
-
-  /* Parle tout seul a l'ouverture d'un menu (une fois par session) */
-  var deja = {};
-  function auto(nom, cle, phrases) {
-    var o = window[nom];
-    if (typeof o !== "function") return;
-    window[nom] = function () {
-      var r = o.apply(this, arguments);
-      if (!deja[cle]) { deja[cle] = true; setTimeout(function () { dire(phrases); }, 500); }
-      return r;
-    };
-  }
-  auto("openGeneralModule", "general", [P.niveau]);
-  auto("openWolofModule", "wolof", [P.niveau]);
-  auto("startTestSimulation", "examens", [P.examen]);
 
   /* Prepare les voix en arriere-plan pour que la premiere ecoute soit immediate */
   setTimeout(function () {
@@ -119,4 +206,6 @@
       if (typeof prefetchVoix === "function") prefetchVoix(liste, "wo");
     } catch (e) {}
   }, 6000);
+
+  window.DiisooAideWolof.dire = function (cle) { if (P[cle]) dire([P[cle]]); };
 })();
