@@ -1,0 +1,30 @@
+name: Veille des formats d'examens
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Créer l'étiquette
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh label create veille-examens --color F3A94E --description "Un format d'examen a peut-être changé" || true
+      - name: Vérifier les sources officielles
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node veille-formats.mjs
+      - name: Enregistrer l'état
+        run: |
+          git config user.name "diisoo-veille"
+          git config user.email "veille@diisoo.sn"
+          git add veille-formats-etat.json
+          git diff --staged --quiet || (git commit -m "veille formats : état mis à jour" && git push)
