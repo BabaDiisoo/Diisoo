@@ -1,16 +1,19 @@
 {
-  "schema": 1,
+  "schema": 2,
   "mis_a_jour": "2026-11-02",
-  "note": "Registre des formats d'examens. Pour suivre un changement officiel, on modifie ce fichier seulement : le moteur diisoo-exams2.js lit les tâches, les durées et les banques d'items ici. Aucun code à toucher.",
+  "note": "Registre des formats d'examens. Pour suivre un changement officiel, on modifie ce fichier seulement : le moteur diisoo-exams2.js lit les tâches, les durées et les banques d'items ici. Les tests sont originaux (créés pour Diisoo), construits sur le format publié de chaque examen. Aucun sujet officiel n'est copié.",
   "examens": {
     "toefl": {
       "nom": "TOEFL iBT Speaking",
       "court": "TOEFL",
       "format": "2026",
       "verifie_le": "2026-11-02",
-      "niveau_confiance": "tiers",
-      "sources": ["https://www.myspeakingscore.com/toefl-speaking-2026"],
-      "resume": "2 tâches, 11 questions, environ 10 minutes : 7 phrases à écouter et répéter, puis 4 questions d'entretien.",
+      "confiance": "Deux tâches et 11 questions (7 + 4) confirmées par ETS. Les durées de réponse viennent de sites de préparation.",
+      "sources": [
+        "https://www.ets.org/toefl/test-takers/ibt/about/content/speaking.html",
+        "https://www.ets.org/content/dam/ets-india/pdfs/toefl/toefl-ibt-test-specifications-2026.pdf"
+      ],
+      "resume": "2 tâches, 11 questions, environ 8 minutes : 7 phrases à écouter et répéter, puis 4 questions d'entretien sur la vie universitaire.",
       "taches": [
         { "id": "repeat", "type": "repeat", "titre": "Écoute et répète", "nb": 7, "prep_s": 0, "rep_s": 12,
           "consigne": "Tu entends une phrase une seule fois. Répète-la le plus exactement possible." },
@@ -19,53 +22,193 @@
       ],
       "tests": [
         { "id": "campus", "titre": "Campus et études",
-          "repeat": [
-            "The library is open.",
-            "Please take a seat.",
-            "The professor will return your papers on Friday.",
-            "Students can borrow up to five books at a time.",
-            "The cafeteria closes earlier than usual this week.",
-            "If you want to join the club, you should sign up before the meeting begins.",
-            "Although the lecture was long, most students agreed that it was very useful."
-          ],
-          "question": [
-            "Tell me about the place where you live.",
-            "What do you usually do on weekends?",
-            "How do you prefer to learn something new?",
-            "What kind of food do you enjoy cooking or eating?"
-          ] },
+          "repeat": ["The library is open.", "Please take a seat.", "The professor will return your papers on Friday.", "Students can borrow up to five books at a time.", "The cafeteria closes earlier than usual this week.", "If you want to join the club, you should sign up before the meeting begins.", "Although the lecture was long, most students agreed that it was very useful."],
+          "question": ["What is your favorite subject to study?", "Some students prefer to study alone, while others prefer to study in groups. Which do you prefer, and why?", "Explain why it is important for students to get enough sleep.", "Tell me about a time when you worked with other people to finish a task."] },
         { "id": "ville", "titre": "Ville et transport",
-          "repeat": [
-            "The train is late.",
-            "Two tickets, please.",
-            "The new market opens near the bus station tomorrow.",
-            "Many people in my town travel by motorbike.",
-            "You can pay with cash or with your phone.",
-            "Because the road was closed, we had to find another way to get to work.",
-            "She told me that the shop would deliver the order as soon as it was ready."
-          ],
-          "question": [
-            "How do you usually get to work or school?",
-            "Describe a person who helps you often.",
-            "What is your favorite season, and why?",
-            "Do you prefer to shop online or in a store?"
-          ] },
+          "repeat": ["The train is late.", "Two tickets, please.", "The new market opens near the bus station tomorrow.", "Many people in my town travel by motorbike.", "You can pay with cash or with your phone.", "Because the road was closed, we had to find another way to get to work.", "She told me that the shop would deliver the order as soon as it was ready."],
+          "question": ["What kind of place do you like to study in?", "Do you think universities should require all students to learn a second language? Why or why not?", "Explain how technology has changed the way students learn.", "Tell me about a time when you had to learn something quickly."] },
         { "id": "travail", "titre": "Travail et apprentissage",
-          "repeat": [
-            "Please sit down.",
-            "My phone is off.",
-            "The meeting starts at nine in the morning.",
-            "I would like to practice English every day.",
-            "Our teacher gave us a lot of homework this week.",
-            "When the internet is slow, I download the lessons and study offline.",
-            "Learning a new language takes time, but regular practice makes it much easier."
-          ],
-          "question": [
-            "What is something you learned recently?",
-            "Tell me about your job or your studies.",
-            "How do you relax after a busy day?",
-            "What do you like about your neighborhood?"
-          ] }
+          "repeat": ["Please sit down.", "My phone is off.", "The meeting starts at nine in the morning.", "I would like to practice English every day.", "Our teacher gave us a lot of homework this week.", "When the internet is slow, I download the lessons and study offline.", "Learning a new language takes time, but regular practice makes it much easier."],
+          "question": ["What time of day do you study best?", "Is it better to take notes by hand or on a computer? Give your opinion.", "Explain why many students join clubs or sports teams.", "What do you think will happen to classrooms in twenty years?"] }
+      ]
+    },
+
+    "toeic": {
+      "nom": "TOEIC Speaking",
+      "court": "TOEIC",
+      "format": "11 questions",
+      "verifie_le": "2026-11-02",
+      "confiance": "Format publié par ETS (11 questions, temps de préparation et de réponse).",
+      "sources": ["https://www.ets.org/toeic/about/speaking-writing.html"],
+      "resume": "11 questions : 2 lectures à voix haute, 2 photos, 3 réponses à des questions, 3 réponses avec un document, 1 opinion.",
+      "taches": [
+        { "id": "ra", "type": "readaloud", "titre": "Lire un texte à voix haute", "nb": 2, "prep_s": 45, "rep_s": 45, "banque": "readaloud",
+          "consigne": "Lis le texte en silence pendant la préparation, puis lis-le à voix haute." },
+        { "id": "pic", "type": "describe", "titre": "Décrire une photo", "nb": 2, "prep_s": 45, "rep_s": 30, "banque": "describe",
+          "consigne": "Décris la photo en détail : les personnes, le lieu, ce qu'elles font." },
+        { "id": "q15", "type": "question", "titre": "Répondre à des questions", "nb": 2, "prep_s": 3, "rep_s": 15, "banque": "q15",
+          "consigne": "Tu entends la question une fois. Tu as 3 secondes pour penser, puis 15 secondes pour répondre." },
+        { "id": "q30", "type": "question", "titre": "Répondre à une question", "nb": 1, "prep_s": 3, "rep_s": 30, "banque": "q30",
+          "consigne": "Tu as 3 secondes pour penser, puis 30 secondes pour répondre." },
+        { "id": "info", "type": "info", "titre": "Répondre avec un document", "nb": 3, "lecture_s": 45, "banque": "info",
+          "reps": [15, 15, 30], "prep_s": 3,
+          "consigne": "Lis le document pendant 45 secondes, puis réponds à 3 questions." },
+        { "id": "opinion", "type": "prompt", "titre": "Donner son opinion", "nb": 1, "prep_s": 45, "rep_s": 60, "banque": "opinion", "lue": true,
+          "consigne": "Prépare ton opinion pendant 45 secondes, puis parle pendant 60 secondes. Donne des raisons et des exemples." }
+      ],
+      "tests": [
+        { "id": "bureau", "titre": "Bureau et voyage",
+          "readaloud": ["Good morning, everyone, and welcome to the monthly staff meeting. Today we will review last month's sales results and discuss the schedule for the new product launch. After the presentation, please take a few minutes to complete the feedback form on your desk.", "Attention, passengers on flight two one four to Dakar. Boarding will begin in ten minutes at gate twelve. Please have your passport and boarding pass ready, and remember that each passenger may carry only one small bag into the cabin."],
+          "describe": [{ "scene": "office" }, { "scene": "airport" }],
+          "q15": ["Imagine that an English company is doing a survey about shopping habits. How often do you go shopping for food?", "Where do you usually buy your clothes, and why?"],
+          "q30": ["What do you like or dislike about shopping online?"],
+          "info": [{ "doc": { "titre": "Conference schedule · Thursday, May 8 · City Hotel, Room B", "lignes": ["9:00  Registration", "9:30  Opening speech: Ms. Diallo", "10:30  Workshop: Customer Service", "12:00  Lunch", "1:30  Panel: Digital Payments", "3:30  Closing remarks"] },
+                     "questions": ["Who gives the opening speech?", "Where will the conference take place?", "I would like to know what is planned for the afternoon. Could you describe the afternoon program?"] }],
+          "opinion": ["Some people prefer to work in a team. Others prefer to work alone. Which do you prefer, and why? Give reasons and examples to support your opinion."] },
+        { "id": "clients", "titre": "Clients et emploi",
+          "readaloud": ["Thank you for calling Baobab Electronics. Our store is open from nine to six, Monday to Saturday. If you know the extension of the person you wish to speak with, please dial it now. Otherwise, please stay on the line and an assistant will help you.", "Welcome to the Dakar Business Fair. This year, more than two hundred companies will present their products. Visitors can pick up a free map at the entrance, and lunch will be served in the main hall from noon until two."],
+          "describe": [{ "scene": "shop" }, { "scene": "cafe" }],
+          "q15": ["Imagine that a radio station is conducting a survey about how people travel to work. How do you usually get to work or school?", "What is the most difficult part of your daily trip?"],
+          "q30": ["Would you like to change the way you travel? Why or why not?"],
+          "info": [{ "doc": { "titre": "Interview schedule · Candidate: Awa Ndiaye · Monday, June 3", "lignes": ["9:00  Welcome by Human Resources", "9:30  Interview with the manager", "10:30  Office tour", "11:30  Lunch with the team", "1:00  Skills test", "2:30  Final meeting"] },
+                     "questions": ["Who will welcome the candidate?", "What time is the interview with the manager?", "Could you tell me everything that will happen in the morning?"] }],
+          "opinion": ["Do you agree or disagree with the following statement? It is better to work for a small company than for a large company. Give reasons for your opinion."] }
+      ]
+    },
+
+    "cambridge_a2": {
+      "groupe": "Cambridge", "bouton": "A2 Key",
+      "nom": "Cambridge A2 Key · Speaking",
+      "court": "Cambridge A2 Key",
+      "format": "A2 Key",
+      "verifie_le": "2026-11-02",
+      "confiance": "Parties et durées d'après Cambridge English. L'examen se passe à deux candidats avec un examinateur : Diisoo l'adapte pour un candidat seul.",
+      "sources": ["https://www.cambridgeenglish.org/Images/561336-key-preliminary-revisions-speaking.pdf"],
+      "resume": "Partie 1 : entretien (informations personnelles, sujets familiers). Partie 2 : discussion autour d'images. Version pour un seul candidat.",
+      "taches": [
+        { "id": "p1", "type": "question", "titre": "Partie 1 · Entretien", "nb": 6, "prep_s": 0, "rep_s": 20, "banque": "p1",
+          "consigne": "L'examinateur pose une question. Réponds en une ou deux phrases." },
+        { "id": "p2", "type": "describe", "titre": "Partie 2 · Discussion", "nb": 2, "prep_s": 5, "rep_s": 40, "banque": "p2",
+          "consigne": "Regarde l'image et réponds à la question. Dis ce que tu aimes ou n'aimes pas, et pourquoi." }
+      ],
+      "tests": [
+        { "id": "a2-1", "titre": "Famille et loisirs",
+          "p1": ["What is your name?", "Where do you live?", "What do you usually do in the evening?", "Tell me about your family.", "What do you like to do at the weekend?", "Tell me about your best friend."],
+          "p2": [{ "scene": "family", "consigne": "Look at the picture. Do you like spending time with your family at home? Say why." }, { "scene": "beach", "consigne": "Look at the picture. Would you like to spend a holiday at the beach? Say why or why not." }] },
+        { "id": "a2-2", "titre": "Ville et achats",
+          "p1": ["How old are you?", "What do you do during the day?", "What food do you like?", "Tell me about the place where you live.", "How do you travel to the market?", "What did you do yesterday?"],
+          "p2": [{ "scene": "market", "consigne": "Look at the picture. Do you like going to the market? Say why." }, { "scene": "bus", "consigne": "Look at the picture. Do you like travelling by bus? Say why or why not." }] }
+      ]
+    },
+
+    "cambridge_b1": {
+      "groupe": "Cambridge", "bouton": "B1 Preliminary",
+      "nom": "Cambridge B1 Preliminary · Speaking",
+      "court": "Cambridge B1 Preliminary",
+      "format": "B1 Preliminary",
+      "verifie_le": "2026-11-02",
+      "confiance": "4 parties d'après Cambridge English. L'examen se passe à deux candidats avec un examinateur : Diisoo l'adapte pour un candidat seul.",
+      "sources": ["https://www.cambridgeenglish.org/Images/561336-key-preliminary-revisions-speaking.pdf"],
+      "resume": "4 parties : entretien, description d'une photo, tâche de discussion, questions de discussion. Version pour un seul candidat.",
+      "taches": [
+        { "id": "p1", "type": "question", "titre": "Partie 1 · Entretien", "nb": 6, "prep_s": 0, "rep_s": 20, "banque": "p1",
+          "consigne": "L'examinateur pose une question personnelle. Réponds en une ou deux phrases." },
+        { "id": "p2", "type": "describe", "titre": "Partie 2 · Une photo", "nb": 1, "prep_s": 0, "rep_s": 60, "banque": "p2",
+          "consigne": "Parle pendant environ une minute : ce que tu vois, où cela se passe, ce que les gens font et ce qu'ils ressentent." },
+        { "id": "p3", "type": "prompt", "titre": "Partie 3 · Tâche de discussion", "nb": 1, "prep_s": 15, "rep_s": 90, "banque": "p3", "lue": true,
+          "consigne": "Lis la situation, puis parle seul comme si tu discutais avec un ami : compare les idées et choisis la meilleure." },
+        { "id": "p4", "type": "question", "titre": "Partie 4 · Discussion", "nb": 4, "prep_s": 0, "rep_s": 30, "banque": "p4",
+          "consigne": "Donne ton avis avec une raison et un exemple." }
+      ],
+      "tests": [
+        { "id": "b1-1", "titre": "Voyages et loisirs",
+          "p1": ["What is your name and where do you come from?", "Tell me about your daily routine.", "What do you enjoy doing in your free time?", "Tell me about a place you like to visit.", "What kind of music do you listen to?", "Do you prefer to stay at home or go out at the weekend?"],
+          "p2": [{ "scene": "beach", "consigne": "Talk about the photo: where are the people, what are they doing, and why do you think they chose this place?" }],
+          "p3": ["Your friend wants to plan a birthday party. He can have it at home, in a restaurant, or at the beach. Talk about each idea and say which one is best."],
+          "p4": ["Do you think it is important to take holidays? Why?", "Some people like travelling to other countries. Others prefer to stay in their own country. What do you think?", "How can young people find good places to spend their free time?", "Is it better to spend holidays with family or with friends?"] },
+        { "id": "b1-2", "titre": "Études et travail",
+          "p1": ["Tell me about your studies or your job.", "What do you like most about your town?", "Who helps you most in your life?", "What do you usually eat for lunch?", "Tell me about something you learned recently.", "What do you plan to do next weekend?"],
+          "p2": [{ "scene": "classroom", "consigne": "Talk about the photo: where are the people, what are they doing, and how do you think they feel?" }],
+          "p3": ["Your cousin wants to learn English quickly. He can take evening classes, study with an app, or practice with friends. Talk about each idea and say which one is best."],
+          "p4": ["Is it easy to learn a language? Why or why not?", "Do you think people learn better in a group or alone?", "How can technology help people who want to learn?", "What advice would you give to someone who starts a new job?"] }
+      ]
+    },
+
+    "duolingo": {
+      "nom": "Duolingo English Test · Speaking",
+      "court": "Duolingo",
+      "format": "2026",
+      "verifie_le": "2026-11-02",
+      "confiance": "Types de questions et durées d'après le guide officiel des questions 2026 de Duolingo.",
+      "sources": ["https://englishtest-static.duolingo.com/media/resources/Questions%20Guide%202026.pdf"],
+      "resume": "4 tâches orales : décrire une photo, lire puis parler, parole interactive (6 questions), échantillon oral.",
+      "taches": [
+        { "id": "photo", "type": "describe", "titre": "Parle de la photo", "nb": 1, "prep_s": 20, "rep_s": 90, "banque": "photo",
+          "consigne": "Regarde la photo pendant 20 secondes, puis décris ce que tu vois pendant 90 secondes." },
+        { "id": "lire", "type": "prompt", "titre": "Lis, puis parle", "nb": 1, "prep_s": 20, "rep_s": 90, "banque": "lire",
+          "consigne": "Lis la question. La question reste affichée pendant que tu parles." },
+        { "id": "inter", "type": "question", "titre": "Parole interactive", "nb": 6, "prep_s": 0, "rep_s": 35, "banque": "inter",
+          "consigne": "Chaque question n'est dite qu'une fois. Réponds pendant 35 secondes." },
+        { "id": "echant", "type": "prompt", "titre": "Échantillon oral (non noté)", "nb": 1, "prep_s": 30, "rep_s": 180, "banque": "echant",
+          "consigne": "Dans le vrai test, cet échantillon n'est pas noté mais peut être envoyé aux universités. Parle jusqu'à 3 minutes." }
+      ],
+      "tests": [
+        { "id": "det-1", "titre": "Marché et cuisine",
+          "photo": [{ "scene": "market" }],
+          "lire": ["Describe a time when you helped someone. What did you do, and how did that person feel?"],
+          "inter": ["Do you like to cook at home?", "What is your favorite meal, and why?", "Who usually cooks in your family?", "Do you prefer to buy food at a market or in a supermarket?", "What can you buy at a market in your town?", "How is shopping today different from shopping in the past?"],
+          "echant": ["Talk about a person who is important to you. Explain why this person matters in your life."] },
+        { "id": "det-2", "titre": "Transport et technologie",
+          "photo": [{ "scene": "bus" }],
+          "lire": ["Do you think technology makes life easier or more complicated? Explain your opinion with examples."],
+          "inter": ["How do you usually travel to school or work?", "Is traffic a problem in your town?", "What do you use your phone for every day?", "Do you prefer to call friends or send messages?", "What new technology would you like to try?", "How could public transport be improved in your city?"],
+          "echant": ["Describe a trip you remember well. Where did you go, who was with you, and what happened?"] }
+      ]
+    },
+
+    "pte": {
+      "nom": "PTE Academic · Speaking",
+      "court": "PTE",
+      "format": "Academic",
+      "verifie_le": "2026-11-02",
+      "confiance": "Tâches, temps de préparation et durées d'après la page officielle de Pearson. Cette version est plus courte que le vrai examen (moins d'items par tâche).",
+      "sources": ["https://www.pearsonpte.com/articles/part-1-english-speaking-and-writing-test-introduction.html"],
+      "resume": "6 tâches : présentation, lecture à voix haute, répétition de phrases, description de graphiques, résumé d'un cours, réponses courtes. Version courte.",
+      "taches": [
+        { "id": "intro", "type": "prompt", "titre": "Présentation personnelle", "nb": 1, "prep_s": 25, "rep_s": 30, "banque": "intro",
+          "consigne": "Lis la consigne pendant 25 secondes, puis présente-toi pendant 30 secondes. Cette tâche n'est pas notée dans le vrai test." },
+        { "id": "ra", "type": "readaloud", "titre": "Lire à voix haute", "nb": 4, "prep_s": 35, "rep_s": 40, "banque": "readaloud",
+          "consigne": "Lis le texte en silence, puis lis-le à voix haute juste après la préparation." },
+        { "id": "rs", "type": "repeat", "titre": "Répéter une phrase", "nb": 6, "prep_s": 0, "rep_s": 15, "banque": "repeat",
+          "consigne": "Écoute la phrase une fois, puis répète tous les mots dans le même ordre." },
+        { "id": "di", "type": "describe", "titre": "Décrire un graphique", "nb": 3, "prep_s": 25, "rep_s": 40, "banque": "describe",
+          "consigne": "Observe le graphique pendant 25 secondes, puis décris-le pendant 40 secondes : sujet, tendance, chiffres importants." },
+        { "id": "rl", "type": "retell", "titre": "Résumer un cours", "nb": 2, "prep_s": 10, "rep_s": 40, "banque": "retell",
+          "consigne": "Écoute le court cours une seule fois. Tu as 10 secondes, puis 40 secondes pour le résumer avec tes mots." },
+        { "id": "asq", "type": "short", "titre": "Réponse courte", "nb": 8, "prep_s": 0, "rep_s": 10, "banque": "short",
+          "consigne": "Réponds avec un mot ou quelques mots seulement." }
+      ],
+      "tests": [
+        { "id": "pte-1", "titre": "Études et société",
+          "intro": ["Introduce yourself. Include your name, where you are from, what you study or do for work, and your interests."],
+          "readaloud": ["Climate change is one of the greatest challenges of our time. Rising temperatures affect farming, water supplies, and coastal cities. Governments and communities must work together to reduce pollution and protect natural resources for future generations.", "The history of trade in West Africa goes back many centuries. Merchants crossed the desert with salt, gold, and cloth, and their journeys connected cities, cultures, and languages across a vast region.", "Regular exercise improves both physical and mental health. Studies show that people who walk for thirty minutes a day sleep better, feel less stress, and have more energy to complete their daily tasks.", "Modern libraries offer much more than books. They provide free internet access, quiet study rooms, and workshops on skills such as writing and computer use, which makes them valuable centers for learning in every community."],
+          "repeat": ["The deadline for the assignment is next Wednesday.", "Please submit your application before the end of the month.", "The museum is closed on Mondays and public holidays.", "Our professor suggested that we read the first chapter again.", "Many students find it difficult to study when it is very hot.", "The new library, which opened last year, has become a popular place for group work."],
+          "describe": [
+            { "graphique": { "titre": "Mobile phone users (millions, example data)", "labels": ["2019", "2020", "2021", "2022", "2023"], "valeurs": [14, 15, 16, 18, 19] } },
+            { "graphique": { "titre": "Average rainfall by month (mm, example data)", "labels": ["Jun", "Jul", "Aug", "Sep", "Oct"], "valeurs": [40, 120, 200, 150, 50] } },
+            { "graphique": { "titre": "Study hours per week by subject (example data)", "labels": ["English", "Maths", "History", "Science"], "valeurs": [6, 4, 2, 3] } }],
+          "retell": [
+            { "t": "Good morning. Today I want to talk about how plants grow. Plants need three things: water, light and air. Farmers in Senegal often plant seeds just before the rainy season because the soil is wet and the sun is strong. When a plant does not get enough water, its leaves turn yellow, and it grows more slowly. Some farmers use drip irrigation to give each plant exactly the water it needs.", "cles": ["plants", "water", "light", "rainy season", "farmers", "drip irrigation"] },
+            { "t": "Many universities now offer online courses. Students can watch lectures at any time and study at their own speed. This is useful for people who work during the day. However, online learning also has a problem: some students feel alone and lose motivation. For this reason, many courses include group chats and weekly video meetings with the teacher.", "cles": ["online courses", "own speed", "work", "alone", "motivation", "group chats"] }],
+          "short": [
+            { "q": "What do you call the person who teaches you at school?", "a": ["teacher", "professor"] },
+            { "q": "What season comes after summer?", "a": ["autumn", "fall"] },
+            { "q": "Is the sun a star or a planet?", "a": ["star"] },
+            { "q": "How many days are there in a week?", "a": ["seven", "7"] },
+            { "q": "What do you use to write on paper?", "a": ["pen", "pencil"] },
+            { "q": "Which is colder, ice or steam?", "a": ["ice"] },
+            { "q": "What do you call a place where you borrow books?", "a": ["library"] },
+            { "q": "What month comes before March?", "a": ["february"] }] }
       ]
     }
   }
