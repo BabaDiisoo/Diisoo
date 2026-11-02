@@ -11,7 +11,7 @@
     "diisoo-pron-business.js", "diisoo-ios-audio.js", "diisoo-direct.js", "diisoo-orga.js", "diisoo-wamic.js",
     "diisoo-aide-wolof.js", "diisoo-biz.js", "diisoo-passage.js", "diisoo-stable.js", "diisoo-tourisme.js",
     "diisoo-son.js", "diisoo-objectif.js", "diisoo-installer.js", "diisoo-assistant.js", "diisoo-coach2.js",
-    "diisoo-parrainage.js", "diisoo-exams2.js"
+    "diisoo-parrainage.js", "diisoo-exams2.js", "diisoo-premium.js"
   ];
 
   function charger(i) {
