@@ -306,6 +306,44 @@
       "Explain why many students join clubs or sports teams.",
       "What do you think will happen to classrooms in twenty years?"
      ]
+    },
+    {
+     "id": "sante",
+     "titre": "Santé et sport",
+     "repeat": [
+      "Please close the door.",
+      "The gym opens early.",
+      "Doctors recommend that adults exercise three times a week.",
+      "Many students feel tired when they study late at night.",
+      "The clinic on campus offers free advice to every student.",
+      "If you have a fever, you should rest at home and drink plenty of water.",
+      "Even though the exam was difficult, the students who prepared carefully passed it easily."
+     ],
+     "question": [
+      "What sport or activity do you enjoy most?",
+      "Some people exercise in the morning, and others exercise in the evening. Which do you prefer, and why?",
+      "Explain why healthy food is important for students.",
+      "Tell me about a time when you felt proud of something you did."
+     ]
+    },
+    {
+     "id": "techno",
+     "titre": "Technologie et communication",
+     "repeat": [
+      "The Wi-Fi is down.",
+      "Turn off your phone.",
+      "The university launched a new app for registering for classes.",
+      "Most students send messages to their friends every day.",
+      "Online lectures allow people to study from any place in the world.",
+      "When the battery is low, I always charge my phone before I leave the house.",
+      "Although technology makes communication faster, some people believe that it reduces face-to-face conversations."
+     ],
+     "question": [
+      "How often do you use the internet?",
+      "Do you think students should be allowed to use phones in class? Why or why not?",
+      "Explain how social media can help or harm students.",
+      "What do you think will happen to books in the future?"
+     ]
     }
    ],
    "remplace_ancien": true
@@ -528,6 +566,99 @@
      "opinion": [
       "Some people think that it is important to continue learning after finishing school or university. Do you agree or disagree? Give reasons and examples to support your opinion."
      ]
+    },
+    {
+     "id": "hotel",
+     "titre": "Hôtel et transport",
+     "readaloud": [
+      "Welcome to the Savannah Hotel. Breakfast is served every morning from six thirty to ten in the garden restaurant. If you need extra towels or a late checkout, please call the front desk at any time, and our staff will be happy to help you.",
+      "Good evening, passengers. The train to Thiès has been delayed by twenty minutes because of heavy rain. We apologize for the inconvenience, and we thank you for your patience. Please listen for further announcements on the platform."
+     ],
+     "describe": [
+      {
+       "scene": "bus"
+      },
+      {
+       "scene": "market"
+      }
+     ],
+     "q15": [
+      "Imagine that a travel agency is conducting a survey. How often do you travel outside your city?",
+      "Do you prefer to travel by bus, by train, or by plane?"
+     ],
+     "q30": [
+      "What are the advantages of staying in a hotel instead of staying with friends or family?"
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Hotel booking confirmation · Savannah Hotel",
+        "lignes": [
+         "Guest: Mr. Ba",
+         "Arrival: Friday, June 6",
+         "Departure: Monday, June 9",
+         "Room: 204, double bed",
+         "Breakfast: included",
+         "Parking: 3,000 FCFA per night",
+         "Airport pickup: not included"
+        ]
+       },
+       "questions": [
+        "What is the guest's room number?",
+        "How much does parking cost?",
+        "I need to plan my trip. Can you tell me everything about the arrival and the departure?"
+       ]
+      }
+     ],
+     "opinion": [
+      "Some people think it is better to take a vacation at home, and others think it is better to travel abroad. Which do you prefer? Give reasons and examples."
+     ]
+    },
+    {
+     "id": "livraison",
+     "titre": "Commerce et livraison",
+     "readaloud": [
+      "Thank you for shopping at Teranga Market. This week, all fresh fruit is thirty percent off, and customers who spend more than twenty thousand francs will receive a free reusable bag. Our home delivery service is available every day until six o'clock.",
+      "Attention all employees. The monthly safety training will take place on Wednesday at ten o'clock in the conference room. Attendance is required, so please arrange your schedules in advance and bring your identification cards."
+     ],
+     "describe": [
+      {
+       "scene": "kitchen"
+      },
+      {
+       "scene": "tech"
+      }
+     ],
+     "q15": [
+      "Imagine that a company is doing a survey about online shopping. How often do you buy things online?",
+      "What kind of products do you usually buy?"
+     ],
+     "q30": [
+      "What would make you stop buying from a company? Explain your reasons."
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Delivery schedule · Teranga Express · Tuesday",
+        "lignes": [
+         "8:00  Pickup at warehouse",
+         "9:30  Deliveries: Plateau district",
+         "11:30  Deliveries: Almadies",
+         "1:00  Lunch break",
+         "2:00  Deliveries: Mermoz",
+         "4:30  Return to warehouse"
+        ]
+       },
+       "questions": [
+        "What time do the deliveries in Almadies begin?",
+        "When is the lunch break?",
+        "Could you describe the schedule for the afternoon, please?"
+       ]
+      }
+     ],
+     "opinion": [
+      "Do you agree or disagree with the following statement? Companies should offer free delivery for all orders. Give reasons for your opinion."
+     ]
     }
    ],
    "remplace_ancien": true
@@ -608,6 +739,50 @@
       {
        "scene": "bus",
        "consigne": "Look at the picture. Do you like travelling by bus? Say why or why not."
+      }
+     ]
+    },
+    {
+     "id": "a2-3",
+     "titre": "Nourriture et école",
+     "p1": [
+      "What's your favourite food?",
+      "Do you cook at home?",
+      "What do you eat for breakfast?",
+      "Tell me about your school or your work.",
+      "What subjects do you like?",
+      "Who do you talk to every day?"
+     ],
+     "p2": [
+      {
+       "scene": "kitchen",
+       "consigne": "Look at the picture. Do you like cooking? Say why or why not."
+      },
+      {
+       "scene": "classroom",
+       "consigne": "Look at the picture. Do you like studying in a class with many students? Say why."
+      }
+     ]
+    },
+    {
+     "id": "a2-4",
+     "titre": "Santé et voyage",
+     "p1": [
+      "Where do you go on holiday?",
+      "Do you like travelling?",
+      "How do you feel today?",
+      "What do you do when you are ill?",
+      "What sport do you like?",
+      "Tell me about your last birthday."
+     ],
+     "p2": [
+      {
+       "scene": "gym",
+       "consigne": "Look at the picture. Do you like doing sport? Say why or why not."
+      },
+      {
+       "scene": "airport",
+       "consigne": "Look at the picture. Would you like to travel by plane? Say why."
       }
      ]
     }
@@ -722,6 +897,60 @@
       "Do you think people learn better in a group or alone?",
       "How can technology help people who want to learn?",
       "What advice would you give to someone who starts a new job?"
+     ]
+    },
+    {
+     "id": "b1-3",
+     "titre": "Technologie et amis",
+     "p1": [
+      "Tell me about your best friend.",
+      "What do you use your phone for?",
+      "How do you keep in touch with friends who live far away?",
+      "What did you do last weekend?",
+      "Do you enjoy using computers?",
+      "What would you like to do next year?"
+     ],
+     "p2": [
+      {
+       "scene": "tech",
+       "consigne": "Talk about the photo: where are the people, what are they doing, and why do you think they are using technology?"
+      }
+     ],
+     "p3": [
+      "Your friend wants to buy a present for his sister's birthday. He can buy a book, some jewellery, or a phone cover. Talk about each idea and say which one is best."
+     ],
+     "p4": [
+      "Do you think it is better to give a present or to give money? Why?",
+      "How important is it to remember friends' birthdays?",
+      "Some people spend a lot of time on their phones. What do you think about that?",
+      "What was the best present you ever received?"
+     ]
+    },
+    {
+     "id": "b1-4",
+     "titre": "Santé et sport",
+     "p1": [
+      "Tell me about the sports you like.",
+      "How often do you exercise?",
+      "What do you do to stay healthy?",
+      "Do you prefer to play sports or to watch them?",
+      "Who do you exercise with?",
+      "What do you eat before a match or a long walk?"
+     ],
+     "p2": [
+      {
+       "scene": "gym",
+       "consigne": "Talk about the photo: where are the people, what are they doing, and how do you think they feel?"
+      }
+     ],
+     "p3": [
+      "Your cousin wants to get fit. He can join a gym, run in the park every morning, or play football with friends. Talk about each idea and say which one is best."
+     ],
+     "p4": [
+      "Is it important to do sport at school? Why?",
+      "What are the benefits of doing sport with other people?",
+      "Do you think healthy food is more expensive than unhealthy food?",
+      "What can people do to stay active when they have a busy life?"
      ]
     }
    ],
@@ -847,6 +1076,52 @@
      ],
      "echant": [
       "Talk about a skill you would like to learn and explain why it would be useful in your life."
+     ]
+    },
+    {
+     "id": "det-4",
+     "titre": "Travail et études",
+     "photo": [
+      {
+       "scene": "office"
+      }
+     ],
+     "lire": [
+      "Talk about a time when you learned something new at work or at school. What did you learn, and how did it help you?"
+     ],
+     "inter": [
+      "What do you do for a living?",
+      "What do you like most about your job or your studies?",
+      "Do you work better alone or with other people?",
+      "How do you manage your time during a busy week?",
+      "What skill is the most important in your field?",
+      "Where do you see yourself in five years?"
+     ],
+     "echant": [
+      "Describe your daily routine and explain which part of your day you enjoy the most."
+     ]
+    },
+    {
+     "id": "det-5",
+     "titre": "Fêtes et voyages",
+     "photo": [
+      {
+       "scene": "beach"
+      }
+     ],
+     "lire": [
+      "What is your favorite holiday or festival? Explain why it is special for you and how you celebrate it."
+     ],
+     "inter": [
+      "Do you prefer holidays by the sea or in the mountains?",
+      "Who do you usually travel with?",
+      "What is the best meal you have eaten on a trip?",
+      "How do you prepare before a long journey?",
+      "Which festival do you celebrate with your family?",
+      "Would you like to live in another country? Why or why not?"
+     ],
+     "echant": [
+      "Talk about a place you would like to visit and explain what you would do there."
      ]
     }
    ],
@@ -1240,6 +1515,322 @@
         "flashlight",
         "lamp",
         "candle"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "pte-3",
+     "titre": "Santé et environnement",
+     "intro": [
+      "Introduce yourself. Say where you live, what you do, and what you would like to achieve this year."
+     ],
+     "readaloud": [
+      "A balanced diet includes fruit, vegetables, protein, and whole grains. Doctors advise people to drink enough water, reduce sugar, and eat at regular times so that the body receives the energy it needs throughout the day.",
+      "Deforestation is the permanent removal of trees from large areas. It destroys the homes of many animals, increases carbon in the air, and often leads to soil erosion, which makes farming more difficult for local communities.",
+      "Mobile banking has changed how many Africans manage their money. With a simple phone, people can send payments, save small amounts, and pay bills without traveling to a bank, which saves both time and transport costs.",
+      "Scientists believe that learning a second language improves memory and concentration. Students who speak two languages often switch between tasks more easily and may keep their minds active longer as they grow older."
+     ],
+     "repeat": [
+      "The laboratory will be closed during the holidays.",
+      "Please attach your photograph to the application form.",
+      "Residents are asked to save water during the dry season.",
+      "The professor explained that the experiment had failed for several reasons.",
+      "Many farmers have started using solar energy to pump water into their fields.",
+      "Although the results were unexpected, the researchers decided to repeat the study next semester."
+     ],
+     "describe": [
+      {
+       "graphique": {
+        "titre": "Daily water use per person (litres, example data)",
+        "labels": [
+         "Drinking",
+         "Cooking",
+         "Washing",
+         "Cleaning"
+        ],
+        "valeurs": [
+         3,
+         8,
+         25,
+         14
+        ]
+       }
+      },
+      {
+       "graphique": {
+        "titre": "Students by faculty (example data)",
+        "labels": [
+         "Science",
+         "Arts",
+         "Law",
+         "Business"
+        ],
+        "valeurs": [
+         320,
+         210,
+         150,
+         280
+        ]
+       }
+      },
+      {
+       "graphique": {
+        "titre": "Average temperature by month (°C, example data)",
+        "labels": [
+         "Jan",
+         "Mar",
+         "May",
+         "Jul"
+        ],
+        "valeurs": [
+         24,
+         27,
+         33,
+         30
+        ]
+       }
+      }
+     ],
+     "retell": [
+      {
+       "t": "Good morning. Today I would like to talk about mobile money. Mobile money lets people send and receive money using only a phone number. It is especially useful in rural areas where banks are far away. Small traders can accept payments easily, and families can send support to relatives in minutes. However, users must protect their secret code to avoid fraud.",
+       "cles": [
+        "mobile money",
+        "phone number",
+        "rural areas",
+        "banks",
+        "traders",
+        "payments",
+        "secret code",
+        "fraud"
+       ]
+      },
+      {
+       "t": "Let us consider why bees are important. Bees carry pollen from flower to flower, which helps plants produce fruit and seeds. Without bees, many crops such as mangoes and cashew nuts would produce much less. Unfortunately, pesticides and the loss of natural habitats are reducing bee populations. Farmers can help by planting flowers and using fewer chemicals.",
+       "cles": [
+        "bees",
+        "pollen",
+        "fruit",
+        "crops",
+        "mangoes",
+        "pesticides",
+        "habitats",
+        "flowers"
+       ]
+      }
+     ],
+     "short": [
+      {
+       "q": "What do you call the doctor who treats children?",
+       "a": [
+        "pediatrician",
+        "paediatrician"
+       ]
+      },
+      {
+       "q": "What is the largest ocean on Earth?",
+       "a": [
+        "pacific"
+       ]
+      },
+      {
+       "q": "How many hours are there in a day?",
+       "a": [
+        "twenty four",
+        "24",
+        "twenty-four"
+       ]
+      },
+      {
+       "q": "What do you use to measure temperature?",
+       "a": [
+        "thermometer"
+       ]
+      },
+      {
+       "q": "What do you call a person who writes books?",
+       "a": [
+        "author",
+        "writer"
+       ]
+      },
+      {
+       "q": "What do you call the money you get for your work?",
+       "a": [
+        "salary",
+        "wage",
+        "wages",
+        "pay"
+       ]
+      },
+      {
+       "q": "Which planet do we live on?",
+       "a": [
+        "earth"
+       ]
+      },
+      {
+       "q": "What is the opposite of expensive?",
+       "a": [
+        "cheap",
+        "inexpensive"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "pte-4",
+     "titre": "Voyage et affaires",
+     "intro": [
+      "Introduce yourself. Mention your hobbies, your studies or job, and why you want to take this test."
+     ],
+     "readaloud": [
+      "International trade allows countries to exchange goods and services that they cannot produce cheaply on their own. Port cities benefit greatly, because ships, warehouses, and transport companies create thousands of jobs for local workers.",
+      "Public libraries were originally built to give ordinary citizens access to knowledge. Today they also offer digital resources, children's programs, and quiet spaces where people can prepare for exams or search for employment.",
+      "Renewable energy comes from sources that do not run out, such as the sun and the wind. Although installing solar panels can be expensive at first, families usually save money in the long term because sunlight is free.",
+      "Effective time management is an essential skill for students and workers alike. By making a daily list, setting priorities, and avoiding distractions, people can complete more tasks and feel less stress at the end of the day."
+     ],
+     "repeat": [
+      "Applications must be submitted before the deadline.",
+      "The seminar on marketing starts at half past two.",
+      "Students are encouraged to ask questions during the lecture.",
+      "The company has decided to open a new branch in the capital.",
+      "Because the harvest was excellent, local prices dropped significantly this year.",
+      "The manager asked everyone to review the report carefully before the meeting."
+     ],
+     "describe": [
+      {
+       "graphique": {
+        "titre": "Tourists visiting a country (thousands, example data)",
+        "labels": [
+         "2019",
+         "2020",
+         "2021",
+         "2022"
+        ],
+        "valeurs": [
+         1000,
+         300,
+         500,
+         900
+        ]
+       }
+      },
+      {
+       "graphique": {
+        "titre": "Monthly expenses of a student (thousand FCFA, example data)",
+        "labels": [
+         "Rent",
+         "Food",
+         "Transport",
+         "Books"
+        ],
+        "valeurs": [
+         40,
+         30,
+         15,
+         10
+        ]
+       }
+      },
+      {
+       "graphique": {
+        "titre": "Mobile data use per day (minutes, example data)",
+        "labels": [
+         "Mon",
+         "Tue",
+         "Wed",
+         "Thu",
+         "Fri"
+        ],
+        "valeurs": [
+         90,
+         110,
+         100,
+         130,
+         150
+        ]
+       }
+      }
+     ],
+     "retell": [
+      {
+       "t": "Welcome to today's lecture on teamwork. In a good team, each person has a clear role and everyone listens to the others. Meetings should be short and focused, and tasks must have deadlines. When conflicts appear, team members should talk calmly and look for a solution together. Teams that communicate well finish their projects faster and with better results.",
+       "cles": [
+        "teamwork",
+        "role",
+        "listens",
+        "meetings",
+        "deadlines",
+        "conflicts",
+        "solution",
+        "projects"
+       ]
+      },
+      {
+       "t": "Today we will discuss how markets set prices. When many people want a product but there is only a small quantity, the price goes up. When there is too much of a product and few buyers, the price goes down. Farmers know this well, because the price of tomatoes drops during harvest season when the market is full.",
+       "cles": [
+        "markets",
+        "prices",
+        "quantity",
+        "buyers",
+        "farmers",
+        "tomatoes",
+        "harvest"
+       ]
+      }
+     ],
+     "short": [
+      {
+       "q": "What do you call the room where you sleep?",
+       "a": [
+        "bedroom"
+       ]
+      },
+      {
+       "q": "What is the capital city of Senegal?",
+       "a": [
+        "dakar"
+       ]
+      },
+      {
+       "q": "How many minutes are there in an hour?",
+       "a": [
+        "sixty",
+        "60"
+       ]
+      },
+      {
+       "q": "What do you use to cut paper?",
+       "a": [
+        "scissors"
+       ]
+      },
+      {
+       "q": "Which day comes before Sunday?",
+       "a": [
+        "saturday"
+       ]
+      },
+      {
+       "q": "What do you call a person who flies a plane?",
+       "a": [
+        "pilot"
+       ]
+      },
+      {
+       "q": "What is the color of the sky on a clear day?",
+       "a": [
+        "blue"
+       ]
+      },
+      {
+       "q": "What do you call the place where you buy medicine?",
+       "a": [
+        "pharmacy",
+        "drugstore",
+        "chemist"
        ]
       }
      ]
