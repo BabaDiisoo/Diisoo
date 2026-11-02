@@ -1,0 +1,45 @@
+{
+ "ielts|https://ielts.idp.com/about/life-skills-a1": {
+  "hash": "51b1857a2b2abc78006513bde76611853d9d3bed29c105b617f243e87c5593be",
+  "vu": "2026-11-02",
+  "echecs": 0
+ },
+ "ielts|https://southsudan.britishcouncil.org/whats-ielts-life-skills-test": {
+  "hash": "10d047b2df2472e97a46046d754597c858717cd6e5587c1822abdbd9cabd4ebf",
+  "vu": "2026-11-02",
+  "echecs": 0
+ },
+ "toefl|https://www.ets.org/toefl/test-takers/ibt/about/content/speaking.html": {
+  "echecs": 1,
+  "erreur": "fetch failed"
+ },
+ "toefl|https://www.ets.org/content/dam/ets-india/pdfs/toefl/toefl-ibt-test-specifications-2026.pdf": {
+  "hash": "72196bd328b2e2eb7e08ee031382fa174b1b80ca23b3073b9bd8743c6f39289f",
+  "vu": "2026-11-02",
+  "echecs": 0
+ },
+ "toeic|https://www.ets.org/toeic/about/speaking-writing.html": {
+  "echecs": 1,
+  "erreur": "fetch failed"
+ },
+ "cambridge_a2|https://www.cambridgeenglish.org/Images/561336-key-preliminary-revisions-speaking.pdf": {
+  "hash": "de79f3914bdf43fc3f300149718be8955a60581f3fdbcf89cec6880d25f128e6",
+  "vu": "2026-11-02",
+  "echecs": 0
+ },
+ "cambridge_b1|https://www.cambridgeenglish.org/Images/561336-key-preliminary-revisions-speaking.pdf": {
+  "hash": "de79f3914bdf43fc3f300149718be8955a60581f3fdbcf89cec6880d25f128e6",
+  "vu": "2026-11-02",
+  "echecs": 0
+ },
+ "duolingo|https://englishtest-static.duolingo.com/media/resources/Questions%20Guide%202026.pdf": {
+  "hash": "3020356df5e6f280968d71200954920087c2a7c0bad04fde019f2617acf319dc",
+  "vu": "2026-11-02",
+  "echecs": 0
+ },
+ "pte|https://www.pearsonpte.com/articles/part-1-english-speaking-and-writing-test-introduction.html": {
+  "hash": "14ed05018e44857d14613741d67d6a8756c32d3913ce7f7e8d967427fa17412a",
+  "vu": "2026-11-02",
+  "echecs": 0
+ }
+}
