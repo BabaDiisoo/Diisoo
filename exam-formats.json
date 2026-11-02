@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "mis_a_jour": "2026-11-02",
+  "note": "Registre des formats d'examens. Pour suivre un changement officiel, on modifie ce fichier seulement : le moteur diisoo-exams2.js lit les tâches, les durées et les banques d'items ici. Aucun code à toucher.",
+  "examens": {
+    "toefl": {
+      "nom": "TOEFL iBT Speaking",
+      "court": "TOEFL",
+      "format": "2026",
+      "verifie_le": "2026-11-02",
+      "niveau_confiance": "tiers",
+      "sources": ["https://www.myspeakingscore.com/toefl-speaking-2026"],
+      "resume": "2 tâches, 11 questions, environ 10 minutes : 7 phrases à écouter et répéter, puis 4 questions d'entretien.",
+      "taches": [
+        { "id": "repeat", "type": "repeat", "titre": "Écoute et répète", "nb": 7, "prep_s": 0, "rep_s": 12,
+          "consigne": "Tu entends une phrase une seule fois. Répète-la le plus exactement possible." },
+        { "id": "interview", "type": "question", "titre": "Entretien", "nb": 4, "prep_s": 0, "rep_s": 45,
+          "consigne": "Tu entends une question une seule fois, puis tu réponds pendant 45 secondes, sans temps de préparation." }
+      ],
+      "tests": [
+        { "id": "campus", "titre": "Campus et études",
+          "repeat": [
+            "The library is open.",
+            "Please take a seat.",
+            "The professor will return your papers on Friday.",
+            "Students can borrow up to five books at a time.",
+            "The cafeteria closes earlier than usual this week.",
+            "If you want to join the club, you should sign up before the meeting begins.",
+            "Although the lecture was long, most students agreed that it was very useful."
+          ],
+          "question": [
+            "Tell me about the place where you live.",
+            "What do you usually do on weekends?",
+            "How do you prefer to learn something new?",
+            "What kind of food do you enjoy cooking or eating?"
+          ] },
+        { "id": "ville", "titre": "Ville et transport",
+          "repeat": [
+            "The train is late.",
+            "Two tickets, please.",
+            "The new market opens near the bus station tomorrow.",
+            "Many people in my town travel by motorbike.",
+            "You can pay with cash or with your phone.",
+            "Because the road was closed, we had to find another way to get to work.",
+            "She told me that the shop would deliver the order as soon as it was ready."
+          ],
+          "question": [
+            "How do you usually get to work or school?",
+            "Describe a person who helps you often.",
+            "What is your favorite season, and why?",
+            "Do you prefer to shop online or in a store?"
+          ] },
+        { "id": "travail", "titre": "Travail et apprentissage",
+          "repeat": [
+            "Please sit down.",
+            "My phone is off.",
+            "The meeting starts at nine in the morning.",
+            "I would like to practice English every day.",
+            "Our teacher gave us a lot of homework this week.",
+            "When the internet is slow, I download the lessons and study offline.",
+            "Learning a new language takes time, but regular practice makes it much easier."
+          ],
+          "question": [
+            "What is something you learned recently?",
+            "Tell me about your job or your studies.",
+            "How do you relax after a busy day?",
+            "What do you like about your neighborhood?"
+          ] }
+      ]
+    }
+  }
+}
