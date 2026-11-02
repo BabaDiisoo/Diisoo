@@ -455,6 +455,7 @@
   /* ---------- boutons dans la liste des tests ---------- */
   function brancher() {
     var box = $("exam-tests");
+    if (box && box.style.display === "none") delete box.dataset.auto;
     if (!box || box.style.display === "none" || box.querySelector(".fx-reel")) return;
     var titre = box.querySelector(".et-titre");
     if (!titre) return;
@@ -473,7 +474,7 @@
       b.onclick = function () { ouvrir(k); };
       ref.parentNode.insertBefore(b, ref.nextSibling); ref = b;
     });
-    if (seul && !box.dataset.auto) { box.dataset.auto = "1"; setTimeout(function () { ouvrir(seul); }, 250); }
+    if (seul && cles.length === 1 && !box.dataset.auto) { box.dataset.auto = "1"; setTimeout(function () { ouvrir(seul); }, 250); }
   }
   var plan = false;
   try {

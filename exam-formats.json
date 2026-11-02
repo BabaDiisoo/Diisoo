@@ -307,7 +307,8 @@
       "What do you think will happen to classrooms in twenty years?"
      ]
     }
-   ]
+   ],
+   "remplace_ancien": true
   },
   "toeic": {
    "nom": "TOEIC Speaking",
@@ -528,7 +529,8 @@
       "Some people think that it is important to continue learning after finishing school or university. Do you agree or disagree? Give reasons and examples to support your opinion."
      ]
     }
-   ]
+   ],
+   "remplace_ancien": true
   },
   "cambridge_a2": {
    "groupe": "Cambridge",
@@ -609,7 +611,8 @@
       }
      ]
     }
-   ]
+   ],
+   "remplace_ancien": true
   },
   "cambridge_b1": {
    "groupe": "Cambridge",
@@ -721,7 +724,8 @@
       "What advice would you give to someone who starts a new job?"
      ]
     }
-   ]
+   ],
+   "remplace_ancien": true
   },
   "duolingo": {
    "nom": "Duolingo English Test · Speaking",
@@ -845,7 +849,8 @@
       "Talk about a skill you would like to learn and explain why it would be useful in your life."
      ]
     }
-   ]
+   ],
+   "remplace_ancien": true
   },
   "pte": {
    "nom": "PTE Academic · Speaking",
@@ -1239,7 +1244,8 @@
       }
      ]
     }
-   ]
+   ],
+   "remplace_ancien": true
   }
  }
 }
