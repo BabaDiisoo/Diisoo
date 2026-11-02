@@ -1,8 +1,10 @@
-/* diisoo-exams2.js v2 : « Format réel » des examens, piloté par un registre
+/* diisoo-exams2.js v3 : « Format réel » des examens, piloté par un registre
    Lit exam-formats.json : pour chaque examen, les tâches (type, nombre, préparation, durée de réponse) et les tests.
    Types gérés : repeat (écoute et répète), readaloud (lire à voix haute), question (réponse orale chronométrée),
    prompt (consigne affichée), describe (photo ou graphique), info (document puis questions),
    retell (résumer un cours entendu), short (réponse courte).
+   v3 : fin de parole détectée par le micro, correction et suggestions (diisoo-oral.js), passage automatique à la question suivante,
+   import des anciens thèmes IELTS (TEST_BANK) enrichis d'un enregistrement et de la partie « poser des questions ».
    Pour suivre un changement du vrai examen, on modifie exam-formats.json seulement : aucun code à toucher. */
 (function () {
   "use strict";
@@ -74,14 +76,28 @@
     "#dii-fmt .fm-doc b{display:block;margin-bottom:4px}" +
     "#dii-fmt .fm-img{margin:8px 0;border-radius:12px;overflow:hidden}#dii-fmt .fm-img svg{width:100%;height:auto;display:block}" +
     "#dii-fmt .fm-src{font-size:11px;color:#8C8064;text-align:center;margin-top:10px;line-height:1.4}";
-  document.head.appendChild(st);
+  var st2 = document.createElement("style");
+  st2.textContent =
+    "@keyframes fmpulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}" +
+    "#dii-fmt .fm-ico.on{animation:fmpulse 1.1s infinite}" +
+    "#dii-fmt .fm-live{min-height:42px;background:#141A2B;border:1px dashed #2a3350;border-radius:12px;padding:8px 10px;font-size:14px;color:#E4DCC9;line-height:1.35;margin:8px 0;text-align:center}" +
+    "#dii-fmt .fm-sug{background:#141A2B;border:1px solid #1E2740;border-radius:12px;padding:10px;margin:8px 0;font-size:13px;line-height:1.5;color:#E4DCC9}" +
+    "#dii-fmt .fm-sug b{display:block;color:#F3A94E;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}" +
+    "#dii-fmt .fm-sug small{display:block;color:#A69C86;font-size:11px;margin:1px 0 6px}" +
+    "#dii-fmt .fm-auto{height:6px;border-radius:99px;background:#141A2B;overflow:hidden;margin:10px 0 4px}" +
+    "#dii-fmt .fm-auto i{display:block;height:100%;width:100%;background:#25D366}" +
+    "#exam-tests.fx-seul>*:not(.et-retour):not(.fx-reel){display:none!important}";
+  document.head.appendChild(st2);
 
   /* ---------- lecteur ---------- */
-  var ov = null, jeton = 0, minuteur = null, ecoute = null;
+  var ov = null, jeton = 0, minuteur = null, ecoute = null, vadT = null, autoT = null;
+  function AUTO() { try { return localStorage.getItem("diisoo_fmt_auto") !== "0"; } catch (e) { return true; } }
 
   function nettoyer() {
     jeton++;
     if (minuteur) { clearInterval(minuteur); minuteur = null; }
+    if (vadT) { clearInterval(vadT); vadT = null; }
+    if (autoT) { clearTimeout(autoT); autoT = null; }
     if (ecoute) { try { ecoute.stop(); } catch (e) {} ecoute = null; }
     try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
   }
@@ -123,6 +139,34 @@
   }
 
   /* ---------- accueil d'un examen ---------- */
+  var BANAL = /^(about|every|there|their|would|which|always|because|today|while|other|these|those|after|before|again|really|still|three|small)$/;
+  function clesDe(txt) {
+    var vus = {}, out = [];
+    (txt.match(/[A-Za-z']{5,}|\b\d+\b/g) || []).forEach(function (w) {
+      var k = w.toLowerCase(); if (BANAL.test(k) || vus[k]) return; vus[k] = 1; if (out.length < 8) out.push(k);
+    });
+    return out;
+  }
+  function enrichir() {
+    try {
+      Object.keys(REG.examens).forEach(function (k) {
+        var ex = REG.examens[k];
+        if (!ex.import_ancien || !ex.enregistrements || ex._imp || typeof TEST_BANK === "undefined") return;
+        ex._imp = true;
+        TEST_BANK.forEach(function (t) {
+          var rec = ex.enregistrements[t.id];
+          if (!rec || ex.tests.some(function (x) { return x.id === "ie-" + t.id; })) return;
+          var ph = {}; (t.phases || []).forEach(function (p) { ph[p.id] = p.questions || []; });
+          var th = t.topic;
+          ex.tests.push({ id: "ie-" + t.id, titre: th,
+            p1a: (ph["1a"] || []).slice(0, 3), p1b: (ph["1b"] || []).slice(0, 5),
+            ask: ["Ask the examiner three questions about this theme: " + th + ". Start with What, Where or Do you."],
+            p2a: [{ t: rec, cles: clesDe(rec) }],
+            p2b: (ph["2b"] || []).slice(0, 2).concat(["What do you like or dislike about " + th.toLowerCase().replace(/&/g, "and") + "? Explain why."]) });
+        });
+      });
+    } catch (e) { console.warn("[diisoo] import examens", e); }
+  }
   function nbReel(ex, t) {
     var test = ex.tests[0], b = test[t.banque || t.type];
     if (t.type === "info") return t.nb;
@@ -130,6 +174,7 @@
   }
   function ouvrir(cle) {
     var ex = REG && REG.examens && REG.examens[cle]; if (!ex) return;
+    enrichir();
     nettoyer();
     var box = cadre((ex.bouton ? ex.groupe + " " + ex.bouton : ex.court) + " · Format réel");
     box.appendChild(el("h3", null, ex.nom));
@@ -141,12 +186,16 @@
     });
     var libre = false; try { libre = typeof aAcces === "function" && aAcces("premium"); } catch (e) {}
     ex.tests.forEach(function (t, i) {
-      var verrou = i >= 1 && !libre;
+      var verrou = i >= (ex.gratuits || 1) && !libre;
       bouton(box, (verrou ? "⭐ " : "▶ ") + "Test " + (i + 1) + " : " + t.titre, function () {
         if (verrou) { try { toast("Ce test est réservé aux abonnés Premium."); openPremium(); } catch (e) {} return; }
         lancer(cle, i);
       }, verrou ? "s l" : "");
     });
+    var ba = bouton(box, "⚙️ Passage automatique à la question suivante : " + (AUTO() ? "OUI" : "NON"), function () {
+      try { localStorage.setItem("diisoo_fmt_auto", AUTO() ? "0" : "1"); } catch (e) {}
+      ba.textContent = "⚙️ Passage automatique à la question suivante : " + (AUTO() ? "OUI" : "NON");
+    }, "s");
     box.appendChild(el("div", "fm-src", ex.confiance + " Dernière vérification : " + ex.verifie_le + ". Les tests sont créés par Diisoo. Diisoo n'est pas affilié aux organismes d'examen."));
   }
 
@@ -202,22 +251,48 @@
       bouton(box, "Je suis prêt", go, "s");
     }
 
+    function silenceMs(t) {
+      if (t.silence_ms) return t.silence_ms;
+      if (t.type === "short") return 1200;
+      if (t.type === "repeat") return 1500;
+      if (t.type === "question") return t.rep_s <= 20 ? 1800 : (t.rep_s <= 30 ? 2200 : 2800);
+      return 3000;
+    }
     function parler(e) {
       var box = cadre(e.titre, e.prog);
-      box.appendChild(el("div", "fm-ico", "🎙️"));
-      box.appendChild(el("p", "fm-p", "Parle maintenant. Le micro écoute."));
+      var ico = el("div", "fm-ico on", "🎙️"); box.appendChild(ico);
+      var etat = el("p", "fm-p", "Parle maintenant. Quand tu as fini, fais une pause : je passe à la suite."); box.appendChild(etat);
       support(box, e);
-      var debut = Date.now(), fini = false;
+      var live = el("div", "fm-live", "…"); box.appendChild(live);
+      var debut = Date.now(), fini = false, aParle = false, dernier = Date.now();
+      var seuil = silenceMs(e.tache), minM = e.tache.type === "repeat" ? 2 : 1, attenteMax = Math.min(9000, e.tache.rep_s * 600);
       function terminer(res) {
         if (fini || e.mon !== jeton) return; fini = true;
+        if (vadT) { clearInterval(vadT); vadT = null; }
         arret(); ecoute = null;
         resultat(e, res || { text: "" }, (Date.now() - debut) / 1000);
       }
+      function stopper(raison) {
+        if (fini) return;
+        if (raison === "silence") { son("ferme"); etat.textContent = "✅ J'ai compris que tu as fini."; ico.className = "fm-ico"; ico.textContent = "✅"; }
+        else if (raison === "rien") { etat.textContent = "Je n'ai rien entendu."; }
+        try { ecoute && ecoute.stop(); } catch (x) {}
+      }
       son("ouvre");
       try {
-        ecoute = startListening("en-US", e.tache.rep_s * 1000, true);
+        ecoute = startListening("en-US", e.tache.rep_s * 1000, true, function (t) {
+          dernier = Date.now();
+          if (!aParle && mots(t).length >= minM) aParle = true;
+          live.textContent = "« " + t + " »";
+        });
         ecoute.promise.then(terminer, function () { terminer({ text: "" }); });
       } catch (err) { terminer({ text: "", unsupported: true }); }
+      if (vadT) clearInterval(vadT);
+      vadT = setInterval(function () {
+        var now = Date.now();
+        if (aParle && now - dernier >= seuil) stopper("silence");
+        else if (!aParle && now - debut >= attenteMax) stopper("rien");
+      }, 200);
       compte(box, e.tache.rep_s, function () { try { ecoute && ecoute.stop(); } catch (x) {} });
       bouton(box, "✋ J'ai fini", function () { try { ecoute && ecoute.stop(); } catch (x) {} }, "s");
     }
@@ -267,7 +342,37 @@
     function resultat(e, res, dur) {
       var ty = e.tache.type, k = e.k, box = cadre(e.titre, (k + 1) / etapes.length);
       var texte = (res.text || "").trim(), cible = texteDe(e);
-      var suite = function () { bouton(box, k + 1 < etapes.length ? "Suivant ›" : "Voir mon bilan", function () { etape(k + 1); }); };
+      var suite = function (nSug, manuel) {
+        var dernierEl = k + 1 >= etapes.length, mon2 = jeton, ms = Math.min(11000, 4500 + 1500 * (nSug || 0));
+        var go = function () { if (mon2 !== jeton) return; if (autoT) { clearTimeout(autoT); autoT = null; } etape(k + 1); };
+        bouton(box, dernierEl ? "Voir mon bilan" : "Suivant ›", go);
+        if (AUTO() && !manuel) {
+          var bar = el("div", "fm-auto"), bi = el("i"); bar.appendChild(bi);
+          var msg = el("p", "fm-p", dernierEl ? "Ton bilan s'affiche dans quelques secondes." : "La question suivante arrive toute seule.");
+          box.appendChild(msg); box.appendChild(bar);
+          bi.style.transition = "width " + ms + "ms linear";
+          requestAnimationFrame(function () { requestAnimationFrame(function () { bi.style.width = "0%"; }); });
+          var pause = bouton(box, "⏸ Rester ici pour relire", function () { if (autoT) { clearTimeout(autoT); autoT = null; } bar.remove(); msg.remove(); pause.remove(); }, "s");
+          autoT = setTimeout(go, ms);
+        }
+      };
+      var conseils = function (libre) {
+        if (!window.DiisooOral) return 0;
+        var a = window.DiisooOral.analyser(texte, texteDe(e), { duree: e.tache.rep_s, ask: e.tache.id === "ask", court: ty === "short", libre: libre });
+        var n = 0;
+        if (a.corrections.length) {
+          var c = el("div", "fm-sug"); c.appendChild(el("b", null, "À corriger"));
+          a.corrections.forEach(function (f) { var d = el("div"); d.innerHTML = "❌ <s>" + esc(f.avant) + "</s> → ✅ <b>" + esc(f.apres) + "</b><small>" + esc(f.note) + "</small>"; c.appendChild(d); n++; });
+          box.appendChild(c);
+        }
+        if (a.conseils.length) {
+          var g = el("div", "fm-sug"); g.appendChild(el("b", null, "Pour progresser"));
+          a.conseils.forEach(function (x) { g.appendChild(el("div", null, "💡 " + x)); n++; });
+          box.appendChild(g);
+        }
+        if (!n) box.appendChild(el("p", "fm-p", "👍 Rien à corriger sur cette réponse."));
+        return n;
+      };
       var rejouer = function () { bouton(box, "↻ Recommencer cette question", function () { var m = ++jeton; e.mon = m; ecouter(e); }, "s"); };
 
       if (res.unsupported) {
@@ -281,7 +386,7 @@
         box.appendChild(el("div", "fm-ico", "🤔"));
         box.appendChild(el("p", "fm-p", "Je n'ai rien entendu. Garde le téléphone près de la bouche."));
         noter(e, ty, 0, dur, 0);
-        suite(); rejouer(); return;
+        suite(0, true); rejouer(); return;
       }
       if (ty === "repeat" || ty === "readaloud") {
         var cmp = comparer(cible, texte);
@@ -293,14 +398,14 @@
         box.appendChild(el("p", "fm-p", "J'ai entendu : « " + texte + " »  (" + Math.round(cmp.score * 100) + " % des mots)"));
         son(cmp.score >= 0.8 ? "juste" : "reessaie");
         bouton(box, "🔊 Réécouter le modèle", function () { try { speak(cible, "en-US", 0.85); } catch (x) {} }, "s");
-        suite(); return;
+        suite(cmp.score >= 0.8 ? 0 : 1); return;
       }
       if (ty === "short") {
         var rep = mots(texte), bonnes = e.item.a || [], ok = bonnes.some(function (a) { return rep.indexOf(a.toLowerCase()) > -1; });
         bilan.courtes.push(ok ? 1 : 0);
         box.appendChild(el("div", "fm-ico", ok ? "✅" : "❌"));
         box.appendChild(el("p", "fm-p", ok ? "Bonne réponse." : "J'ai entendu : « " + texte + " ». Réponse attendue : " + bonnes.join(" ou ") + "."));
-        son(ok ? "juste" : "reessaie"); suite(); return;
+        son(ok ? "juste" : "reessaie"); suite(ok ? 0 : 1); return;
       }
       /* question, prompt, describe, retell : on mesure le volume de parole */
       var n = mots(texte).length, objectif = Math.round(e.tache.rep_s * 1.2);
@@ -314,8 +419,9 @@
         bilan.cles.push(trouves.length / e.item.cles.length);
         box.appendChild(el("p", "fm-p", "Idées clés retrouvées : " + trouves.length + " sur " + e.item.cles.length + " (" + e.item.cles.join(", ") + ")."));
       }
-      if (!plein) box.appendChild(el("p", "fm-p", "Astuce : ajoute une raison et un exemple (« because… », « for example… »)."));
-      suite();
+      var nS = conseils(ty !== "question");
+      if (!window.DiisooOral && !plein) box.appendChild(el("p", "fm-p", "Astuce : ajoute une raison et un exemple (« because… », « for example… »)."));
+      suite(nS);
     }
     function noter(e, ty, v, dur, n) {
       if (ty === "repeat" || ty === "readaloud") bilan.precision.push(v);
@@ -358,13 +464,16 @@
       var g = (REG.examens[k].groupe || REG.examens[k].court).toLowerCase();
       if (txt.indexOf(g) === 0) cles.push(k);
     });
-    var ref = titre;
+    var ref = titre, seul = null;
+    cles.forEach(function (k) { if (REG.examens[k].remplace_ancien) seul = k; });
+    if (seul) box.classList.add("fx-seul");
     cles.forEach(function (k) {
       var ex = REG.examens[k], b = el("button", "fx-reel"); b.type = "button";
       b.innerHTML = "🎯 Format réel " + esc(ex.bouton ? ex.groupe + " " + ex.bouton : ex.court) + "<small>Les mêmes tâches et les mêmes durées que l'examen</small>";
       b.onclick = function () { ouvrir(k); };
       ref.parentNode.insertBefore(b, ref.nextSibling); ref = b;
     });
+    if (seul && !box.dataset.auto) { box.dataset.auto = "1"; setTimeout(function () { ouvrir(seul); }, 250); }
   }
   var plan = false;
   try {
@@ -373,5 +482,5 @@
   } catch (e) {}
   charger().then(brancher);
 
-  window.DiisooExams2 = { version: 2, ouvrir: ouvrir, registre: function () { return REG; } };
+  window.DiisooExams2 = { version: 3, ouvrir: ouvrir, registre: function () { return REG; } };
 })();

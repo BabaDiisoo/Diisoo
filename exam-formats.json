@@ -13,7 +13,7 @@
     "https://ielts.idp.com/about/life-skills-a1",
     "https://southsudan.britishcouncil.org/whats-ielts-life-skills-test"
    ],
-   "resume": "Partie 1 : questions personnelles, sujets familiers, poser des questions. Partie 2 : écouter un enregistrement en prenant des notes, répondre, puis discuter du thème.",
+   "resume": "Partie 1 : questions personnelles, sujets familiers, poser des questions. Partie 2 : écouter un enregistrement en prenant des notes, répondre, puis discuter : décrire, donner ses préférences et les justifier, développer.",
    "taches": [
     {
      "id": "p1a",
@@ -184,7 +184,39 @@
       "Do you like walking in the park?"
      ]
     }
-   ]
+   ],
+   "remplace_ancien": true,
+   "import_ancien": true,
+   "gratuits": 3,
+   "enregistrements": {
+    "neighbours": "My name is Karim. I live in a house in Thiès. My neighbours are very kind. Every morning the old man next door says hello and gives me fresh bread. On Sundays we all eat lunch together in the street.",
+    "family": "Hello, I am Fatou. I have a big family. I live with my mother, my father and three brothers. My grandmother is seventy years old. On Sundays we visit her and we eat rice and fish together.",
+    "free-time": "My name is Peter. In my free time I like football. I play with my friends on Saturday afternoon. After the game we drink tea and talk. On Sunday I listen to music and read a book at home.",
+    "work": "Hello, my name is Sara. I work in a hospital. I start work at eight o'clock and I finish at four o'clock. I help sick people every day. I like my job because my colleagues are very friendly.",
+    "shopping": "I am John. Today I am at the market. I need rice, tomatoes and onions. The rice costs six hundred francs. The woman is nice and gives me a small gift. Then I pay and go home with my bags.",
+    "travel": "My name is Aminata. Next week I travel to Dakar by bus. The journey takes two hours. I take one small bag, my phone and some water. My cousin waits for me at the station. We will visit the sea together.",
+    "health": "Hello, this is Tom. Yesterday I had a headache and a fever. I went to the doctor in the morning. He gave me some medicine and said, drink a lot of water and rest. Today I feel much better.",
+    "food": "My name is Awa. My favourite food is chicken with rice. My mother cooks it on Fridays. We also eat fruit and drink fresh juice. I do not like very spicy food, but my brother loves it.",
+    "shopping_food": "I am Lisa. Every Saturday I buy food at the supermarket. This week I buy bread, milk, eggs and apples. The total is twelve pounds. I use my card to pay and put everything in a bag.",
+    "transport_travel": "Hello, I am Ibrahima. I go to work by bus. The bus stop is near my house. The bus comes at seven fifteen and the ticket costs two hundred francs. Sometimes the road is busy and I arrive late.",
+    "health_emergencies": "This is Emma. Last night my neighbour fell in the kitchen and hurt her arm. I called the ambulance and the number is nine nine nine. The ambulance arrived in ten minutes and took her to hospital.",
+    "family_reunion": "My name is Moussa. I live in London and my wife and two children live in Senegal. I miss them every day. I phone them on Sunday evening. I hope they come to London next year and live with me.",
+    "airport": "Hello, I am Daniel. I am at the airport. My flight to Paris leaves at ten thirty. I show my passport and my ticket at the desk. I give one big bag to the woman. Then I wait at gate number five.",
+    "hotel": "My name is Julie. I have a room at the hotel for three nights. The room has a bed, a shower and a television. Breakfast is at seven in the restaurant. The hotel is quiet and clean, and the staff are polite.",
+    "money": "I am Ousmane. I have fifty pounds in my wallet. I buy a book for ten pounds and a shirt for twenty pounds. The shop assistant gives me my change. I put the rest of the money in my bag.",
+    "clothes": "My name is Rose. Today it is cold, so I wear a warm jacket and long trousers. My brother wears a blue shirt and black shoes. On Fridays many people in my town wear traditional clothes.",
+    "friends": "Hello, I am Cheikh. I have a good friend called Paul. We study together and we play football on Saturdays. He is funny and always helps me. Next weekend we go to the cinema with two other friends.",
+    "phone": "My name is Lucy. I have a new phone. I use it to call my family and to send messages. I also take photos and look for information on the internet. I charge my phone every night.",
+    "jobs": "Hello, I am Mamadou. My father is a farmer and my mother is a teacher. My sister is a nurse and my brother is a driver. I want to be a mechanic. I like cars and I like to repair things.",
+    "restaurant": "I am Nina. Tonight I am in a restaurant with my family. The waiter brings the menu. I order grilled fish and a salad. My father orders chicken. The food is hot and delicious, and we pay at the end.",
+    "weekend": "My name is Ali. This weekend I am very busy. On Saturday morning I clean my room and wash my clothes. In the afternoon I visit my uncle. On Sunday I go to the beach with my friends and we play volleyball.",
+    "festivals": "Hello, I am Khady. My favourite festival is Tabaski. Before the festival we buy new clothes. On the day we pray, then we eat meat with our family and give food to poor people. It is a happy day.",
+    "farming": "I am Samba. I live in a village and I am a farmer. I grow millet and peanuts. I also have two cows and ten chickens. In the morning I give water to the animals. The rainy season is very important for my work.",
+    "bank": "My name is Grace. I go to the bank on Monday morning. I want to open an account, so I show my passport and fill in a form. Then I go to the post office to send a letter to my mother.",
+    "school": "Hello, I am Fatima. I study English at school three times a week. My teacher is kind and gives us homework. I practice new words every day. After school I read in the library and I ask questions.",
+    "home": "I am Mark. I live in a small flat on the second floor. There is one bedroom, a kitchen and a bathroom. The flat is warm and bright. I pay rent every month, and the landlord is a friendly man.",
+    "holidays": "My name is Mariama. I love the rainy season, but for holidays I prefer the sunny weather. Last summer I stayed at my aunt's house near the sea. It was hot, so we swam every afternoon and ate ice cream."
+   }
   },
   "toefl": {
    "nom": "TOEFL iBT Speaking",
