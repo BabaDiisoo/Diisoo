@@ -62,12 +62,12 @@
     if (palier && fait < palier) {
       var b = document.createElement("span");
       b.className = "pr-r"; b.setAttribute("role", "button"); b.style.lineHeight = "44px"; b.style.textAlign = "center";
-      b.textContent = "🎁 Réclamer ma récompense";
+      b.textContent = "🎁 Activée automatiquement. Un souci ? Écris-nous";
       b.onclick = function (ev) {
         ev.stopPropagation();
         var p = lire("diisoo_profile", {}) || {};
-        var m = "Bonjour Diisoo, j'ai invité " + n + " amis. Mon code : " + code() + (p.phone ? ". Mon numéro WhatsApp : " + p.phone : "") +
-          ". Je réclame : " + (palier >= 10 ? "le Pack Commerçants" : "1 mois Premium") + ".";
+        var m = "Bonjour Diisoo, ma récompense de parrainage n'est pas activée. J'ai invité " + n + " amis. Mon code : " + code() + (p.phone ? ". Mon numéro WhatsApp : " + p.phone : "") +
+          ". Récompense attendue : " + (palier >= 10 ? "le Pack Commerçants" : "1 mois Premium") + ".";
         window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(m), "_blank", "noopener");
         ecrire("diisoo_ref_reclame", palier);
         setTimeout(dessiner, 500);
@@ -87,6 +87,23 @@
   }
   try { new MutationObserver(function () { var e = $("ref-compteur"); if (e && !e.querySelector(".pr-b")) dessiner(); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
   setTimeout(dessiner, 1500);
+
+  /* ---------- lien code -> numéro : la récompense s'accorde alors toute seule ---------- */
+  function lier() {
+    try {
+      var pr = lire("diisoo_profile", {}) || {};
+      if (!pr.phone || typeof db === "undefined" || !db || lire("diisoo_ref_lie", "") === pr.phone + code()) return;
+      db.rpc("lier_code_parrain", { p_code: code(), p_whatsapp: pr.phone }).then(function (r) {
+        if (r && !r.error) {
+          ecrire("diisoo_ref_lie", pr.phone + code());
+          try { if (typeof majStatutAcces === "function") majStatutAcces(); } catch (e) {}
+        }
+      }, function () {});
+    } catch (e) {}
+  }
+  setTimeout(lier, 4000);
+  window.addEventListener("online", lier);
+  setInterval(function () { try { if (typeof majStatutAcces === "function" && nb() >= 3) majStatutAcces(); } catch (e) {} }, 60000);
 
   /* ---------- accueil de l'ami invité ---------- */
   setTimeout(function () {
