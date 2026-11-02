@@ -334,7 +334,7 @@
     if (bilan.precision.length) box.appendChild(el("div", "fm-tr", "Répétition et lecture : " + bilan.precision.filter(function (v) { return v >= 0.8; }).length + " / " + bilan.precision.length + " bien dites (" + Math.round(moy(bilan.precision) * 100) + " % des mots)."));
     if (bilan.courtes.length) box.appendChild(el("div", "fm-tr", "Réponses courtes : " + bilan.courtes.reduce(function (s, v) { return s + v; }, 0) + " / " + bilan.courtes.length + " justes."));
     if (bilan.oraux.length) box.appendChild(el("div", "fm-tr", "Réponses orales : " + bilan.oraux.length + " réponses, " + Math.round(moy(bilan.oraux.map(function (o) { return o.mots; }))) + " mots en moyenne (objectif conseillé : " + Math.round(moy(bilan.oraux.map(function (o) { return o.obj; }))) + ")."));
-    if (bilan.cles.length) box.appendChild(el("div", "fm-tr", "Résumés de cours : " + Math.round(moy(bilan.cles) * 100) + " % des idées clés retrouvées."));
+    if (bilan.cles.length) box.appendChild(el("div", "fm-tr", "Écoute et compréhension : " + Math.round(moy(bilan.cles) * 100) + " % des idées clés retrouvées."));
     box.appendChild(el("p", "fm-p", "Ce bilan compte les mots reconnus. Ce n'est pas une note officielle de l'examen."));
     try { if (typeof addXP === "function") addXP(8); if (typeof bumpDailyGoal === "function") bumpDailyGoal(1); } catch (e) {}
     try {
