@@ -24,8 +24,8 @@
       if (rms[i] > max) max = rms[i];
     }
     var total = data.length / rate;
-    var cap = 0.5 + 0.1 * lettres + (mots > 2 ? 0.2 * mots : 0);
-    var silenceMin = mots > 2 ? 30 : 15; /* 300 ms pour une phrase, 150 ms pour un mot */
+    var cap = 0.8 + 0.13 * lettres + (mots > 2 ? 0.3 * mots : 0);
+    var silenceMin = mots > 2 ? 45 : 25; /* 450 ms pour une phrase, 250 ms pour un mot */
     if (max <= 0) return total;
     var seuil = max * 0.06, debut = -1;
     for (i = 0; i < n; i++) { if (rms[i] > seuil) { debut = i; break; } }
@@ -35,7 +35,7 @@
       if (rms[i] <= seuil) {
         calme++;
         /* silence d'au moins 150 ms apres au moins 150 ms de voix */
-        if (calme >= silenceMin && (i - calme + 1 - debut) >= 15) { coupe = (i - calme + 1) * fen / rate + 0.06; break; }
+        if (calme >= silenceMin && (i - calme + 1 - debut) >= 20) { coupe = (i - calme + 1) * fen / rate + 0.2; break; }
       } else calme = 0;
     }
     var fin = coupe > 0 ? coupe : total;
