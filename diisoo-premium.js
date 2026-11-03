@@ -7,7 +7,7 @@
     plus90: "6 000 FCFA",
     plus365: "20 000 FCFA"
   };
-  var ETRANGER = "Depuis l'étranger : même offre en euros (environ 5 € / 12 € / 35 €), écris-nous sur WhatsApp.";
+  var ETRANGER = "🔒 Paiement sécurisé PayTech, depuis n'importe quel pays : Wave, Orange Money, Visa, Mastercard.";
 
   var NEUF = [
     { id: "plus30", icone: "⭐", titre: "Diisoo Plus · 30 jours", prix: PRIX.plus30, dispo: true,
@@ -57,11 +57,11 @@
     var box = document.getElementById("premium-offers");
     if (!box || enCours) return;
     if (box.querySelector(".dp-t")) return;
-    if (box.children.length < 4) return;
+    if (!box.children.length) return;
     enCours = true;
     try {
       box.innerHTML = "";
-             var g = el('<div style="font-size:14px;font-weight:800;color:#F6F1E7">🆓 Gratuit pour toujours</div>' +
+            var g = el('<div style="font-size:14px;font-weight:800;color:#F6F1E7">🆓 Gratuit pour toujours</div>' +
         '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin-top:4px">Leçons d\'anglais et de wolof, tourisme, coach vocal, 3 tests d\'examen, entraînement oral, objectifs, parrainage.</div>', "border-color:#25D366;margin-top:0");
       box.appendChild(g);
 
@@ -69,7 +69,7 @@
         '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin:4px 0 8px">Tout est débloqué : simulateur IELTS complet, tests de format réel (TOEFL, TOEIC, Cambridge, Duolingo, PTE), niveaux Intermédiaire et Avancé. Pas de renouvellement automatique.</div>' +
         '<div class="dp-seg" style="display:flex;gap:6px"></div>' +
         '<button type="button" class="dp-pay" style="margin-top:10px;' + BTN + '"></button>' +
-        '<div style="' + SOUS + '">Wave, Orange Money ou carte bancaire. Activation immédiate sur ton numéro.</div>');
+        '<div style="' + SOUS + '">Wave, Orange Money, Visa ou Mastercard, d\'où que tu sois. Activation immédiate sur ton numéro.</div>');
       var seg = plus.querySelector(".dp-seg"), pay = plus.querySelector(".dp-pay");
       function maj() {
         var d = DUREES.filter(function (x) { return x.id === choix; })[0];
@@ -92,7 +92,7 @@
       pay.onclick = function () { payer(choix); };
       maj();
       box.appendChild(plus);
-             var c = offre("commercants");
+            var c = offre("commercants");
       var pc = el('<div style="display:flex;justify-content:space-between;gap:8px"><div style="font-size:14px;font-weight:800;color:#F6F1E7">🧰 Pack Commerçants</div><div style="font-size:12px;font-weight:700;color:#F0906B;white-space:nowrap">' + (c && c.prix || "5 000 FCFA") + '</div></div>' +
         '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin:4px 0 8px">Anglais de tous les secteurs : pièces détachées, mode, électronique, import Chine. Achat unique, accès à vie.</div>' +
         '<button type="button" class="dp-pc" style="' + BTN + '">💳 Payer ' + (c && c.prix || "5 000 FCFA") + '</button>');
@@ -106,13 +106,13 @@
           '<span style="font-size:13px;color:#F6F1E7;font-weight:700">' + o.icone + " " + o.titre + '</span>' +
           '<span style="font-size:11px;color:#F0906B;white-space:nowrap">' + o.prix + ' ›</span></a>';
       }).join("");
-      box.appendChild(el('<div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#F3A94E">Avec l\'agence ABC-GLOBAL</div>' +
-        '<div style="font-size:11px;color:#A69C86;margin:2px 0 4px">Un accompagnement humain. Touche une ligne pour en parler sur WhatsApp.</div>' + rows));
+      box.appendChild(el('<div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#F3A94E">Services ABC-GLOBAL</div>' +
+        '<div style="font-size:11px;color:#A69C86;margin:2px 0 4px">Besoin d\'un accompagnement humain ? Touche une ligne.</div>' + rows));
 
       var f = document.createElement("div");
       f.className = "dp-t";
       f.style.cssText = "font-size:11px;color:#8C8064;line-height:1.5;margin:10px 2px 0;text-align:center";
-      f.innerHTML = ETRANGER + '<br><a href="https://wa.me/' + WA + '" target="_blank" rel="noopener" style="color:#F3A94E">Un souci avec un paiement ? Écris-nous</a>';
+      f.textContent = ETRANGER;
       box.appendChild(f);
     } catch (e) {}
     enCours = false;
