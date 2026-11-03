@@ -354,10 +354,10 @@
 
     function silenceMs(t) {
       if (t.silence_ms) return t.silence_ms;
-      if (t.type === "short") return 800;
-      if (t.type === "repeat") return 1000;
-      if (t.type === "question") return t.rep_s <= 20 ? 1300 : (t.rep_s <= 30 ? 1600 : 2000);
-      return 2200;
+      if (t.type === "short") return 1100;
+      if (t.type === "repeat") return 1400;
+      if (t.type === "question") return t.rep_s <= 20 ? 1800 : (t.rep_s <= 30 ? 2100 : 2600);
+      return 2800;
     }
 
     /* lecture karaoké : chaque mot s'allume quand tu le dis (cacher = mots masqués, comme à l'examen) */
