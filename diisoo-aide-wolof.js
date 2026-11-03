@@ -1,4 +1,4 @@
-/* diisoo-aide-wolof.js v2 : aide vocale en wolof sur chaque etape
+/* diisoo-aide-wolof.js v3 : aide vocale en wolof sur chaque etape
    - parle tout seul UNE SEULE FOIS par etape (menu, niveau, theme, mots, examens), ensuite seul le bouton 🔊 repete
    - ta voix d'abord : si la phrase est enregistree avec l'outil #enregistrer-voix, c'est elle qui est lue (instantane)
    - sinon la voix generee de l'app est utilisee
@@ -144,7 +144,7 @@
     return null;
   }
 
-  btn.onclick = function () { var e = phrasesEcran(); try { localStorage.setItem("diisoo_aide_vu", "1"); } catch (x) {} if (e) dire(e.l); };
+  btn.onclick = function () { montreJusqua = Date.now() + 6000; pulser(false); var e = phrasesEcran(); try { localStorage.setItem("diisoo_aide_vu", "1"); } catch (x) {} if (e) dire(e.l); };
 
   /* ---------- declenchement automatique ---------- */
   var geste = 0;
@@ -155,13 +155,17 @@
   function compteurs() { try { return JSON.parse(localStorage.getItem("diisoo_aide_n") || "{}") || {}; } catch (e) { return {}; } }
   function ecrire(o) { try { localStorage.setItem("diisoo_aide_n", JSON.stringify(o)); } catch (e) {} }
 
-  var derniere = "";
+  var derniere = "", montreJusqua = 0;
+  function surcouche() { var e = document.getElementById("screen-premium"); return !!(e && !e.classList.contains("hidden")); }
   setInterval(function () {
     var e = phrasesEcran();
-    btn.style.display = e ? "flex" : "none";
+    if (e && surcouche()) e = null;
+    /* le bouton ne reste pas affiche en permanence : 10 s a chaque nouvel ecran (20 s s'il clignote), puis il disparait */
+    btn.style.display = (e && Date.now() < montreJusqua) ? "flex" : "none";
     if (!e) { derniere = ""; return; }
     if (e.sig === derniere) return;
     derniere = e.sig;
+    montreJusqua = Date.now() + 10000;
     var recent = Date.now() - geste < 3000;
     var c = compteurs(), n = c[e.sig] || 0;
     if (e.sig === "passage") return;
@@ -172,7 +176,7 @@
     } else if (!recent) {
       /* pas de geste recent (ouverture de l'app) : le navigateur bloque le son, on attire l'oeil */
       var vu = false; try { vu = !!localStorage.getItem("diisoo_aide_vu"); } catch (x) {}
-      if (!vu || n < MAXAUTO) pulser(true);
+      if (!vu || n < MAXAUTO) { pulser(true); montreJusqua = Date.now() + 20000; }
     }
   }, 350);
 
