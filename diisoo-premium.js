@@ -1,8 +1,7 @@
-/* diisoo-premium.js v1 : écran Premium simplifié
+/* diisoo-premium.js v3 : écran Premium simplifié
    3 niveaux clairs : Gratuit pour toujours / Diisoo Plus (pass 30 jours, 90 jours, 1 an) / Services ABC-GLOBAL.
    Les prix sont dans PRIX ci-dessous : une seule ligne à changer.
-   Les pass se commandent par WhatsApp (activation sur le numéro) ; le paiement en ligne reste réservé aux offres
-   que le serveur connaît déjà (Pack Commerçants). Les achats déjà faits restent valables. */
+   Paiement en ligne (Wave, Orange Money) via PayTech : boutons toujours visibles. Les achats déjà faits restent valables. */
 (function () {
   "use strict";
 
@@ -36,59 +35,28 @@
     } catch (e) {}
   }
 
-  function titre(txt, sous) {
+  var WA = "221772882109";
+  var choix = "plus90";
+  var DUREES = [
+    { id: "plus30", court: "30 jours", prix: PRIX.plus30, note: "" },
+    { id: "plus90", court: "90 jours", prix: PRIX.plus90, note: "-20 %" },
+    { id: "plus365", court: "1 an", prix: PRIX.plus365, note: "-33 %" }
+  ];
+  function el(html, css) {
     var d = document.createElement("div");
-    d.className = "dp-t";
-    d.style.cssText = "margin:14px 2px 2px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#F3A94E";
-    d.textContent = txt;
-    if (sous) { var s = document.createElement("div"); s.style.cssText = "font-size:11px;font-weight:400;color:#A69C86;text-transform:none;letter-spacing:0;margin-top:2px"; s.textContent = sous; d.appendChild(s); }
+    d.className = "dp-t bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3";
+    d.style.cssText = "margin-top:10px;" + (css || "");
+    d.innerHTML = html;
     return d;
   }
+  function offre(id) { try { return PREMIUM_CONFIG.offres.filter(function (x) { return x.id === id; })[0]; } catch (e) { return null; } }
+  function payer(id) {
+    try { if (typeof payerOffre === "function") return payerOffre(id); } catch (e) {}
+    window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour, je veux l'offre " + id + "."), "_blank", "noopener");
+  }
+  var BTN = "display:block;width:100%;min-height:46px;border:0;border-radius:12px;font-size:14px;font-weight:800;color:#1a1206;background:linear-gradient(90deg,#F3A94E,#E2703E)";
+  var SOUS = "font-size:11px;color:#A69C86;line-height:1.5;margin-top:6px;text-align:center";
 
   var enCours = false;
   function habiller() {
-    var box = document.getElementById("premium-offers");
-    if (!box || enCours) return;
-    if (box.querySelector(".dp-t")) return;
-    var cartes = box.children;
-    if (cartes.length < 4) return;
-    enCours = true;
-    try {
-      var l = [];
-      for (var i = 0; i < cartes.length; i++) l.push(cartes[i]);
-      /* ordre : plus30, plus90, plus365, commercants, visa, coaching, pro */
-      var gratuit = document.createElement("div");
-      gratuit.className = "bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3";
-      gratuit.style.cssText = "border-color:#25D366";
-      gratuit.innerHTML = '<div style="font-size:14px;font-weight:800;color:#F6F1E7">🆓 Gratuit pour toujours</div>' +
-        '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin-top:4px">Leçons d\'anglais et de wolof, tourisme, coach vocal, 3 tests d\'examen, entraînement oral, objectifs et rappels, parrainage.</div>';
-      box.insertBefore(gratuit, l[0]);
-      box.insertBefore(titre("Diisoo Plus : tout débloqué", "Choisis une durée. Tu paies une fois, tu n'es jamais prélevé automatiquement."), l[0]);
-      var etr = document.createElement("div");
-      etr.style.cssText = "font-size:11px;color:#8C8064;line-height:1.4;margin:2px 2px 0";
-      etr.textContent = ETRANGER;
-      box.insertBefore(etr, l[3]);
-      box.insertBefore(titre("Achat unique"), l[3]);
-      box.insertBefore(titre("Services ABC-GLOBAL", "Un accompagnement humain, avec l'agence."), l[4]);
-    } catch (e) {}
-    enCours = false;
-  }
-
-  /* l'écran redessine ses offres deux fois : on réhabille à chaque fois */
-  var orig = window.renderPremium;
-  if (typeof orig === "function") {
-    window.renderPremium = function () {
-      ajuster();
-      var r = orig.apply(this, arguments);
-      setTimeout(habiller, 50);
-      return r;
-    };
-  }
-  try {
-    new MutationObserver(function () { setTimeout(habiller, 30); })
-      .observe(document.body, { childList: true, subtree: true });
-  } catch (e) {}
-  ajuster();
-
-  window.DiisooPremium = { version: 1, prix: PRIX };
-})();
+    var
