@@ -1,7 +1,4 @@
-/* diisoo-premium.js v3 : écran Premium simplifié
-   3 niveaux clairs : Gratuit pour toujours / Diisoo Plus (pass 30 jours, 90 jours, 1 an) / Services ABC-GLOBAL.
-   Les prix sont dans PRIX ci-dessous : une seule ligne à changer.
-   Paiement en ligne (Wave, Orange Money) via PayTech : boutons toujours visibles. Les achats déjà faits restent valables. */
+/* diisoo-premium.js v3 : ecran Premium simplifie (Gratuit / Diisoo Plus / services ABC-GLOBAL). Prix : voir PRIX. */
 (function () {
   "use strict";
 
@@ -14,11 +11,11 @@
 
   var NEUF = [
     { id: "plus30", icone: "⭐", titre: "Diisoo Plus · 30 jours", prix: PRIX.plus30, dispo: true,
-      texte: "Tout est débloqué : simulateur IELTS complet, tests de format réel des autres examens, niveaux Intermédiaire et Avancé du Business. Pas de renouvellement automatique." },
+      texte: "Tout est débloqué. Pas de renouvellement automatique." },
     { id: "plus90", icone: "⭐", titre: "Diisoo Plus · 90 jours", prix: PRIX.plus90, dispo: true,
-      texte: "Le même accès pendant 3 mois, pour préparer un examen sans souci. Meilleur prix par mois." },
+      texte: "Le même accès pendant 3 mois." },
     { id: "plus365", icone: "🏆", titre: "Diisoo Plus · 1 an", prix: PRIX.plus365, dispo: true,
-      texte: "Un an d'accès complet. Le plus avantageux : moins de 1 700 FCFA par mois." }
+      texte: "Un an d'accès complet." }
   ];
 
   function ajuster() {
@@ -29,7 +26,6 @@
       o.forEach(function (x) { garde[x.id] = x; });
       var suite = [];
       ["commercants", "visa", "coaching", "pro"].forEach(function (id) { if (garde[id]) suite.push(garde[id]); });
-      if (garde.commercants) garde.commercants.titre = "Pack Commerçants (achat unique)";
       o.length = 0;
       NEUF.concat(suite).forEach(function (x) { o.push(x); });
     } catch (e) {}
@@ -56,7 +52,6 @@
   }
   var BTN = "display:block;width:100%;min-height:46px;border:0;border-radius:12px;font-size:14px;font-weight:800;color:#1a1206;background:linear-gradient(90deg,#F3A94E,#E2703E)";
   var SOUS = "font-size:11px;color:#A69C86;line-height:1.5;margin-top:6px;text-align:center";
-
   var enCours = false;
   function habiller() {
     var box = document.getElementById("premium-offers");
@@ -66,12 +61,10 @@
     enCours = true;
     try {
       box.innerHTML = "";
-      /* 1. gratuit */
-      var g = el('<div style="font-size:14px;font-weight:800;color:#F6F1E7">🆓 Gratuit pour toujours</div>' +
+             var g = el('<div style="font-size:14px;font-weight:800;color:#F6F1E7">🆓 Gratuit pour toujours</div>' +
         '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin-top:4px">Leçons d\'anglais et de wolof, tourisme, coach vocal, 3 tests d\'examen, entraînement oral, objectifs, parrainage.</div>', "border-color:#25D366;margin-top:0");
       box.appendChild(g);
 
-      /* 2. Diisoo Plus : un seul choix, un seul bouton */
       var plus = el('<div style="font-size:15px;font-weight:800;color:#F6F1E7">⭐ Diisoo Plus</div>' +
         '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin:4px 0 8px">Tout est débloqué : simulateur IELTS complet, tests de format réel (TOEFL, TOEIC, Cambridge, Duolingo, PTE), niveaux Intermédiaire et Avancé. Pas de renouvellement automatique.</div>' +
         '<div class="dp-seg" style="display:flex;gap:6px"></div>' +
@@ -99,16 +92,13 @@
       pay.onclick = function () { payer(choix); };
       maj();
       box.appendChild(plus);
-
-      /* 3. Pack Commerçants */
-      var c = offre("commercants");
+             var c = offre("commercants");
       var pc = el('<div style="display:flex;justify-content:space-between;gap:8px"><div style="font-size:14px;font-weight:800;color:#F6F1E7">🧰 Pack Commerçants</div><div style="font-size:12px;font-weight:700;color:#F0906B;white-space:nowrap">' + (c && c.prix || "5 000 FCFA") + '</div></div>' +
         '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin:4px 0 8px">Anglais de tous les secteurs : pièces détachées, mode, électronique, import Chine. Achat unique, accès à vie.</div>' +
         '<button type="button" class="dp-pc" style="' + BTN + '">💳 Payer ' + (c && c.prix || "5 000 FCFA") + '</button>');
       pc.querySelector(".dp-pc").onclick = function () { payer("commercants"); };
       box.appendChild(pc);
 
-      /* 4. Services ABC-GLOBAL : accompagnement humain, une ligne chacun */
       var rows = ["visa", "coaching", "pro"].map(function (id) {
         var o = offre(id); if (!o) return "";
         var lien = ""; try { lien = premiumLien(o); } catch (e) { lien = "https://wa.me/" + WA; }
@@ -119,7 +109,6 @@
       box.appendChild(el('<div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#F3A94E">Avec l\'agence ABC-GLOBAL</div>' +
         '<div style="font-size:11px;color:#A69C86;margin:2px 0 4px">Un accompagnement humain. Touche une ligne pour en parler sur WhatsApp.</div>' + rows));
 
-      /* 5. étranger et aide */
       var f = document.createElement("div");
       f.className = "dp-t";
       f.style.cssText = "font-size:11px;color:#8C8064;line-height:1.5;margin:10px 2px 0;text-align:center";
@@ -129,7 +118,6 @@
     enCours = false;
   }
 
-  /* l'écran redessine ses offres deux fois : on réhabille à chaque fois */
   var orig = window.renderPremium;
   if (typeof orig === "function") {
     window.renderPremium = function () {
