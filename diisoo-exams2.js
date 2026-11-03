@@ -1,4 +1,4 @@
-/* diisoo-exams2.js v4 : « Format réel » des examens, piloté par un registre
+/* diisoo-exams2.js v5 : « Format réel » des examens, piloté par un registre
    Lit exam-formats.json : pour chaque examen, les tâches (type, nombre, préparation, durée de réponse) et les tests.
    Types gérés : repeat (écoute et répète), readaloud (lire à voix haute), question (réponse orale chronométrée),
    prompt (consigne affichée), describe (photo ou graphique), info (document puis questions),
@@ -311,7 +311,7 @@
       }
       for (var i = 0; i < t.nb && i < banque.length; i++) etapes.push({ tache: t, i: i, n: Math.min(t.nb, banque.length), item: banque[i] });
     });
-    var bilan = { precision: [], courtes: [], oraux: [], cles: [], corr: [], mots: [] };
+    var bilan = { precision: [], courtes: [], oraux: [], cles: [], corr: [], mots: [], expr: [] };
 
     function texteDe(e) { var it = e.item; return typeof it === "string" ? it : (it.t || it.q || it.consigne || ""); }
     function etape(k) {
@@ -374,11 +374,15 @@
         chips.forEach(function (c) { if (c.classList.contains("ok") || !c._n) return; if (H.indexOf(c._n) > -1) { c.classList.add("ok"); c.textContent = c._t; } });
       };
     }
+    function aMatch(dit, spec) {
+      var d = " " + mots(dit).join(" ") + " ";
+      return String(spec).split("|").some(function (a) { var m = mots(a).join(" "); return m && d.indexOf(" " + m + " ") > -1; });
+    }
     function ideesLive(box, cles) {
       var wrap = el("div", "fm-kw"), ch = [];
       cles.forEach(function (k) { var c = el("span", "fm-w", "•••"); c._k = k; wrap.appendChild(c); ch.push(c); });
       box.appendChild(wrap);
-      return function (txt) { var d = txt.toLowerCase(); ch.forEach(function (c) { if (!c.classList.contains("ok") && d.indexOf(c._k.toLowerCase()) > -1) { c.classList.add("ok"); c.textContent = c._k; } }); };
+      return function (txt) { ch.forEach(function (c) { if (!c.classList.contains("ok") && aMatch(txt, c._k)) { c.classList.add("ok"); c.textContent = String(c._k).split("|")[0]; } }); };
     }
     var CONN = ["because", "and", "but", "for example"], QDEB = /\b(what|where|when|who|why|how|do you|did you|are you|is it|can you|have you|would you|could you)\b/gi;
     function metreLive(box, objectif, ask) {
@@ -409,7 +413,7 @@
       else if (ty === "retell" && e.item.cles) maj = ideesLive(box, e.item.cles);
       else {
         support(box, e);
-        if (ty !== "short") maj = metreLive(box, objectif, t.id === "ask");
+        if (ty !== "short") maj = (e.item && e.item.cles) ? ideesLive(box, e.item.cles) : metreLive(box, objectif, t.id === "ask");
       }
       var ring = null, etat = el("div", "fm-state rec", "● Je t'écoute");
       var live = el("div", "fm-hr", "");
@@ -560,7 +564,8 @@
         suite(pc >= 80 ? 0 : 1); return;
       }
       if (ty === "short") {
-        var rep = mots(texte), bonnes = e.item.a || [], ok = bonnes.some(function (a) { return rep.indexOf(a.toLowerCase()) > -1; });
+        var rep = mots(texte), bonnes = e.item.a || [], jn = " " + rep.join(" ") + " ", jn2 = jn.replace(/(\d) (?=\d{3}(?!\d))/g, "$1");
+        var ok = bonnes.some(function (a) { var x = " " + String(a).toLowerCase() + " "; return jn.indexOf(x) > -1 || jn2.indexOf(x) > -1; });
         bilan.courtes.push(ok ? 1 : 0);
         carte(ok ? "✓" : "✗", ok ? "" : "r", ok ? "Bonne réponse" : "Réponse attendue", ok ? "« " + texte + " »" : bonnes.join(" / "));
         son(ok ? "juste" : "reessaie"); suite(ok ? 0 : 1); return;
@@ -576,6 +581,18 @@
         e.item.cles.forEach(function (c) { var ok2 = trouves.indexOf(c) > -1; iw.appendChild(el("span", "fm-w" + (ok2 ? " ok" : ""), ok2 ? c : "▢ " + c)); });
         box.appendChild(iw);
         box.appendChild(el("div", "fm-hr", "Idées retrouvées : " + trouves.length + " / " + e.item.cles.length));
+      }
+      if (ty !== "retell" && e.item && e.item.cles) {
+        var ok3 = 0, wr = el("div", "fm-kw");
+        e.item.cles.forEach(function (c) { var hit = aMatch(texte, c); if (hit) ok3++; wr.appendChild(el("span", "fm-w" + (hit ? " ok" : ""), (hit ? "" : "▢ ") + String(c).split("|")[0])); });
+        bilan.expr.push(ok3 / e.item.cles.length);
+        box.appendChild(el("div", "fm-hr", "Expressions utiles : " + ok3 + " / " + e.item.cles.length));
+        box.appendChild(wr);
+      }
+      if (e.item && e.item.modele) {
+        var mo = el("div", "fm-sug"); mo.appendChild(el("b", null, "Réponse modèle")); mo.appendChild(el("div", null, e.item.modele));
+        var mb = el("button", "fm-b s", "🔊 Écouter le modèle"); mb.type = "button"; mb.style.minHeight = "40px"; mb.onclick = function () { try { speak(e.item.modele, "en-US", 0.9); } catch (x) {} };
+        mo.appendChild(mb); box.appendChild(mo);
       }
       var nS = conseils(ty !== "question");
       suite(nS);
@@ -596,6 +613,7 @@
     var sk = [];
     if (bilan.precision.length) sk.push({ k: "pron", n: "Prononciation", v: moy(bilan.precision), c: "Répète à voix haute les mots à revoir, 5 minutes par jour." });
     if (bilan.oraux.length) sk.push({ k: "flu", n: "Fluidité", v: moy(bilan.oraux.map(function (o) { return Math.min(1, o.mots / o.obj); })), c: "Parle plus longtemps : une idée, une raison, un exemple." });
+    if (bilan.expr.length) sk.push({ k: "expr", n: "Expressions pro", v: moy(bilan.expr), c: "Utilise les expressions du métier : demande polie, prix, garantie, livraison." });
     if (bilan.cles.length) sk.push({ k: "cont", n: "Compréhension", v: moy(bilan.cles), c: "Avant de répondre, retiens 3 idées clés de ce que tu entends." });
     if (bilan.corr.length) sk.push({ k: "gram", n: "Grammaire", v: 1 - moy(bilan.corr), c: "Relis tes corrections et refais la phrase correctement à voix haute." });
     if (bilan.courtes.length) sk.push({ k: "vit", n: "Réponses rapides", v: moy(bilan.courtes), c: "Réponds vite, en un ou deux mots, sans chercher la phrase parfaite." });
@@ -631,7 +649,18 @@
   }
 
   /* ---------- boutons dans la liste des tests ---------- */
+  function brancherBiz() {
+    var a = $("business-picker");
+    if (!a || !a.parentNode || $("fx-biz-btn")) return;
+    if (!REG) { charger().then(brancherBiz); return; }
+    if (!REG.examens || !REG.examens.business) return;
+    var b = el("button", "fx-reel"); b.id = "fx-biz-btn"; b.type = "button";
+    b.innerHTML = "🎯 Simulation professionnelle<small>Vends, achète, négocie : comme en vrai</small>";
+    b.onclick = function () { ouvrir("business"); };
+    a.parentNode.insertBefore(b, a);
+  }
   function brancher() {
+    brancherBiz();
     var box = $("exam-tests");
     if (box && box.style.display === "none") delete box.dataset.auto;
     if (!box || box.style.display === "none" || box.querySelector(".fx-reel")) return;
@@ -661,5 +690,5 @@
   } catch (e) {}
   charger().then(brancher);
 
-  window.DiisooExams2 = { version: 4, ouvrir: ouvrir, registre: function () { return REG; } };
+  window.DiisooExams2 = { version: 5, ouvrir: ouvrir, registre: function () { return REG; } };
 })();

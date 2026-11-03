@@ -1837,6 +1837,835 @@
     }
    ],
    "remplace_ancien": true
+  },
+  "business": {
+   "nom": "Simulateur professionnel · Business anglais",
+   "court": "Business",
+   "groupe": "Business",
+   "bouton": "Pro",
+   "format": "5 parties par scénario",
+   "verifie_le": "2026-11-03",
+   "sources": [],
+   "confiance": "Scénarios de vente, d'achat et d'import créés par Diisoo à partir des situations réelles des marchés sénégalais et de l'import.",
+   "resume": "Vocabulaire, dialogue, calculs de prix, lecture de document et présentation, comme en vrai.",
+   "gratuits": 1,
+   "taches": [
+    {
+     "id": "vocab",
+     "type": "repeat",
+     "titre": "Vocabulaire du métier",
+     "nb": 6,
+     "rep_s": 12,
+     "banque": "repeat",
+     "consigne": "Écoute la phrase, puis répète-la exactement."
+    },
+    {
+     "id": "dialogue",
+     "type": "question",
+     "titre": "Au comptoir",
+     "nb": 4,
+     "rep_s": 25,
+     "banque": "question",
+     "consigne": "Un client ou un fournisseur te parle. Réponds comme un vrai professionnel."
+    },
+    {
+     "id": "chiffres",
+     "type": "short",
+     "titre": "Prix et calculs",
+     "nb": 5,
+     "rep_s": 10,
+     "banque": "short",
+     "consigne": "Calcule dans ta tête et dis le résultat."
+    },
+    {
+     "id": "doc",
+     "type": "info",
+     "titre": "Lire un document",
+     "nb": 3,
+     "lecture_s": 25,
+     "banque": "info",
+     "reps": [
+      15,
+      15,
+      30
+     ],
+     "prep_s": 3,
+     "consigne": "Lis le document, puis réponds aux 3 questions."
+    },
+    {
+     "id": "pitch",
+     "type": "prompt",
+     "titre": "Présente ton offre",
+     "nb": 1,
+     "prep_s": 20,
+     "rep_s": 40,
+     "banque": "prompt",
+     "consigne": "Présente ton activité à un nouveau client."
+    }
+   ],
+   "tests": [
+    {
+     "id": "colobane",
+     "titre": "🔧 Pièces détachées",
+     "repeat": [
+      "Do you have the original part or a copy?",
+      "This brake pad fits a Toyota Corolla from 2010.",
+      "The wholesale price is lower if you buy ten pieces.",
+      "I can give you a six-month warranty on this engine part.",
+      "Please bring the old part so we can compare it.",
+      "The part is out of stock, but it will arrive on Friday."
+     ],
+     "question": [
+      {
+       "q": "Good morning. My car makes a noise when I brake. Which part do I need?",
+       "cles": [
+        "brake pad|brake pads|brakes",
+        "check|inspect|look",
+        "price|cost"
+       ],
+       "modele": "Good morning. It is probably the brake pads. Let me check your car model, and then I will give you the price."
+      },
+      {
+       "q": "This alternator is too expensive. Can you do something for me?",
+       "cles": [
+        "discount|reduce|lower",
+        "best price|final price|last price",
+        "original|quality|warranty"
+       ],
+       "modele": "I can give you a small discount if you pay cash. This is my best price for an original part with a six-month warranty."
+      },
+      {
+       "q": "Is there a guarantee if the part does not work?",
+       "cles": [
+        "warranty|guarantee",
+        "months|days",
+        "return|exchange|replace"
+       ],
+       "modele": "Yes, we give a three-month warranty. If the part does not work, you can bring it back and we will exchange it."
+      },
+      {
+       "q": "I need twenty oil filters for my garage. Can you make a wholesale price?",
+       "cles": [
+        "wholesale|bulk",
+        "twenty|20",
+        "price|discount|quote"
+       ],
+       "modele": "Of course. For twenty oil filters I can offer a wholesale price. Let me prepare a quote for you."
+      }
+     ],
+     "short": [
+      {
+       "q": "Three tyres cost twenty-five thousand francs each. What is the total?",
+       "a": [
+        "75000",
+        "75 000",
+        "seventy five thousand",
+        "seventy-five thousand"
+       ]
+      },
+      {
+       "q": "A part costs forty thousand francs. You give a ten percent discount. What is the new price?",
+       "a": [
+        "36000",
+        "36 000",
+        "thirty six thousand",
+        "thirty-six thousand"
+       ]
+      },
+      {
+       "q": "Two filters at six thousand each, plus two thousand for transport. What is the total?",
+       "a": [
+        "14000",
+        "14 000",
+        "fourteen thousand"
+       ]
+      },
+      {
+       "q": "Four brake pads cost twelve thousand francs each. What is the total?",
+       "a": [
+        "48000",
+        "48 000",
+        "forty eight thousand",
+        "forty-eight thousand"
+       ]
+      },
+      {
+       "q": "The customer gives you fifty thousand francs for a thirty-five thousand franc part. How much change?",
+       "a": [
+        "15000",
+        "15 000",
+        "fifteen thousand"
+       ]
+      }
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Invoice 0457 · Auto Pièces Colobane",
+        "lignes": [
+         "Customer: Mr. Sow, Garage Sow",
+         "Date: 12 March",
+         "4 × brake pads · 12,000 F each",
+         "2 × oil filters · 3,000 F each",
+         "Transport: 2,000 F",
+         "Payment: cash on delivery"
+        ]
+       },
+       "questions": [
+        "How many brake pads are on the invoice?",
+        "How will the customer pay?",
+        "Please tell me the full order and the price of the oil filters."
+       ]
+      }
+     ],
+     "prompt": [
+      {
+       "t": "A new garage owner visits your shop. Present your shop: what you sell, your prices and your warranty.",
+       "cles": [
+        "original|quality",
+        "price|prices",
+        "warranty|guarantee",
+        "deliver|delivery",
+        "welcome|visit"
+       ],
+       "modele": "Welcome to my shop. I sell original and good-quality spare parts for all cars. My prices are fair, and I give a warranty on every engine part. I can also deliver to your garage. Please visit us again."
+      }
+     ]
+    },
+    {
+     "id": "sandaga",
+     "titre": "👗 Mode et beauté",
+     "repeat": [
+      "This fabric comes in three colors and two sizes.",
+      "Would you like to try it on in the fitting room?",
+      "The price is fixed, but I can offer a discount for five dresses.",
+      "We sell the cloth by the meter or by the roll.",
+      "This size is too small, but I can bring a bigger one.",
+      "If you buy in bulk, the price per piece is lower."
+     ],
+     "question": [
+      {
+       "q": "I like this dress, but I do not know my size. Can you help me?",
+       "cles": [
+        "size|measure",
+        "try|fitting",
+        "bigger|smaller|other"
+       ],
+       "modele": "Of course. Let me measure you, and you can try it on in the fitting room. If it is too small, I will bring a bigger size."
+      },
+      {
+       "q": "The price is too high. Last week it was cheaper.",
+       "cles": [
+        "price",
+        "discount|reduce|lower",
+        "quality|new|fabric"
+       ],
+       "modele": "I understand. This is a new collection and the fabric is very good quality. I can reduce the price a little if you take two."
+      },
+      {
+       "q": "I want to buy fifty pieces of this cloth for my shop. What is your best price?",
+       "cles": [
+        "fifty|50",
+        "wholesale|bulk|best price",
+        "delivery|deliver|payment"
+       ],
+       "modele": "For fifty pieces I can make a wholesale price. Let me calculate it for you, and we can discuss delivery and payment."
+      },
+      {
+       "q": "This colour faded after one wash. I want a refund.",
+       "cles": [
+        "sorry|apologize",
+        "refund|exchange|replace",
+        "receipt|bring"
+       ],
+       "modele": "I am very sorry about that. Please bring the item and your receipt, and I will exchange it or give you a refund."
+      }
+     ],
+     "short": [
+      {
+       "q": "A dress costs eighteen thousand francs. You sell five. What is the total?",
+       "a": [
+        "90000",
+        "90 000",
+        "ninety thousand"
+       ]
+      },
+      {
+       "q": "Cloth costs three thousand francs per meter. A customer buys six meters. What is the total?",
+       "a": [
+        "18000",
+        "18 000",
+        "eighteen thousand"
+       ]
+      },
+      {
+       "q": "A bag costs twenty thousand francs with a ten percent discount. What is the new price?",
+       "a": [
+        "18000",
+        "18 000",
+        "eighteen thousand"
+       ]
+      },
+      {
+       "q": "Two shirts at seven thousand each and one pair of trousers at ten thousand. What is the total?",
+       "a": [
+        "24000",
+        "24 000",
+        "twenty four thousand",
+        "twenty-four thousand"
+       ]
+      },
+      {
+       "q": "The customer pays thirty thousand francs for a twenty-two thousand franc dress. How much change?",
+       "a": [
+        "8000",
+        "8 000",
+        "eight thousand"
+       ]
+      }
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Price list · Sandaga Mode · March",
+        "lignes": [
+         "Dress (cotton): 18,000 F",
+         "Shirt (men): 7,000 F",
+         "Wax cloth, 6 yards: 15,000 F",
+         "Wholesale: -15% from 20 pieces",
+         "Open: Monday to Saturday, 8:00 to 19:00",
+         "Payment: cash, Wave, Orange Money"
+        ]
+       },
+       "questions": [
+        "How much is a men's shirt?",
+        "From how many pieces do you get a wholesale discount?",
+        "Could you explain the opening hours and the ways to pay?"
+       ]
+      }
+     ],
+     "prompt": [
+      {
+       "t": "A customer enters your boutique for the first time. Present your products, your sizes and your payment options.",
+       "cles": [
+        "dress|shirt|cloth|fabric",
+        "size|sizes",
+        "price|prices",
+        "payment|pay",
+        "welcome|help"
+       ],
+       "modele": "Welcome to my boutique. I sell dresses, shirts and wax cloth in many colours and sizes. My prices are fair, and you can try everything on. You can pay in cash, with Wave or with Orange Money. How can I help you?"
+      }
+     ]
+    },
+    {
+     "id": "electronique",
+     "titre": "📱 Électronique",
+     "repeat": [
+      "This phone has a twelve-month warranty.",
+      "The charger works with two hundred and twenty volts.",
+      "Do you accept payment by Orange Money or Wave?",
+      "The screen is new and it has a protective glass.",
+      "I can offer you a better price if you buy two phones.",
+      "Please keep your receipt in case you need a repair."
+     ],
+     "question": [
+      {
+       "q": "I want a good phone, but I do not have a big budget. What do you recommend?",
+       "cles": [
+        "budget|price",
+        "battery|camera|memory|storage",
+        "recommend|suggest|good"
+       ],
+       "modele": "I recommend this model. It is not expensive, the battery is strong and the camera is good. It also has a one-year warranty."
+      },
+      {
+       "q": "Is this television original? How do I know?",
+       "cles": [
+        "original|genuine",
+        "warranty|guarantee",
+        "box|receipt|invoice"
+       ],
+       "modele": "Yes, it is original. It comes in the sealed box with an invoice and a one-year warranty."
+      },
+      {
+       "q": "The phone stopped working after one week. What can you do?",
+       "cles": [
+        "sorry",
+        "warranty|guarantee",
+        "repair|replace|exchange"
+       ],
+       "modele": "I am sorry about that. The phone is under warranty, so I can replace it or send it for repair. Please bring your receipt."
+      },
+      {
+       "q": "Can I pay in two instalments? I do not have the full amount today.",
+       "cles": [
+        "instalment|installment|two payments",
+        "deposit|first payment|half",
+        "sign|agree|date"
+       ],
+       "modele": "Yes, you can. You pay half today as a deposit, and the rest in one month. We will write it down and both sign."
+      }
+     ],
+     "short": [
+      {
+       "q": "A phone costs eighty thousand francs. You sell three. What is the total?",
+       "a": [
+        "240000",
+        "240 000",
+        "two hundred and forty thousand",
+        "two hundred forty thousand"
+       ]
+      },
+      {
+       "q": "A television costs one hundred and fifty thousand francs with a ten percent discount. What is the new price?",
+       "a": [
+        "135000",
+        "135 000",
+        "one hundred and thirty five thousand",
+        "one hundred thirty five thousand"
+       ]
+      },
+      {
+       "q": "A charger costs four thousand francs. A customer buys five. What is the total?",
+       "a": [
+        "20000",
+        "20 000",
+        "twenty thousand"
+       ]
+      },
+      {
+       "q": "The customer pays half of a ninety thousand franc phone. How much is the deposit?",
+       "a": [
+        "45000",
+        "45 000",
+        "forty five thousand",
+        "forty-five thousand"
+       ]
+      },
+      {
+       "q": "The customer gives you one hundred thousand francs for a seventy-five thousand franc phone. How much change?",
+       "a": [
+        "25000",
+        "25 000",
+        "twenty five thousand",
+        "twenty-five thousand"
+       ]
+      }
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Warranty card · Centenaire Telecom",
+        "lignes": [
+         "Product: Smartphone X5",
+         "Purchase date: 4 February",
+         "Warranty: 12 months",
+         "Covers: battery, screen, software",
+         "Not covered: water damage, broken screen",
+         "Service point: Centenaire, shop 14"
+        ]
+       },
+       "questions": [
+        "How long is the warranty?",
+        "What is not covered by the warranty?",
+        "Can you tell me what the warranty covers and where I can go for repairs?"
+       ]
+      }
+     ],
+     "prompt": [
+      {
+       "t": "A young customer asks you to explain the difference between a cheap phone and a good phone. Explain it clearly and give your advice.",
+       "cles": [
+        "battery",
+        "camera|screen",
+        "price|budget",
+        "warranty|guarantee",
+        "recommend|advice|suggest"
+       ],
+       "modele": "A good phone has a stronger battery, a better camera and a clearer screen. A cheap phone costs less, but it can stop working sooner. Think about your budget, and always ask for a warranty. I recommend this model, because the price is fair and the quality is good."
+      }
+     ]
+    },
+    {
+     "id": "bazar",
+     "titre": "🛋️ Bazar et meubles",
+     "repeat": [
+      "We offer free delivery inside the city.",
+      "The sofa comes in three parts and we can assemble it.",
+      "You can pay in three instalments without extra cost.",
+      "This table is made of solid wood.",
+      "The delivery will take three to five days.",
+      "Would you like to see the same model in another colour?"
+     ],
+     "question": [
+      {
+       "q": "I am looking for a bed for my family. What do you have?",
+       "cles": [
+        "size|king|double|single",
+        "mattress",
+        "price"
+       ],
+       "modele": "We have beds in several sizes: single, double and king size. A mattress is included in some models. Let me show you the prices."
+      },
+      {
+       "q": "Can you deliver to my house, and is it free?",
+       "cles": [
+        "deliver|delivery",
+        "free|cost|charge",
+        "address|where|day"
+       ],
+       "modele": "Yes, we deliver. Delivery is free inside the city. Please give me your address and the day you prefer."
+      },
+      {
+       "q": "Can I pay a little each month for this wardrobe?",
+       "cles": [
+        "instalment|installment|monthly",
+        "deposit|first payment",
+        "months"
+       ],
+       "modele": "Yes. You pay a deposit today and the rest in three monthly instalments. We write it on a contract."
+      },
+      {
+       "q": "The table you delivered has a scratch. This is not acceptable.",
+       "cles": [
+        "sorry|apologize",
+        "replace|exchange|repair",
+        "photo|send|today"
+       ],
+       "modele": "I am very sorry. Please send me a photo, and we will replace the table or repair it as soon as possible."
+      }
+     ],
+     "short": [
+      {
+       "q": "A sofa costs two hundred thousand francs. You give a fifteen percent discount. What is the new price?",
+       "a": [
+        "170000",
+        "170 000",
+        "one hundred and seventy thousand",
+        "one hundred seventy thousand"
+       ]
+      },
+      {
+       "q": "Four chairs cost fifteen thousand francs each. What is the total?",
+       "a": [
+        "60000",
+        "60 000",
+        "sixty thousand"
+       ]
+      },
+      {
+       "q": "A wardrobe costs ninety thousand francs. The customer pays in three equal instalments. How much each time?",
+       "a": [
+        "30000",
+        "30 000",
+        "thirty thousand"
+       ]
+      },
+      {
+       "q": "A bed costs one hundred and twenty thousand. Delivery costs five thousand. What is the total?",
+       "a": [
+        "125000",
+        "125 000",
+        "one hundred and twenty five thousand",
+        "one hundred twenty five thousand"
+       ]
+      },
+      {
+       "q": "The customer gives you two hundred thousand francs for a one hundred and sixty thousand franc sofa. How much change?",
+       "a": [
+        "40000",
+        "40 000",
+        "forty thousand"
+       ]
+      }
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Order form · Bazar Teranga",
+        "lignes": [
+         "Customer: Mrs. Fall",
+         "Item: 3-seat sofa, grey",
+         "Price: 180,000 F",
+         "Deposit paid: 60,000 F",
+         "Balance: two payments of 60,000 F",
+         "Delivery: Saturday, before noon"
+        ]
+       },
+       "questions": [
+        "What colour is the sofa?",
+        "How much did the customer pay today?",
+        "Could you explain how the customer will pay the balance, and when the delivery is?"
+       ]
+      }
+     ],
+     "prompt": [
+      {
+       "t": "A couple wants to furnish their new home. Present your delivery and payment options and give them confidence.",
+       "cles": [
+        "delivery|deliver",
+        "payment|pay",
+        "instalment|installment|months",
+        "warranty|guarantee",
+        "welcome|help"
+       ],
+       "modele": "Welcome. We can furnish your whole home. Delivery is free inside the city, and we can assemble the furniture for you. You can pay in three instalments, and every item has a warranty. Tell me what you need, and I will make you a good offer."
+      }
+     ]
+    },
+    {
+     "id": "agriculture",
+     "titre": "🌾 Agriculture et marché frais",
+     "repeat": [
+      "The tomatoes are fresh and they come from my farm.",
+      "How many kilos do you need for the market?",
+      "We harvest every morning before six o'clock.",
+      "The price changes with the season.",
+      "I can deliver the vegetables to your shop twice a week.",
+      "This pump brings water to the whole field."
+     ],
+     "question": [
+      {
+       "q": "I want to buy tomatoes and onions for my restaurant. What can you offer?",
+       "cles": [
+        "kilo|kilos",
+        "price",
+        "fresh|quality"
+       ],
+       "modele": "I have fresh tomatoes and onions from my farm. Tell me how many kilos you need, and I will give you a good price."
+      },
+      {
+       "q": "Your price is higher than at the other market. Why?",
+       "cles": [
+        "quality|fresh",
+        "harvest|farm|today",
+        "discount|lower|reduce"
+       ],
+       "modele": "My vegetables are fresher, because I harvest every morning. If you buy more, I can lower the price a little."
+      },
+      {
+       "q": "Can you deliver every week? I need the same quantity each time.",
+       "cles": [
+        "deliver|delivery",
+        "week|twice|day",
+        "quantity|kilos|same"
+       ],
+       "modele": "Yes. I can deliver every week, on the day you choose, and I keep the same quantity for you."
+      },
+      {
+       "q": "My irrigation pump is broken. What do you recommend?",
+       "cles": [
+        "pump",
+        "repair|replace|new",
+        "water|field|farm"
+       ],
+       "modele": "I recommend a new pump, because repairing the old one costs almost the same. This model brings enough water to your whole field."
+      }
+     ],
+     "short": [
+      {
+       "q": "Tomatoes cost eight hundred francs per kilo. A customer buys twenty kilos. What is the total?",
+       "a": [
+        "16000",
+        "16 000",
+        "sixteen thousand"
+       ]
+      },
+      {
+       "q": "Onions cost five hundred francs per kilo. A customer buys thirty kilos. What is the total?",
+       "a": [
+        "15000",
+        "15 000",
+        "fifteen thousand"
+       ]
+      },
+      {
+       "q": "A crate of vegetables costs twelve thousand francs. You sell four crates. What is the total?",
+       "a": [
+        "48000",
+        "48 000",
+        "forty eight thousand",
+        "forty-eight thousand"
+       ]
+      },
+      {
+       "q": "You harvest one hundred kilos and sell sixty. How many kilos are left?",
+       "a": [
+        "40",
+        "40",
+        "forty"
+       ]
+      },
+      {
+       "q": "A pump costs one hundred and eighty thousand francs with a ten percent discount. What is the new price?",
+       "a": [
+        "162000",
+        "162 000",
+        "one hundred and sixty two thousand",
+        "one hundred sixty two thousand"
+       ]
+      }
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Delivery note · Ferme Ndiaye",
+        "lignes": [
+         "Customer: Restaurant Le Baobab",
+         "Delivery: Tuesday 7:00",
+         "Tomatoes: 25 kg",
+         "Onions: 15 kg",
+         "Peppers: 10 kg",
+         "Payment: end of the month"
+        ]
+       },
+       "questions": [
+        "How many kilos of tomatoes are in the delivery?",
+        "When is the payment?",
+        "Could you tell me everything that will be delivered on Tuesday?"
+       ]
+      }
+     ],
+     "prompt": [
+      {
+       "t": "A restaurant owner visits your farm. Present your products, your quality and your delivery service.",
+       "cles": [
+        "fresh",
+        "farm|harvest",
+        "price",
+        "deliver|delivery",
+        "quality|good"
+       ],
+       "modele": "Welcome to my farm. All my vegetables are fresh, and we harvest every morning. The quality is very good and my prices are fair. I can deliver to your restaurant every week. Please taste the tomatoes."
+      }
+     ]
+    },
+    {
+     "id": "chine",
+     "titre": "🚢 Logistique et import",
+     "repeat": [
+      "We ship the goods by sea in a forty-foot container.",
+      "The delivery time is about thirty-five days.",
+      "Please send me the packing list and the invoice.",
+      "Who pays the customs duties, the buyer or the seller?",
+      "The goods are ready, but the payment has not arrived.",
+      "Could you give me your best price for a full container?"
+     ],
+     "question": [
+      {
+       "q": "We are a supplier in Guangzhou. How many pieces do you want to order?",
+       "cles": [
+        "pieces|units|quantity",
+        "price|quote",
+        "sample|samples"
+       ],
+       "modele": "We would like to order five hundred pieces. Could you send me a quote and a sample first?"
+      },
+      {
+       "q": "The minimum order is one thousand pieces. Can you accept that?",
+       "cles": [
+        "minimum|quantity",
+        "lower|reduce|less",
+        "discount|price|next order"
+       ],
+       "modele": "That is a little high for the first order. Could you reduce the minimum to five hundred? If the quality is good, we will order more next time."
+      },
+      {
+       "q": "Our price is FOB Guangzhou. Do you understand what that means?",
+       "cles": [
+        "FOB",
+        "shipping|freight|transport",
+        "port|Dakar"
+       ],
+       "modele": "Yes, FOB means the price includes the goods until they are loaded on the ship. We pay the sea freight to Dakar."
+      },
+      {
+       "q": "Your container is delayed by two weeks. What is the situation?",
+       "cles": [
+        "delay|delayed",
+        "when|date|arrive",
+        "information|update|inform"
+       ],
+       "modele": "That is a problem for my customers. Could you tell me the new arrival date and keep me informed every few days?"
+      }
+     ],
+     "short": [
+      {
+       "q": "One piece costs two dollars. You order five hundred pieces. What is the total in dollars?",
+       "a": [
+        "1000",
+        "1 000",
+        "one thousand",
+        "a thousand"
+       ]
+      },
+      {
+       "q": "A container holds twenty tonnes. You load fourteen tonnes. How many tonnes are left?",
+       "a": [
+        "6",
+        "6",
+        "six"
+       ]
+      },
+      {
+       "q": "The goods cost ten thousand dollars and the freight costs one thousand five hundred. What is the total?",
+       "a": [
+        "11500",
+        "11 500",
+        "eleven thousand five hundred"
+       ]
+      },
+      {
+       "q": "Delivery takes thirty-five days. Today is the first of May. Which month will it arrive?",
+       "a": [
+        "june"
+       ]
+      },
+      {
+       "q": "You pay thirty percent as a deposit on a ten thousand dollar order. How much is the deposit?",
+       "a": [
+        "3000",
+        "3 000",
+        "three thousand"
+       ]
+      }
+     ],
+     "info": [
+      {
+       "doc": {
+        "titre": "Proforma invoice · Guangzhou Trade Co.",
+        "lignes": [
+         "Buyer: ABC Import, Dakar",
+         "Goods: LED lamps, 2,000 pieces",
+         "Price: 1.80 USD per piece (FOB)",
+         "Total: 3,600 USD",
+         "Payment: 30% deposit, 70% before shipping",
+         "Shipping: 40 days by sea to Dakar"
+        ]
+       },
+       "questions": [
+        "How many lamps are in the order?",
+        "How much is the deposit?",
+        "Could you explain the payment terms and the shipping time?"
+       ]
+      }
+     ],
+     "prompt": [
+      {
+       "t": "You call a new supplier in China. Present your company, your market in Senegal and what you want to buy.",
+       "cles": [
+        "company|business",
+        "Senegal|Dakar",
+        "market|customers",
+        "order|buy|quantity",
+        "price|quote"
+       ],
+       "modele": "Good morning. I represent ABC Import in Dakar, Senegal. We sell electrical products to shops and customers in our market. We would like to buy LED lamps, and we need a quote for five hundred pieces. We hope to build a long-term business with you."
+      }
+     ]
+    }
+   ]
   }
  }
 }
