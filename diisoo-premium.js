@@ -7,7 +7,7 @@
     plus90: "6 000 FCFA",
     plus365: "20 000 FCFA"
   };
-  var ETRANGER = "🔒 Paiement sécurisé PayTech, depuis n'importe quel pays : Wave, Orange Money, Visa, Mastercard.";
+  var ETRANGER = "🔒 Paiement sécurisé PayTech : Wave, Orange Money, Free Money.";
 
   var NEUF = [
     { id: "plus30", icone: "⭐", titre: "Diisoo Plus · 30 jours", prix: PRIX.plus30, dispo: true,
@@ -69,7 +69,7 @@
         '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin:4px 0 8px">Tout est débloqué : simulateur IELTS complet, tests de format réel (TOEFL, TOEIC, Cambridge, Duolingo, PTE), niveaux Intermédiaire et Avancé. Pas de renouvellement automatique.</div>' +
         '<div class="dp-seg" style="display:flex;gap:6px"></div>' +
         '<button type="button" class="dp-pay" style="margin-top:10px;' + BTN + '"></button>' +
-        '<div style="' + SOUS + '">Wave, Orange Money, Visa ou Mastercard, d\'où que tu sois. Activation immédiate sur ton numéro.</div>');
+        '<div style="' + SOUS + '">Wave, Orange Money ou Free Money. Activation immédiate sur ton numéro.</div>');
       var seg = plus.querySelector(".dp-seg"), pay = plus.querySelector(".dp-pay");
       function maj() {
         var d = DUREES.filter(function (x) { return x.id === choix; })[0];
