@@ -340,6 +340,29 @@
     tete.parentNode.insertBefore(b, tete.nextSibling);
     return true;
   }
+  /* ---------- premier lancement : accueil chaleureux, une seule fois ---------- */
+  var VU = "diisoo_guide_vu";
+  function vu() { try { return localStorage.getItem(VU) === "1"; } catch (e) { return true; } }
+  function marquerVu() { try { localStorage.setItem(VU, "1"); } catch (e) {} }
+  function prenom() { try { var p = store.get("diisoo_profile"); return (p && p.first_name) || ""; } catch (e) { return ""; } }
+  function bienvenue() {
+    var dash = $("screen-dashboard");
+    if (vu() || !dash || dash.classList.contains("hidden") || $("dg-welcome") || (ov && !ov.classList.contains("hidden"))) return;
+    css();
+    var w = document.createElement("div"); w.id = "dg-welcome"; w.setAttribute("role", "dialog"); w.setAttribute("aria-label", "Bienvenue");
+    w.style.cssText = "position:fixed;left:12px;right:12px;bottom:14px;z-index:88;background:#141A2B;border:1px solid #E1693F;border-radius:20px;padding:16px;color:#F6F1E7;box-shadow:0 10px 40px rgba(0,0,0,.6)";
+    var n = prenom();
+    w.innerHTML = '<div style="font-size:17px;font-weight:800;line-height:1.25">👋 ' + (n ? "Bienvenue " + n.replace(/[<>&]/g, "") + " !" : "Bienvenue !") + '</div>' +
+      '<div style="font-size:13px;color:#C9BFA8;margin-top:6px">Dis-moi ce que tu veux apprendre, et j\'ouvre ta leçon. Pas besoin de chercher.</div>' +
+      '<button type="button" id="dg-w-go" style="width:100%;min-height:52px;margin-top:12px;border-radius:16px;border:0;background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;font-weight:800;font-size:15px">🎙️ Commencer avec la voix</button>' +
+      '<button type="button" id="dg-w-no" style="width:100%;min-height:44px;margin-top:6px;border-radius:14px;border:0;background:transparent;color:#A69C86;font-size:13px">Je choisis moi-même</button>';
+    document.body.appendChild(w);
+    var ferme = function () { marquerVu(); w.remove(); };
+    $("dg-w-go").onclick = function () { ferme(); ouvrir(); };
+    $("dg-w-no").onclick = ferme;
+  }
+  setInterval(function () { try { bienvenue(); } catch (e) {} }, 1500);
+
   /* Si l'accueil est reconstruit par un autre script, le bouton revient */
   setInterval(function () { try { poser(); } catch (e) {} }, 1000);
   poser();
