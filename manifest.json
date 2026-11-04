@@ -6,7 +6,10 @@
   "start_url": "./?source=pwa",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait",
   "dir": "ltr",
   "lang": "fr",
@@ -14,13 +17,91 @@
   "theme_color": "#0B0F1C",
   "prefer_related_applications": false,
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
-  "categories": ["education", "business", "productivity"],
+  "categories": [
+    "education",
+    "business",
+    "productivity"
+  ],
   "shortcuts": [
-    { "name": "Ma révision du jour", "short_name": "Révision", "url": "./?source=raccourci-revision", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] },
-    { "name": "Simulateur IELTS", "short_name": "IELTS", "url": "./?source=raccourci-ielts", "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+    {
+      "name": "Ma révision du jour",
+      "short_name": "Révision",
+      "url": "./?source=raccourci-revision",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Simulateur IELTS",
+      "short_name": "IELTS",
+      "url": "./?source=raccourci-ielts",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/1-accueil.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Accueil"
+    },
+    {
+      "src": "screenshots/2-guide-vocal.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Guide vocal"
+    },
+    {
+      "src": "screenshots/3-seance-guidee.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Séance guidée"
+    },
+    {
+      "src": "screenshots/4-examens.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Examens"
+    },
+    {
+      "src": "screenshots/5-business.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Business"
+    }
   ]
 }
