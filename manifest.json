@@ -69,37 +69,37 @@
   ],
   "screenshots": [
     {
-      "src": "screenshots/1-accueil.png",
+      "src": "1-accueil.jpg",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Accueil"
     },
     {
-      "src": "screenshots/2-guide-vocal.png",
+      "src": "2-guide-vocal.jpg",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Guide vocal"
     },
     {
-      "src": "screenshots/3-seance-guidee.png",
+      "src": "3-seance-guidee.jpg",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Séance guidée"
     },
     {
-      "src": "screenshots/4-examens.png",
+      "src": "4-examens.jpg",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Examens"
     },
     {
-      "src": "screenshots/5-business.png",
+      "src": "5-business.jpg",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Business"
     }
