@@ -1,0 +1,5921 @@
+/* diisoo-bundle.js : tous les scripts de Diisoo en un seul fichier (chargement plus rapide). Généré, ne pas modifier à la main. */
+try{
+/* ---- diisoo-secteurs.js ---- */
+/* diisoo-secteurs.js
+ * Chargeur des modules sectoriels (Colobane, Sandaga, Centenaire, Guangzhou).
+ * Zero-Breaking Change : aucune clé existante n'est lue ni modifiée.
+ * Clé propre : "diisoo_secteurs_v1" (localStorage). Aucun accès à IndexedDB.
+ */
+(function () {
+  "use strict";
+
+  var MODULES = [
+    "diisoo-module-colobane.json",
+    "diisoo-module-sandaga.json",
+    "diisoo-module-centenaire.json",
+    "diisoo-module-guangzhou.json",
+    "diisoo-module-colobane-intermediaire.json",
+    "diisoo-module-sandaga-intermediaire.json",
+    "diisoo-module-centenaire-intermediaire.json",
+    "diisoo-module-guangzhou-intermediaire.json"
+  ];
+  var KEY = "diisoo_secteurs_v1";
+  var cache = {};
+
+  function lireEtat() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || { faits: {} }; }
+    catch (e) { return { faits: {} }; }
+  }
+
+  function ecrireEtat(etat) {
+    try { localStorage.setItem(KEY, JSON.stringify(etat)); } catch (e) {}
+  }
+
+  function charger(fichier) {
+    return fetch(fichier, { cache: "no-cache" })
+      .then(function (r) {
+        if (!r.ok) throw new Error(fichier + " " + r.status);
+        return r.json();
+      })
+      .then(function (m) { cache[m.id] = m; return m; })
+      .catch(function () { return null; });
+  }
+
+  function chargerTout() {
+    return Promise.all(MODULES.map(charger)).then(function (liste) {
+      return liste.filter(Boolean);
+    });
+  }
+
+  function liste() {
+    var etat = lireEtat();
+    return Object.keys(cache).map(function (id) {
+      var m = cache[id];
+      return {
+        id: m.id,
+        marche: m.marche,
+        theme: m.theme,
+        niveau: m.niveau,
+        xp: m.xp,
+        fait: !!etat.faits[id]
+      };
+    });
+  }
+
+  function obtenir(id) { return cache[id] || null; }
+
+  /* Évaluation : reponses = tableau de textes choisis (3 questions).
+   * Valide à 2 bonnes réponses sur 3. XP donné une seule fois par module. */
+  function evaluer(id, reponses) {
+    var m = cache[id];
+    if (!m) return { ok: false, raison: "module introuvable" };
+    var bonnes = 0;
+    m.evaluation.forEach(function (q, i) {
+      if (reponses[i] === q.reponse) bonnes++;
+    });
+    var reussi = bonnes >= 2;
+    var etat = lireEtat();
+    var xpGagne = 0;
+    if (reussi && !etat.faits[id]) {
+      etat.faits[id] = { date: new Date().toISOString(), score: bonnes };
+      xpGagne = m.xp;
+      ecrireEtat(etat);
+      /* Brancher ici l'XP existant de Diisoo, par exemple : */
+      /* if (window.validerExercice) window.validerExercice(id, xpGagne); */
+      document.dispatchEvent(new CustomEvent("diisoo:secteur-valide", {
+        detail: { id: id, xp: xpGagne, score: bonnes }
+      }));
+    }
+    return { ok: true, reussi: reussi, bonnes: bonnes, xp: xpGagne, suivant: m.suivant };
+  }
+
+  window.DiisooSecteurs = {
+    chargerTout: chargerTout,
+    liste: liste,
+    obtenir: obtenir,
+    evaluer: evaluer
+  };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-secteurs.js",e);}
+
+try{
+/* ---- diisoo-secteurs-ui.js ---- */
+/* diisoo-secteurs-ui.js (v2)
+ * Anglais des marches : meme apparence et meme logique que les autres secteurs Business
+ * (un titre, un niveau, une carte a la fois, fleches et barre de progression).
+ * Usage : DiisooSecteursUI.menu(conteneur) ; DiisooSecteursUI.ouvrir(id, conteneur)
+ * Voix : window.diisooParler(texte, langue). Evaluation et XP : DiisooSecteurs (inchange).
+ */
+(function () {
+  "use strict";
+
+  var CSS = [
+    ".mk{display:flex;flex-direction:column;gap:.5rem}",
+    ".mk-h{font-size:.875rem;font-weight:700;color:#F6F1E7;text-align:center;margin:0}",
+    ".mk-lvl{font-size:11px;font-weight:700;color:#C99CEA;padding-top:6px;margin:0}",
+    ".mk-cap{font-size:10px;font-weight:700;color:#8C8064;text-transform:uppercase;letter-spacing:.06em;margin:0}",
+    ".mk-nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;padding:2px 0}",
+    ".mk-row{display:flex;align-items:center;justify-content:center;width:100%}",
+    ".mk-arr{background:#141A2B;border:1px solid #1E2740;color:#C9BFA8;border-radius:9999px;width:34px;height:34px;font-size:16px;line-height:1;padding:0}",
+    ".mk-rowlab{flex:1;text-align:center;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8C8064}",
+    ".mk-bar{width:100%;height:4px;border-radius:9999px;background:#1E2740;margin:6px 0 4px;overflow:hidden}",
+    ".mk-fill{height:100%;background:#E1693F;border-radius:9999px;transition:width .25s}",
+    ".mk-card{background:#141A2B;border:1px solid #1E2740;border-radius:.75rem;padding:.75rem;display:flex;flex-direction:column;gap:.25rem;animation:mkin .22s ease-out}",
+    "@keyframes mkin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}",
+    ".mk-en{font-size:.875rem;font-weight:600;color:#F6F1E7}",
+    ".mk-big{font-size:1rem;font-weight:700;color:#F6F1E7;line-height:1.35}",
+    ".mk-fr{font-size:.75rem;color:#A69C86}",
+    ".mk-wo{font-size:.75rem;color:#5FC98F;font-style:italic}",
+    ".mk-role{font-size:10px;font-weight:700;color:#C99CEA;text-transform:uppercase;letter-spacing:.06em}",
+    ".mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.25rem}",
+    ".mk-b{background:#1E2740;color:#E4DCC9;border:0;border-radius:.5rem;padding:.5rem;font-size:11px;font-weight:600}",
+    ".mk-b:active{background:#2A3454}",
+    ".mk-go{width:100%;padding:.8rem;border-radius:.75rem;font-size:.85rem;font-weight:700;margin-top:.25rem}",
+    ".mk-sec{width:100%;padding:.7rem;border-radius:.75rem;background:#141A2B;color:#A69C86;font-size:.75rem;font-weight:600;border:1px solid #1E2740}",
+    ".mk-choix{display:block;width:100%;text-align:left;background:#1E2740;color:#F6F1E7;border:2px solid transparent;border-radius:.75rem;padding:.8rem;margin-top:.4rem;font-size:.85rem}",
+    ".mk-choix:active{border-color:#E1693F}",
+    ".mk-ok{color:#5FC98F}.mk-ko{color:#EE85A3}"
+  ].join("");
+
+  function injecterCSS() {
+    if (document.getElementById("mk-css")) return;
+    var s = document.createElement("style");
+    s.id = "mk-css";
+    s.textContent = CSS;
+    document.head.appendChild(s);
+  }
+  function esc(t) {
+    return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  }
+  function parler(texte, langue) {
+    if (typeof window.diisooParler === "function") { try { window.diisooParler(texte, langue || "en"); } catch (e) {} }
+  }
+  function emoji(en) {
+    try { return (window.DiisooImages && window.DiisooImages.emojiFor(en)) || ""; } catch (e) { return ""; }
+  }
+  function boutons(en, wo) {
+    var h = '<div class="mk-grid" style="' + (wo ? "" : "grid-template-columns:1fr") + '">';
+    if (en) h += '<button type="button" class="mk-b" data-say="' + esc(en) + '" data-lang="en">🔊 English</button>';
+    if (wo) h += '<button type="button" class="mk-b" data-say="' + esc(wo) + '" data-lang="wo">🔊 Wolof</button>';
+    return h + "</div>";
+  }
+  function lier(racine) {
+    var b = racine.querySelectorAll("[data-say]");
+    for (var i = 0; i < b.length; i++) b[i].addEventListener("click", function () { parler(this.getAttribute("data-say"), this.getAttribute("data-lang")); });
+  }
+  function nav(lab, pct) {
+    return '<div class="mk-nav"><div class="mk-row"><button type="button" class="mk-arr" data-d="-1" aria-label="Precedent">‹</button>' +
+      '<div class="mk-rowlab">' + esc(lab) + '</div><button type="button" class="mk-arr" data-d="1" aria-label="Suivant">›</button></div>' +
+      '<div class="mk-bar"><div class="mk-fill" style="width:' + pct + '%"></div></div></div>';
+  }
+  var ORDRE_MARCHE = { colobane: 0, sandaga: 1, centenaire: 2, guangzhou: 3 };
+  function niveauLabel(n) { return n === "intermediaire" ? "📈 Intermédiaire" : "🌱 Débutant"; }
+
+  function menu(conteneur) {
+    injecterCSS();
+    var liste = window.DiisooSecteurs.liste().slice().sort(function (a, b) {
+      var na = a.niveau === "intermediaire" ? 1 : 0, nb = b.niveau === "intermediaire" ? 1 : 0;
+      if (na !== nb) return na - nb;
+      return (ORDRE_MARCHE[String(a.marche).toLowerCase().split(" ")[0]] || 0) - (ORDRE_MARCHE[String(b.marche).toLowerCase().split(" ")[0]] || 0);
+    });
+    if (!liste.length) { conteneur.innerHTML = '<p class="mk-fr" style="text-align:center">Modules indisponibles pour le moment.</p>'; return; }
+    var cur = 0;
+    for (var i = 0; i < liste.length; i++) { if (!liste[i].fait) { cur = i; break; } }
+    function rendre() {
+      var m = liste[cur];
+      conteneur.innerHTML = '<div class="mk"><h4 class="mk-h">🛒 Anglais des marchés</h4>' +
+        nav("Module " + (cur + 1) + " sur " + liste.length, Math.round((cur + 1) / liste.length * 100)) +
+        '<p class="mk-lvl">' + niveauLabel(m.niveau) + "</p>" +
+        '<div class="mk-card"><p class="mk-en">' + esc(m.marche) + '</p><p class="mk-fr">' + esc(m.theme) + "</p>" +
+        '<p class="mk-wo" style="font-style:normal">' + (m.fait ? "✅ Terminé" : "+" + m.xp + " XP") + "</p>" +
+        '<button type="button" class="mk-go btn-primary" id="mk-start">' + (m.fait ? "Refaire ▶" : "Commencer ▶") + "</button></div></div>";
+      var arr = conteneur.querySelectorAll(".mk-arr");
+      for (var k = 0; k < arr.length; k++) arr[k].addEventListener("click", function () {
+        var n = cur + parseInt(this.getAttribute("data-d"), 10);
+        if (n >= 0 && n < liste.length) { cur = n; rendre(); }
+      });
+      conteneur.querySelector("#mk-start").addEventListener("click", function () { ouvrir(liste[cur].id, conteneur); });
+    }
+    rendre();
+  }
+
+  function ouvrir(id, conteneur) {
+    injecterCSS();
+    var m = window.DiisooSecteurs.obtenir(id);
+    if (!m) { conteneur.innerHTML = '<p class="mk-fr">Module introuvable.</p>'; return; }
+    var cartes = [];
+    cartes.push({ t: "accroche", cap: "Pour commencer", en: m.accroche.en, fr: m.accroche.fr });
+    (m.vocabulaire || []).forEach(function (v) { cartes.push({ t: "voc", cap: "Vocabulaire à écouter et répéter", en: v.en, fr: v.fr }); });
+    (m.pont_wolof || []).forEach(function (p) { cartes.push({ t: "pont", cap: "En wolof, sur le marché", en: p.en, wo: p.wo }); });
+    (m.dialogue || []).forEach(function (d) { cartes.push({ t: "dlg", cap: "Dialogue", role: d.role, en: d.en, fr: d.fr }); });
+    (m.pratique_micro || []).forEach(function (p) { cartes.push({ t: "prat", cap: "Répète 3 fois à voix haute", en: p }); });
+    if (m.defi) cartes.push({ t: "defi", cap: "Défi", en: m.defi.en, fr: m.defi.fr });
+    var nq = (m.evaluation || []).length;
+    (m.evaluation || []).forEach(function (q, i) { cartes.push({ t: "quiz", cap: "Question " + (i + 1) + " sur " + nq, q: q }); });
+    var pos = 0, reponses = [];
+
+    function entete() {
+      return '<h4 class="mk-h">🛒 ' + esc(m.marche) + " · " + esc(m.theme) + "</h4>" +
+        nav(pos < cartes.length ? "Étape " + (pos + 1) + " sur " + cartes.length : "Résultat", Math.round((Math.min(pos + 1, cartes.length)) / cartes.length * 100)) +
+        '<p class="mk-lvl">' + niveauLabel(m.niveau) + "</p>";
+    }
+    function lierNav() {
+      var arr = conteneur.querySelectorAll(".mk-arr");
+      for (var k = 0; k < arr.length; k++) arr[k].addEventListener("click", function () {
+        var n = pos + parseInt(this.getAttribute("data-d"), 10);
+        var maxLibre = cartes.length - nq;   // les questions ne se sautent pas
+        if (n >= 0 && n <= Math.max(maxLibre, 0) && n < cartes.length) { pos = n; rendre(); }
+      });
+    }
+    function retour() {
+      return '<button type="button" class="mk-sec" id="mk-back">⬅️ Retour aux marchés</button>';
+    }
+    function rendre() {
+      var c = cartes[pos], h = '<div class="mk">' + entete();
+      var em = c.en ? emoji(c.en) : "";
+      if (c.t === "quiz") {
+        h += '<p class="mk-cap">' + esc(c.cap) + '</p><div class="mk-card"><p class="mk-big">' + esc(c.q.q) + "</p>";
+        c.q.choix.forEach(function (x) { h += '<button type="button" class="mk-choix" data-c="' + esc(x) + '">' + esc(x) + "</button>"; });
+        h += "</div>";
+      } else {
+        h += '<p class="mk-cap">' + esc(c.cap) + "</p>";
+        h += '<div class="mk-card' + (em ? " fx-em" : "") + '"' + (em ? ' data-em="' + em + '"' : "") + ">";
+        if (c.role) h += '<p class="mk-role">' + (/vend|march/i.test(c.role) ? "🧑‍💼 " : "🛍️ ") + esc(c.role) + "</p>";
+        h += '<p class="' + (c.t === "accroche" || c.t === "defi" || c.t === "prat" ? "mk-big" : "mk-en") + '">' + esc(c.en) + "</p>";
+        if (c.fr) h += '<p class="mk-fr">' + esc(c.fr) + "</p>";
+        if (c.wo) h += '<p class="mk-wo">🗣️ ' + esc(c.wo) + "</p>";
+        if (c.t !== "defi") h += boutons(c.en, c.wo);
+        var dernier = pos === cartes.length - nq - 1;
+        h += '<button type="button" class="mk-go btn-primary" id="mk-next">' + (dernier && nq ? "Passer aux questions ▶" : "Suivant ▶") + "</button></div>";
+      }
+      h += retour() + "</div>";
+      conteneur.innerHTML = h;
+      lier(conteneur); lierNav();
+      conteneur.querySelector("#mk-back").addEventListener("click", function () { menu(conteneur); });
+      var n = conteneur.querySelector("#mk-next");
+      if (n) n.addEventListener("click", function () { if (pos < cartes.length - 1) { pos++; rendre(); } });
+      var ch = conteneur.querySelectorAll(".mk-choix");
+      for (var i = 0; i < ch.length; i++) ch[i].addEventListener("click", function () {
+        reponses[pos - (cartes.length - nq)] = this.getAttribute("data-c");
+        if (pos < cartes.length - 1) { pos++; rendre(); } else fin();
+      });
+    }
+    function fin() {
+      var r = window.DiisooSecteurs.evaluer(id, reponses);
+      var h = '<div class="mk"><h4 class="mk-h">🛒 ' + esc(m.marche) + " · " + esc(m.theme) + "</h4>";
+      h += '<div class="mk-card"><p class="mk-big ' + (r.reussi ? "mk-ok" : "mk-ko") + '">' + (r.reussi ? "Bravo ! " : "Presque. ") + r.bonnes + "/" + nq + "</p>";
+      if (r.xp) h += '<p class="mk-wo" style="font-style:normal">+' + r.xp + " XP</p>";
+      h += '<p class="mk-fr">' + esc(r.reussi ? m.recap : "Il faut 2 bonnes réponses sur 3. Réessaie.") + "</p></div>";
+      h += '<button type="button" class="mk-go btn-primary" id="mk-fin">' + (r.reussi && r.suivant ? "Marché suivant ▶" : "Retour aux marchés") + "</button>";
+      if (!r.reussi) h += '<button type="button" class="mk-sec" id="mk-retry">Réessayer</button>';
+      h += "</div>";
+      conteneur.innerHTML = h;
+      conteneur.querySelector("#mk-fin").addEventListener("click", function () {
+        if (r.reussi && r.suivant && window.DiisooSecteurs.obtenir(r.suivant)) ouvrir(r.suivant, conteneur); else menu(conteneur);
+      });
+      var rt = conteneur.querySelector("#mk-retry");
+      if (rt) rt.addEventListener("click", function () { reponses = []; pos = cartes.length - nq; rendre(); });
+    }
+    rendre();
+  }
+
+  window.DiisooSecteursUI = { menu: menu, ouvrir: ouvrir };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-secteurs-ui.js",e);}
+
+try{
+/* ---- diisoo-secteurs-init.js ---- */
+/* diisoo-secteurs-init.js
+ * Branche les modules sectoriels dans l'écran Outils Business, sans rien modifier d'autre.
+ * Ajoute un bouton "Anglais des marchés" au-dessus de la liste des secteurs.
+ * Relie la voix (speak) et l'XP (addXP) existants. Aucune clé localStorage existante touchée.
+ */
+(function () {
+    "use strict";
+
+    /* Pont voix : utilise le moteur existant (Oolel pour le wolof, TTS pour l'anglais) */
+    window.diisooParler = function (texte, langue) {
+        try { return speak(texte, langue === "wo" ? "wo" : "en-US", 0.9); }
+        catch (e) { console.error("Erreur voix secteurs :", e); }
+    };
+
+    /* Pont XP : une seule fois par module (géré dans DiisooSecteurs.evaluer) */
+    document.addEventListener("diisoo:secteur-valide", function (ev) {
+        try { addXP(ev.detail.xp); bumpDailyGoal(1); }
+        catch (e) { console.error("Erreur XP secteurs :", e); }
+    });
+
+    function el(id) { return document.getElementById(id); }
+
+    function reinitialiser() {
+        var vue = el("secteurs-vue"), ouvrir = el("secteurs-ouvrir"), retour = el("secteurs-retour");
+        if (vue) { vue.classList.add("hidden"); vue.innerHTML = ""; }
+        if (ouvrir) ouvrir.classList.remove("hidden");
+        if (retour) retour.classList.add("hidden");
+    }
+
+    function injecter() {
+        var picker = el("business-picker");
+        if (!picker || el("secteurs-zone")) { reinitialiser(); return; }
+
+        var z = document.createElement("div");
+        z.id = "secteurs-zone";
+        z.className = "space-y-2";
+        z.innerHTML =
+            '<button type="button" id="secteurs-ouvrir" class="w-full text-left p-4 rounded-2xl shadow-md" ' +
+                'style="background:linear-gradient(135deg,#2A1A14,#141A2B);border:1px solid #E1693F">' +
+                '<span class="text-2xl">🛒</span>' +
+                '<h4 class="text-sm font-bold text-[#F6F1E7] mt-1">Anglais des marchés</h4>' +
+                '<p class="text-[11px] text-[#A69C86]">Colobane, Sandaga, Centenaire, Guangzhou : 4 minutes par module, +30 XP.</p>' +
+            '</button>' +
+            '<button type="button" id="secteurs-retour" class="hidden w-full py-3 bg-[#141A2B] text-[#A69C86] rounded-xl text-xs font-semibold">⬅️ Retour aux secteurs</button>' +
+            '<div id="secteurs-vue" class="hidden"></div>';
+        picker.parentNode.insertBefore(z, picker);
+
+        el("secteurs-ouvrir").onclick = function () {
+            window.DiisooSecteurs.chargerTout().then(function (liste) {
+                if (!liste.length) { toast("Modules indisponibles pour le moment"); return; }
+                picker.classList.add("hidden");
+                var contenu = el("business-content");
+                if (contenu) contenu.classList.add("hidden");
+                el("secteurs-ouvrir").classList.add("hidden");
+                el("secteurs-retour").classList.remove("hidden");
+                var vue = el("secteurs-vue");
+                vue.classList.remove("hidden");
+                window.DiisooSecteursUI.menu(vue);
+            });
+        };
+        el("secteurs-retour").onclick = function () {
+            stopAllAudio();
+            openBusinessModule();
+        };
+    }
+
+    /* On enveloppe openBusinessModule : l'original s'exécute en premier, puis on ajoute le bouton */
+    var _ouvrir = window.openBusinessModule;
+    if (typeof _ouvrir === "function") {
+        window.openBusinessModule = function () {
+            var r = _ouvrir.apply(this, arguments);
+            try { injecter(); } catch (e) { console.error(e); }
+            return r;
+        };
+    }
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-secteurs-init.js",e);}
+
+try{
+/* ---- diisoo-pron.js ---- */
+/* diisoo-pron.js
+ * Affiche la prononciation (phonetique pour francophones) sous les phrases wolof.
+ * Fichier autonome : une seule ligne dans index.html : <script src="diisoo-pron.js" defer></script>
+ * Ne modifie aucun texte existant, ajoute seulement une ligne grise sous la phrase wolof.
+ * Source : relecture-wolof-diisoo-3000-avec-prononciation.xlsx (prelecture, a faire valider par un locuteur natif).
+ */
+(function () {
+  "use strict";
+  var PRON = {"Jërëjëf":"Djeureudjeuf","Ba ëllëg":"Ba eulleug","Fanaanal jàmm":"Fanaanal djàmm","Maa ngi fi rekk, jërëjëf":"Maa ngi fi rekk, djeureudjeuf","Njaboot":"Ndjaboot","Am naa njaboot bu réy":"Am naa ndjaboot bu réy","Sama yaay mi ngi ci kër gi":"Sama yaay mi ngi tchi keur gi","Bëgg naa sama doom yi":"Beugg naa sama doom yi","Ñaata doom nga am ?":"Gnaata doom nga am ?","Ndax am nga rakk ?":"Ndakh am nga rakk ?","Kër":"Keur","Dëkkandoo":"Deukkandoo","Ndox":"Ndokh","Xarit":"Kharit","Ñam":"Gnam","Maa ngi dem kër":"Maa ngi dem keur","Soxla naa ndox":"Sokhla naa ndokh","Foo dëkk ?":"Foo deukk ?","Maa ngi liggéey ci butik":"Maa ngi liggéey tchi butik","Xaalis":"Khaalis","Njëg":"Ndjeug","Ñaata la ?":"Gnaata la ?","Jënd":"Djeund","Jaay":"Djaay","Wàññi njëg li, su la neexee":"Wàgngni ndjeug li, su la neekhee","Bëgg naa jënd ceeb":"Beugg naa djeund tcheeb","Amuma xaalis léegi":"Amuma khaalis léegi","Wàññi ko tuuti":"Wàgngni ko tuuti","Ñëw":"Gneuw","Jege":"Djege","Foo jëm ?":"Foo djeum ?","Marse bi jege na fi":"Marse bi djege na fi","Kaay fi, su la neexee":"Kaay fi, su la neekhee","Fan la kaar bi jóge ?":"Fan la kaar bi djóge ?","Loxo":"Lokho","Faju":"Fadju","Soxla naa gis doktoor":"Sokhla naa gis doktoor","Dama gën a baax léegi":"Dama geun a baakh léegi","Ceeb":"Tcheeb","Jën":"Djeun","Neex":"Neekh","Dama xiif":"Dama khiif","Ñam bi neex na":"Gnam bi neekh na","Bëgg naa lekk ceeb ak jën":"Beugg naa lekk tcheeb ak djeun","Ndox mi":"Ndokh mi","Ñaar":"Gnaar","Ñett":"Gnett","Ëllëg":"Eulleug","Ban waxtu la ?":"Ban wakhtu la ?","Dinaa ñëw ëllëg":"Dinaa gneuw eulleug","Ñaata nit ñoo fi nekk ?":"Gnaata nit gnoo fi nekk ?","Maa ngi wut kër":"Maa ngi wut keur","Ñaata la loyer bi ?":"Gnaata la loyer bi ?","Boroom kër":"Boroom keur","Ndax mën naa xool kër gi ?":"Ndakh meun naa khool keur gi ?","Kuraŋ bi du liggéey":"Kurang bi du liggéey","Gox bi dafa dal":"Gokh bi dafa dal","Dama war a sinye kontra kër gi":"Dama war a sinye kontra keur gi","Jaaykat":"Djaaykat","Jëndkat":"Djeundkat","Xar":"Khar","Bëy":"Beuy","Senegaal laa jóge":"Senegaal laa djóge","Neex na ma xam la":"Neekh na ma kham la","Ñaata at nga am ?":"Gnaata at nga am ?","Maa ngi dëkk Cees":"Maa ngi deukk Tchees","Damay wax angale ak farañse":"Damay wakh angale ak faragnse","Mën nga wax sa tur araf ci araf ?":"Meun nga wakh sa tur araf tchi araf ?","F-A-T-O-U (araf ci araf)":"F-A-T-O-U (araf tchi araf)","Maa ngi tudd Fatou. Neex na ma xam la.":"Maa ngi tudd Fatou. Neekh na ma kham la.","Neex na ma it. Fu nga jóge ?":"Neekh na ma it. Fu nga djóge ?","Thiès laa jóge, ci Senegaal.":"Thiès laa djóge, tchi Senegaal.","Mag bu jigéen (grande sœur) / Rakk bu jigéen (petite sœur)":"Mag bu djigéen (grande sœur) / Rakk bu djigéen (petite sœur)","Am naa ñett doom":"Am naa gnett doom","Sama yaay dafay dëkk ak nun":"Sama yaay dafay deukk ak nun","Danuy lekk ànd ci ngoon, bés bu nekk":"Danuy lekk ànd tchi ngoon, bés bu nekk","Sama baay chauffeur la":"Sama baay tchhauffeur la","Dama bëgg sama njaboot lool":"Dama beugg sama ndjaboot lool","Kan moo gëna mag ci sa njaboot ?":"Kan moo geuna mag tchi sa ndjaboot ?","Sama maam bu jigéen moo gëna mag":"Sama maam bu djigéen moo geuna mag","Ndax am nga njaboot bu mag ?":"Ndakh am nga ndjaboot bu mag ?","Waaw, am naa ñaar rakk bu góor ak benn rakk bu jigéen.":"Waaw, am naa gnaar rakk bu góor ak benn rakk bu djigéen.","Ndax dangeen dëkk ànd ?":"Ndakh dangeen deukk ànd ?","Waaw, danuy dëkk ci benn kër ak sunu waajur.":"Waaw, danuy deukk tchi benn keur ak sunu waadjur.","Sama maam bu jigéen ; am na juróom ñaar fukk ak juróom ñett at.":"Sama maam bu djigéen ; am na djuróom gnaar fukk ak djuróom gnett at.","Xarit ci liggéey":"Kharit tchi liggéey","Damay tàmbali liggéey ci juróom ñett":"Damay tàmbali liggéey tchi djuróom gnett","Damay noppi liggéey ci juróom":"Damay noppi liggéey tchi djuróom","Damay liggéey ci bureau bi":"Damay liggéey tchi bureau bi","Sama liggéey dafa sonn waaye dafay neex ma":"Sama liggéey dafa sonn waaye dafay neekh ma","Dama bëgg dimbali kiliyaan yi":"Dama beugg dimbali kiliyaan yi","Damay noppalu tuuti ci digg-bëccëg":"Damay noppalu tuuti tchi digg-beutchtcheug","Damay liggéey ci butik bi bés bu nekk.":"Damay liggéey tchi butik bi bés bu nekk.","Ci ban waxtu nga tàmbali liggéey ?":"Tchi ban wakhtu nga tàmbali liggéey ?","Damay tàmbali ci juróom ñett te noppi ci juróom benn.":"Damay tàmbali tchi djuróom gnett te noppi tchi djuróom benn.","Lan nga bëgg ci sa liggéey ?":"Lan nga beugg tchi sa liggéey ?","Dama bëgg dimbali kiliyaan yi bés bu nekk.":"Dama beugg dimbali kiliyaan yi bés bu nekk.","Mën nga wàññi njëg li ?":"Meun nga wàgngni ndjeug li ?","Dama bëgg jënd ceeb":"Dama beugg djeund tcheeb","Ndax nangu ngeen Wave ak Orange Money ?":"Ndakh nangu ngeen Wave ak Orange Money ?","Ñaata la tamaate yi ?":"Gnaata la tamaate yi ?","Mën nga ma wàññil ci njëg li ?":"Meun nga ma wàgngnil tchi ndjeug li ?","Ñaata la sac bi ?":"Gnaata la satch bi ?","Juróom junni franc la.":"Djuróom djunni frantch la.","Dafa seer lool. Mën nga wàññi njëg li ?":"Dafa seer lool. Meun nga wàgngni ndjeug li ?","Waaw, ñeent junni franc ngir yaw.":"Waaw, gneent djunni frantch ngir yaw.","Jërëjëf, dinaa jël ñaar.":"Djeureudjeuf, dinaa djeul gnaar.","Dama bëgg reserve benn bilee":"Dama beugg reserve benn bilee","Ci ban waxtu la bus bi di dem ?":"Tchi ban wakhtu la bus bi di dem ?","Ana arre bu gëna jege ?":"Ana arre bu geuna djege ?","Maa ngi tukki ngir gis sama njaboot":"Maa ngi tukki ngir gis sama ndjaboot","Ndax war naa am visa ngir réew mii ?":"Ndakh war naa am visa ngir réew mii ?","Damay jël bus bi suba su nekk":"Damay djeul bus bi suba su nekk","Fukki minut la ci taksi bu jóge fii.":"Fukki minut la tchi taksi bu djóge fii.","Ci ban waxtu la sama tukki avion di dem ?":"Tchi ban wakhtu la sama tukki avion di dem ?","Sa tukki avion bi dafay dem ci juróom ñett ci suba.":"Sa tukki avion bi dafay dem tchi djuróom gnett tchi suba.","Damay jël bus bi suba su nekk.":"Damay djeul bus bi suba su nekk.","Ana opitaal bu gëna jege ?":"Ana opitaal bu geuna djege ?","Dama gën a baax tey":"Dama geun a baakh tey","Wool ambilaas bi, su la neexee":"Wool ambilaas bi, su la neekhee","Naanal benn comprimé ñaari yoon ci bés bi":"Naanal benn tchomprimé gnaari yoon tchi bés bi","Kañ nga tàmbali feebar ?":"Kagn nga tàmbali feebar ?","Yaa ngi ci jàmm ?":"Yaa ngi tchi djàmm ?","Démb ci ngoon.":"Démb tchi ngoon.","Dafa neex lool":"Dafa neekh lool","Xiif na ma":"Khiif na ma","Dama bëgg ceeb ak jën":"Dama beugg tcheeb ak djeun","Lekk bii dafa neex lool":"Lekk bii dafa neekh lool","Mën naa am addition bi, su la neexee ?":"Meun naa am addition bi, su la neekhee ?","Ban lekk nga gëna bëgg ?":"Ban lekk nga geuna beugg ?","Dama bëgg ceebu jën":"Dama beugg tcheebu djeun","Mën naa am menu bi, su la neexee ?":"Meun naa am menu bi, su la neekhee ?","Waaw, jël ko.":"Waaw, djeul ko.","Jën wu ñu def ak ceeb neex na lool tey.":"Djeun wu gnu def ak tcheeb neekh na lool tey.","Lan nga bëgg a naan ?":"Lan nga beugg a naan ?","Ndox rekk, su la neexee.":"Ndokh rekk, su la neekhee.","Waxtu":"Wakhtu","Ban waxtu la léegi ?":"Ban wakhtu la léegi ?","Dinaa la gis ëllëg ci suba":"Dinaa la gis eulleug tchi suba","Ndaje mi dafay tàmbali ci fukk":"Ndadje mi dafay tàmbali tchi fukk","Ñaata nit ñu ngi ñëw ?":"Gnaata nit gnu ngi gneuw ?","Ci ban waxtu nga di jóg ?":"Tchi ban wakhtu nga di djóg ?","Damay jóg ci juróom benn suba su nekk":"Damay djóg tchi djuróom benn suba su nekk","Ñett waxtu la.":"Gnett wakhtu la.","Ci ban waxtu la ndaje mi di tàmbali ?":"Tchi ban wakhtu la ndadje mi di tàmbali ?","Dafay tàmbali ëllëg ci fukk.":"Dafay tàmbali eulleug tchi fukk.","Damay jóg ci juróom benn suba su nekk.":"Damay djóg tchi djuróom benn suba su nekk.","Ñaan visa":"Gnaan visa","Maa ngi dem gis sama njaboot":"Maa ngi dem gis sama ndjaboot","Ñaata bés ngay toog ?":"Gnaata bés ngay toog ?","Dinaa toog ñaari ayubés":"Dinaa toog gnaari ayubés","Ndax am nga bérab bu nga di nelaw bu nga reserve ?":"Ndakh am nga bérab bu nga di nelaw bu nga reserve ?","Lan moo tax nga di tukki ?":"Lan moo takh nga di tukki ?","Maa ngi dem gis sama njaboot ñaari ayubés.":"Maa ngi dem gis sama ndjaboot gnaari ayubés.","Ndax am nga bilee bu délsi ?":"Ndakh am nga bilee bu délsi ?","Ndax caution bi mu ngi ci ?":"Ndakh tchaution bi mu ngi tchi ?","Boroom kër gi":"Boroom keur gi","Mën naa gis kër gi ?":"Meun naa gis keur gi ?","Ñaata pièce la am ?":"Gnaata piètche la am ?","Ñaata la loyer apartema bii ?":"Gnaata la loyer apartema bii ?","Juróom fukk junni franc la, ak caution bi.":"Djuróom fukk djunni frantch la, ak tchaution bi.","Mën naa gis balaa may tànn ?":"Meun naa gis balaa may tànn ?","Waaw, dëgg la, ñëwal ëllëg ci suba.":"Waaw, deugg la, gneuwal eulleug tchi suba.","Semences yi":"Sementches yi","Dama soxla semences ngir sama tool":"Dama sokhla sementches ngir sama tool","Ñaata la benn saaku engrais ?":"Gnaata la benn saaku engrais ?","Ndax semences yii dañuy sax bu baax ci nawet ?":"Ndakh sementches yii dagnuy sakh bu baakh tchi nawet ?","Damay sotti ndox ci sama gàncax yi suba su nekk":"Damay sotti ndokh tchi sama gàntchakh yi suba su nekk","Ngóob mi baax na at mii":"Ngóob mi baakh na at mii","Damay jaay sama légumes ci marse bu Thiès":"Damay djaay sama légumes tchi marse bu Thiès","Mën nga ko yóbbu ci sama tool ?":"Meun nga ko yóbbu tchi sama tool ?","Salaam aleekum. Dama soxla semences ngir sama tool.":"Salaam aleekum. Dama sokhla sementches ngir sama tool.","Lan nga bëgg a ji ?":"Lan nga beugg a dji ?","Semences yii baax nañu ci nawet.":"Sementches yii baakh nagnu tchi nawet.","Ñaata la saaku bu ndaw ?":"Gnaata la saaku bu ndaw ?","Ñaari junni ak juróom téeméer franc.":"Gnaari djunni ak djuróom téeméer frantch.","Ndax am ngeen engrais itam ?":"Ndakh am ngeen engrais itam ?","Waaw, fukki junni franc ngir saaku bu mag.":"Waaw, fukki djunni frantch ngir saaku bu mag.","Mën nga ko yóbbu ci sama tool ci Thiès ?":"Meun nga ko yóbbu tchi sama tool tchi Thiès ?","Waaw, ëllëg ci suba.":"Waaw, eulleug tchi suba.","Damay yor sama njaay bu ndaw":"Damay yor sama ndjaay bu ndaw","Beykat laa, te maa ngi jaay sama légumes ci marse bi.":"Beykat laa, te maa ngi djaay sama légumes tchi marse bi.","Yaa ko jaay ci sa bopp ?":"Yaa ko djaay tchi sa bopp ?","Sama njaboot dafay liggéey ci tool yi":"Sama ndjaboot dafay liggéey tchi tool yi","Sama rakk bu góor dafay jaay meññeef ci marse bi":"Sama rakk bu góor dafay djaay megngneef tchi marse bi","Ndax sa njaboot am na tool ?":"Ndakh sa ndjaboot am na tool ?","Waaw, sama waajur yi dañuy ji dugub ak gerte.":"Waaw, sama waadjur yi dagnuy dji dugub ak gerte.","Baana-baana la ci Thiès.":"Baana-baana la tchi Thiès.","Damay tàmbali liggéey ci juróom benn ci suba":"Damay tàmbali liggéey tchi djuróom benn tchi suba","Damay sotti ndox ci gàncax yi bés bu nekk":"Damay sotti ndokh tchi gàntchakh yi bés bu nekk","Damay jaay sama yëf ci mbedd mi":"Damay djaay sama yeuf tchi mbedd mi","Ci juróom benn. Damay sotti ndox ci sama légumes yi njëkk, ba noppi dem ci marse bi.":"Tchi djuróom benn. Damay sotti ndokh tchi sama légumes yi ndjeukk, ba noppi dem tchi marse bi.","Ñaata waxtu nga liggéey ?":"Gnaata wakhtu nga liggéey ?","Ni fukki waxtu ci bés bu nekk.":"Ni fukki wakhtu tchi bés bu nekk.","Wàññil ma tuuti":"Wàgngnil ma tuuti","Dama bëgg jënd fukki kilo sooble":"Dama beugg djeund fukki kilo sooble","Salaam aleekum. Ñaata la tamaate yi ?":"Salaam aleekum. Gnaata la tamaate yi ?","Juróom téeméer franc la ci kilo bi.":"Djuróom téeméer frantch la tchi kilo bi.","Dafa seer. Mën nga wàññi njëg li ?":"Dafa seer. Meun nga wàgngni ndjeug li ?","Ngir yaw, ñeent téeméer. Ñu ngi jóge ci tool bi tey ci suba.":"Ngir yaw, gneent téeméer. Gnu ngi djóge tchi tool bi tey tchi suba.","Baax na, bëgg naa ñett kilo.":"Baakh na, beugg naa gnett kilo.","Damay yóbbu marsandiis ci Ndakaaru":"Damay yóbbu marsandiis tchi Ndakaaru","Kamiyon bi dafay dem ci juróom ñaar":"Kamiyon bi dafay dem tchi djuróom gnaar","Ñaata la bilee bi ngir dem marse bi ?":"Gnaata la bilee bi ngir dem marse bi ?","Ndax kamiyon bii dafay dem marse bu Thiès ?":"Ndakh kamiyon bii dafay dem marse bu Thiès ?","Waaw, dafay dem ci juróom ñaar ak légumes yu bees.":"Waaw, dafay dem tchi djuróom gnaar ak légumes yu bees.","Ñaata la sama bagaas yi ?":"Gnaata la sama bagaas yi ?","Ñaar junni franc la.":"Gnaar djunni frantch la.","Dama war a noppalu, liggéey naa ci jant bi bés bi bépp":"Dama war a noppalu, liggéey naa tchi djant bi bés bi bépp","Naanal ndox bu bari bu tàngee":"Naanal ndokh bu bari bu tàngee","Liggéey naa ci tool bi bés bi bépp te naanul ndox.":"Liggéey naa tchi tool bi bés bi bépp te naanul ndokh.","War nga naan ndox te noppalu.":"War nga naan ndokh te noppalu.","Dëgg nga, jërëjëf.":"Deugg nga, djeureudjeuf.","Légumes yu bees ak meññeef":"Légumes yu bees ak megngneef","Dama bëgg ceeb ak ginaar, su la neexee":"Dama beugg tcheeb ak ginaar, su la neekhee","Lan nga bëgg ?":"Lan nga beugg ?","Ceeb ak ginaar, su la neexee.":"Tcheeb ak ginaar, su la neekhee.","Ndax bëgg nga légumes ?":"Ndakh beugg nga légumes ?","Waaw, ak ndox.":"Waaw, ak ndokh.","Nawet dafay tàmbali ci sulet":"Nawet dafay tàmbali tchi sulet","Marse bi dafay ubbeeku ci juróom benn":"Marse bi dafay ubbeeku tchi djuróom benn","Juróom téeméer franc":"Djuróom téeméer frantch","Kañ la nawet di tàmbali ?":"Kagn la nawet di tàmbali ?","Ci sulet. Danuy ji gerte gannaaw taw bi njëkk.":"Tchi sulet. Danuy dji gerte gannaaw taw bi ndjeukk.","Ci ban waxtu la marse bi di ubbeeku ?":"Tchi ban wakhtu la marse bi di ubbeeku ?","Ci juróom benn.":"Tchi djuróom benn.","Am naa sama njaay bu ndaw ci Senegaal":"Am naa sama ndjaay bu ndaw tchi Senegaal","Dinaa délsi sama kër gannaaw tukki bi":"Dinaa délsi sama keur gannaaw tukki bi","Damay jënd marsandiis ngir jaay ko ci sama butik":"Damay djeund marsandiis ngir djaay ko tchi sama butik","Lu tax nga bëgg a tukki ?":"Lu takh nga beugg a tukki ?","Dama bëgg jënd marsandiis ngir sama njaay.":"Dama beugg djeund marsandiis ngir sama ndjaay.","Ndax dinga délsi Senegaal ?":"Ndakh dinga délsi Senegaal ?","Waaw, sama njaboot ak sama butik ñu ngi fa.":"Waaw, sama ndjaboot ak sama butik gnu ngi fa.","Am naa tool bu ndaw ci gannaaw kër gi":"Am naa tool bu ndaw tchi gannaaw keur gi","Loyer bi fanweer junni franc la ci weer wi":"Loyer bi fanweer djunni frantch la tchi weer wi","Ndax am nga tool ?":"Ndakh am nga tool ?","Waaw, damay ji tamaate ak sooble ci gannaaw kër gi.":"Waaw, damay dji tamaate ak sooble tchi gannaaw keur gi.","Ndax loyer bi dafa seer ?":"Ndakh loyer bi dafa seer ?","Ban référans la pièce bii am ?":"Ban référans la piètche bii am ?","Amortisëer":"Amortiseuer","Ndax pièce bii original la walla copie la ?":"Ndakh piètche bii original la walla tchopie la ?","Ñaata la pièce bii ?":"Gnaata la piètche bii ?","Ndax am nga garanti ?":"Ndakh am nga garanti ?","Ndax pièce bii OEM la walla aftermarket ?":"Ndakh piètche bii OEM la walla aftermarket ?","Maa ngi wut fournisseur bu jóge fabrik bi":"Maa ngi wut fournisseur bu djóge fabrik bi","Ñaata la ngir commande gros ?":"Gnaata la ngir tchommande gros ?","Ñaata acompte laa war a fey ?":"Gnaata atchompte laa war a fey ?","Ndax fey nga ci Yuan walla dollar ?":"Ndakh fey nga tchi Yuan walla dollar ?","Ñaata weer garanti pièce bii am ?":"Gnaata weer garanti piètche bii am ?","Ndax prix bi dafa bokk montage bi ?":"Ndakh prikh bi dafa bokk montage bi ?","Dinaa dellusi bu prix bi neexul ma":"Dinaa dellusi bu prikh bi neekhul ma","Ndax mën nga ma jox facture ?":"Ndakh meun nga ma djokh fatchture ?","Pièce bii dafa yem ak ban marque oto ?":"Piètche bii dafa yem ak ban marque oto ?","Prix gros / prix détail":"Prikh gros / prikh détail","Ndax tissu bii baax na ?":"Ndakh tissu bii baakh na ?","Am nga yeneen couleur ?":"Am nga yeneen tchouleur ?","Bëgg naa jënd ci gros":"Beugg naa djeund tchi gros","Ñaata la ngir fukk pièce ?":"Gnaata la ngir fukk piètche ?","Ndax tissu bii dafay soppi couleur bu ñu ko raxasee ?":"Ndakh tissu bii dafay soppi tchouleur bu gnu ko rakhasee ?","Ñaata la minimum commande bi ?":"Gnaata la minimum tchommande bi ?","Ndax mën nga ma yónnee échantillon ?":"Ndakh meun nga ma yónnee étchhantillon ?","Ndax tissu bii coton pur la ?":"Ndakh tissu bii tchoton pur la ?","Am nga ticket bi ?":"Am nga titchket bi ?","Ndax mën naa ko soppi su neexul ma ?":"Ndakh meun naa ko soppi su neekhul ma ?","Ñaata fan ngir am beneen stock ?":"Gnaata fan ngir am beneen stotchk ?","Ndax jaay nga itam ci internet ?":"Ndakh djaay nga itam tchi internet ?","Ndax jumtukaay bii dafay dox ci 220V ?":"Ndakh djumtukaay bii dafay dokh tchi 220V ?","Ndax am na garanti bu fabrikaan bi ?":"Ndakh am na garanti bu fabrikaan bi ?","Ndax mën nga ma ko testeel ci sama kanam ?":"Ndakh meun nga ma ko testeel tchi sama kanam ?","Ndax dafa yem ak voltage bu Senegaal ?":"Ndakh dafa yem ak voltage bu Senegaal ?","Ndax am nga facture bu njëkk bi ?":"Ndakh am nga fatchture bu ndjeukk bi ?","Ñaata la ngir carton bu mat ?":"Gnaata la ngir tcharton bu mat ?","Ndax chargeur bi dafa bokk ?":"Ndakh tchhargeur bi dafa bokk ?","Ñaata la capacité batterie bi ?":"Gnaata la tchapatchité batterie bi ?","Ndax mën naa fey ci mobile money ?":"Ndakh meun naa fey tchi mobile money ?","Am nga service après-vente ?":"Am nga servitche après-vente ?","Ndax meuble bii mën nañ ko wàcce ?":"Ndakh meuble bii meun nagn ko wàtchtche ?","Lan matière lañu jëfandikoo ?":"Lan matière lagnu djeufandikoo ?","Ndax dinañ ko yónnee ci kër gi ?":"Ndakh dinagn ko yónnee tchi keur gi ?","Ñaata la ngir ensemble bi bépp ?":"Gnaata la ngir ensemble bi bépp ?","Ndax mën naa fey ci plusieurs fois ?":"Ndakh meun naa fey tchi plusieurs fois ?","Ndax meuble bii dafa traité ci termites ?":"Ndakh meuble bii dafa traité tchi termites ?","Ñaata fan ngir fabriquer commande bi ?":"Gnaata fan ngir fabriquer tchommande bi ?","Am nga service montage ?":"Am nga servitche montage ?","Ndax mën naa xool catalogue modèles yi ?":"Ndakh meun naa khool tchatalogue modèles yi ?","Ñaata la transport bu conteneur ?":"Gnaata la transport bu tchonteneur ?","Ñaata fan ngir livraison bi ?":"Gnaata fan ngir livraison bi ?","Ndax soxla nga visa d'affaires ?":"Ndakh sokhla nga visa d'affaires ?","Ñaata la prix FOB bi ?":"Gnaata la prikh FOB bi ?","Bëgg naa envoi bu bokk ak yeneen":"Beugg naa envoi bu bokk ak yeneen","Ñaata CBM la sama marsandiis am ?":"Gnaata TchBM la sama marsandiis am ?","Soxla naa Bill of Lading bi":"Sokhla naa Bill of Lading bi","Fan la packing list bi ?":"Fan la patchking list bi ?","Ñaata fan ngir dédouaner ci Port Dakar ?":"Gnaata fan ngir dédouaner tchi Port Dakar ?","Ban Incoterm nga jëfandikoo ?":"Ban Intchoterm nga djeufandikoo ?","Ndax nangu nga fey ci acompte, topp solde bi ?":"Ndakh nangu nga fey tchi atchompte, topp solde bi ?","Ñaata fan la devis bi dox ?":"Gnaata fan la devis bi dokh ?","Am nga assurance transport ?":"Am nga assurantche transport ?","Boy, ñaata la pièce bii ?":"Boy, gnaata la piètche bii ?","Fukk ak juróom-ñeent junni la, waay.":"Fukk ak djuróom-gneent djunni la, waay.","Waaw waaw, ndax mën nga wàññi tuuti ?":"Waaw waaw, ndakh meun nga wàgngni tuuti ?","Ci sa ndigël, dinaa la ko jox ci fukk ak juróom-ñaar junni.":"Tchi sa ndigeul, dinaa la ko djokh tchi fukk ak djuróom-gnaar djunni.","Ndax pièce bii dafa bokk ci fabrik bi, walla copie la ?":"Ndakh piètche bii dafa bokk tchi fabrik bi, walla tchopie la ?","Dafa bokk ci fabrik bi, wóor na ko.":"Dafa bokk tchi fabrik bi, wóor na ko.","Ban taille nga am ci tissu bii ?":"Ban taille nga am tchi tissu bii ?","Am naa L ak XL, walla mën naa la ko def ci sa mesure.":"Am naa L ak KhL, walla meun naa la ko def tchi sa mesure.","Ñaata la ngir fukk pièces, bu ma jëndee ci gros ?":"Gnaata la ngir fukk piètches, bu ma djeundee tchi gros ?","Ci gros, dinaa la ko wàññi, ñeent fukk junni rekk.":"Tchi gros, dinaa la ko wàgngni, gneent fukk djunni rekk.","Ndax mën nga ma yónnee échantillon bu njëkk ?":"Ndakh meun nga ma yónnee étchhantillon bu ndjeukk ?","Waaw, léegi léegi, dinaa ko tàbbal ci prise bi.":"Waaw, léegi léegi, dinaa ko tàbbal tchi prise bi.","Waaw, benn at garanti, ak facture bu njëkk.":"Waaw, benn at garanti, ak fatchture bu ndjeukk.","Waaw, mën nañ ko wàcce ngir livraison bi yomb.":"Waaw, meun nagn ko wàtchtche ngir livraison bi yomb.","Waaw, livraison bi bokkul ci njëg bi, ñaar fukk junni la.":"Waaw, livraison bi bokkul tchi ndjeug bi, gnaar fukk djunni la.","Waaw, mën nga fey ñetti yoon, ci ñetti weer.":"Waaw, meun nga fey gnetti yoon, tchi gnetti weer.","Ñaata la transport bu conteneur bi ?":"Gnaata la transport bu tchonteneur bi ?","Dafa aju ci ñaata CBM la sa marsandiis am.":"Dafa adju tchi gnaata TchBM la sa marsandiis am.","Ñaata fan ngir livraison bi ci Port Dakar ?":"Gnaata fan ngir livraison bi tchi Port Dakar ?","Tollu na ci fanweer, bu dédouanement bi yomb.":"Tollu na tchi fanweer, bu dédouanement bi yomb.","Soxla naa Bill of Lading bi ak packing list bi.":"Sokhla naa Bill of Lading bi ak patchking list bi.","Waaw, dinaa la ko yónnee bu ñu jëlee marsandiis bi.":"Waaw, dinaa la ko yónnee bu gnu djeulee marsandiis bi.","Pompu ndox ngir tool bi":"Pompu ndokh ngir tool bi","Pièces détachées yu tracteur":"Piètches détatchhées yu tratchteur","Prix gros ngir baana-baana yi":"Prikh gros ngir baana-baana yi","Damay jaay ci crédit":"Damay djaay tchi tchrédit","Fey ci mobile money":"Fey tchi mobile money","Caisse ngir denc légumes yi":"Tchaisse ngir dentch légumes yi","Jumtukaay yu irrigation":"Djumtukaay yu irrigation","Conteneur ngir yónnee marsandiis":"Tchonteneur ngir yónnee marsandiis","Ñaata la tamaate bi ci kilo ?":"Gnaata la tamaate bi tchi kilo ?","Juróom téeméer la ci kilo bi.":"Djuróom téeméer la tchi kilo bi.","Dafa seer. Wàññil ma tuuti.":"Dafa seer. Wàgngnil ma tuuti.","Baax na, ñeent téeméer la.":"Baakh na, gneent téeméer la.","Jërëjëf. Jënd naa ñett kilo.":"Djeureudjeuf. Djeund naa gnett kilo.","Ndax am na garanti ci pièce bii ?":"Ndakh am na garanti tchi piètche bii ?","Waaw, ñetti weer la.":"Waaw, gnetti weer la.","Bu ma ko tàbbalee te dootul dox, mën naa ko delloo ?":"Bu ma ko tàbbalee te dootul dokh, meun naa ko delloo ?","Waaw, indil ma facture bi ak pièce bi.":"Waaw, indil ma fatchture bi ak piètche bi.","Ndax mën nga ma ko wuutal ak beneen ?":"Ndakh meun nga ma ko wuutal ak beneen ?","Waaw, mën nañu ko wuutal ci ñetti fan.":"Waaw, meun nagnu ko wuutal tchi gnetti fan.","Ñaata la ci téeméer pièces ?":"Gnaata la tchi téeméer piètches ?","Ci téeméer pièces, ñett téeméer ak juróom-fukk junni.":"Tchi téeméer piètches, gnett téeméer ak djuróom-fukk djunni.","Dafa seer. Ndax mën nga ko def ñett téeméer junni ?":"Dafa seer. Ndakh meun nga ko def gnett téeméer djunni ?","Baax na, waaye fey bi dafa war a jëkk.":"Baakh na, waaye fey bi dafa war a djeukk.","Dinaa fey juróom-fukk ci téeméer léegi, li desul bu ma jotee marsandiis bi.":"Dinaa fey djuróom-fukk tchi téeméer léegi, li desul bu ma djotee marsandiis bi.","Waaw, jërëjëf. Dinaa ko waajal ci ñetti fan.":"Waaw, djeureudjeuf. Dinaa ko waadjal tchi gnetti fan.","Ndax mën naa fey ak Wave ?":"Ndakh meun naa fey ak Wave ?","Waaw, yónnee ma ko ci numéro bii.":"Waaw, yónnee ma ko tchi numéro bii.","Yónnee naa ko. Ndax mën nga ma jox reçu ?":"Yónnee naa ko. Ndakh meun nga ma djokh reçu ?","Waaw, dinaa la jox facture bi ak numéro série bi.":"Waaw, dinaa la djokh fatchture bi ak numéro série bi.","Bu mu xaalee ci benn weer, ndax dinga ma ko wuutal ?":"Bu mu khaalee tchi benn weer, ndakh dinga ma ko wuutal ?","Ndax mën nga ñëw ci kër gi ngir jël mesure yi ?":"Ndakh meun nga gneuw tchi keur gi ngir djeul mesure yi ?","Waaw, kañ nga bëgg ñu ñëw ?":"Waaw, kagn nga beugg gnu gneuw ?","Altine ci suba.":"Altine tchi suba.","Baax na. Dinañu ñëw ak ñaari liggéeykat ngir montage bi.":"Baakh na. Dinagnu gneuw ak gnaari liggéeykat ngir montage bi.","Ñaata la montage bi ?":"Gnaata la montage bi ?","Bokkul ci njëg bi, juróom junni la.":"Bokkul tchi ndjeug bi, djuróom djunni la.","Ñaata la pompu ndox bii ?":"Gnaata la pompu ndokh bii ?","Ñaar téeméer ak juróom-fukk junni la.":"Gnaar téeméer ak djuróom-fukk djunni la.","Ndax dafay dox ak solaire ?":"Ndakh dafay dokh ak solaire ?","Ndax mën nga ma won ni muy liggéey ?":"Ndakh meun nga ma won ni muy liggéey ?","Waaw, ñëwal, dinaa la ko won ci tool bi.":"Waaw, gneuwal, dinaa la ko won tchi tool bi.","Ban papiers lañuy laaj ci douane ?":"Ban papiers lagnuy laadj tchi douane ?","Facture bi, packing list bi ak Bill of Lading bi.":"Fatchture bi, patchking list bi ak Bill of Lading bi.","Ñaata la droits de douane yi ?":"Gnaata la droits de douane yi ?","Dafa aju ci xeetu marsandiis bi. Transitaire bi dina la ko wax.":"Dafa adju tchi kheetu marsandiis bi. Transitaire bi dina la ko wakh.","Ndax mën nga ma jox numéro transitaire bi ?":"Ndakh meun nga ma djokh numéro transitaire bi ?","Waaw, dinaa la ko yónnee ci WhatsApp.":"Waaw, dinaa la ko yónnee tchi WhatsApp.","Ñaata la benn pièce ?":"Gnaata la benn piètche ?","Fukk dolaar la ci benn.":"Fukk dolaar la tchi benn.","Dafa seer. Dinaa jënd juróom téeméer.":"Dafa seer. Dinaa djeund djuróom téeméer.","Juróom-ñett dolaar ngir juróom téeméer pièces.":"Djuróom-gnett dolaar ngir djuróom téeméer piètches.","Ndax mën nga ko yónnee Dakar ?":"Ndakh meun nga ko yónnee Dakar ?","Waaw, FOB walla CIF, ban nga bëgg ?":"Waaw, FOB walla TchIF, ban nga beugg ?","+ sectionKey +":"+ setchtionKey +","Plakët fren":"Plakeut fren","Buji":"Budji","Radiyatëer":"Radiyateuer","Paar-choks":"Paar-tchhoks","Ci fabrik":"Tchi fabrik","Ocasiyoŋ":"Otchasiyong","Ndax am nga ko ci stok ?":"Ndakh am nga ko tchi stok ?","Soxla naa pièce bu Toyota Corolla":"Sokhla naa piètche bu Toyota Tchorolla","Won ma pièce bu njëkk bi":"Won ma piètche bu ndjeukk bi","Ñaata la di yàgg ?":"Gnaata la di yàgg ?","Mën nga ma ko taxawal ?":"Meun nga ma ko takhawal ?","Kii kopi bu baax la":"Kii kopi bu baakh la","Ndax essãas la walla gasoil ?":"Ndakh essãas la walla gasoil ?","Am na coow lu bees":"Am na tchoow lu bees","Soxla naa lu gën a yomb":"Sokhla naa lu geun a yomb","Mën naa ko delloo bu yemul ?":"Meun naa ko delloo bu yemul ?","Bind njëg bi, baal ma":"Bind ndjeug bi, baal ma","Ñaata nga am ?":"Gnaata nga am ?","Dinaa jël ñaar yi":"Dinaa djeul gnaar yi","Xaar tuuti, dinaa xool stok bi":"Khaar tuuti, dinaa khool stok bi","Bëgg naa commande téeméer plakët fren":"Beugg naa tchommande téeméer plakeut fren","Ban njëg bi gën a baax ngir konteneer ?":"Ban ndjeug bi geun a baakh ngir konteneer ?","Soxla nanu échantillon balaa commande bi":"Sokhla nanu étchhantillon balaa tchommande bi","Ndax qualité bi am na certifika ?":"Ndakh qualité bi am na tchertifika ?","Ban quantité bu ndaw la war a commande ?":"Ban quantité bu ndaw la war a tchommande ?","Mën nga def njëg bu gën a baax ngir kiliyaŋ bu mu bokk ?":"Meun nga def ndjeug bu geun a baakh ngir kiliyang bu mu bokk ?","Dinanu fey fanweer ci téeméer léegi, li des ci livraison bi":"Dinanu fey fanweer tchi téeméer léegi, li des tchi livraison bi","Yónnee ma nataal ci pièce bu nekk":"Yónnee ma nataal tchi piètche bu nekk","Ñaata fan la livraison bi ci Ndakaaru ?":"Gnaata fan la livraison bi tchi Ndakaaru ?","Marsandiz bi agsi na ak pièce yu yàqu":"Marsandiz bi agsi na ak piètche yu yàqu","Bëgg nanu ñu delloo xaalis bi walla ñu weccil ko":"Beugg nanu gnu delloo khaalis bi walla gnu wetchtchil ko","Mën nga ma defal factuur ci tur sama entreprise ?":"Meun nga ma defal fatchtuur tchi tur sama entreprise ?","Ndax njëg bi FOB la walla CIF ?":"Ndakh ndjeug bi FOB la walla TchIF ?","Bëgg nanu kontra bu yàgg":"Beugg nanu kontra bu yàgg","Bu mujj bi fanweer fan la":"Bu mudjdj bi fanweer fan la","Dinaa la ko wax bu ma xoolee ak sama partner":"Dinaa la ko wakh bu ma khoolee ak sama partner","Soxla naa batri.":"Sokhla naa batri.","Bees walla ocasiyoŋ ?":"Bees walla otchasiyong ?","Bees. Ñaata la ?":"Bees. Gnaata la ?","Càmmoñ walla ndeyjoor ?":"Tchàmmogn walla ndeydjoor ?","Bi ci càmmoñ.":"Bi tchi tchàmmogn.","Waaw, ci fabrik walla kopi ?":"Waaw, tchi fabrik walla kopi ?","Kopi, dafa gën a yomb.":"Kopi, dafa geun a yomb.","Sama oto bi demul. Man maa ngi jàpp ne batri la.":"Sama oto bi demul. Man maa ngi djàpp ne batri la.","Ñaata la bu bees ak garanti ?":"Gnaata la bu bees ak garanti ?","Soxla naa plakët fren ngir Toyota Corolla 2010.":"Sokhla naa plakeut fren ngir Toyota Tchorolla 2010.","Ci fabrik walla kopi ?":"Tchi fabrik walla kopi ?","Ban la diggante njëg bi ?":"Ban la diggante ndjeug bi ?","Am na coow lu bees ci kanam.":"Am na tchoow lu bees tchi kanam.","Man maa ngi jàpp ne amortisör la. Bàyyi ma xool.":"Man maa ngi djàpp ne amortisör la. Bàyyi ma khool.","Mën nga ko soppi tey ?":"Meun nga ko soppi tey ?","Pièce bii yemul ak sama oto.":"Piètche bii yemul ak sama oto.","Waaw, jënd naa ko démb.":"Waaw, djeund naa ko démb.","Jox ma ñaar, benn ngir oto bu nekk.":"Djokh ma gnaar, benn ngir oto bu nekk.","Bëgg nanu commande juróom téeméer plakët fren ngir Toyota. Ban njëg bi gën a baax ?":"Beugg nanu tchommande djuróom téeméer plakeut fren ngir Toyota. Ban ndjeug bi geun a baakh ?","Ngir juróom téeméer, ñaar dolaar ci benn, FOB Guangzhou.":"Ngir djuróom téeméer, gnaar dolaar tchi benn, FOB Guangzhou.","Mën nanu fey fanweer ci téeméer léegi, li des balaa yónnee bi.":"Meun nanu fey fanweer tchi téeméer léegi, li des balaa yónnee bi.","Balaa commande bu mag bi, yónnee nu échantillon ci pièce bu nekk.":"Balaa tchommande bu mag bi, yónnee nu étchhantillon tchi piètche bu nekk.","Mën nanu yónnee ñett échantillon. Yéen ngeen fey yónnee bi.":"Meun nanu yónnee gnett étchhantillon. Yéen ngeen fey yónnee bi.","Ndax qualité bi am na certifika ? Am nga ko ?":"Ndakh qualité bi am na tchertifika ? Am nga ko ?","Konteneer bi agsi na, waaye ñaar-fukk pièce yàqu nañu.":"Konteneer bi agsi na, waaye gnaar-fukk piètche yàqu nagnu.","Yónnee nataal yi ak packing list bi.":"Yónnee nataal yi ak patchking list bi.","Lii la. Bëgg nanu weccil ci yónnee bi toppu.":"Lii la. Beugg nanu wetchtchil tchi yónnee bi toppu.","Danuy jënd ci yaw weer wu nekk. Mën nga nu def njëg bu gën a baax ?":"Danuy djeund tchi yaw weer wu nekk. Meun nga nu def ndjeug bu geun a baakh ?","Ngir kontra bu benn at, mën naa wàññi juróom ci téeméer.":"Ngir kontra bu benn at, meun naa wàgngni djuróom tchi téeméer.","Def ko juróom-ñett ci téeméer te dinanu signé tey.":"Def ko djuróom-gnett tchi téeméer te dinanu signé tey.","Defal ma factuur bi ci tur sama entreprise.":"Defal ma fatchtuur bi tchi tur sama entreprise.","ABC Global, Thiès, Senegaal. Douane bi soxla na njëg bi bu mat.":"ABTch Global, Thiès, Senegaal. Douane bi sokhla na ndjeug bi bu mat.","Rujlev":"Rudjlev","Am nga taille bu gën a mag ?":"Am nga taille bu geun a mag ?","Mën naa ko jéem ?":"Meun naa ko djéem ?","Fu néegu jéem bi nekk ?":"Fu néegu djéem bi nekk ?","Kuloor bii dafa la neex":"Kuloor bii dafa la neekh","Ndax tissu bii kotoŋ la ?":"Ndakh tissu bii kotong la ?","Ndax day ndaw bu ñu ko raxasee ?":"Ndakh day ndaw bu gnu ko rakhasee ?","Mën nga ko def ci sama taille ?":"Meun nga ko def tchi sama taille ?","Kañ la di mat ?":"Kagn la di mat ?","Bëgg naa produi yu kawar yu natirel":"Beugg naa produi yu kawar yu natirel","Ndax parfem bii ci fabrik la ?":"Ndakh parfem bii tchi fabrik la ?","Ñaata ngir ensemble bi bépp ?":"Gnaata ngir ensemble bi bépp ?","Dinaa fey ci Wave":"Dinaa fey tchi Wave","Bëgg naa ko soppi":"Beugg naa ko soppi","Am nga ko ci ñuul ?":"Am nga ko tchi gnuul ?","Danuy jaay ci gros ci boutik yi ci Thiès":"Danuy djaay tchi gros tchi boutik yi tchi Thiès","Bëgg naa import tissu wax bu jóge Siin":"Beugg naa import tissu wakh bu djóge Siin","Mën nga ko print ci sunu dessin ?":"Meun nga ko print tchi sunu dessin ?","Soxla nanu kuloor yu yem ak échantillon bi":"Sokhla nanu kuloor yu yem ak étchhantillon bi","Ñaata fan la production bi di yàgg ?":"Gnaata fan la produtchtion bi di yàgg ?","Ndax kuloor bi day dem ?":"Ndakh kuloor bi day dem ?","Am nga certifika ngir cosmétique yi ?":"Am nga tchertifika ngir tchosmétique yi ?","Xool bés bu mujj bi balaa yónnee bi":"Khool bés bu mudjdj bi balaa yónnee bi","Bëgg nanu sunu logo ci emballaas bi":"Beugg nanu sunu logo tchi emballaas bi","Damay jaay ci kiliyaŋ yi ci réso sosyal":"Damay djaay tchi kiliyang yi tchi réso sosyal","Mën nga yónnee ci sama kiliyaŋ yi ci kanam ?":"Meun nga yónnee tchi sama kiliyang yi tchi kanam ?","Soxla naa njëg bu gën a baax ngir téeméer pièce":"Sokhla naa ndjeug bu geun a baakh ngir téeméer piètche","Dañuy nangu dellu ci diggante juróom-ñaar fan":"Dagnuy nangu dellu tchi diggante djuróom-gnaar fan","Danuy joxe exclusivité ngir Senegaal":"Danuy djokhe ekhtchlusivité ngir Senegaal","Nanu signé accord bi":"Nanu signé atchtchord bi","Bëgg naa robu.":"Beugg naa robu.","Moyenne. Am nga ko ci xonq ?":"Moyenne. Am nga ko tchi khonq ?","Ñaata la tissu bii ?":"Gnaata la tissu bii ?","Ñett junni ci metar bi.":"Gnett djunni tchi metar bi.","Dinaa jël juróom metar.":"Dinaa djeul djuróom metar.","Am nga dàll yii ci ñeent-fukk ?":"Am nga dàll yii tchi gneent-fukk ?","Waaw, ci ñuul ak marron.":"Waaw, tchi gnuul ak marron.","Dinaa jël yu ñuul yi.":"Dinaa djeul yu gnuul yi.","Parfem bii neex na ma. Ñaata la ?":"Parfem bii neekh na ma. Gnaata la ?","Fukk ak ñaar junni, ci fabrik la.":"Fukk ak gnaar djunni, tchi fabrik la.","Mën naa jéem beneen ?":"Meun naa djéem beneen ?","Bëgg naa saabu ak kerem ngir yaram.":"Beugg naa saabu ak kerem ngir yaram.","Natirel, baal ma. Ñaata la ?":"Natirel, baal ma. Gnaata la ?","Am nga taille bu gën a mag ? Bii dafa ndaw.":"Am nga taille bu geun a mag ? Bii dafa ndaw.","Jéemal bii. Néegu jéem bi, fale la nekk.":"Djéemal bii. Néegu djéem bi, fale la nekk.","Dafa ma yem. Am nga ko ci bleu ?":"Dafa ma yem. Am nga ko tchi bleu ?","Mën nga def mbubb mii ci sama taille ?":"Meun nga def mbubb mii tchi sama taille ?","Waaw. War naa jël sa mesure yi.":"Waaw. War naa djeul sa mesure yi.","Jënd naa robu bii démb, waaye fermetir bi yàqu na.":"Djeund naa robu bii démb, waaye fermetir bi yàqu na.","Waaw, lii la. Bëgg naa ko soppi.":"Waaw, lii la. Beugg naa ko soppi.","Dinaa jël ñett robu. Ñaata ngir yépp ?":"Dinaa djeul gnett robu. Gnaata ngir yépp ?","Ñaar-fukk ak ñeent junni, waaye ñaar-fukk junni ngir yaw.":"Gnaar-fukk ak gneent djunni, waaye gnaar-fukk djunni ngir yaw.","Dinaa fey ci Wave.":"Dinaa fey tchi Wave.","Danuy jaay ci boutik yi ci Thiès. Ban quantité bu ndaw la ngir gros ?":"Danuy djaay tchi boutik yi tchi Thiès. Ban quantité bu ndaw la ngir gros ?","Juróom-fukk pièce ci modèle bu nekk.":"Djuróom-fukk piètche tchi modèle bu nekk.","Mën nga wàññi fukk ci téeméer ngir juróom-fukk pièce ?":"Meun nga wàgngni fukk tchi téeméer ngir djuróom-fukk piètche ?","Bëgg naa import tissu wax bu jóge Siin. Mën nga ko print ci sunu dessin ?":"Beugg naa import tissu wakh bu djóge Siin. Meun nga ko print tchi sunu dessin ?","Waaw, yónnee fichier bi. Bu ndaw bi, junni metar.":"Waaw, yónnee fitchhier bi. Bu ndaw bi, djunni metar.","Am nga certifika ngir cosmétique yii ?":"Am nga tchertifika ngir tchosmétique yii ?","Waaw, te bés bu mujj bi ci ñaari at la.":"Waaw, te bés bu mudjdj bi tchi gnaari at la.","Bëgg nanu sunu logo ci emballaas bi.":"Beugg nanu sunu logo tchi emballaas bi.","Damay jaay ci réso sosyal. Mën nga yónnee ci sama kiliyaŋ yi ci kanam ?":"Damay djaay tchi réso sosyal. Meun nga yónnee tchi sama kiliyang yi tchi kanam ?","Waaw, danuy def dropshipping. Colis bu nekk dafa am njëg bu ci yokk.":"Waaw, danuy def dropshipping. Tcholis bu nekk dafa am ndjeug bu tchi yokk.","Ñaata la colis bu nekk ?":"Gnaata la tcholis bu nekk ?","Bëgg nanu exclusivité ngir Senegaal.":"Beugg nanu ekhtchlusivité ngir Senegaal.","Su fekkee loolu, war ngeen jënd fukk junni pièce ci at.":"Su fekkee loolu, war ngeen djeund fukk djunni piètche tchi at.","Nu nangu. Nanu signé accord bi.":"Nu nangu. Nanu signé atchtchord bi.","Factuur":"Fatchtuur","Échantillon":"Étchhantillon","Tarjumaan":"Tardjumaan","Ñaata fan ci géej ?":"Gnaata fan tchi géedj ?","Ñaata ci metar kib ?":"Gnaata tchi metar kib ?","Soxla nanu packing list bi":"Sokhla nanu patchking list bi","Uzin bi ci Guangzhou la nekk":"Uzin bi tchi Guangzhou la nekk","Mën nga ma tekki ?":"Meun nga ma tekki ?","Bind ko ci sinwaa, baal ma":"Bind ko tchi sinwaa, baal ma","Soxla naa virmaŋ bank":"Sokhla naa virmang bank","Taux bi kawe na tey":"Taukh bi kawe na tey","Ban otel moo jege marse bi ?":"Ban otel moo djege marse bi ?","Ñaata la uzin bi sore ?":"Gnaata la uzin bi sore ?","Soxla naa visa ngir Siin":"Sokhla naa visa ngir Siin","Fan laa mën a soppi xaalis ?":"Fan laa meun a soppi khaalis ?","Mën nga ma dem jël ci àeroporu bi ?":"Meun nga ma dem djeul tchi àeroporu bi ?","Ban Incoterm la, FOB walla CIF ?":"Ban Intchoterm la, FOB walla TchIF ?","Soxla nanu Bill of Lading bi":"Sokhla nanu Bill of Lading bi","Marsandiz bi tëj nañu ko ci douane":"Marsandiz bi teudj nagnu ko tchi douane","Soxla nanu certifika orijin":"Sokhla nanu tchertifika oridjin","Defal assurance ngir marsandiz bi":"Defal assurantche ngir marsandiz bi","Ñaata la konteneer bu fees ?":"Gnaata la konteneer bu fees ?","Mën nanu bokk konteneer ?":"Meun nanu bokk konteneer ?","Bu mujj bi amul bu ñu ko sàmm":"Bu mudjdj bi amul bu gnu ko sàmm","Bëgg nanu ñibbi uzin bi balaa nu fey":"Beugg nanu gnibbi uzin bi balaa nu fey","Ndax nangu nga crédit documentaire ?":"Ndakh nangu nga tchrédit dotchumentaire ?","Xoolal qualité bi balaa ñu yeb marsandiz bi":"Khoolal qualité bi balaa gnu yeb marsandiz bi","Am nanu agent bu exclusif ci Ndakaaru":"Am nanu agent bu ekhtchlusif tchi Ndakaaru","Nanu tàmbali ak commande d'essai":"Nanu tàmbali ak tchommande d'essai","Fan nga bëgg a dem ?":"Fan nga beugg a dem ?","Ci otel bii, baal ma.":"Tchi otel bii, baal ma.","Am naa néeg ngir ñett guddi.":"Am naa néeg ngir gnett guddi.","Salaamaalekum, Senegaal laa jóge. Bëgg naa jënd marsandiz.":"Salaamaalekum, Senegaal laa djóge. Beugg naa djeund marsandiz.","Dalal ak jàmm. Bëgg nga gis échantillon yi ?":"Dalal ak djàmm. Beugg nga gis étchhantillon yi ?","Waaw, baal ma. Ñaata la ?":"Waaw, baal ma. Gnaata la ?","Ñaata la benn karton ?":"Gnaata la benn karton ?","Ñaari téeméer yuan.":"Gnaari téeméer yuan.","Ñaata la diisaay bi ?":"Gnaata la diisaay bi ?","Kañ la livraison bi ?":"Kagn la livraison bi ?","Ci ñaari ayubés.":"Tchi gnaari ayubés.","Ci port bu Ndakaaru ?":"Tchi port bu Ndakaaru ?","Ci virmaŋ bank. Dinaa la yónnee sama kont.":"Tchi virmang bank. Dinaa la yónnee sama kont.","Ndax taux bi baax na tey ?":"Ndakh taukh bi baakh na tey ?","Mën nga ma yónnee nimero suivi bi ?":"Meun nga ma yónnee nimero suivi bi ?","Soxla naa visa ngir Siin. Ban kayit lañu soxla ?":"Sokhla naa visa ngir Siin. Ban kayit lagnu sokhla ?","Ñaata fan la di yàgg ?":"Gnaata fan la di yàgg ?","Mën nga ma tekki ? Mënuma wax sinwaa.":"Meun nga ma tekki ? Meunuma wakh sinwaa.","Waaw, man mooy sa tarjumaan tey.":"Waaw, man mooy sa tardjumaan tey.","Laaj ko njëg bi ngir junni pièce.":"Laadj ko ndjeug bi ngir djunni piètche.","Ndax marsandiz bi mat na ?":"Ndakh marsandiz bi mat na ?","Yónnee nataal ci karton yi.":"Yónnee nataal tchi karton yi.","FOB Shenzhen la. Yaw ngay fey fret ci géej.":"FOB Shenzhen la. Yaw ngay fey fret tchi géedj.","Mën nga ma joxe njëg CIF Ndakaaru ?":"Meun nga ma djokhe ndjeug TchIF Ndakaaru ?","Konteneer bi tëj nañu ko ci douane bu Ndakaaru.":"Konteneer bi teudj nagnu ko tchi douane bu Ndakaaru.","Ban kayit moo ñàkk ?":"Ban kayit moo gnàkk ?","Certifika orijin bi. Mën nga ko yónnee tey ?":"Tchertifika oridjin bi. Meun nga ko yónnee tey ?","Ñu di njaay yu ndaw lanu. Mën nanu bokk konteneer ?":"Gnu di ndjaay yu ndaw lanu. Meun nanu bokk konteneer ?","Ñaata la ci metar kib ?":"Gnaata la tchi metar kib ?","Bëgg nanu ñibbi uzin bi balaa nu fey.":"Beugg nanu gnibbi uzin bi balaa nu fey.","Dalal ak jàmm. Kañ ngeen di agsi ?":"Dalal ak djàmm. Kagn ngeen di agsi ?","Weer wi ñëw. Xoolal qualité bi balaa ñu yeb marsandiz bi.":"Weer wi gneuw. Khoolal qualité bi balaa gnu yeb marsandiz bi.","Nanu tàmbali ak commande d'essai.":"Nanu tàmbali ak tchommande d'essai.","Baax na, benn konteneer bu ñaar-fukk pied.":"Baakh na, benn konteneer bu gnaar-fukk pied.","Mbaxal":"Mbakhal","Limoŋ":"Limong","Ndax légum yii bees nañu ?":"Ndakh légum yii bees nagnu ?","Ñaata ngir saak ceeb ?":"Gnaata ngir saak tcheeb ?","Dama jënd ci baykat bi ci kanam":"Dama djeund tchi baykat bi tchi kanam","Kañ la ngóob bi ?":"Kagn la ngóob bi ?","Nawet bi baax na at mii":"Nawet bi baakh na at mii","Danuy wow mangoro yi ci jant bi":"Danuy wow mangoro yi tchi djant bi","Naka ngay denc sooble yi ?":"Naka ngay dentch sooble yi ?","Soxla naa néeg bu sedd ngir jën":"Sokhla naa néeg bu sedd ngir djeun","Ñaata la diisaay saak bii ?":"Gnaata la diisaay saak bii ?","War na denc ci bérab bu wow":"War na dentch tchi bérab bu wow","Ndax produi bi bio la ?":"Ndakh produi bi bio la ?","Damay jaay jus ak konfitir":"Damay djaay djus ak konfitir","Mën naa ko jéem njëkk ?":"Meun naa ko djéem ndjeukk ?","Ñaata la mën a yàgg ?":"Gnaata la meun a yàgg ?","Bëgg naa emballaas bu set":"Beugg naa emballaas bu set","Livraison du fey bu ëpp juróom-fukk junni":"Livraison du fey bu eupp djuróom-fukk djunni","Danuy soppi meññeef yi ci jus ak konfitir":"Danuy soppi megngneef yi tchi djus ak konfitir","Soxla nanu certifika sécurité alimentaire":"Sokhla nanu tchertifika sétchurité alimentaire","Ñaata la produi bi mën a yàgg ?":"Gnaata la produi bi meun a yàgg ?","Bëgg nanu export mangoro yu wow":"Beugg nanu ekhport mangoro yu wow","Jëndkat bi bëgg na etiket ci angale":"Djeundkat bi beugg na etiket tchi angale","Ñaata la ci tonn ?":"Gnaata la tchi tonn ?","Dinanu signé kontra appovisionmaŋ ngir benn at":"Dinanu signé kontra appovisionmang ngir benn at","Soxla nanu transpoor bu sedd":"Sokhla nanu transpoor bu sedd","Genn-wàll ci ngóob bi jaay nañu ko":"Genn-wàll tchi ngóob bi djaay nagnu ko","Danuy jënd ci kooperatif yu jigéen":"Danuy djeund tchi kooperatif yu djigéen","Mën nga fey ci jamono ngóob bi ?":"Meun nga fey tchi djamono ngóob bi ?","Soxla nanu am prêt ngir jënd mašin bi":"Sokhla nanu am prêt ngir djeund mašin bi","Njëg bi day wàññiku ci jamono ngóob bi":"Ndjeug bi day wàgngniku tchi djamono ngóob bi","Nanu dëgmal njëg bi balaa jamono bi":"Nanu deugmal ndjeug bi balaa djamono bi","Waaw, bees nañu.":"Waaw, bees nagnu.","Benn kilo, baal ma. Ñaata la ?":"Benn kilo, baal ma. Gnaata la ?","Bëgg naa saak ceeb.":"Beugg naa saak tcheeb.","Ñaar-fukk ak juróom kilo walla juróom-fukk kilo ?":"Gnaar-fukk ak djuróom kilo walla djuróom-fukk kilo ?","Ñaar-fukk ak juróom kilo.":"Gnaar-fukk ak djuróom kilo.","Ñaari plato nen, baal ma.":"Gnaari plato nen, baal ma.","Fanweer nen ci plato bu nekk.":"Fanweer nen tchi plato bu nekk.","Ñaata ngir ñaar ?":"Gnaata ngir gnaar ?","Ndax jën bi bees na ?":"Ndakh djeun bi bees na ?","Waaw, agsi na ci suba.":"Waaw, agsi na tchi suba.","Ñaari kilo, baal ma.":"Gnaari kilo, baal ma.","Mangoro yii dañuy mag. Ñaata la ?":"Mangoro yii dagnuy mag. Gnaata la ?","Téeméer franc ci benn.":"Téeméer frantch tchi benn.","Dinaa jël fukk.":"Dinaa djeul fukk.","Dama jënd ci baykat bi ci kanam. Ñaata ci saak sooble ?":"Dama djeund tchi baykat bi tchi kanam. Gnaata tchi saak sooble ?","Fukk ak juróom junni ci saak bi, juróom-fukk kilo.":"Fukk ak djuróom djunni tchi saak bi, djuróom-fukk kilo.","Su ma jëlee ñaar-fukk saak, ban njëg la ?":"Su ma djeulee gnaar-fukk saak, ban ndjeug la ?","Ci bérab bu wow te am ngelaw.":"Tchi bérab bu wow te am ngelaw.","Kañ la ngóob bi at mii ?":"Kagn la ngóob bi at mii ?","Ci oktoobar, nawet bi baax na.":"Tchi oktoobar, nawet bi baakh na.","Mën naa commande léegi te jël ko ginnaaw ?":"Meun naa tchommande léegi te djeul ko ginnaaw ?","Danuy wow mangoro yi ci jant bi. Bëgg nga jéem ?":"Danuy wow mangoro yi tchi djant bi. Beugg nga djéem ?","Waaw, dafa suukar. Ñaata ci kilo ?":"Waaw, dafa suukar. Gnaata tchi kilo ?","Ñett junni ci kilo, ci emballaas bu set.":"Gnett djunni tchi kilo, tchi emballaas bu set.","Ndax dangay yónnee ?":"Ndakh dangay yónnee ?","Waaw, livraison du fey bu ëpp juróom-fukk junni.":"Waaw, livraison du fey bu eupp djuróom-fukk djunni.","Sama commande juróom-benn-fukk junni la.":"Sama tchommande djuróom-benn-fukk djunni la.","Bëgg nanu export mangoro yu wow ci Ërop.":"Beugg nanu ekhport mangoro yu wow tchi Europ.","Am nga certifika sécurité alimentaire ?":"Am nga tchertifika sétchurité alimentaire ?","Danuy ko waajal. Etiket bi dina nekk ci angale.":"Danuy ko waadjal. Etiket bi dina nekk tchi angale.","Bëgg nanu kontra appovisionmaŋ ngir benn at.":"Beugg nanu kontra appovisionmang ngir benn at.","Ban quantité ci weer wu nekk ?":"Ban quantité tchi weer wu nekk ?","Ñaari tonn, te qualité bi war na bokk saa su nekk.":"Gnaari tonn, te qualité bi war na bokk saa su nekk.","Danuy jënd ci kooperatif yu jigéen. Mën nga fey ci jamono ngóob bi ?":"Danuy djeund tchi kooperatif yu djigéen. Meun nga fey tchi djamono ngóob bi ?","Waaw, genn-wàll ci ngóob bi, te genn-wàll ginnaaw jaay bi.":"Waaw, genn-wàll tchi ngóob bi, te genn-wàll ginnaaw djaay bi.","Loolu dina dimbali jigéen ñi lool.":"Loolu dina dimbali djigéen gni lool.","Soxla nanu transpoor bu sedd ngir jën bi.":"Sokhla nanu transpoor bu sedd ngir djeun bi.","Kamiyon bu sedd ñaari téeméer junni la ci tukki bu nekk.":"Kamiyon bu sedd gnaari téeméer djunni la tchi tukki bu nekk.","Mën nanu bokk kamiyon bi ak njaay yeneen ?":"Meun nanu bokk kamiyon bi ak ndjaay yeneen ?","Njëg bi day wàññiku ci jamono ngóob bi. Nanu dëgmal njëg bi balaa jamono bi.":"Ndjeug bi day wàgngniku tchi djamono ngóob bi. Nanu deugmal ndjeug bi balaa djamono bi.","Ban njëg nga di joxe ?":"Ban ndjeug nga di djokhe ?","Ñett téeméer franc ci kilo ngir jamono bi bépp.":"Gnett téeméer frantch tchi kilo ngir djamono bi bépp.","Jàng":"Djàng","Xët":"Kheut","Jàngalekat":"Djàngalekat","Mën nga ma jàngal lii ?":"Meun nga ma djàngal lii ?","Mën naa jàng waaye damay bind ndank":"Meun naa djàng waaye damay bind ndank","Naka lañu di bind baat bii ?":"Naka lagnu di bind baat bii ?","Lii mooy lisit njëg yi":"Lii mooy lisit ndjeug yi","Jàngal etiket bi ci kaas bi":"Djàngal etiket bi tchi kaas bi","Damay lim ci sama bopp":"Damay lim tchi sama bopp","Bind xaalis bi ci limu ak araf":"Bind khaalis bi tchi limu ak araf","Soxla naa lunet ngir jàng":"Sokhla naa lunet ngir djàng","Mën nga ma dimbali ma bind mesaas ?":"Meun nga ma dimbali ma bind mesaas ?","Tey dinaa jàng fukk baat yu bees":"Tey dinaa djàng fukk baat yu bees","Limu bii juum na":"Limu bii djuum na","Jàngaat ko, ndank":"Djàngaat ko, ndank","Bind ko ci reçu bi":"Bind ko tchi reçu bi","Bëgg naa jàng ci farañse":"Beugg naa djàng tchi faragnse","Damay jàngal njaay yi jàng ak bind":"Damay djàngal ndjaay yi djàng ak bind","Mag ñi dañuy jàng gaaw ak misaal yu dëgg":"Mag gni dagnuy djàng gaaw ak misaal yu deugg","Danuy jàngal jàng ak njëgu marse bi":"Danuy djàngal djàng ak ndjeugu marse bi","Bind quantité bi, njëg bi ak total bi":"Bind quantité bi, ndjeug bi ak total bi","Xoolal ne total bi jub na":"Khoolal ne total bi djub na","Jàng kontra bi balaa nga signé":"Djàng kontra bi balaa nga signé","Laaj kenn mu leeral la klos yi":"Laadj kenn mu leeral la klos yi","Danuy jëfandikoo telefon ngir jàng":"Danuy djeufandikoo telefon ngir djàng","Mesaas yu baat mën nañu dimbali ñi tàmbali":"Mesaas yu baat meun nagnu dimbali gni tàmbali","Ku nekk am na droit ci jàng":"Ku nekk am na droit tchi djàng","Denc kopi ci dokimaŋ bu nekk":"Dentch kopi tchi dokimang bu nekk","Jàng di tijji bunt yu bees":"Djàng di tidjdji bunt yu bees","Damay jàngal sama kiliyaŋ yi xool seen factuur":"Damay djàngal sama kiliyang yi khool seen fatchtuur","Jàng mooy benn xëyu ci sa bopp":"Djàng mooy benn kheuyu tchi sa bopp","Juróom téeméer franc la.":"Djuróom téeméer frantch la.","Mën nga jàng etiket bii ?":"Meun nga djàng etiket bii ?","Waaw, bind nañu suukar.":"Waaw, bind nagnu suukar.","Te njëg bi ?":"Te ndjeug bi ?","Thiès, ci wetu marse bi.":"Thiès, tchi wetu marse bi.","Tey, juróom ci weeru oktoobar la.":"Tey, djuróom tchi weeru oktoobar la.","Fii, ci suuf xët bi.":"Fii, tchi suuf kheut bi.","Mën nga ma ko jàngal njëkk ?":"Meun nga ma ko djàngal ndjeukk ?","Njëkk, bindal sa tur ak sa sant.":"Ndjeukk, bindal sa tur ak sa sant.","Bëgg naa bind factuur.":"Beugg naa bind fatchtuur.","Njëkk bind produi bi, ba noppi quantité bi.":"Ndjeukk bind produi bi, ba noppi quantité bi.","Ba noppi njëg bi ak total bi ?":"Ba noppi ndjeug bi ak total bi ?","Mën nga ma dimbali ma bind mesaas ngir sama fournisseur ?":"Meun nga ma dimbali ma bind mesaas ngir sama fournisseur ?","Waaw. Lan nga bëgg a wax ?":"Waaw. Lan nga beugg a wakh ?","Bëgg naa juróom-fukk saak ceeb altine.":"Beugg naa djuróom-fukk saak tcheeb altine.","Limu bii juum na.":"Limu bii djuum na.","Dëgg nga. Jàngaat ko, ndank.":"Deugg nga. Djàngaat ko, ndank.","Juróom-ñaar téeméer la, du junni ak juróom-ñaar téeméer.":"Djuróom-gnaar téeméer la, du djunni ak djuróom-gnaar téeméer.","Damay jàngal njaay yi jàng ak bind.":"Damay djàngal ndjaay yi djàng ak bind.","Naka ngay ñu jàngal ?":"Naka ngay gnu djàngal ?","Ak misaal yu dëgg: njëg yi, factuur yi ak mesaas yi.":"Ak misaal yu deugg: ndjeug yi, fatchtuur yi ak mesaas yi.","Jàng kontra bii balaa nga signé.":"Djàng kontra bii balaa nga signé.","Laaj kenn mu leeral la ko. Bul signé lu nga dégguwul.":"Laadj kenn mu leeral la ko. Bul signé lu nga dégguwul.","Damay jàngal sama kiliyaŋ yi xool seen factuur.":"Damay djàngal sama kiliyang yi khool seen fatchtuur.","Lan lañu war a xool ?":"Lan lagnu war a khool ?","Quantité bi, njëg bi ak total bi.":"Quantité bi, ndjeug bi ak total bi.","Danuy jëfandikoo telefon ngir jàng.":"Danuy djeufandikoo telefon ngir djàng.","Mesaas yu baat mën nañu dimbali ñi tàmbali ?":"Mesaas yu baat meun nagnu dimbali gni tàmbali ?","Waaw, dinañu déglu njëkk, ba noppi jàng bind bi.":"Waaw, dinagnu déglu ndjeukk, ba noppi djàng bind bi.","Ku nekk am na droit ci jàng.":"Ku nekk am na droit tchi djàng.","Ba ci juróom-fukk at ?":"Ba tchi djuróom-fukk at ?","Waaw. Jàng di tijji bunt yu bees.":"Waaw. Djàng di tidjdji bunt yu bees.","Am naa ñaar doom":"Am naa gnaar doom","Maa ngi liggéey ci boutik":"Maa ngi liggéey tchi boutik","Fan nga juddoo ?":"Fan nga djuddoo ?","Thiès laa juddoo":"Thiès laa djuddoo","Waxal ndank, baal ma":"Wakhal ndank, baal ma","Mën nga waxaat ko ?":"Meun nga wakhaat ko ?","Maa ngi tudd Moussa, sama sant mooy Jóob.":"Maa ngi tudd Moussa, sama sant mooy Djóob.","Thiès laa juddoo, ci at mi 1993.":"Thiès laa djuddoo, tchi at mi 1993.","Mooy juróom-ñaar juróom-ñaar, benn ñaar ñett, ñeent juróom juróom-benn juróom-ñaar.":"Mooy djuróom-gnaar djuróom-gnaar, benn gnaar gnett, gneent djuróom djuróom-benn djuróom-gnaar.","Am naa ñett rakk yu góor":"Am naa gnett rakk yu góor","Am naa benn rakk bu jigéen":"Am naa benn rakk bu djigéen","Moom mooy sama jabar":"Moom mooy sama djabar","Moom mooy sama jëkkër":"Moom mooy sama djeukkeur","Kii mooy sama xarit bu gëna ma jege":"Kii mooy sama kharit bu geuna ma djege","Danoo bokk dëkk":"Danoo bokk deukk","Sama njaboot dafa bare":"Sama ndjaboot dafa bare","Danuy lekk bokk ci dibéer":"Danuy lekk bokk tchi dibéer","Wax ma ci sa njaboot.":"Wakh ma tchi sa ndjaboot.","Dama bokk dëkk ak sama waajur ak sama ñaar rakk yu jigéen.":"Dama bokk deukk ak sama waadjur ak sama gnaar rakk yu djigéen.","Sóofóor la. Sama yaay mi, légumes la di jaay.":"Sóofóor la. Sama yaay mi, légumes la di djaay.","Ndax am nga njaboot bu bare ?":"Ndakh am nga ndjaboot bu bare ?","Waaw, juróom-ñett nit lanu ci kër gi.":"Waaw, djuróom-gnett nit lanu tchi keur gi.","Dama door liggéey ci juróom-ñett":"Dama door liggéey tchi djuróom-gnett","Dama jeex ci juróom":"Dama djeekh tchi djuróom","Sama patroŋ dafa baax":"Sama patrong dafa baakh","Ndax mën nga ma dalal ngir waxtaan ?":"Ndakh meun nga ma dalal ngir wakhtaan ?","Am naa juróom at ci liggéey bi":"Am naa djuróom at tchi liggéey bi","Kii mooy sama CV":"Kii mooy sama TchV","Dinañu ma fey ci fan weer wi":"Dinagnu ma fey tchi fan weer wi","Maa ngi ci kongé":"Maa ngi tchi kongé","Rendez-vous bi ci fukk la":"Rendez-vous bi tchi fukk la","Soxla naa benn bés ngir noppalu":"Sokhla naa benn bés ngir noppalu","Salaamaalekum. Lu tax nga bëgg liggéey bii ?":"Salaamaalekum. Lu takh nga beugg liggéey bii ?","Bëgg naa liggéey ak nit ñi te damay jàng bu gaaw.":"Beugg naa liggéey ak nit gni te damay djàng bu gaaw.","Ñaata at nga am ci liggéey bi ?":"Gnaata at nga am tchi liggéey bi ?","Am naa ñeent at ci ajaans bu tukki.":"Am naa gneent at tchi adjaans bu tukki.","Ndax mën nga door altine ?":"Ndakh meun nga door altine ?","Waaw, mën naa door altine ci juróom-ñett.":"Waaw, meun naa door altine tchi djuróom-gnett.","Mën nga wàññi njëg bi ?":"Meun nga wàgngni ndjeug bi ?","Dinaa jël ñaar":"Dinaa djeul gnaar","Am nga weccit ?":"Am nga wetchtchit ?","Lii mooy sa weccit":"Lii mooy sa wetchtchit","Ndax njëg bii amul wàññi ?":"Ndakh ndjeug bii amul wàgngni ?","Jox ma wàññi":"Djokh ma wàgngni","Bëgg naa gis beneen kuloor":"Beugg naa gis beneen kuloor","Dinaa dellusi ëllëg":"Dinaa dellusi eulleug","Dalal ak jàmm, soxna. Lan nga bëgg jënd ?":"Dalal ak djàmm, sokhna. Lan nga beugg djeund ?","Bëgg naa ñett kilo sooble. Ñaata la ?":"Beugg naa gnett kilo sooble. Gnaata la ?","Ñeent téeméer la ci kilo bi.":"Gneent téeméer la tchi kilo bi.","Dafa seer. Ñett téeméer ak juróom-fukk, baal ma.":"Dafa seer. Gnett téeméer ak djuróom-fukk, baal ma.","Baax na, ci yaw, ñett téeméer ak juróom-fukk.":"Baakh na, tchi yaw, gnett téeméer ak djuróom-fukk.","Jërëjëf. Lii mooy xaalis bi.":"Djeureudjeuf. Lii mooy khaalis bi.","Ban waxtu la bus bi di dem ?":"Ban wakhtu la bus bi di dem ?","Ñaata waxtu la tukki bi di yàgg ?":"Gnaata wakhtu la tukki bi di yàgg ?","Ndax palaas bii amul boroom ?":"Ndakh palaas bii amul boroom ?","Mën nga ma won ko ci kart bi ?":"Meun nga ma won ko tchi kart bi ?","Wëlbatilal ci càmmoñ, ba noppi ci ndeyjoor":"Weulbatilal tchi tchàmmogn, ba noppi tchi ndeydjoor","Waaw. Juróom-benn junni la.":"Waaw. Djuróom-benn djunni la.","Dina dem ci ñaar waxtu, ci platform bu ñett.":"Dina dem tchi gnaar wakhtu, tchi platform bu gnett.","Ci diggante ñeent waxtu.":"Tchi diggante gneent wakhtu.","Mënuma nelaw":"Meunuma nelaw","Soxla naa doktoor":"Sokhla naa doktoor","Ñaata yoon laa war a naan ko ?":"Gnaata yoon laa war a naan ko ?","Naanal ko bu ñu lekkee":"Naanal ko bu gnu lekkee","Ndax dafa metti lool ?":"Ndakh dafa metti lool ?","Allerjik naa ci lii":"Allerdjik naa tchi lii","Maa ngi gën a woomle tey":"Maa ngi geun a woomle tey","Salaamaalekum. Lan mooy jafe-jafe bi ?":"Salaamaalekum. Lan mooy djafe-djafe bi ?","Ndax am nga sëqët ?":"Ndakh am nga seuqeut ?","Naanal garab gii ñaari yoon ci bés, bu ñu lekkee.":"Naanal garab gii gnaari yoon tchi bés, bu gnu lekkee.","Jërëjëf, doktoor.":"Djeureudjeuf, doktoor.","Xiif naa":"Khiif naa","Benn taabal ngir ñeent, baal ma":"Benn taabal ngir gneent, baal ma","Mën naa gis kart bi ?":"Meun naa gis kart bi ?","Bëgg naa ceebu jën":"Beugg naa tcheebu djeun","Bu ci nekk kaani, baal ma":"Bu tchi nekk kaani, baal ma","Lekk bi neex na lool":"Lekk bi neekh na lool","Mën nanu am facture bi ?":"Meun nanu am fatchture bi ?","Benn kaas ndox, baal ma":"Benn kaas ndokh, baal ma","Dafa xorom lool":"Dafa khorom lool","Salaamaalekum. Benn taabal ngir ñaar ?":"Salaamaalekum. Benn taabal ngir gnaar ?","Waaw, baal ma. Mën nanu gis kart bi ?":"Waaw, baal ma. Meun nanu gis kart bi ?","Waaw, baax na. Lan ngeen bëgg naan ?":"Waaw, baakh na. Lan ngeen beugg naan ?","Ñaari butéel ndox ak benn jus.":"Gnaari butéel ndokh ak benn djus.","Te lan ngeen bëgg lekk ?":"Te lan ngeen beugg lekk ?","Ganaar ak ceeb ngir man, jën ngir sama xarit.":"Ganaar ak tcheeb ngir man, djeun ngir sama kharit.","Ñaar waxtu ak genn-wàll la":"Gnaar wakhtu ak genn-wàll la","Juróom waxtu la":"Djuróom wakhtu la","Ëllëg, talaata la":"Eulleug, talaata la","Démb, ci kër laa nekkoon":"Démb, tchi keur laa nekkoon","Damay yeewu ci juróom-benn":"Damay yeewu tchi djuróom-benn","Bés bu nekk ci suba":"Bés bu nekk tchi suba","Ayu-bi jëm":"Ayu-bi djeum","Fan wi mooy juróom ci weeru mee":"Fan wi mooy djuróom tchi weeru mee","Sama bésu juddu ci oktoobar la":"Sama bésu djuddu tchi oktoobar la","Baal ma, ban waxtu la ?":"Baal ma, ban wakhtu la ?","Ñett waxtu ak fukk simili la.":"Gnett wakhtu ak fukk simili la.","Ban waxtu la jàng bi di tàmbali ?":"Ban wakhtu la djàng bi di tàmbali ?","Ci ñeent waxtu, ci juróom-fukk simili.":"Tchi gneent wakhtu, tchi djuróom-fukk simili.","Ndax jàng bi bés bu nekk la ?":"Ndakh djàng bi bés bu nekk la ?","Déedéet, altine rekk, àllarba ak àjjuma.":"Déedéet, altine rekk, àllarba ak àdjdjuma.","Jàmm nga yendoo ?":"Djàmm nga yendoo ?","Fanaanal ak jàmm":"Fanaanal ak djàmm","Dalal ak jàmm":"Dalal ak djàmm","Jërëjëf bu baax":"Djeureudjeuf bu baakh","Jàmm":"Djàmm","Jëkkër":"Djeukkeur","Jabar":"Djabar","Ëtt":"Eutt","Caabi":"Tchaabi","Dëkk":"Deukk","Wàññi":"Wàgngni","Junni":"Djunni","Jox ma":"Djokh ma","Càmmoñ":"Tchàmmogn","Ndeyjoor":"Ndeydjoor","Bët":"Beut","Gémmiñ":"Gémmign","Xol":"Khol","Xorom":"Khorom","Meññeef":"Megngneef","Buntu ëtt":"Buntu eutt","Patroŋ":"Patrong","Mekanisiyeŋ":"Mekanisiyeng","Ndaje":"Ndadje","Njabootu":"Ndjabootu","Fanaanal jamm":"Fanaanal djamm","Ndax am nga njabootu bu mag ?":"Ndakh am nga ndjabootu bu mag ?","Ndax sa njabootu am na tool ?":"Ndakh sa ndjabootu am na tool ?","Maa ngi tukki ngir gis sama njabootu":"Maa ngi tukki ngir gis sama ndjabootu","Dafa jafe":"Dafa djafe","Ndax jayye nga itam ci internet ?":"Ndakh djayye nga itam tchi internet ?","Maa ngi dem gis sama njabootu":"Maa ngi dem gis sama ndjabootu","Damaa soxla semences ngir sama tool":"Damaa sokhla sementches ngir sama tool","Kitchen":"Kittchhen","Kuran gi dafa taxaw":"Kuran gi dafa takhaw","Salaamaalekum. Damaa soxla semences ngir sama tool.":"Salaamaalekum. Damaa sokhla sementches ngir sama tool.","Dafa baax":"Dafa baakh","Dafa ñaaw":"Dafa gnaaw","Ñaata la?":"Gnaata la?","Baax na lool ! Mën nga ñëw ci test bu dëgg.":"Baakh na lool ! Meun nga gneuw tchi test bu deugg.","Baax na, waaye kontinuwaal jàng.":"Baakh na, waaye kontinuwaal djàng.","Jàngaat tuuti balaa test bi.":"Djàngaat tuuti balaa test bi.","Fii, ñuy laaj la sa bopp : sa tur, sa at yi, foo dëkk, sa liggéey. Tontul ak baat yu leer.":"Fii, gnuy laadj la sa bopp : sa tur, sa at yi, foo deukk, sa liggéey. Tontul ak baat yu leer.","Laaj yi dañuy jëm ci benn mbir (kër, njaboot, liggéey). Tontul ak kàddu gu mat, bul tontu ak benn baat rekk.":"Laadj yi dagnuy djeum tchi benn mbir (keur, ndjaboot, liggéey). Tontul ak kàddu gu mat, bul tontu ak benn baat rekk.","Xool nataal bi te wax li nga gis : nit ñi, béj bi, li ñuy def. Ni : « I can see... ».":"Khool nataal bi te wakh li nga gis : nit gni, bédj bi, li gnuy def. Ni : « I tchan see... ».","Wax sa xalaat te joxal ab sabab. Ni : « I think... because... ».":"Wakh sa khalaat te djokhal ab sabab. Ni : « I think... betchause... ».","Bu sa tontu nuru tontu bu baax, pourcentage bi dafay yokku. 70 % walla ko ëpp = baax na.":"Bu sa tontu nuru tontu bu baakh, pourtchentage bi dafay yokku. 70 % walla ko eupp = baakh na.","Ci 5 sekond yi ñu noppi, xalaatal ci li nga wax.":"Tchi 5 sekond yi gnu noppi, khalaatal tchi li nga wakh.","jërëjëf":"djeureudjeuf","baax":"baakh","ñaata la":"gnaata la","jaay ma":"djaay ma","amul weccu":"amul wetchtchu","jox ma weccu":"djokh ma wetchtchu","ndaje":"ndadje","junni":"djunni","ndox":"ndokh"};
+  var CLS = "diisoo-pron";
+  function norm(s) { return String(s || "").replace(/\s+/g, " ").trim(); }
+  function traiter(el) {
+    if (!el || el.nodeType !== 1 || el.classList.contains(CLS)) return;
+    if (el.children.length > 0 || el.dataset.pronDone) return;
+    var t = norm(el.textContent).replace(/^\S*\uFE0F?\s+(?=\S)/u, function (m) { return /\p{L}/u.test(m) ? m : ""; });
+    var p = PRON[t] || PRON[norm(el.textContent)];
+    if (!p) return;
+    el.dataset.pronDone = "1";
+    var d = document.createElement(el.tagName === "P" ? "p" : "span");
+    d.className = CLS;
+    d.style.cssText = "font-size:10px;color:#9A8F7A;margin-top:1px;" + (el.tagName === "P" ? "" : "display:block;");
+    d.textContent = "\uD83D\uDD24 " + p;
+    el.insertAdjacentElement("afterend", d);
+  }
+  function balayer(racine) {
+    if (!racine || racine.nodeType !== 1) return;
+    if (racine.children.length === 0) { traiter(racine); return; }
+    racine.querySelectorAll("p,span,div,h3,h4,td,li").forEach(traiter);
+  }
+  var attente = null;
+  function planifier(n) {
+    if (attente) return;
+    attente = setTimeout(function () { attente = null; balayer(document.body); }, 150);
+  }
+  function demarrer() {
+    balayer(document.body);
+    new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+  else demarrer();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-pron.js",e);}
+
+try{
+/* ---- diisoo-voix-court.js ---- */
+/* diisoo-voix-court.js
+ * Corrige les mots wolof courts (Waaw, Ndëk...) ou la voix Oolel ajoute des sons inventes apres le mot.
+ * Principe : pour un mot ou deux mots seulement, on arrete la lecture a la fin du mot
+ * (premier silence apres la voix, ou duree maximale selon la longueur du mot).
+ * Ne modifie aucun fichier existant. Une seule ligne a ajouter dans diisoo-secteurs-loader.js.
+ */
+(function () {
+  "use strict";
+  /* Interrupteur de test : ouvrir https://diisoo.sn/?court=0 desactive ce correctif */
+  try { if (new URLSearchParams(location.search).get("court") === "0") return; } catch (e) {}
+  var ACTIF = false;
+  var DEBUG = false; /* message temporaire a l'ecran, passer a false une fois valide */
+  function avis(m) { try { if (DEBUG && typeof window.toast === "function") window.toast(m); } catch (e) {} }
+
+  /* Calcule la duree a jouer (secondes) pour un signal mono et un nombre de lettres */
+  function dureeUtile(data, rate, lettres, mots) {
+    mots = mots || 1;
+    var fen = Math.max(1, Math.round(rate * 0.01));
+    var n = Math.floor(data.length / fen), rms = new Float32Array(n), max = 0, i, j;
+    for (i = 0; i < n; i++) {
+      var s = 0;
+      for (j = 0; j < fen; j++) { var v = data[i * fen + j]; s += v * v; }
+      rms[i] = Math.sqrt(s / fen);
+      if (rms[i] > max) max = rms[i];
+    }
+    var total = data.length / rate;
+    var cap = 0.8 + 0.13 * lettres + (mots > 2 ? 0.3 * mots : 0);
+    var silenceMin = mots > 2 ? 45 : 25; /* 450 ms pour une phrase, 250 ms pour un mot */
+    if (max <= 0) return total;
+    var seuil = max * 0.06, debut = -1;
+    for (i = 0; i < n; i++) { if (rms[i] > seuil) { debut = i; break; } }
+    if (debut < 0) return total;
+    var coupe = -1, calme = 0;
+    for (i = debut; i < n; i++) {
+      if (rms[i] <= seuil) {
+        calme++;
+        /* silence d'au moins 150 ms apres au moins 150 ms de voix */
+        if (calme >= silenceMin && (i - calme + 1 - debut) >= 20) { coupe = (i - calme + 1) * fen / rate + 0.2; break; }
+      } else calme = 0;
+    }
+    var fin = coupe > 0 ? coupe : total;
+    var plafond = debut * fen / rate + cap;
+    return Math.min(fin, plafond, total);
+  }
+
+  function motsCourts(texte) {
+    var t = String(texte || "").trim();
+    var mots = t.split(/\s+/).filter(function (m) { return /\p{L}/u.test(m); });
+    var lettres = t.replace(/[^\p{L}]/gu, "").length;
+    return (mots.length >= 1 && mots.length <= 4 && lettres <= 24) ? { lettres: lettres, mots: mots.length } : 0;
+  }
+
+  function patcherStart() {
+    var AB = window.AudioBufferSourceNode;
+    if (!AB || AB.prototype.__diisooCourt) return;
+    var orig = AB.prototype.start;
+    AB.prototype.start = function (when, offset, duration) {
+      try {
+        if (ACTIF && this.buffer && duration === undefined && !offset) {
+          var d = dureeUtile(this.buffer.getChannelData(0), this.buffer.sampleRate, ACTIF.lettres, ACTIF.mots);
+          if (d > 0.2 && d < this.buffer.duration - 0.05) {
+            avis("\u2702\uFE0F coupe a " + d.toFixed(1) + "s sur " + this.buffer.duration.toFixed(1) + "s");
+            return orig.call(this, when || 0, 0, d);
+          }
+          avis("mot court, audio de " + this.buffer.duration.toFixed(1) + "s, rien a couper");
+        }
+      } catch (e) {}
+      return orig.apply(this, arguments);
+    };
+    AB.prototype.__diisooCourt = true;
+  }
+
+  function envelopper() {
+    var V = window.Diisoo && window.Diisoo.voix;
+    if (!V || !V.jouer || V.jouer.__court) return !!(V && V.jouer);
+    var orig = V.jouer;
+    var nouveau = function (texte, langue) {
+      var l = langue === "wo" ? motsCourts(texte) : 0;
+      ACTIF = l;
+      var r;
+      try { r = orig.apply(this, arguments); } catch (e) { ACTIF = false; throw e; }
+      return Promise.resolve(r).finally(function () { if (ACTIF === l) ACTIF = false; });
+    };
+    nouveau.__court = true;
+    V.jouer = nouveau;
+    return true;
+  }
+
+  patcherStart();
+  var essais = 0;
+  var t = setInterval(function () { if (envelopper() || ++essais > 100) clearInterval(t); }, 100);
+
+  if (typeof module !== "undefined") module.exports = { dureeUtile: dureeUtile, motsCourts: motsCourts };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-voix-court.js",e);}
+
+try{
+/* ---- diisoo-essai.js ---- */
+/* diisoo-essai.js
+ * Ecran d'accueil : permet d'ecouter 3 phrases wolof AVANT de donner son prenom.
+ * Fichier autonome, ajoute seulement une carte au-dessus du formulaire. Ne modifie aucun fichier existant.
+ */
+(function () {
+  "use strict";
+  var PHRASES = [
+    { wo: "Salaam aleekum", fr: "Bonjour", pr: "Salaam aleekum" },
+    { wo: "Nanga def ?", fr: "Comment vas-tu ?", pr: "Nanga def ?" },
+    { wo: "Jërëjëf", fr: "Merci", pr: "Djeureudjeuf" }
+  ];
+
+  function jouer(texte, bouton) {
+    var fin = function () { if (bouton) { bouton.disabled = false; bouton.style.opacity = "1"; } };
+    try {
+      if (bouton) { bouton.disabled = true; bouton.style.opacity = ".6"; }
+      var r;
+      if (typeof window.speak === "function") r = window.speak(texte, "wo", 0.9);
+      else if (window.Diisoo && window.Diisoo.voix) r = window.Diisoo.voix.jouer(texte, "wo");
+      Promise.resolve(r).then(fin, fin);
+    } catch (e) { fin(); }
+  }
+
+  function construire() {
+    var ecran = document.getElementById("screen-onboarding");
+    var form = document.getElementById("form-onboarding");
+    if (!ecran || !form || document.getElementById("diisoo-essai")) return !!document.getElementById("diisoo-essai");
+    var carte = document.createElement("div");
+    carte.id = "diisoo-essai";
+    carte.style.cssText = "background:#141A2B;border:1px solid #1E2740;border-radius:16px;padding:14px;";
+    var titre = document.createElement("p");
+    titre.style.cssText = "font-size:13px;font-weight:700;color:#E4DCC9;margin:0 0 2px;";
+    titre.textContent = "Écoute d'abord, sans t'inscrire";
+    var sous = document.createElement("p");
+    sous.style.cssText = "font-size:11px;color:#A69C86;margin:0 0 10px;";
+    sous.textContent = "Touche une phrase pour l'entendre en wolof.";
+    carte.appendChild(titre); carte.appendChild(sous);
+    PHRASES.forEach(function (p) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", "Écouter : " + p.wo);
+      b.style.cssText = "display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 12px;margin-top:6px;background:#0B0F1C;border:1px solid #1E2740;border-radius:12px;color:inherit;text-align:left;cursor:pointer;";
+      var ic = document.createElement("span");
+      ic.textContent = "🔊"; ic.style.cssText = "font-size:20px;flex:none;";
+      var tx = document.createElement("span");
+      tx.style.cssText = "display:block;min-width:0;";
+      var l1 = document.createElement("span");
+      l1.style.cssText = "display:block;font-size:15px;font-weight:700;color:#5FC98F;";
+      l1.textContent = p.wo;
+      var l2 = document.createElement("span");
+      l2.style.cssText = "display:block;font-size:11px;color:#A69C86;";
+      l2.textContent = p.fr; /* la prononciation est ajoutee par diisoo-pron.js */
+      tx.appendChild(l1); tx.appendChild(l2);
+      b.appendChild(ic); b.appendChild(tx);
+      b.addEventListener("click", function () { jouer(p.wo, b); });
+      carte.appendChild(b);
+    });
+    var suite = document.createElement("p");
+    suite.style.cssText = "font-size:11px;color:#8C8064;margin:10px 0 0;text-align:center;";
+    suite.textContent = "Ça te plaît ? Donne ton prénom ci-dessous pour continuer.";
+    carte.appendChild(suite);
+    form.parentNode.insertBefore(carte, form);
+    return true;
+  }
+
+  function demarrer() {
+    if (construire()) return;
+    var n = 0, t = setInterval(function () { if (construire() || ++n > 40) clearInterval(t); }, 250);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+  else demarrer();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-essai.js",e);}
+
+try{
+/* ---- diisoo-accueil.js ---- */
+/* diisoo-accueil.js
+ * Accueil (tableau de bord) :
+ * 1) la carte "Ajoute ton WhatsApp" passe sous les 4 menus (l'action principale reste en haut) ;
+ * 2) le champ du numero ne depasse plus de sa carte ;
+ * 3) libelles plus clairs : "Dashboard" devient "Accueil", la disquette affiche "Sauvegarder" tant que le progres n'est pas sauvegarde.
+ * 4) tout tient sur le premier ecran ; 5) la demande de WhatsApp n'apparait qu'apres 3 jours de pratique.
+ * Ne modifie aucun fichier existant : deplace seulement un element deja present et ajoute une regle CSS.
+ */
+(function () {
+  "use strict";
+  function css() {
+    if (document.getElementById("diisoo-accueil-css")) return;
+    var s = document.createElement("style");
+    s.id = "diisoo-accueil-css";
+    s.textContent =
+      "#wa-capture,#wa-capture *{box-sizing:border-box}" +
+      "#wa-capture{max-width:100%;overflow:hidden}" +
+      "#wa-capture input[type=tel]{min-width:0;width:100%}" +
+      "#wa-capture>.flex{max-width:100%}" +
+      "#wa-capture>.flex>input{flex:1 1 0%}" +
+      /* tout visible des l'entree : espacements et hauteurs reduits (ecran d'accueil seulement) */
+      "#screen-dashboard{justify-content:flex-start!important;padding-top:.25rem}" +
+      "#screen-dashboard>*+*{margin-top:.5rem!important}" +
+      "#screen-dashboard .space-y-3>*+*{margin-top:.5rem!important}" +
+      "#screen-dashboard .space-y-3{margin-top:.5rem!important;margin-bottom:0!important}" +
+      "#screen-dashboard .grid.grid-cols-2{gap:.5rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button{min-height:6.4rem!important;padding:.7rem .8rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button>span{font-size:1.9rem!important;margin-bottom:.2rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button>h3{font-size:.95rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.68rem!important;margin-top:.15rem!important;line-height:1.2!important}" +
+      "#revision-card{padding:.7rem .9rem!important}" +
+      "#screen-dashboard>div:last-child>p:last-child{font-size:9px!important;line-height:1.3!important}" +
+      /* demande de numero : cachee tant que l'apprenant n'a pas pratique quelques jours */
+      "body:not([data-wa-ok]) #wa-capture{display:none!important}" +
+      /* libelles plus clairs sans toucher aux scripts qui ecrivent ces boutons */
+      "button[aria-label^=\"Sauvegarder mon\"]::after{content:\" Sauvegarder\";font-size:11px;font-weight:700;margin-left:4px}";
+    document.head.appendChild(s);
+  }
+  function deplacer() {
+    var wa = document.getElementById("wa-capture");
+    var rev = document.getElementById("revision-card");
+    if (!wa || !rev || wa.dataset.accueil) return !!wa;
+    var zone = rev.parentNode;                       /* le bloc "space-y-3" qui contient revision + 4 menus */
+    var grille = zone && zone.querySelector(".grid.grid-cols-2");
+    if (!grille) return false;
+    wa.dataset.accueil = "1";
+    grille.parentNode.insertBefore(wa, grille.nextSibling);
+    return true;
+  }
+  var JOURS_AVANT_WHATSAPP = 3;
+  function joursPratique() {
+    var n = 0;
+    try {
+      var log = JSON.parse(localStorage.getItem("diisoo_daily_xp") || "{}");
+      Object.keys(log).forEach(function (k) { if (Number(log[k]) > 0) n++; });
+    } catch (e) {}
+    try {
+      var st = JSON.parse(localStorage.getItem("diisoo_streak") || "{}");
+      if (st && Number(st.count) > n) n = Number(st.count);
+    } catch (e) {}
+    return n;
+  }
+  function majWhatsApp() {
+    try {
+      if (joursPratique() >= JOURS_AVANT_WHATSAPP) document.body.setAttribute("data-wa-ok", "1");
+      else document.body.removeAttribute("data-wa-ok");
+    } catch (e) {}
+  }
+  function renommer() {
+    var h = document.querySelector("#screen-dashboard h1 span span");
+    if (h && /dashboard/i.test(h.textContent)) { h.textContent = "Accueil"; return true; }
+    return !!h;
+  }
+  function demarrer() {
+    css();
+    renommer();
+    majWhatsApp();
+    setInterval(majWhatsApp, 5000);
+    if (deplacer()) return;
+    var n = 0, t = setInterval(function () { if (deplacer() || ++n > 40) clearInterval(t); }, 250);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+  else demarrer();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-accueil.js",e);}
+
+try{
+/* ---- diisoo-partage.js ---- */
+/* diisoo-partage.js
+ * Partager sa serie : toucher la pastille "🔥 N jours" ouvre WhatsApp avec un message pret
+ * (avec le lien de parrainage de l'apprenant). Aucune place prise en plus sur l'ecran.
+ * Fichier autonome : ne modifie aucun fichier existant.
+ */
+(function () {
+  "use strict";
+  var ID = "streak-counter";
+
+  function code() {
+    try { if (typeof monCodeRef === "function") return monCodeRef(); } catch (e) {}
+    try { var c = JSON.parse(localStorage.getItem("diisoo_ref_code")); if (typeof c === "string") return c; } catch (e) {}
+    return "";
+  }
+
+  function message(n) {
+    var lien = "https://diisoo.sn/" + (code() ? "?ref=" + code() : "");
+    var debut = n > 1
+      ? "\uD83D\uDD25 J'ai " + n + " jours d'affil\u00E9e sur Diisoo, l'application pour apprendre l'anglais et le wolof avec la voix. "
+      : "Je t'invite sur Diisoo, l'application pour apprendre l'anglais et le wolof avec la voix. ";
+    return debut + "Essaie-la ici : " + lien;
+  }
+
+  function partager() {
+    var el = document.getElementById(ID);
+    var m = el && /(\d+)/.exec(el.textContent || "");
+    var n = m ? parseInt(m[1], 10) : 0;
+    window.open("https://wa.me/?text=" + encodeURIComponent(message(n)), "_blank", "noopener");
+    try { if (typeof majCompteurParrainage === "function") setTimeout(majCompteurParrainage, 1500); } catch (e) {}
+  }
+
+  function installer() {
+    var el = document.getElementById(ID);
+    if (!el) return false;
+    if (el.dataset.partage) return true;
+    el.dataset.partage = "1";
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("title", "Partager ma s\u00E9rie sur WhatsApp");
+    el.style.cursor = "pointer";
+    el.addEventListener("click", partager);
+    el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); partager(); } });
+    if (!document.getElementById("diisoo-partage-css")) {
+      var s = document.createElement("style");
+      s.id = "diisoo-partage-css";
+      s.textContent = "#" + ID + "{white-space:nowrap;flex:none}#" + ID + "::after{content:\"\\1F4E4\";font-size:11px;margin-left:3px}";
+      document.head.appendChild(s);
+    }
+    return true;
+  }
+
+  function demarrer() {
+    if (installer()) return;
+    var n = 0, t = setInterval(function () { if (installer() || ++n > 40) clearInterval(t); }, 250);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+  else demarrer();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-partage.js",e);}
+
+try{
+/* ---- diisoo-ui.js ---- */
+/* diisoo-ui.js
+ * Uniformise le design de toute l'application : polices, couleurs, boutons, champs, focus.
+ * Fichier autonome, ne modifie aucun autre fichier.
+ * Ajouter "diisoo-ui.js" EN DERNIER dans le tableau FICHIERS de diisoo-secteurs-loader.js.
+ * Déploiement progressif : inactif par défaut. Actif seulement si l'adresse contient ?ui=1
+ * (mémorisé ensuite sur l'appareil). ?ui=0 le désactive. Pour l'activer pour tout le monde : ACTIF_PAR_DEFAUT = true.
+ */
+(function () {
+  "use strict";
+  var ACTIF_PAR_DEFAUT = true;
+  var CLE = "diisooUI";
+
+  var actif = ACTIF_PAR_DEFAUT;
+  try {
+    var q = new URLSearchParams(location.search).get("ui");
+    if (q === "1") localStorage.setItem(CLE, "1");
+    if (q === "0") localStorage.removeItem(CLE);
+    if (localStorage.getItem(CLE) === "1") actif = true;
+    if (q === "0") actif = false;
+  } catch (e) {}
+  if (!actif) return;
+  if (window.__diisooUI) return;
+  window.__diisooUI = true;
+
+  var CSS = [
+    /* Polices : tout hérite de la police de l'application */
+    "button,input,select,textarea{font-family:inherit}",
+    /* Champs : 16 px minimum (évite le zoom automatique sur iPhone), hauteur confortable */
+    "input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px;min-height:48px;border-radius:12px}",
+    /* Texte lisible */
+    "body{font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}",
+    /* Focus visible partout (clavier et lecteurs d'écran) */
+    ":focus-visible{outline:3px solid var(--gold,#F3A94E);outline-offset:2px}",
+    /* Boutons : zone tactile minimale et coins uniformes (classes ajoutées par le script ci-dessous) */
+    ".diisoo-ui-btn{min-height:48px;border-radius:14px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}",
+    ".diisoo-ui-btn:active{transform:scale(.98)}",
+    /* Liens utiles : zone tactile */
+    "a.diisoo-ui-link{display:inline-block;min-height:44px;line-height:44px}",
+    /* Images et médias ne débordent jamais */
+    "img,video,canvas,svg{max-width:100%}",
+    "audio{width:100%}",
+    /* Défilement doux, sauf pour qui préfère moins de mouvement */
+    "@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}"
+  ].join("\n");
+
+  var st = document.createElement("style");
+  st.id = "diisoo-ui-style";
+  st.textContent = CSS;
+  document.head.appendChild(st);
+
+  /* Boutons avec du texte : on leur donne une zone tactile de 48 px.
+     Les boutons à icône seule (sans texte) ne sont pas touchés pour ne pas déformer les menus. */
+  var planifie = false;
+  function appliquer() {
+    planifie = false;
+    var bs = document.querySelectorAll("button:not(.diisoo-ui-btn),[role=button]:not(.diisoo-ui-btn)");
+    for (var i = 0; i < bs.length; i++) {
+      var b = bs[i];
+      var t = (b.textContent || "").replace(/\s+/g, " ").trim();
+      var lettres = t.replace(/[^A-Za-zÀ-ÿ0-9]/g, "");
+      if (lettres.length >= 3 && b.offsetHeight > 0 && b.offsetHeight < 44) b.classList.add("diisoo-ui-btn");
+    }
+    var ls = document.querySelectorAll("a[href]:not(.diisoo-ui-link)");
+    for (var j = 0; j < ls.length; j++) {
+      var a = ls[j];
+      if (a.closest("p,li,span") || a.children.length) continue;
+      if (a.offsetHeight > 0 && a.offsetHeight < 32 && (a.textContent || "").trim().length >= 3) a.classList.add("diisoo-ui-link");
+    }
+  }
+  function planifier() {
+    if (planifie) return;
+    planifie = true;
+    (window.requestIdleCallback || function (f) { return setTimeout(f, 200); })(appliquer);
+  }
+  new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true });
+  planifier();
+  window.DiisooUI = { actif: true, reappliquer: appliquer };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-ui.js",e);}
+
+try{
+/* ---- diisoo-coach.js ---- */
+/* diisoo-coach.js
+ * Coach vocal autonome. Une ligne dans index.html : <script src="diisoo-coach.js" defer></script>
+ * Usage : DiisooCoach.ouvrir({ en: "How are you?", pron: "Haou ar you ?", wo: "Naka nga def ?", fr: "Comment vas-tu ?" })
+ * Parcours : écouter, répéter, s'enregistrer, comparer (si reconnaissance vocale), se réécouter, recommencer ou suivant.
+ * Limite affichée à l'utilisateur : le texte reconnu est comparé à la phrase cible. Ce n'est pas une note de prononciation.
+ * Sans reconnaissance vocale : l'enregistrement est réécouté et l'apprenant s'auto-évalue.
+ * Sans micro : écoute et répétition à voix haute seulement.
+ */
+(function () {
+  "use strict";
+  if (window.DiisooCoach) return;
+
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var CAN_REC = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  var SEUIL = 0.8;
+
+  function norm(s) {
+    return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim();
+  }
+  function dist(a, b) {
+    var d = [], i, j;
+    for (i = 0; i <= a.length; i++) { d[i] = [i]; }
+    for (j = 1; j <= b.length; j++) d[0][j] = j;
+    for (i = 1; i <= a.length; i++) for (j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+  function simil(a, b) { var m = Math.max(a.length, b.length); return m ? 1 - dist(a, b) / m : 1; }
+
+  function el(tag, css, txt) {
+    var e = document.createElement(tag);
+    if (css) e.style.cssText = css;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  var BTN = "min-height:52px;padding:0 18px;border:0;border-radius:14px;font:600 16px system-ui,sans-serif;color:#fff;background:#1f6feb;width:100%;margin-top:10px;";
+  var BTN2 = BTN.replace("#1f6feb", "#2a3350");
+
+  function jouerEn(texte) {
+    try {
+      if (window.Diisoo && window.Diisoo.voix && window.Diisoo.voix.jouer) return window.Diisoo.voix.jouer(texte, "en");
+    } catch (e) {}
+    return new Promise(function (res, rej) {
+      if (!window.speechSynthesis) return rej(new Error("voix indisponible"));
+      var u = new SpeechSynthesisUtterance(texte); u.lang = "en-US"; u.rate = 0.9;
+      u.onend = function () { res(true); }; u.onerror = function () { rej(new Error("voix")); };
+      speechSynthesis.speak(u);
+    });
+  }
+  function jouerWo(texte) {
+    if (window.Diisoo && window.Diisoo.ecouter) {
+      try { if (window.Diisoo.voix && window.Diisoo.voix.debloquer) window.Diisoo.voix.debloquer(); } catch (e) {}
+      return window.Diisoo.ecouter(texte);
+    }
+    return Promise.resolve("indisponible");
+  }
+
+  function ouvrir(o) {
+    o = o || {};
+    if (!o.en) return;
+    var fond = el("div", "position:fixed;inset:0;z-index:99999;background:rgba(5,8,18,.92);display:flex;align-items:flex-end;justify-content:center;");
+    var box = el("div", "width:100%;max-width:520px;max-height:92vh;overflow:auto;background:#121a2e;color:#f2f5ff;border-radius:22px 22px 0 0;padding:20px 18px 26px;font-family:system-ui,sans-serif;");
+    fond.appendChild(box);
+    document.body.appendChild(fond);
+
+    var flux = null, rec = null, audioUrl = null, sr = null, enCours = false;
+
+    function fermer() {
+      try { if (sr) sr.abort(); } catch (e) {}
+      try { if (rec && rec.state !== "inactive") rec.stop(); } catch (e) {}
+      try { if (flux) flux.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+      try { if (window.Diisoo && window.Diisoo.voix) window.Diisoo.voix.arreter(); } catch (e) {}
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+      fond.remove();
+      if (o.onFin) o.onFin();
+    }
+
+    function vue() {
+      box.innerHTML = "";
+      box.appendChild(el("div", "font:700 26px system-ui;margin-bottom:6px;", o.en));
+      if (o.pron) box.appendChild(el("div", "font-size:18px;color:#ffd166;margin-bottom:6px;", o.pron));
+      if (o.wo) box.appendChild(el("div", "font-size:18px;margin-bottom:4px;", "Wolof : " + o.wo));
+      if (o.fr) box.appendChild(el("div", "font-size:16px;color:#aab4d4;margin-bottom:10px;", "Français : " + o.fr));
+      var msg = el("div", "min-height:44px;margin:10px 0;font-size:17px;line-height:1.4;");
+      msg.setAttribute("aria-live", "polite");
+      box.appendChild(msg);
+
+      var bEn = el("button", BTN, "1. Écouter en anglais");
+      var bWo = o.wo ? el("button", BTN2, "Écouter en wolof") : null;
+      var bRep = el("button", BTN, CAN_REC || SR ? "2. Répéter (micro)" : "2. Répéter à voix haute");
+      var bSuiv = el("button", BTN2, o.suivant ? "Phrase suivante" : "Fermer");
+      var bVer = el("button", BTN2, "3. Vérifier ce que j'ai dit");
+      var lecteur = el("div", "margin-top:10px;");
+
+      bEn.onclick = function () {
+        msg.textContent = "Écoute bien...";
+        jouerEn(o.en).then(function () { msg.textContent = "Maintenant, répète à voix haute."; })
+          .catch(function () { msg.textContent = "Son indisponible. Vérifie le volume ou ta connexion, puis réessaie."; });
+      };
+      if (bWo) bWo.onclick = function () {
+        msg.textContent = "Écoute...";
+        jouerWo(o.wo).then(function (r) {
+          var T = {
+            ok: "",
+            limite: "Limite d'écoutes atteinte.",
+            occupe: "Une lecture est déjà en cours. Attends la fin, puis réessaie.",
+            erreur: "La voix wolof ne répond pas (serveur de voix). Réessaie dans une minute. [code: erreur]",
+            vide: "Pas de texte wolof pour cette phrase. [code: vide]",
+            indisponible: "Voix wolof non chargée sur cette page. Recharge la page. [code: non chargé]"
+          };
+          msg.textContent = T[r] != null ? T[r] : "Son wolof indisponible. [code: " + r + "]";
+        });
+      };
+
+      /* Étape 2 : enregistrement seul (MediaRecorder). Touche encore pour arrêter. Lecture automatique ensuite. */
+      var recTimer = null;
+      function arreterEnreg() { try { if (rec && rec.state !== "inactive") rec.stop(); } catch (e) {} }
+      bRep.onclick = function () {
+        if (enCours) { arreterEnreg(); return; }
+        if (!CAN_REC) {
+          if (SR) { bVer.onclick(); return; }
+          msg.textContent = "Ton navigateur n'a pas de micro ici. Répète à voix haute, puis réécoute la phrase.";
+          return;
+        }
+        lecteur.innerHTML = "";
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+          flux = st; var morceaux = [];
+          rec = new MediaRecorder(st);
+          rec.ondataavailable = function (e) { if (e.data && e.data.size) morceaux.push(e.data); };
+          rec.onstop = function () {
+            clearTimeout(recTimer);
+            try { st.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+            enCours = false; bRep.textContent = "2. Répéter (micro)";
+            if (audioUrl) URL.revokeObjectURL(audioUrl);
+            audioUrl = morceaux.length ? URL.createObjectURL(new Blob(morceaux, { type: rec.mimeType || "audio/webm" })) : null;
+            if (!audioUrl) { msg.textContent = "Rien enregistré. Rapproche-toi du micro et réessaie."; return; }
+            var a = el("audio"); a.controls = true; a.src = audioUrl; a.style.cssText = "width:100%;";
+            lecteur.appendChild(a);
+            msg.textContent = "Voici ta voix. Compare avec le modèle, ou touche « Vérifier ».";
+            a.play().catch(function () {});
+            if (SR) bVer.style.display = "block";
+          };
+          rec.start(); enCours = true;
+          bRep.textContent = "Arrêter l'enregistrement";
+          msg.textContent = "Je t'enregistre... dis la phrase, puis touche « Arrêter ».";
+          recTimer = setTimeout(arreterEnreg, 10000);
+        }).catch(function () {
+          msg.textContent = "Micro refusé ou indisponible. Autorise-le dans le navigateur, puis réessaie.";
+        });
+      };
+
+      /* Étape 3 : reconnaissance vocale seule (jamais en même temps que l'enregistrement). */
+      bVer.style.display = SR ? "block" : "none";
+      bVer.onclick = function () {
+        if (enCours || !SR) return;
+        enCours = true; var texte = "", erreur = "";
+        msg.textContent = "Je t'écoute... dis la phrase maintenant (8 secondes).";
+        try {
+          sr = new SR(); sr.lang = "en-US"; sr.interimResults = false; sr.maxAlternatives = 3;
+          sr.onresult = function (e) {
+            var best = "", bs = -1;
+            Array.prototype.forEach.call(e.results[0], function (x) {
+              var v = simil(norm(x.transcript), norm(o.en)); if (v > bs) { bs = v; best = x.transcript; }
+            });
+            texte = best;
+          };
+          sr.onerror = function (e) { erreur = e.error || "erreur"; };
+          sr.onend = function () {
+            enCours = false;
+            if (erreur === "not-allowed" || erreur === "service-not-allowed") msg.textContent = "Micro bloqué. Autorise le micro dans le navigateur, puis réessaie.";
+            else if (erreur === "network") msg.textContent = "Connexion trop faible pour la reconnaissance vocale. Réessaie.";
+            else if (erreur === "audio-capture") msg.textContent = "Le micro est occupé. Ferme les autres applications qui l'utilisent, puis réessaie.";
+            else if (texte) {
+              var v = simil(norm(texte), norm(o.en));
+              msg.textContent = v >= SEUIL
+                ? "Bravo ! Le texte reconnu correspond à la phrase. (Ce n'est pas une note de prononciation.)"
+                : "J'ai compris : « " + texte + " ». Réécoute le modèle et réessaie. (Ce n'est pas une note de prononciation.)";
+            } else msg.textContent = "Je n'ai rien compris. Parle plus fort, plus près du micro, et réessaie. [code: " + (erreur || "silence") + "]";
+          };
+          sr.start();
+          setTimeout(function () { try { sr.stop(); } catch (e) {} }, 8000);
+        } catch (e) { enCours = false; msg.textContent = "Reconnaissance vocale indisponible sur ce navigateur."; }
+      };
+
+      bSuiv.onclick = function () { fermer(); if (o.suivant) o.suivant(); };
+
+      box.appendChild(bEn); if (bWo) box.appendChild(bWo); box.appendChild(bRep);
+      box.appendChild(lecteur); box.appendChild(bVer);
+      var bFin = el("button", BTN2, "Fermer"); bFin.onclick = fermer;
+      box.appendChild(bSuiv);
+      if (o.suivant) box.appendChild(bFin);
+      box.appendChild(el("div", "margin-top:14px;font-size:12px;color:#6f7aa0;text-align:center;", "Coach v2 : micro séparé"));
+    }
+    vue();
+    return { fermer: fermer };
+  }
+
+  window.DiisooCoach = { ouvrir: ouvrir, supporte: { enregistrement: CAN_REC, reconnaissance: !!SR } };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-coach.js",e);}
+
+try{
+/* ---- diisoo-themes-extra.js ---- */
+/* diisoo-themes-extra.js
+ * 1) Classe les thèmes d'anglais généraux en 3 niveaux (N1 Débutant complet, N2 Débutant, N3 Pratique réelle).
+ * 2) Ajoute 5 thèmes de situations réelles : hôtel, chemin, entretien d'embauche, présenter son activité, commande et livraison.
+ * Ne supprime et ne modifie aucune phrase existante. Seul le titre des onglets reçoit un préfixe « N1 · », « N2 · » ou « N3 · ».
+ * Wolof : première version écrite par Claude, à faire valider par un locuteur natif avant de communiquer dessus.
+ */
+(function () {
+  "use strict";
+  if (window.__diisooThemesExtra) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooThemesExtra = true;
+
+  var NIVEAU = {
+    intro: 1, family: 1, food: 1, time: 1,
+    work: 2, market: 2, travel: 2, health: 2, housing: 2, directions: 2,
+    visa: 3, agri: 3, hotel: 3, interview: 3, pitch: 3, orders: 3
+  };
+
+  var NOUVEAUX = [
+    {
+      id: "hotel", title: "Réserver un hôtel",
+      vocab: [
+        { en: "Room", fr: "Chambre", wo: "Néeg bi" },
+        { en: "Key", fr: "Clé", wo: "Caabi bi" },
+        { en: "Night", fr: "Nuit", wo: "Guddi gi" },
+        { en: "Breakfast", fr: "Petit-déjeuner", wo: "Ndekki bi" },
+        { en: "I have a reservation", fr: "J'ai une réservation", wo: "Am naa réserwasioŋ" },
+        { en: "Do you have a free room?", fr: "Avez-vous une chambre libre ?", wo: "Am ngeen néeg bu amul kenn ?" },
+        { en: "How much is it per night?", fr: "C'est combien la nuit ?", wo: "Ñaata la guddi gi ?" },
+        { en: "Is breakfast included?", fr: "Le petit-déjeuner est-il compris ?", wo: "Ndekki bi dafa nekk ci njëg gi ?" }
+      ],
+      dialogue: [
+        { who: "A", en: "Good evening. How can I help you?", fr: "Bonsoir. Comment puis-je vous aider ?", wo: "Naka laa la mën a dimbali ?" },
+        { who: "B", en: "I would like a room for two nights.", fr: "Je voudrais une chambre pour deux nuits.", wo: "Maa ngi bëgg benn néeg ñaari guddi." },
+        { who: "A", en: "Single or double?", fr: "Simple ou double ?", wo: "Néeg bu benn nit walla bu ñaari nit ?" },
+        { who: "B", en: "A single room, please. How much is it?", fr: "Une chambre simple, s'il vous plaît. C'est combien ?", wo: "Benn néeg bu benn nit, baal ma. Ñaata la ?" },
+        { who: "A", en: "It is thirty thousand francs per night, breakfast included.", fr: "C'est trente mille francs la nuit, petit-déjeuner compris.", wo: "Fanweer junni franc la guddi gi, ndekki bi ci biir la." },
+        { who: "B", en: "That is fine. Here is my passport.", fr: "C'est bon. Voici mon passeport.", wo: "Baax na. Nii mooy sama paspoor." },
+        { who: "A", en: "Thank you. Here is your key. Room twelve.", fr: "Merci. Voici votre clé. Chambre douze.", wo: "Jërëjëf. Nii mooy sa caabi. Néeg bu fukk ak ñaar." }
+      ],
+      quiz: [
+        { q: "I have a ___.", o: ["reservation", "reserve", "reservate"], a: 0, why: "« I have a reservation » = j'ai une réservation." },
+        { q: "How much is it ___ night?", o: ["per", "for", "at"], a: 0, why: "« per night » = par nuit." },
+        { q: "Is breakfast ___?", o: ["included", "include", "including"], a: 0, why: "« Is breakfast included? » = le petit-déjeuner est-il compris ?" }
+      ]
+    },
+    {
+      id: "directions", title: "Demander son chemin",
+      vocab: [
+        { en: "Left", fr: "Gauche", wo: "Càmmoñ" },
+        { en: "Right", fr: "Droite", wo: "Ndeyjoor" },
+        { en: "Straight ahead", fr: "Tout droit", wo: "Jubal" },
+        { en: "Street", fr: "Rue", wo: "Mbedd mi" },
+        { en: "Near", fr: "Près", wo: "Jege" },
+        { en: "Far", fr: "Loin", wo: "Sori" },
+        { en: "Excuse me, where is the market?", fr: "Excusez-moi, où est le marché ?", wo: "Baal ma, fan la marse bi nekk ?" },
+        { en: "Turn left", fr: "Tournez à gauche", wo: "Jëw ci càmmoñ" }
+      ],
+      dialogue: [
+        { who: "A", en: "Excuse me, where is the bus station?", fr: "Excusez-moi, où est la gare routière ?", wo: "Baal ma, fan la gaar bi nekk ?" },
+        { who: "B", en: "Go straight, then turn left at the traffic light.", fr: "Allez tout droit, puis tournez à gauche au feu.", wo: "Jubal, noppi jëw ci càmmoñ ci làmp bi." },
+        { who: "A", en: "Is it far?", fr: "C'est loin ?", wo: "Dafa sori ?" },
+        { who: "B", en: "No, it is five minutes on foot.", fr: "Non, c'est à cinq minutes à pied.", wo: "Déedéet, juroom miniit rekk ci tànk." },
+        { who: "A", en: "Thank you very much.", fr: "Merci beaucoup.", wo: "Jërëjëf ci lool." },
+        { who: "B", en: "You are welcome.", fr: "Je vous en prie.", wo: "Amul solo." }
+      ],
+      quiz: [
+        { q: "Turn ___ at the traffic light.", o: ["left", "leave", "lift"], a: 0, why: "« Turn left » = tournez à gauche." },
+        { q: "How ___ is it?", o: ["far", "long-far", "much-far"], a: 0, why: "« How far is it? » = c'est à quelle distance ?" },
+        { q: "Go ___, then turn right.", o: ["straight", "strait", "straigth"], a: 0, why: "« Go straight » = allez tout droit." }
+      ]
+    },
+    {
+      id: "interview", title: "Entretien d'embauche",
+      vocab: [
+        { en: "Experience", fr: "Expérience", wo: "Eksperiyaas" },
+        { en: "Skills", fr: "Compétences", wo: "Xam-xam yi" },
+        { en: "Salary", fr: "Salaire", wo: "Peyoor" },
+        { en: "Tell me about yourself", fr: "Parlez-moi de vous", wo: "Wax ma ci sa bopp" },
+        { en: "I have five years of experience", fr: "J'ai cinq ans d'expérience", wo: "Am naa juroom at ci liggéey bi" },
+        { en: "Why do you want this job?", fr: "Pourquoi voulez-vous ce poste ?", wo: "Lu tax nga bëgg liggéey bii ?" },
+        { en: "I can start next month", fr: "Je peux commencer le mois prochain", wo: "Mën naa tàmbali weer wi di ñëw" },
+        { en: "I am reliable", fr: "Je suis fiable", wo: "Ñuy wóolu ma" }
+      ],
+      dialogue: [
+        { who: "A", en: "Tell me about yourself.", fr: "Parlez-moi de vous.", wo: "Wax ma ci sa bopp." },
+        { who: "B", en: "I am a logistics graduate with five years of experience.", fr: "Je suis diplômé en logistique avec cinq ans d'expérience.", wo: "Maa ngi jàng lojistik te am naa juroom at ci liggéey bi." },
+        { who: "A", en: "Why do you want this job?", fr: "Pourquoi voulez-vous ce poste ?", wo: "Lu tax nga bëgg liggéey bii ?" },
+        { who: "B", en: "I like organizing transport and working with a team.", fr: "J'aime organiser le transport et travailler en équipe.", wo: "Bëgg naa tëral yoonu transpoor te liggéey ak mbooloo mi." },
+        { who: "A", en: "What is your greatest strength?", fr: "Quel est votre point fort ?", wo: "Lan mooy sa kàttan bu ëpp ?" },
+        { who: "B", en: "I am reliable and I solve problems quickly.", fr: "Je suis fiable et je résous vite les problèmes.", wo: "Ñuy wóolu ma te di leru jafe-jafe yi ci gaaw." },
+        { who: "A", en: "When can you start?", fr: "Quand pouvez-vous commencer ?", wo: "Kañ nga mën a tàmbali ?" },
+        { who: "B", en: "I can start next month.", fr: "Je peux commencer le mois prochain.", wo: "Mën naa tàmbali weer wi di ñëw." }
+      ],
+      quiz: [
+        { q: "I have five years of ___.", o: ["experience", "experiences", "experiment"], a: 0, why: "« experience » est indénombrable ici : five years of experience." },
+        { q: "Tell me about ___.", o: ["yourself", "you", "your"], a: 0, why: "« Tell me about yourself » = parlez-moi de vous." },
+        { q: "When can you ___?", o: ["start", "starting", "to start"], a: 0, why: "Après « can », le verbe reste à l'infinitif sans « to »." }
+      ]
+    },
+    {
+      id: "pitch", title: "Présenter son activité",
+      vocab: [
+        { en: "Company", fr: "Entreprise", wo: "Kompaañi bi" },
+        { en: "Customer", fr: "Client", wo: "Kiliyaŋ bi" },
+        { en: "Product", fr: "Produit", wo: "Produi bi" },
+        { en: "Catalogue", fr: "Catalogue", wo: "Katalog bi" },
+        { en: "I run a small business in Thiès", fr: "Je dirige une petite entreprise à Thiès", wo: "Maa ngi jiite ab liggéeyukaay bu ndaw ci Cees" },
+        { en: "We sell and export local products", fr: "Nous vendons et exportons des produits locaux", wo: "Ñu ngi jaay te di yónnee yëfi réew mi" },
+        { en: "We are looking for a reliable partner", fr: "Nous cherchons un partenaire fiable", wo: "Ñu ngi seet ab pàrtneer bu ñuy wóolu" },
+        { en: "Can I send you our catalogue?", fr: "Puis-je vous envoyer notre catalogue ?", wo: "Mën naa la yónnee sunu katalog ?" }
+      ],
+      dialogue: [
+        { who: "A", en: "Nice to meet you. What does your company do?", fr: "Enchanté. Que fait votre entreprise ?", wo: "Neex na ma xam la. Lu sa liggéeyukaay def ?" },
+        { who: "B", en: "We sell and export local products from Senegal.", fr: "Nous vendons et exportons des produits locaux du Sénégal.", wo: "Ñu ngi jaay te di yónnee yëfi réew mi ci Senegaal." },
+        { who: "A", en: "How long have you been in business?", fr: "Depuis quand êtes-vous en activité ?", wo: "Ñaata at ngeen am ci liggéey bi ?" },
+        { who: "B", en: "Since 2022. We have clients in Dakar and Thiès.", fr: "Depuis 2022. Nous avons des clients à Dakar et à Thiès.", wo: "Li dale 2022. Am nanu kiliyaŋ ci Ndakaaru ak Cees." },
+        { who: "A", en: "What are you looking for?", fr: "Que cherchez-vous ?", wo: "Lan ngeen di seet ?" },
+        { who: "B", en: "We are looking for a reliable partner abroad. Can I send you our catalogue?", fr: "Nous cherchons un partenaire fiable à l'étranger. Puis-je vous envoyer notre catalogue ?", wo: "Ñu ngi seet ab pàrtneer bu ñuy wóolu ci biti. Mën naa la yónnee sunu katalog ?" }
+      ],
+      quiz: [
+        { q: "We ___ local products.", o: ["sell", "sells", "selling"], a: 0, why: "« We sell » : pas de -s avec we." },
+        { q: "We are looking ___ a partner.", o: ["for", "to", "at"], a: 0, why: "« look for » = chercher." },
+        { q: "Can I send you our ___?", o: ["catalogue", "catalogue's", "cataloguing"], a: 0, why: "« catalogue » = catalogue de produits." }
+      ]
+    },
+    {
+      id: "orders", title: "Commande & livraison",
+      vocab: [
+        { en: "Order", fr: "Commande", wo: "Komaand bi" },
+        { en: "Quantity", fr: "Quantité", wo: "Kantite bi" },
+        { en: "Delivery", fr: "Livraison", wo: "Yónnee bi" },
+        { en: "Invoice", fr: "Facture", wo: "Faktiir bi" },
+        { en: "I want to place an order", fr: "Je veux passer une commande", wo: "Bëgg naa def ab komaand" },
+        { en: "How many pieces do you need?", fr: "Combien de pièces vous faut-il ?", wo: "Ñaata pyes ngeen soxla ?" },
+        { en: "When will the goods arrive?", fr: "Quand les marchandises arriveront-elles ?", wo: "Kañ la marsandiis yi di agsi ?" },
+        { en: "Can you send me the invoice?", fr: "Pouvez-vous m'envoyer la facture ?", wo: "Mën ngeen ma yónnee faktiir bi ?" }
+      ],
+      dialogue: [
+        { who: "A", en: "Hello, I would like to place an order.", fr: "Bonjour, je voudrais passer une commande.", wo: "Salaamaleekum, bëgg naa def ab komaand." },
+        { who: "B", en: "Sure. How many pieces do you need?", fr: "Bien sûr. Combien de pièces vous faut-il ?", wo: "Waaw. Ñaata pyes ngeen soxla ?" },
+        { who: "A", en: "Five hundred pieces. What is the price?", fr: "Cinq cents pièces. Quel est le prix ?", wo: "Juroom téeméer pyes. Ñaata la njëg gi ?" },
+        { who: "B", en: "For five hundred pieces, it is two dollars each.", fr: "Pour cinq cents pièces, c'est deux dollars l'unité.", wo: "Ci juroom téeméer pyes, ñaari dolaar la ci benn." },
+        { who: "A", en: "When will the goods arrive in Dakar?", fr: "Quand les marchandises arriveront-elles à Dakar ?", wo: "Kañ la marsandiis yi di agsi Ndakaaru ?" },
+        { who: "B", en: "Delivery takes three weeks by sea. I will send the invoice today.", fr: "La livraison prend trois semaines par bateau. J'envoie la facture aujourd'hui.", wo: "Yónnee bi dafay jël ñetti ayubés ci géej. Dinaa yónnee faktiir bi tey." }
+      ],
+      quiz: [
+        { q: "How ___ pieces do you need?", o: ["many", "much", "more"], a: 0, why: "« pieces » se compte : how many." },
+        { q: "The minimum ___ is one hundred pieces.", o: ["order", "ordering", "ordered"], a: 0, why: "« minimum order » = commande minimum." },
+        { q: "Delivery ___ two weeks.", o: ["takes", "take", "taking"], a: 0, why: "Sujet singulier (delivery) : takes." }
+      ]
+    }
+  ];
+
+  var ids = {};
+  G.forEach(function (t) { ids[t.id] = true; });
+  NOUVEAUX.forEach(function (t) { if (!ids[t.id]) G.push(t); });
+
+  G.forEach(function (t) {
+    var n = NIVEAU[t.id] || 3;
+    t.niveau = n;
+    if (!/^N[123] · /.test(t.title)) t.title = "N" + n + " · " + t.title;
+  });
+  G.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-themes-extra.js",e);}
+
+try{
+/* ---- diisoo-lecons.js ---- */
+/* diisoo-lecons.js
+ * Leçons d'anglais générales : affiche la prononciation simplifiée sous chaque phrase
+ * et ajoute un bouton « Coach » (écouter, répéter, se réécouter) sous chaque carte.
+ * Dépend de diisoo-coach.js (à charger avant). Ne modifie aucun autre fichier.
+ * La prononciation simplifiée est une AIDE (écriture pour francophones). Prélecture à valider.
+ */
+(function () {
+  "use strict";
+  if (window.__diisooLecons) return;
+  window.__diisooLecons = true;
+
+  var PRON_EN = {"Left":"Lèft","Right":"Raït","Straight ahead":"Stréït ahèd","Street":"Strît","Near":"Nir","Far":"Far","Excuse me, where is the market?":"Èkskiouz mi, wèr iz zi markit ?","Turn left":"Teurn lèft","Room":"Roum","Key":"Kî","Night":"Naït","Breakfast":"Brèkfast","I have a reservation":"Aï hav a rézeurvéïchen","Do you have a free room?":"Dou you hav a frî roum ?","How much is it per night?":"Haou meutch iz it peur naït ?","Is breakfast included?":"Iz brèkfast inklioudid ?","Experience":"Ekspirièns","Skills":"Skilz","Salary":"Saleuri","Tell me about yourself":"Tèl mi abaout yorsèlf","I have five years of experience":"Aï hav faïv yeurz ov ekspirièns","Why do you want this job?":"Waï dou you wont ziss djob ?","I can start next month":"Aï kan start nèkst meunth","I am reliable":"Aï am rilaïabel","Company":"Keumpani","Customer":"Keustomeur","Product":"Prodakt","Catalogue":"Katalog","I run a small business in Thiès":"Aï reun a smol biznis in Tiès","We sell and export local products":"Wi sèl and èksport lôkal prodakts","We are looking for a reliable partner":"Wi ar loukinng for a rilaïabel partneur","Can I send you our catalogue?":"Kan aï sènd you aour katalog ?","Order":"Ordeur","Quantity":"Kouantiti","Delivery":"Dilivri","Invoice":"Inn-voïss","I want to place an order":"Aï wont tou pléïss an ordeur","How many pieces do you need?":"Haou mèni pîssiz dou you nîd ?","When will the goods arrive?":"Wèn wil zi goudz araïv ?","Can you send me the invoice?":"Kan you sènd mi zi inn-voïss ?","My name is...": "Maï néïm iz...","I am from Senegal": "Aï am frome Sénégal","Nice to meet you": "Naïce tou mîte you","I am a student": "Aï am a stioudent","How old are you?": "Haou ôld ar you ?","I am thirty years old": "Aï am theurti yeurz ôld","Where do you live?": "Wèr dou you liv ?","I live in Thiès": "Aï liv in Tiès","What do you do for a living?": "Wot dou you dou for a livinng ?","I speak English and French": "Aï spîk Inngliche and Frènntch","Can you spell your name?": "Kan you spèl yor néïm ?","F-A-T-O-U": "Èf-Eï-Ti-Ô-You","Family": "Fameli","Father": "Fa-zeur","Mother": "Meu-zeur","Brother": "Breu-zeur","Sister": "Sisteur","I have three children": "Aï hav thri tchildren","My mother lives with us": "Maï meu-zeur livz wiz eus","We eat together every evening": "Wi ît tou-guè-zeur èvri îvninng","My father is a driver": "Maï fa-zeur iz a draïveur","I love my family very much": "Aï leuv maï fameli vèri meutch","Who is the oldest in your family?": "Hou iz zi ôldist in yor fameli ?","My grandmother is the oldest": "Maï grandmeu-zeur iz zi ôldist","Work": "Weurk","Job": "Djob","Every day": "Èvri déï","Busy": "Bizi","Colleague": "Kolîg","I start work at eight o'clock": "Aï start weurk at éït o-klok","I finish work at five o'clock": "Aï finiche weurk at faïv o-klok","I work in an office": "Aï weurk in an offiss","My job is difficult but interesting": "Maï djob iz difikeult beut intrestinng","I am looking for a new job": "Aï am loukinng for a niou djob","I like helping customers": "Aï laïk hèlpinng keustomeurz","I take a short break at noon": "Aï téïk a chort bréïk at noun","Market": "Markit","Price": "Praïce","Money": "Meuni","Buy": "Baï","Cheap": "Tchîp","How much does it cost?": "Haou meutch deuz it kost ?","That is too expensive": "Zat iz tou ekspènnsiv","Can you make it cheaper?": "Kan you méïk it tchîpeur ?","I would like to buy some rice": "Aï woud laïk tou baï seum raïce","Do you accept mobile money?": "Dou you aksèpt môbaïl meuni ?","How much are the tomatoes?": "Haou meutch ar zi tomêtôz ?","Could you give me a discount?": "Koud you guiv mi a diskaount ?","Airport": "Èrport","Ticket": "Tikit","Passport": "Passport","Flight": "Flaït","Bus": "Beuss","I would like to book a ticket": "Aï woud laïk tou bouk a tikit","What time does the bus leave?": "Wot taïm deuz zi beuss lîv ?","Where is the nearest bus stop?": "Wèr iz zi nirist beuss stop ?","I am traveling to visit my family": "Aï am travelinng tou vizit maï fameli","Do I need a visa for this country?": "Dou aï nîd a vîza for ziss keuntri ?","How do you get to work?": "Haou dou you guét tou weurk ?","I take the bus every morning": "Aï téïk zi beuss èvri morninng","Doctor": "Doktor","Hospital": "Hospitel","Sick": "Sik","Medicine": "Médsin","Help": "Hèlp","I have a headache": "Aï hav a hèdéïk","I need to see a doctor": "Aï nîd tou sî a doktor","Where is the nearest hospital?": "Wèr iz zi nirist hospitel ?","I feel better today": "Aï fîl bèteur toudéï","Please call an ambulance": "Plîz kol an ambioulenss","Take one tablet twice a day": "Téïk wan tablèt twaïce a déï","Since when do you feel sick?": "Sinss wèn dou you fîl sik ?","Restaurant": "Rèstorant","Menu": "Mènniou","Water": "Wotteur","Delicious": "Dilichess","Bill": "Bil","I am hungry": "Aï am heunngri","What do you recommend?": "Wot dou you rékomènd ?","I would like some rice and fish": "Aï woud laïk seum raïce and fiche","This meal is very tasty": "Ziss mîl iz vèri téïsti","Can I have the bill, please?": "Kan aï hav zi bil, plîz ?","What is your favourite dish?": "Wot iz yor féïvorit diche ?","I like thieboudienne": "Aï laïk tiébou-diène","Today": "Toudéï","Tomorrow": "Toumorô","Yesterday": "Yèsteurdéï","Number": "Neumbeur","Time": "Taïm","What time is it now?": "Wot taïm iz it naou ?","I will see you tomorrow morning": "Aï wil sî you toumorô morninng","The meeting starts at ten o'clock": "Zi mîtinng starts at tèn o-klok","I was busy yesterday": "Aï woz bizi yèsteurdéï","How many people are coming?": "Haou mèni pîpel ar keuminng ?","What time do you wake up?": "Wot taïm dou you wéïk eup ?","I wake up at six every morning": "Aï wéïk eup at siks èvri morninng","Visa application": "Vîza aplikéïchen","Purpose of visit": "Peurpeuss ov vizit","I am visiting my family": "Aï am vizitinng maï fameli","Return ticket": "Ritèrn tikit","How long will you stay?": "Haou lonng wil you stéï ?","I will stay for two weeks": "Aï wil stéï for tou wîks","Who is paying for your trip?": "Hou iz péïinng for yor trip ?","I am paying for myself": "Aï am péïinng for maïsèlf","Do you have accommodation booked?": "Dou you hav akomodéïchen boukt ?","I am looking for an apartment": "Aï am loukinng for an apartment","How much is the rent?": "Haou meutch iz zi rènt ?","Is the deposit included?": "Iz zi dipozit inklioudid ?","Landlord": "Lanndlord","Tenant": "Ténnant","The electricity is not working": "Zi ilèktrissiti iz not weurkinng","Can I visit the house?": "Kan aï vizit zi haouss ?","How many rooms are there?": "Haou mèni roumz ar zèr ?","I need to sign the lease": "Aï nîd tou saïn zi lîss","The neighbourhood is quiet": "Zi néïbeur-houd iz kouaïet","Seeds": "Sîdz","Fertilizer": "Feurtilaïzeur","Field": "Fîld","Harvest": "Harvist","Farmer": "Farmeur","I need seeds for my field": "Aï nîd sîdz for maï fîld","How much is a bag of fertilizer?": "Haou meutch iz a bag ov feurtilaïzeur ?","Do these seeds grow well in the rainy season?": "Dou zîz sîdz grô wèl in zi réïni sîzen ?","I water my crops every morning": "Aï wotteur maï krops èvri morninng","The harvest was good this year": "Zi harvist woz goud ziss yir","I sell my vegetables at the Thiès market": "Aï sèl maï vèdjtabelz at zi Tiès markit","Can you deliver to my farm?": "Kan you délivèr tou maï farm ?"};
+
+  window.DiisooPronEN = Object.assign(window.DiisooPronEN || {}, PRON_EN);
+
+  function theme() { try { return typeof currentGeneralTheme === "function" ? currentGeneralTheme() : null; } catch (e) { return null; } }
+
+  function ouvrirCoach(t, i) {
+    var w = t.vocab[i];
+    if (!w || !window.DiisooCoach) return;
+    var suiv = t.vocab[i + 1] ? function () { ouvrirCoach(t, i + 1); } : null;
+    window.DiisooCoach.ouvrir({ en: w.en, pron: PRON_EN[w.en] || "", wo: w.wo || "", fr: w.fr || "", suivant: suiv });
+  }
+
+  function enrichir() {
+    if (!window.DiisooCoach) return;
+    var t = theme();
+    if (!t || !t.vocab) return;
+    var btns = document.querySelectorAll('button[data-practice^="gen-l:"]');
+    btns.forEach(function (b) {
+      var parts = String(b.getAttribute("data-practice")).split(":");
+      var i = parseInt(parts[2], 10);
+      if (isNaN(i) || parts[1] !== t.id || !t.vocab[i]) return;
+      var grille = b.parentElement, carte = grille && grille.parentElement;
+      if (!carte || carte.getAttribute("data-dii-lecon") === "1") return;
+      carte.setAttribute("data-dii-lecon", "1");
+      var w = t.vocab[i];
+      var p = PRON_EN[w.en];
+      var titre = carte.querySelector("p");
+      if (p && titre) {
+        var l = document.createElement("p");
+        l.className = "diisoo-pron-en";
+        l.style.cssText = "font-size:12px;color:#F3A94E;margin-top:2px;";
+        l.textContent = "Prononce : " + p;
+        titre.parentNode.insertBefore(l, titre.nextSibling);
+      }
+      var c = document.createElement("button");
+      c.type = "button";
+      c.textContent = "🎓 Coach vocal";
+      c.style.cssText = "width:100%;min-height:44px;border-radius:12px;border:1px solid #F3A94E;background:transparent;color:#F3A94E;font-weight:700;font-size:13px;";
+      c.onclick = function () { ouvrirCoach(t, i); };
+      grille.parentNode.insertBefore(c, grille.nextSibling);
+    });
+  }
+
+  var plan = false;
+  function planifier() {
+    if (plan) return; plan = true;
+    setTimeout(function () { plan = false; try { enrichir(); } catch (e) {} }, 250);
+  }
+  new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true });
+  planifier();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-lecons.js",e);}
+
+try{
+/* ---- diisoo-reseau.js ---- */
+/* diisoo-reseau.js
+ * Bandeau simple quand la connexion est coupée ou très lente. Ne touche à aucune requête.
+ * Ajouter "diisoo-reseau.js" à la fin du tableau FICHIERS de diisoo-secteurs-loader.js.
+ */
+(function () {
+  "use strict";
+  if (window.__diisooReseau) return;
+  window.__diisooReseau = true;
+
+  var barre = null, masque = null;
+
+  function lente() {
+    try {
+      var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      return !!c && (c.saveData === true || /^(slow-2g|2g)$/.test(c.effectiveType || ""));
+    } catch (e) { return false; }
+  }
+
+  function afficher(texte, couleur) {
+    clearTimeout(masque);
+    if (!barre) {
+      barre = document.createElement("div");
+      barre.setAttribute("role", "status");
+      barre.setAttribute("aria-live", "polite");
+      barre.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99998;padding:10px 14px;font:600 14px/1.4 system-ui,sans-serif;text-align:center;color:#0B0F1C;";
+      document.body.appendChild(barre);
+    }
+    barre.style.background = couleur;
+    barre.textContent = texte;
+    barre.style.display = "block";
+  }
+  function cacher() { if (barre) barre.style.display = "none"; }
+
+  function etat() {
+    if (navigator.onLine === false) {
+      afficher("Pas de connexion. Les leçons déjà ouvertes restent disponibles. Les voix demandent internet.", "#F3A94E");
+    } else if (lente()) {
+      afficher("Connexion lente. Les voix peuvent mettre plus de temps à arriver.", "#F6F1E7");
+      masque = setTimeout(cacher, 6000);
+    } else {
+      afficher("Connexion rétablie.", "#5FC98F");
+      masque = setTimeout(cacher, 2500);
+    }
+  }
+
+  window.addEventListener("offline", etat);
+  window.addEventListener("online", etat);
+  try {
+    var c = navigator.connection;
+    if (c && c.addEventListener) c.addEventListener("change", function () { if (navigator.onLine !== false && lente()) etat(); });
+  } catch (e) {}
+  if (navigator.onLine === false) etat();
+  else if (lente()) etat();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-reseau.js",e);}
+
+try{
+/* ---- diisoo-coach-liens.js ---- */
+/* diisoo-coach-liens.js
+ * Branche le coach vocal (diisoo-coach.js) dans les Outils Business et dans les modules « Anglais des marchés ».
+ * Les simulateurs d'examens (IELTS, TOEFL...) gardent leur propre moteur micro : le coach n'y est pas ajouté.
+ * Charger APRES diisoo-coach.js et diisoo-lecons.js. Ne modifie aucun autre fichier.
+ */
+(function () {
+  "use strict";
+  if (window.__diisooCoachLiens) return;
+  window.__diisooCoachLiens = true;
+
+  var STYLE = "width:100%;min-height:44px;margin-top:6px;border-radius:12px;border:1px solid #F3A94E;background:transparent;color:#F3A94E;font-weight:700;font-size:13px;";
+  function pron(en) { var P = window.DiisooPronEN || {}; return P[en] || ""; }
+  function bouton(onclick) {
+    var c = document.createElement("button");
+    c.type = "button"; c.textContent = "🎓 Coach vocal"; c.style.cssText = STYLE; c.onclick = onclick;
+    return c;
+  }
+
+  /* 1) Outils Business : cartes de vocabulaire (boutons data-biz) */
+  function business() {
+    var T; try { T = typeof CHINA_TRADE_WOLOF !== "undefined" ? CHINA_TRADE_WOLOF : null; } catch (e) { T = null; }
+    if (!T) return;
+    document.querySelectorAll('button[data-biz="en"]').forEach(function (b) {
+      var sec = b.getAttribute("data-sec"), i = parseInt(b.getAttribute("data-i"), 10);
+      var grille = b.parentElement, carte = grille && grille.parentElement;
+      if (!carte || carte.getAttribute("data-dii-coach") === "1" || !T[sec] || !T[sec].vocab[i]) return;
+      carte.setAttribute("data-dii-coach", "1");
+      var lancer = function (k) {
+        var v = T[sec].vocab[k]; if (!v || !window.DiisooCoach) return;
+        window.DiisooCoach.ouvrir({
+          en: v.en, pron: pron(v.en), wo: v.wo || "", fr: v.fr || "",
+          suivant: T[sec].vocab[k + 1] ? function () { lancer(k + 1); } : null
+        });
+      };
+      var cible = carte.querySelector('button[onclick^="practiceBusinessPhrase"]') || grille;
+      cible.parentNode.insertBefore(bouton(function () { lancer(i); }), cible.nextSibling);
+    });
+  }
+
+  /* 2) Modules « Anglais des marchés » : cartes .mk-card */
+  function marches() {
+    document.querySelectorAll(".mk-card").forEach(function (carte) {
+      if (carte.getAttribute("data-dii-coach") === "1" || carte.querySelector(".mk-choix")) return;
+      var en = carte.querySelector(".mk-en, .mk-big");
+      if (!en) return;
+      var texte = (en.textContent || "").trim();
+      if (!texte) return;
+      carte.setAttribute("data-dii-coach", "1");
+      var frEl = carte.querySelector(".mk-fr"), woEl = carte.querySelector(".mk-wo");
+      var fr = frEl ? frEl.textContent.trim() : "";
+      var wo = woEl ? woEl.textContent.replace(/^\s*🗣️\s*/, "").trim() : "";
+      var b = bouton(function () {
+        if (window.DiisooCoach) window.DiisooCoach.ouvrir({ en: texte, pron: pron(texte), wo: wo, fr: fr });
+      });
+      var suivant = carte.querySelector("#mk-next");
+      if (suivant) suivant.parentNode.insertBefore(b, suivant); else carte.appendChild(b);
+    });
+  }
+
+  var plan = false;
+  function planifier() {
+    if (plan) return; plan = true;
+    setTimeout(function () { plan = false; try { if (window.DiisooCoach) { business(); marches(); } } catch (e) {} }, 250);
+  }
+  new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true });
+  planifier();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-coach-liens.js",e);}
+
+try{
+/* ---- diisoo-examens-coach.js ---- */
+/* diisoo-examens-coach.js
+ * Entraînement oral pour les examens (IELTS Life Skills A1, TOEFL, TOEIC, Cambridge, Duolingo, PTE).
+ * Ajoute un bouton « Entraînement oral » sous la liste des tests : phrases modèles à écouter et répéter avec le coach.
+ * Séparé du simulateur : aucun minuteur, aucune note, aucun test existant modifié.
+ * Charger APRES diisoo-coach.js. Prononciation simplifiée : prélecture à valider.
+ */
+(function () {
+  "use strict";
+  if (window.__diisooExamCoach) return;
+  window.__diisooExamCoach = true;
+
+  var DATA = {"ielts": {"nom": "IELTS Life Skills A1", "p": [{"en": "My name is ___ and I come from Senegal.", "fr": "Je m'appelle ___ et je viens du Sénégal.", "pr": "Maï néïm iz ___ and aï keum from Sénégal"}, {"en": "I live in Thiès with my family.", "fr": "J'habite à Thiès avec ma famille.", "pr": "Aï liv in Tiès wiz maï fameli"}, {"en": "I work as a driver.", "fr": "Je travaille comme chauffeur.", "pr": "Aï weurk az a draïveur"}, {"en": "I like football and I like cooking.", "fr": "J'aime le football et la cuisine.", "pr": "Aï laïk foutbol and aï laïk koukinng"}, {"en": "In the picture I can see two people.", "fr": "Sur l'image, je vois deux personnes.", "pr": "In zi piktcheur aï kan sî tou pîpel"}, {"en": "They are happy and they are talking.", "fr": "Ils sont contents et ils parlent.", "pr": "Zéï ar hapi and zéï ar tokinng"}, {"en": "I think it is a good idea because it is cheap.", "fr": "Je pense que c'est une bonne idée parce que ce n'est pas cher.", "pr": "Aï thinnk it iz a goud aïdia bikoz it iz tchîp"}, {"en": "Could you repeat that, please?", "fr": "Pouvez-vous répéter, s'il vous plaît ?", "pr": "Koud you ripît zat, plîz ?"}]}, "toefl": {"nom": "TOEFL Speaking", "p": [{"en": "I prefer to study in the library because it is quiet.", "fr": "Je préfère étudier à la bibliothèque parce que c'est calme.", "pr": "Aï prifeur tou stoudi in zi laïbrèri bikoz it iz kouaïet"}, {"en": "For example, last week I studied there for three hours.", "fr": "Par exemple, la semaine dernière, j'y ai étudié trois heures.", "pr": "For ègzampel, last wîk aï steudid zèr for thri aourz"}, {"en": "In my opinion, group work is more useful.", "fr": "À mon avis, le travail en groupe est plus utile.", "pr": "In maï opinienn, groupe weurk iz mor iousfoul"}, {"en": "There are two reasons for my choice.", "fr": "Il y a deux raisons à mon choix.", "pr": "Zèr ar tou rîzenz for maï tchoïss"}, {"en": "First, it saves time. Second, it saves money.", "fr": "D'abord, cela fait gagner du temps. Ensuite, de l'argent.", "pr": "Feurst, it séïvz taïm. Sèkend, it séïvz meuni"}, {"en": "In the picture, the students are reading books.", "fr": "Sur l'image, les étudiants lisent des livres.", "pr": "In zi piktcheur, zi stioudents ar rîdinng bouks"}, {"en": "I agree with this statement because it is practical.", "fr": "Je suis d'accord avec cette affirmation parce que c'est pratique.", "pr": "Aï agrî wiz ziss stéïtment bikoz it iz praktikel"}, {"en": "To sum up, I believe this is the best option.", "fr": "En résumé, je pense que c'est la meilleure option.", "pr": "Tou seum eup, aï bilîv ziss iz zi bèst opchen"}]}, "toeic": {"nom": "TOEIC Speaking", "p": [{"en": "Hello, this is Baba from ABC Global.", "fr": "Bonjour, ici Baba de ABC Global.", "pr": "Hèlô, ziss iz Baba from Eï-Bî-Sî Glôbal"}, {"en": "I would like to confirm our meeting on Monday.", "fr": "Je voudrais confirmer notre réunion de lundi.", "pr": "Aï woud laïk tou konfeurm aour mîtinng on Meundéï"}, {"en": "Could you send me the report by Friday?", "fr": "Pouvez-vous m'envoyer le rapport avant vendredi ?", "pr": "Koud you sènd mi zi ripôrt baï Fraïdéï ?"}, {"en": "The shipment will arrive next week.", "fr": "L'expédition arrivera la semaine prochaine.", "pr": "Zi chipment wil araïv nèkst wîk"}, {"en": "I am sorry for the delay.", "fr": "Je suis désolé pour le retard.", "pr": "Aï am sori for zi diléï"}, {"en": "The office opens at eight and closes at five.", "fr": "Le bureau ouvre à huit heures et ferme à dix-sept heures.", "pr": "Zi offiss ôpenz at éït and klôziz at faïv"}, {"en": "Please let me know if you have any questions.", "fr": "N'hésitez pas à me le dire si vous avez des questions.", "pr": "Plîz lèt mi nô if you hav èni kouèschenz"}, {"en": "Thank you for your help.", "fr": "Merci pour votre aide.", "pr": "Thènk you for yor hèlp"}]}, "cambridge": {"nom": "Cambridge A2/B1 Speaking", "p": [{"en": "I would like to tell you about my last holiday.", "fr": "J'aimerais vous parler de mes dernières vacances.", "pr": "Aï woud laïk tou tèl you abaout maï last holidéï"}, {"en": "I went to Dakar with my friends.", "fr": "Je suis allé à Dakar avec mes amis.", "pr": "Aï wènt tou Dakar wiz maï frèndz"}, {"en": "We stayed in a small hotel near the beach.", "fr": "Nous avons logé dans un petit hôtel près de la plage.", "pr": "Wi stéïd in a smol hôtèl nir zi bîtch"}, {"en": "The weather was hot, but we had a great time.", "fr": "Il faisait chaud, mais nous avons passé un super moment.", "pr": "Zi wèzeur woz hot, beut wi had a gréït taïm"}, {"en": "I think the first photo is more interesting.", "fr": "Je trouve que la première photo est plus intéressante.", "pr": "Aï thinnk zi feurst fôtô iz mor intrestinng"}, {"en": "In the future, I would like to travel more.", "fr": "À l'avenir, j'aimerais voyager davantage.", "pr": "In zi fioutcheur, aï woud laïk tou travel mor"}, {"en": "What about you? What do you think?", "fr": "Et vous ? Qu'en pensez-vous ?", "pr": "Wot abaout you ? Wot dou you thinnk ?"}, {"en": "That is a good point, but I disagree.", "fr": "C'est un bon argument, mais je ne suis pas d'accord.", "pr": "Zat iz a goud poïnt, beut aï disagrî"}]}, "duolingo": {"nom": "Duolingo English Test", "p": [{"en": "I usually wake up early and drink tea.", "fr": "D'habitude, je me réveille tôt et je bois du thé.", "pr": "Aï ioujouali wéïk eup eurli and drinnk tî"}, {"en": "The picture shows a busy street market.", "fr": "L'image montre un marché de rue animé.", "pr": "Zi piktcheur chôz a bizi strît markit"}, {"en": "Many people are buying fruit and vegetables.", "fr": "Beaucoup de gens achètent des fruits et des légumes.", "pr": "Mèni pîpel ar baïinng frout and vèdjtabelz"}, {"en": "I would describe my hometown as small and friendly.", "fr": "Je décrirais ma ville natale comme petite et chaleureuse.", "pr": "Aï woud diskraïb maï homtaoun az smol and frèndli"}, {"en": "Technology has changed the way we communicate.", "fr": "La technologie a changé notre façon de communiquer.", "pr": "Tèknolodji haz tchéïndjd zi wéï wi komiounikéït"}, {"en": "I have been learning English for two years.", "fr": "J'apprends l'anglais depuis deux ans.", "pr": "Aï hav bîn leurninng Inngliche for tou yirz"}, {"en": "One advantage is that it saves time.", "fr": "Un avantage est que cela fait gagner du temps.", "pr": "Wan advantidj iz zat it séïvz taïm"}, {"en": "That is all I want to say about this topic.", "fr": "C'est tout ce que je veux dire sur ce sujet.", "pr": "Zat iz ol aï wont tou séï abaout ziss topik"}]}, "pte": {"nom": "PTE Academic Speaking", "p": [{"en": "The graph shows an increase in sales over five years.", "fr": "Le graphique montre une hausse des ventes sur cinq ans.", "pr": "Zi graf chôz an inkrîss in séïlz ôveur faïv yirz"}, {"en": "Overall, the trend is positive.", "fr": "Globalement, la tendance est positive.", "pr": "Ôveurol, zi trènd iz pozitiv"}, {"en": "The lecture was about climate change.", "fr": "Le cours portait sur le changement climatique.", "pr": "Zi lèktcheur woz abaout klaïmet tchéïndj"}, {"en": "According to the speaker, farmers need more support.", "fr": "Selon l'orateur, les agriculteurs ont besoin de plus de soutien.", "pr": "Akordinng tou zi spîkeur, farmeurz nîd mor seupôrt"}, {"en": "The main idea is that education creates opportunities.", "fr": "L'idée principale est que l'éducation crée des opportunités.", "pr": "Zi méïn aïdia iz zat èdioukéïchen kriéïts opeurtiounitiz"}, {"en": "In conclusion, we should invest in renewable energy.", "fr": "En conclusion, nous devrions investir dans les énergies renouvelables.", "pr": "In konklioujen, wi choud invèst in rinioueubel ènerdji"}, {"en": "Let me describe what I see in the image.", "fr": "Laissez-moi décrire ce que je vois sur l'image.", "pr": "Lèt mi diskraïb wot aï sî in zi imidj"}, {"en": "There are several people standing near a bus.", "fr": "Il y a plusieurs personnes debout près d'un bus.", "pr": "Zèr ar sèvral pîpel stanndinng nir a beuss"}]}};
+  var ORDRE = ["ielts", "toefl", "toeic", "cambridge", "duolingo", "pte"];
+
+  function courant() {
+    try { var s = localStorage.getItem("diisoo_exam"); if (s && DATA[s]) return s; } catch (e) {}
+    return "ielts";
+  }
+  function el(tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; }
+
+  function ouvrir() {
+    if (!window.DiisooCoach) return;
+    var ex = courant();
+    var fond = el("div", "position:fixed;inset:0;z-index:99990;background:rgba(5,8,18,.94);display:flex;align-items:flex-end;justify-content:center;");
+    var box = el("div", "width:100%;max-width:520px;max-height:92vh;overflow:auto;background:#121a2e;color:#f2f5ff;border-radius:22px 22px 0 0;padding:18px 16px 26px;font-family:inherit;");
+    fond.appendChild(box); document.body.appendChild(fond);
+
+    function lancer(liste, i) {
+      var p = liste[i]; if (!p) return;
+      window.DiisooCoach.ouvrir({
+        en: p.en, pron: p.pr, fr: p.fr,
+        suivant: liste[i + 1] ? function () { lancer(liste, i + 1); } : null
+      });
+    }
+    function rendre() {
+      box.innerHTML = "";
+      box.appendChild(el("div", "font:700 20px inherit;margin-bottom:4px;", "🎓 Entraînement oral"));
+      box.appendChild(el("div", "font-size:13px;color:#aab4d4;margin-bottom:12px;line-height:1.4;", "Phrases modèles à écouter et répéter avant le test. Ce n'est pas le test : pas de minuteur, pas de note."));
+      var chips = el("div", "display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;");
+      ORDRE.forEach(function (k) {
+        var on = k === ex;
+        var b = el("button", "min-height:40px;padding:0 14px;border-radius:999px;border:1px solid " + (on ? "#E1693F" : "#2a3350") + ";background:" + (on ? "#C2542D" : "#0B0F1C") + ";color:" + (on ? "#fff" : "#A69C86") + ";font-weight:700;font-size:13px;", k === "ielts" ? "IELTS" : k.toUpperCase() === "TOEFL" || k === "toeic" || k === "pte" ? k.toUpperCase() : k.charAt(0).toUpperCase() + k.slice(1));
+        b.type = "button";
+        b.onclick = function () { ex = k; try { localStorage.setItem("diisoo_exam", k); } catch (e) {} rendre(); };
+        chips.appendChild(b);
+      });
+      box.appendChild(chips);
+      box.appendChild(el("div", "font-weight:700;margin-bottom:8px;", DATA[ex].nom));
+      var liste = DATA[ex].p;
+      liste.forEach(function (p, i) {
+        var b = el("button", "display:block;width:100%;text-align:left;min-height:52px;margin-top:8px;padding:10px 14px;border-radius:14px;border:1px solid #2a3350;background:#141A2B;color:#f2f5ff;font-size:15px;line-height:1.35;");
+        b.type = "button";
+        b.appendChild(el("div", "font-weight:600;", p.en));
+        b.appendChild(el("div", "font-size:12px;color:#F3A94E;margin-top:2px;", p.pr));
+        b.onclick = function () { lancer(liste, i); };
+        box.appendChild(b);
+      });
+      var f = el("button", "width:100%;min-height:52px;margin-top:14px;border:0;border-radius:14px;background:#2a3350;color:#fff;font-weight:600;font-size:16px;", "Fermer");
+      f.type = "button"; f.onclick = function () { fond.remove(); };
+      box.appendChild(f);
+    }
+    rendre();
+  }
+
+  function ajouter() {
+    var box = document.getElementById("test-topic-buttons");
+    if (!box || document.getElementById("dii-exam-train")) return;
+    var b = el("button", "width:100%;min-height:48px;margin-top:10px;border-radius:12px;border:1px solid #F3A94E;background:transparent;color:#F3A94E;font-weight:700;font-size:14px;", "🎓 Entraînement oral (avant le test)");
+    b.id = "dii-exam-train"; b.type = "button"; b.onclick = ouvrir;
+    box.parentNode.insertBefore(b, box.nextSibling);
+  }
+
+  var plan = false;
+  function planifier() {
+    if (plan) return; plan = true;
+    setTimeout(function () { plan = false; try { ajouter(); } catch (e) {} }, 250);
+  }
+  new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true });
+  planifier();
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-examens-coach.js",e);}
+
+try{
+/* ---- diisoo-pron-business.js ---- */
+/* diisoo-pron-business.js
+ * Prononciation simplifiée (écriture pour francophones) du vocabulaire et des dialogues Business et « Anglais des marchés ».
+ * Alimente le coach vocal via window.DiisooPronEN. Aide pédagogique, prélecture à valider.
+ */
+(function () {
+  "use strict";
+  window.DiisooPronEN = Object.assign(window.DiisooPronEN || {}, {"Shock absorber": "Chok abzorbeur", "Brakes / brake pads": "Bréïks / bréïk padz", "Do you have a warranty?": "Dou you hav a woranti ?", "Does the price include installation?": "Deuz zi praïce inklioud instaléïchen ?", "How much for a bulk order?": "Haou meutch for a beulk ordeur ?", "How much deposit do I pay?": "Haou meutch dipozit dou aï péï ?", "Can you give me an invoice?": "Kan you guiv mi an inn-voïss ?", "How much does this part cost?": "Haou meutch deuz ziss part kost ?", "Do you pay in Yuan or dollars?": "Dou you péï in you-ane or dolarz ?", "What is the reference of this part?": "Wot iz zi rèfrenss ov ziss part ?", "I'm looking for a direct factory supplier": "Aïm loukinng for a dairèkt faktri seupplaïeur", "Is this an original part or a copy?": "Iz ziss an oridjinel part or a kopi ?", "Is this an OEM or an aftermarket part?": "Iz ziss an Ô-Î-Èm or an aftermarkit part ?", "Which vehicle brand is this part compatible with?": "Witch vîkel brand iz ziss part kompatibel wiz ?", "How many months of warranty does this part have?": "Haou mèni meunths ov woranti deuz ziss part hav ?", "I will come back if the price doesn't suit me": "Aï wil keum bak if zi praïce deuzent sout mi", "I sell on credit": "Aï sèl on krèdit", "What size do you have?": "Wot saïz dou you hav ?", "Do you have a receipt?": "Dou you hav a rissît ?", "How much for ten pieces?": "Haou meutch for tèn pîssiz ?", "Do you also sell online?": "Dou you olsô sèl onlaïn ?", "Do you have other colours?": "Dou you hav euzeur keuleurz ?", "Is the fabric pure cotton?": "Iz zi fabrik pioueur koton ?", "Is this fabric good quality?": "Iz ziss fabrik goud kwoliti ?", "What is the restocking time?": "Wot iz zi ristokinng taïm ?", "Wholesale price / retail price": "Hôlséïl praïce / rîtéïl praïce", "Wholesale price for street traders": "Hôlséïl praïce for strît tréïdeurz", "Can you send me a sample?": "Kan you sènd mi a sampel ?", "Does this fabric bleed when washed?": "Deuz ziss fabrik blîd wèn woched ?", "What is the minimum order quantity?": "Wot iz zi minimoum ordeur kouantiti ?", "I would like to buy in bulk": "Aï woud laïk tou baï in beulk", "Can I exchange it if it doesn't fit?": "Kan aï èkstchéïndj it if it deuzent fit ?", "Mobile money payment": "Môbaïl meuni péïment", "Is the charger included?": "Iz zi tchardjeur inklioudid ?", "What is the battery capacity?": "Wot iz zi bateri kapassiti ?", "Is there a manufacturer's warranty?": "Iz zèr a manioufaktchereurz woranti ?", "Can I pay by mobile money?": "Kan aï péï baï môbaïl meuni ?", "Does this device work on 220V?": "Deuz ziss divaïss weurk on tou-tou-zîrô vôlt ?", "Do you have the original invoice?": "Dou you hav zi oridjinel inn-voïss ?", "Do you have an after-sales service?": "Dou you hav an aftèr séïlz seurviss ?", "Is it compatible with Senegalese voltage?": "Iz it kompatibel wiz Sénégalîz vôltidj ?", "What is the price for a full carton?": "Wot iz zi praïce for a foul kartonn ?", "Can you test the device in front of me?": "Kan you tèst zi divaïss in freunt ov mi ?", "What material is used?": "Wot matirièl iz iouzd ?", "Do you deliver to home?": "Dou you délivèr tou hôm ?", "Can I pay in instalments?": "Kan aï péï in instolments ?", "Do you offer an assembly service?": "Dou you ofeur an assembli seurviss ?", "Can this furniture be taken apart?": "Kan ziss feurnitcheur bi téïkenn apart ?", "Is the furniture treated against termites?": "Iz zi feurnitcheur trîtid agèinst teurmaïts ?", "Can I see a catalogue of models?": "Kan aï sî a katalog ov modelz ?", "How much for the whole living room set?": "Haou meutch for zi hôl livinng roum sèt ?", "What is the manufacturing time for custom orders?": "Wot iz zi manioufaktchrinng taïm for keustom ordeurz ?", "Customs clearance": "Keustemz klirenss", "Shipping container": "Chipinng kontéïneur", "What is the FOB price?": "Wot iz zi Èf-Ô-Bî praïce ?", "What is the delivery time?": "Wot iz zi dilivri taïm ?", "Where is the packing list?": "Wèr iz zi pakinng list ?", "Which Incoterm do you use?": "Witch Inkotèrm dou you iouz ?", "Where is the customs office?": "Wèr iz zi keustemz offiss ?", "I prefer a groupage shipment": "Aï prifeur a groupidj chipment", "Do you have transport insurance?": "Dou you hav transport inchourenss ?", "How many CBM is my cargo?": "Haou mèni Sî-Bî-Èm iz maï kargô ?", "I need the Bill of Lading": "Aï nîd zi bil ov lédinng", "Do you need a business visa?": "Dou you nîd a biznis vîza ?", "I'm looking for a reliable supplier": "Aïm loukinng for a rilaïabel seupplaïeur", "How much does transport by container cost?": "Haou meutch deuz transport baï kontéïneur kost ?", "What is the validity period of the quote?": "Wot iz zi validiti pirièd ov zi kwôt ?", "Do you accept a deposit then balance payment?": "Dou you aksèpt a dipozit zèn balanss péïment ?", "How many days to clear customs at the Port of Dakar?": "Haou mèni déïz tou klir keustemz at zi port ov Dakar ?", "Irrigation equipment": "Irigéïchen ikwipment", "Tractor spare parts": "Traktor spèr parts", "Fresh tomatoes and onions": "Frèch tomêtôz and euniennz", "Storage crates for vegetables": "Storidj kréïts for vèdjtabelz", "Water pump for the field": "Wotteur peump for zi fîld", "Solar panel for the farm": "Sôlar panel for zi farm", "I want to buy ten refurbished phones to resell in my shop.": "Aï wont tou baï tèn rifeurbicht fônz tou risèl in maï chop", "to resell": "tou risèl", "battery health": "bateri hèlth", "unlocked": "eunlokt", "original box": "oridjinel boks", "to test": "tou tèst", "receipt": "rissît", "It's good": "Its goud", "It's bad / damaged": "Its bad / damidjd", "Pay": "Péï", "Reduce it a little": "Ridiouss it a litel", "Hello. I want ten refurbished phones to resell in my shop.": "Hèlô. Aï wont tèn rifeurbicht fônz tou risèl in maï chop", "Which brand? I have Samsung and Tecno.": "Witch brand ? Aï hav Samseung and Tèknô.", "Samsung. What is the battery health?": "Samseung. Wot iz zi bateri hèlth ?", "Above 85 percent. All phones are unlocked.": "Abeuv éïti-faïv peursènt. Ol fônz ar eunlokt.", "Can I test three phones before I pay?": "Kan aï tèst thri fônz bifor aï péï ?", "Of course. Test them here.": "Ov kors. Tèst zèm hir.", "What is your price for ten, with the original box?": "Wot iz yor praïce for tèn, wiz zi oridjinel boks ?", "55,000 CFA each without box, 58,000 CFA with the original box.": "Fifti-faïv zaouzend Sî-Èf-Eï îtch wizaout boks, fifti-éït zaouzend Sî-Èf-Eï wiz zi oridjinel boks.", "I will take ten without box. Please give me a receipt and a three months warranty.": "Aï wil téïk tèn wizaout boks. Plîz guiv mi a rissît and a thri meunths woranti.", "What is the battery health?": "Wot iz zi bateri hèlth ?", "Can I test the phones before I pay?": "Kan aï tèst zi fônz bifor aï péï ?", "Please give me a receipt and a warranty.": "Plîz guiv mi a rissît and a woranti.", "Hello, do you have a refurbished phone with a warranty?": "Hèlô, dou you hav a rifeurbicht fôn wiz a woranti ?", "refurbished": "rifeurbicht", "battery": "bateri", "charger": "tchardjeur", "screen": "skrîn", "warranty": "woranti", "mobile money": "môbaïl meuni", "How much is it?": "Haou meutch iz it ?", "Hello. Do you have a refurbished Samsung phone?": "Hèlô. Dou you hav a rifeurbicht Samseung fôn ?", "Yes. This one is very good. The screen is perfect.": "Yès. Ziss wan iz vèri goud. Zi skrîn iz peurfèkt.", "How is the battery?": "Haou iz zi bateri ?", "The battery is new. Three months warranty.": "Zi bateri iz niou. Thri meunths woranti.", "60,000 CFA.": "Sikssti zaouzend Sî-Èf-Eï.", "Yes. Wave or Orange Money.": "Yès. Wéïv or Orindj Meuni.", "Is there a warranty?": "Iz zèr a woranti ?", "I want to order twenty sets of brake pads. What is your best wholesale price?": "Aï wont tou ordeur twènti sèts ov bréïk padz. Wot iz yor bèst hôlséïl praïce ?", "compatible with": "kompatibel wiz", "original / aftermarket": "oridjinel / aftermarkit", "delivery time": "dilivri taïm", "return policy": "ritèrn polissi", "defective": "difèktiv", "deposit": "dipozit", "Money": "Meuni", "It's expensive": "Its ekspènnsiv", "Good morning. I need twenty sets of brake pads for Toyota Corolla and Hyundai Accent.": "Goud morninng. Aï nîd twènti sèts ov bréïk padz for Toyota Korola and Hiyoundaï Aksènt.", "Original or aftermarket? Original is 25,000 CFA, aftermarket is 15,000 CFA.": "Oridjinel or aftermarkit ? Oridjinel iz twènti-faïv zaouzend Sî-Èf-Eï, aftermarkit iz fifetîn zaouzend Sî-Èf-Eï.", "Are the aftermarket ones compatible with both models?": "Ar zi aftermarkit wannz kompatibel wiz bôth modelz ?", "Yes, they are compatible. For twenty sets, I can do 13,000 CFA each.": "Yès, zéï ar kompatibel. For twènti sèts, aï kan dou theurtîn zaouzend Sî-Èf-Eï îtch.", "What is the delivery time to Thies?": "Wot iz zi dilivri taïm tou Tiès ?", "Three days. I need a deposit of 30 percent.": "Thri déïz. Aï nîd a dipozit ov theurti peursènt.", "And if some pieces are defective?": "And if seum pîssiz ar difèktiv ?", "You can return them within seven days. I will give you an invoice.": "You kan ritèrn zèm wizin sèvenn déïz. Aï wil guiv you an inn-voïss.", "Deal. I will send the deposit by Wave today.": "Dîl. Aï wil sènd zi dipozit baï Wéïv toudéï.", "Are they compatible with this model?": "Ar zéï kompatibel wiz ziss modèl ?", "What is your return policy for defective parts?": "Wot iz yor ritèrn polissi for difèktiv parts ?", "Hello, I need brake pads for a Toyota Corolla.": "Hèlô, aï nîd bréïk padz for a Toyota Korola.", "brake pads": "bréïk padz", "spare part": "spèr part", "price": "praïce", "wholesale": "hôlséïl", "discount": "diskaount", "Slowly / Take it easy": "Slôli / Téïk it îzi", "Buy": "Baï", "Sell": "Sèl", "Good morning. Do you have brake pads for a Corolla?": "Goud morninng. Dou you hav bréïk padz for a Korola ?", "Yes. Original or used?": "Yès. Oridjinel or iouzd ?", "Original. How much is it?": "Oridjinel. Haou meutch iz it ?", "25,000 CFA.": "Twènti-faïv zaouzend Sî-Èf-Eï.", "It's expensive. What is your best price?": "Its ekspènnsiv. Wot iz yor bèst praïce ?", "For you, 22,000 CFA, with one month warranty.": "For you, twènti-tou zaouzend Sî-Èf-Eï, wiz wan meunth woranti.", "Deal. I'll take two.": "Dîl. Aïl téïk tou.", "What is your best price?": "Wot iz yor bèst praïce ?", "Can you quote me a price FOB Guangzhou for one twenty-foot container?": "Kan you kwôt mi a praïce Èf-Ô-Bî Gouanng-djô for wan twènti-fout kontéïneur ?", "FOB (free on board)": "Èf-Ô-Bî (frî on bord)", "CIF (cost, insurance, freight)": "Sî-Aï-Èf (kost, inchourenss, fréït)", "bill of lading": "bil ov lédinng", "payment terms": "péïment teurmz", "freight forwarder": "fréït forwardeur", "inspection": "inspèkchen", "Hello. Can you quote me a price FOB Guangzhou for one twenty-foot container of plastic chairs?": "Hèlô. Kan you kwôt mi a praïce Èf-Ô-Bî Gouanng-djô for wan twènti-fout kontéïneur ov plastik tchèrz ?", "Yes. FOB Guangzhou is 4,800 dollars for the full container.": "Yès. Èf-Ô-Bî Gouanng-djô iz for zaouzend éït eundrid dolarz for zi foul kontéïneur.", "What are your payment terms?": "Wot ar yor péïment teurmz ?", "Thirty percent deposit, and seventy percent against the bill of lading.": "Theurti peursènt dipozit, and sèventi peursènt agèinst zi bil ov lédinng.", "Can my freight forwarder do an inspection before shipping?": "Kan maï fréït forwardeur dou an inspèkchen bifor chipinng ?", "Yes. Inspection is possible one week before loading.": "Yès. Inspèkchen iz posibel wan wîk bifor lôdinng.", "What is the price CIF Dakar?": "Wot iz zi praïce Sî-Aï-Èf Dakar ?", "5,900 dollars. Transit time is about thirty-five days.": "Faïv zaouzend naïn eundrid dolarz. Tranzit taïm iz abaout theurti-faïv déïz.", "Please send me the proforma invoice. I will compare with my freight forwarder.": "Plîz sènd mi zi proforma inn-voïss. Aï wil kompèr wiz maï fréït forwardeur.", "Can you quote me a price FOB?": "Kan you kwôt mi a praïce Èf-Ô-Bî ?", "Can my freight forwarder do an inspection?": "Kan maï fréït forwardeur dou an inspèkchen ?", "Hello, I want to ship a container to Dakar.": "Hèlô, aï wont tou chip a kontéïneur tou Dakar.", "container": "kontéïneur", "shipment": "chipment", "invoice": "inn-voïss", "customs": "keustemz", "freight": "fréït", "minimum order": "minimoum ordeur", "Container": "Kontéïneur", "Customs": "Keustemz", "Hello. What is your minimum order?": "Hèlô. Wot iz yor minimoum ordeur ?", "One hundred pieces.": "Wan eundrid pîssiz.", "What is the price per piece?": "Wot iz zi praïce peur pîss ?", "Five dollars each.": "Faïv dolarz îtch.", "Can you give me a discount for five hundred pieces?": "Kan you guiv mi a diskaount for faïv eundrid pîssiz ?", "Yes. Four dollars fifty each.": "Yès. For dolarz fifti îtch.", "How long is the shipment to Dakar?": "Haou lonng iz zi chipment tou Dakar ?", "About thirty-five days by sea. I will send the invoice today.": "Abaout theurti-faïv déïz baï sî. Aï wil sènd zi inn-voïss toudéï.", "What is your minimum order?": "Wot iz yor minimoum ordeur ?", "Please send me the invoice.": "Plîz sènd mi zi inn-voïss.", "I want to order fifty shirts in three sizes and two colors.": "Aï wont tou ordeur fifti cheurts in thri saïziz and tou keuleurz.", "bulk order": "beulk ordeur", "color / pattern": "keuleur / patern", "sample": "sampel", "custom-made": "keustom-méïd", "lead time": "lîd taïm", "quality control": "kwoliti kontrôl", "It's beautiful": "Its biouitifoul", "It's too small": "Its tou smol", "It's too big": "Its tou big", "Good afternoon. I want fifty shirts, sizes small, medium and large.": "Goud afteurnoun. Aï wont fifti cheurts, saïziz smol, mîdiem and lardj.", "Which colors and which fabric?": "Witch keuleurz and witch fabrik ?", "Blue and white, in cotton. Can I see a sample first?": "Blou and waït, in koton. Kan aï sî a sampel feurst ?", "Yes. The sample is 5,000 CFA, and I will deduct it from the order.": "Yès. Zi sampel iz faïv zaouzend Sî-Èf-Eï, and aï wil didekt it from zi ordeur.", "What is the price for fifty pieces?": "Wot iz zi praïce for fifti pîssiz ?", "8,000 CFA each. If you want it custom-made with your logo, it is 9,500 CFA.": "Éït zaouzend Sî-Èf-Eï îtch. If you wont it keustom-méïd wiz yor lôgô, it iz naïn zaouzend faïv eundrid Sî-Èf-Eï.", "What is the lead time for custom-made shirts?": "Wot iz zi lîd taïm for keustom-méïd cheurts ?", "Ten days. We do quality control before delivery.": "Tèn déïz. Wi dou kwoliti kontrôl bifor dilivri.", "Good. I will pay half now and half at delivery.": "Goud. Aï wil péï haf naou and haf at dilivri.", "Can I see a sample first?": "Kan aï sî a sampel feurst ?", "What is the lead time?": "Wot iz zi lîd taïm ?", "Do you do quality control before delivery?": "Dou you dou kwoliti kontrôl bifor dilivri ?", "Good afternoon, I'm looking for a size medium dress.": "Goud afteurnoun, aïm loukinng for a saïz mîdiem drèss.", "fabric": "fabrik", "size": "saïz", "dress": "drèss", "tailor": "téïleur", "supplier": "seupplaïeur", "fitting room": "fitinng roum", "Good afternoon. Do you have this dress in medium?": "Goud afteurnoun. Dou you hav ziss drèss in mîdiem ?", "Yes. This fabric is very good quality.": "Yès. Ziss fabrik iz vèri goud kwoliti.", "Can I try it on?": "Kan aï traï it on ?", "Of course. The fitting room is there.": "Ov kors. Zi fitinng roum iz zèr.", "It's a little big. Do you have a smaller size?": "Its a litel big. Dou you hav a smoleur saïz ?", "Yes, size small. 15,000 CFA.": "Yès, saïz smol. Fifetîn zaouzend Sî-Èf-Eï.", "If I buy three, what is your wholesale price?": "If aï baï thri, wot iz yor hôlséïl praïce ?", "For three, 12,000 CFA each.": "For thri, twèlv zaouzend Sî-Èf-Eï îtch.", "Do you have this in medium?": "Dou you hav ziss in mîdiem ?", "What is your wholesale price?": "Wot iz yor hôlséïl praïce ?"});
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-pron-business.js",e);}
+
+try{
+/* ---- diisoo-ios-audio.js ---- */
+/* diisoo-ios-audio.js
+ * Correctifs audio pour iPhone / iPad (Safari) :
+ * 1) Le déverrouillage audio d'origine ne se fait qu'au tout premier toucher. Après un retour d'une autre
+ *    application, un appel ou la mise en veille, iOS suspend l'audio et les voix restent muettes.
+ *    Ici : on redéverrouille à chaque toucher (au plus une fois par seconde) et au retour sur l'app.
+ * 2) Interrupteur silencieux : sur iOS 16 et avant, le son Web Audio est coupé par l'interrupteur de sonnerie.
+ *    Une piste silencieuse jouée par un élément audio règle la catégorie « lecture ».
+ * 3) Après usage du micro, iOS 17+ garde la catégorie « enregistrement » (son faible, haut-parleur d'appel) :
+ *    on remet la catégorie « lecture » au toucher suivant.
+ * Sans effet sur Android et ordinateur. Ne modifie aucun autre fichier.
+ */
+(function () {
+  "use strict";
+  if (window.__diisooIosAudio) return;
+  window.__diisooIosAudio = true;
+
+  var UA = navigator.userAgent || "";
+  var IOS = /iPhone|iPad|iPod/.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  if (!IOS) return;
+
+  var dernier = 0;
+  var SILENCE = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+  var piste = null;
+
+  function debloquer() {
+    var t = Date.now();
+    if (t - dernier < 1000) return;
+    dernier = t;
+    try { if (navigator.audioSession && navigator.audioSession.type !== "playback") navigator.audioSession.type = "playback"; } catch (e) {}
+    try { if (window.Diisoo && window.Diisoo.voix && window.Diisoo.voix.debloquer) window.Diisoo.voix.debloquer(); } catch (e) {}
+    demarrerPiste();
+  }
+
+  function demarrerPiste() {
+    if (navigator.audioSession) return;            // iOS 17+ : la catégorie suffit
+    try {
+      if (!piste) {
+        piste = new Audio(SILENCE);
+        piste.setAttribute("playsinline", "");
+        piste.loop = true;
+        piste.volume = 1;
+      }
+      if (piste.paused) { var p = piste.play(); if (p && p.catch) p.catch(function () {}); }
+    } catch (e) {}
+  }
+
+  ["touchend", "pointerdown", "click"].forEach(function (ev) {
+    document.addEventListener(ev, debloquer, { capture: true, passive: true });
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { try { if (piste && !piste.paused) piste.pause(); } catch (e) {} }
+    else { dernier = 0; }
+  });
+  window.addEventListener("pageshow", function () { dernier = 0; });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-ios-audio.js",e);}
+
+try{
+/* ---- diisoo-direct.js ---- */
+/* diisoo-direct.js v2 : Examens et visa en 2 etapes
+   - supprime l'explication apres inscription
+   - Etape 1 : les 6 examens en grille
+   - Etape 2 : les tests de l'examen choisi, numerotes (fait, Premium), avec un gros bouton "Continuer" */
+(function () {
+  "use strict";
+
+  /* Plus d'explication apres inscription (le bouton "Comment ca marche" du menu reste) */
+  try { store.set("diisoo_tuto_seen", true); } catch (e) {}
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#exam-tabs,#autres-examens{display:none!important}" +
+    "#btn-test-main[data-mode='start']{display:none!important}" +
+    "#test-topic-buttons{display:none!important}" +
+    "#exam-grid,#exam-tests .et-grille{display:grid;gap:10px}" +
+    "#exam-grid{grid-template-columns:1fr 1fr}" +
+    "#exam-grid button{min-height:60px;padding:8px 10px;text-align:left;border-radius:16px;" +
+    "background:#141A2B;border:1px solid #1E2740;color:#F6F1E7;display:flex;align-items:center;gap:8px}" +
+    "#exam-grid button:active{border-color:#E1693F}" +
+    "#exam-grid .ex-ic{font-size:24px;line-height:1}" +
+    "#exam-grid .ex-nm{font-size:14px;font-weight:700;line-height:1.2}" +
+    "#exam-tests .et-titre{text-align:center;font-size:13px;font-weight:700;color:#C9BFA8;margin:2px 0 8px}" +
+    "#exam-tests .et-retour{width:100%;min-height:38px;padding:6px 12px;margin-bottom:8px;background:#141A2B;border:1px solid #1E2740;" +
+    "border-radius:12px;color:#E4DCC9;font-size:12px;font-weight:700;text-align:left}" +
+    "#exam-tests .et-suite{width:100%;min-height:62px;margin-bottom:12px;padding:10px 14px;border-radius:18px;border:0;" +
+    "background:#25D366;color:#fff;font-size:16px;font-weight:800;text-align:left}" +
+    "#exam-tests .et-suite small{display:block;font-size:12px;font-weight:600;opacity:.9;margin-top:2px}" +
+    "#exam-tests .et-grille{grid-template-columns:repeat(5,1fr)}" +
+    "#exam-tests .et-t{position:relative;min-height:56px;border-radius:14px;background:#141A2B;border:1px solid #1E2740;" +
+    "color:#F6F1E7;font-size:17px;font-weight:800}" +
+    "#exam-tests .et-t.fait{background:#12351F;border-color:#25D366}" +
+    "#exam-tests .et-t.prem{opacity:.6}" +
+    "#exam-tests .et-t i{position:absolute;top:2px;right:4px;font-style:normal;font-size:11px}" +
+    "#exam-tests .et-leg{text-align:center;font-size:11px;color:#8C8064;margin-top:10px}";
+  document.head.appendChild(st);
+
+  var EXAMS = [
+    ["ielts", "IELTS", "🇬🇧", "Visa A1"],
+    ["toefl", "TOEFL", "🎓", "Speaking"],
+    ["toeic", "TOEIC", "💼", "Speaking"],
+    ["cambridge", "Cambridge", "📘", "A2/B1"],
+    ["duolingo", "Duolingo", "🦉", "English Test"],
+    ["pte", "PTE", "🧪", "Academic"]
+  ];
+
+  function $(id) { return document.getElementById(id); }
+  function vus() {
+    var o = {};
+    try { (store.get("diisoo_tests") || []).forEach(function (h) { if (h && h.topic) o[h.topic] = 1; }); } catch (e) {}
+    return o;
+  }
+
+  function listeTests(ex) {
+    try { if (ex === "ielts") return TEST_BANK; } catch (e) {}
+    return window.__examList || [];
+  }
+
+  function montrerEtape1() {
+    var g = $("exam-grid"), t = $("exam-tests");
+    if (g) g.style.display = "";
+    if (t) t.style.display = "none";
+  }
+
+  function lancerTest(i) {
+    var boutons = document.querySelectorAll("#test-topic-buttons > button");
+    if (boutons[i]) boutons[i].click();
+  }
+
+  function montrerEtape2(ex, nom) {
+    var picker = $("test-picker");
+    if (!picker) return;
+    var g = $("exam-grid");
+    if (g) g.style.display = "none";
+    var box = $("exam-tests");
+    if (!box) { box = document.createElement("div"); box.id = "exam-tests"; picker.insertBefore(box, picker.firstChild); }
+    box.style.display = "";
+    box.innerHTML = "";
+
+    var liste = listeTests(ex), seen = vus();
+    var boutons = document.querySelectorAll("#test-topic-buttons > button");
+
+    var back = document.createElement("button");
+    back.type = "button"; back.className = "et-retour"; back.textContent = "‹ Changer d'examen";
+    back.onclick = montrerEtape1;
+    box.appendChild(back);
+
+    var titre = document.createElement("div");
+    titre.className = "et-titre"; titre.textContent = nom + " : " + liste.length + " tests";
+    box.appendChild(titre);
+
+    /* Test suivant : le premier non fait et ouvert */
+    var suite = -1, premier = -1;
+    liste.forEach(function (t, i) {
+      var verrou = boutons[i] && /^\s*⭐/.test(boutons[i].textContent);
+      if (!verrou && premier < 0) premier = i;
+      if (!verrou && !seen[t.topic] && suite < 0) suite = i;
+    });
+    var cible = suite >= 0 ? suite : premier;
+    if (cible >= 0) {
+      var c = document.createElement("button");
+      c.type = "button"; c.className = "et-suite";
+      c.innerHTML = "▶ " + (suite >= 0 ? "Continuer" : "Refaire") + "<small>Test " + (cible + 1) + " : " + String(liste[cible].topic).replace(/</g, "&lt;") + "</small>";
+      c.onclick = function () { lancerTest(cible); };
+      box.appendChild(c);
+    }
+
+    var grille = document.createElement("div");
+    grille.className = "et-grille";
+    liste.forEach(function (t, i) {
+      var verrou = boutons[i] && /^\s*⭐/.test(boutons[i].textContent);
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "et-t" + (seen[t.topic] ? " fait" : "") + (verrou ? " prem" : "");
+      b.innerHTML = (i + 1) + (seen[t.topic] ? "<i>✅</i>" : (verrou ? "<i>⭐</i>" : ""));
+      b.setAttribute("aria-label", "Test " + (i + 1) + " : " + t.topic);
+      b.onclick = function () { lancerTest(i); };
+      grille.appendChild(b);
+    });
+    box.appendChild(grille);
+
+    var leg = document.createElement("div");
+    leg.className = "et-leg"; leg.textContent = "✅ fait   ⭐ Premium";
+    box.appendChild(leg);
+  }
+
+  function choisirExamen(ex, nom) {
+    try {
+      var chip = Array.prototype.slice.call(document.querySelectorAll("#exam-tabs button"))
+        .filter(function (b) { return b.textContent === nom; })[0];
+      if (chip) chip.click();
+      if (ex === "ielts") { currentTest = TEST_BANK[0]; renderTestPicker(); }
+      montrerEtape2(ex, nom);
+    } catch (e) { console.warn("[diisoo] direct", e); }
+  }
+
+  function monterGrille() {
+    var picker = $("test-picker");
+    if (!picker) return;
+    var g = $("exam-grid");
+    if (!g) {
+      g = document.createElement("div");
+      g.id = "exam-grid";
+      EXAMS.forEach(function (e) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = '<span class="ex-ic">' + e[2] + '</span><span class="ex-nm">' + e[1] +
+          '<br><span style="font-size:11px;font-weight:400;color:#A69C86">' + e[3] + "</span></span>";
+        b.onclick = function () { choisirExamen(e[0], e[1]); };
+        g.appendChild(b);
+      });
+      picker.insertBefore(g, picker.firstChild);
+    }
+    montrerEtape1();
+  }
+
+  var orig = window.startTestSimulation;
+  if (typeof orig === "function") {
+    window.startTestSimulation = function () {
+      var r = orig.apply(this, arguments);
+      try { monterGrille(); } catch (e) {}
+      return r;
+    };
+  }
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-direct.js",e);}
+
+try{
+/* ---- diisoo-orga.js ---- */
+/* diisoo-orga.js v2 : organisation des menus, un choix a la fois
+   Anglais et Wolof : Niveau, puis Theme, puis Mots (3 etapes, une decision par ecran).
+   Cartes de mots : Wolof, English, Francais bien separes, boutons numerotes 1, 2, 3.
+   Business et Examens : grille propre, pas de doublon. Wikidata retire des themes. */
+(function () {
+  "use strict";
+
+  /* Neutralise l'ancien diisoo-menus.js s'il est encore charge */
+  try {
+    var olds = document.querySelectorAll("style");
+    for (var i = 0; i < olds.length; i++) {
+      if (olds[i].textContent.indexOf("#business-picker{display:grid") >= 0) olds[i].remove();
+    }
+  } catch (e) {}
+
+  var st = document.createElement("style");
+  st.textContent =
+    /* Barres de niveau de l'ancien systeme et textes parasites */
+    "#tierbar-general,#tierbar-wolof,#tierbar-business,#tierbar-ielts{display:none!important}" +
+    "#test-picker>p{display:none!important}" +
+    /* Grilles : 2 colonnes alignees, aucun defilement lateral */
+    "#general-tabs,#wolof-tabs,#business-tabs{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;" +
+    "overflow:visible!important;padding:0!important;margin:8px 0 0!important}" +
+    "#general-tabs>*,#wolof-tabs>*,#business-tabs>*{margin:0!important;width:100%;min-height:48px;" +
+    "padding:6px 10px!important;font-size:13px!important;line-height:1.2;text-align:left;" +
+    "white-space:normal!important;border-radius:14px!important;box-sizing:border-box}" +
+    "#general-content,#lexicon-container,#business-content{max-height:none!important;overflow:visible!important}" +
+    "#general-tabs.lvl-hide,#wolof-tabs.lvl-hide,#general-content.lvl-hide,#lexicon-container.lvl-hide,.lvl-hide{display:none!important}" +
+    /* Choix du niveau */
+    ".lvl-picker{display:flex;flex-direction:column;gap:10px}" +
+    ".lvl-title{text-align:center;font-size:14px;font-weight:700;color:#F6F1E7;margin:4px 0}" +
+    ".lvl-btn{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:10px 14px;" +
+    "background:#141A2B;border:1px solid #1E2740;border-radius:16px;color:#F6F1E7;text-align:left}" +
+    ".lvl-btn:active{border-color:#E1693F}" +
+    ".lvl-btn.lock{opacity:.6}" +
+    ".lvl-ic{font-size:28px;line-height:1}" +
+    ".lvl-nm{font-size:15px;font-weight:800;line-height:1.2}" +
+    ".lvl-sub{font-size:11px;color:#A69C86;font-weight:400;margin-top:2px}" +
+    ".lvl-back{width:100%;min-height:38px;padding:6px 12px;margin-bottom:6px;background:#10251A;border:1px solid #3FAE74;" +
+    "border-radius:12px;color:#5FC98F;font-size:12px;font-weight:700;text-align:left}" +
+    ".lvl-back.th{background:#141A2B;border-color:#1E2740;color:#E4DCC9}" +
+    ".lvl-step{text-align:center;font-size:12px;font-weight:700;color:#C9BFA8;margin:6px 0 0}" +
+    /* Cartes de mots (Anglais Wolof) : trois blocs bien separes */
+    "#lexicon-container>.fx-em{padding:16px!important}" +
+    "#lexicon-container>.fx-em>div:first-of-type{display:flex!important;flex-direction:column;gap:12px}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:first-child{display:contents}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:last-child{order:2;text-align:left!important}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:first-child>p:first-child{order:1;font-size:26px!important;line-height:1.15!important;margin:0}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:first-child>p:last-child{order:3;font-size:14px!important;color:#A69C86!important;margin:0}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:last-child>p{font-size:26px!important;line-height:1.15!important;margin:0}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:first-child>p:first-child::before{content:'\\1F1F8\\1F1F3  WOLOF';display:block;font-size:11px;letter-spacing:.12em;font-weight:700;color:#5FC98F;margin-bottom:2px}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:last-child>p::before{content:'\\1F1EC\\1F1E7  ENGLISH';display:block;font-size:11px;letter-spacing:.12em;font-weight:700;color:#A69C86;margin-bottom:2px}" +
+    "#lexicon-container>.fx-em>div:first-of-type>div:first-child>p:last-child::before{content:'\\1F1EB\\1F1F7  '}" +
+    "#lexicon-container>.fx-em>.grid{grid-template-columns:1fr 1fr 1fr!important;gap:10px!important}" +
+    "#lexicon-container .grid>button.dii-b:nth-child(1)::before{content:'1'}" +
+    "#lexicon-container .grid>button.dii-b:nth-child(2)::before{content:'2'}" +
+    "#lexicon-container .grid>button.dii-b:nth-child(3)::before{content:'3'}" +
+    "#lexicon-container .grid>button.dii-b::before{position:absolute;top:6px;left:8px;width:18px;height:18px;border-radius:50%;" +
+    "background:rgba(255,255,255,.18);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}" +
+    /* Boutons : icone au-dessus, mot en dessous, identiques partout */
+    "button.dii-b[data-practice]{position:relative;display:flex!important;flex-direction:column;align-items:center;justify-content:center;" +
+    "gap:3px;min-height:68px!important;padding:8px 4px!important;border-radius:16px!important;font-size:11px!important;line-height:1.1;text-align:center}" +
+    "button.dii-b[data-practice] .dii-i{font-size:26px;line-height:1}" +
+    "button.dii-b[data-practice] .dii-c{font-weight:700}" +
+    "button.dii-b[data-practice] .dii-x{display:none}" +
+    "button.dii-b[data-practice]:disabled{opacity:.45}";
+  document.head.appendChild(st);
+
+  var NAMES = ["Débutant", "Intermédiaire", "Avancé"];
+  var ICONS = ["🌱", "🌿", "🌳"];
+  var KEYS = {
+    general: { tabs: "general-tabs", content: "general-content", unit: "thèmes" },
+    wolof: { tabs: "wolof-tabs", content: "lexicon-container", unit: "thèmes" }
+  };
+  var lvl = { general: null, wolof: null };
+
+  function $(id) { return document.getElementById(id); }
+  function unlocked(key) { try { return tierState()[key].unlocked || 1; } catch (e) { return 1; } }
+  function levelOf(key, b, i, n) {
+    if (key === "general") { var m = /N([123])\b/.exec(b.textContent); return m ? +m[1] : 1; }
+    return Math.min(3, Math.floor(i / Math.ceil(n / 3)) + 1);
+  }
+
+  function filtrer(key) {
+    var c = KEYS[key], box = $(c.tabs);
+    if (!box) return;
+    var items = Array.prototype.slice.call(box.children), n = items.length;
+    items.forEach(function (b, i) {
+      b.dataset.lvl = levelOf(key, b, i, n);
+      b.disabled = false; b.style.pointerEvents = ""; b.style.opacity = "";
+      var tag = b.querySelector(".tier-lock-tag"); if (tag) tag.remove();
+      b.style.display = (lvl[key] === null || +b.dataset.lvl === lvl[key]) ? "" : "none";
+    });
+  }
+
+  /* Remplace l'ancien verrouillage par points : plus de cadenas par bouton */
+  window.applyTierLocks = function (key) {
+    if (key === "general" || key === "wolof") { filtrer(key); return; }
+    var bar = $("tierbar-" + key); if (bar) bar.remove();
+    if (key === "ielts") {
+      try {
+        Array.prototype.forEach.call($("test-topic-buttons").children, function (b) {
+          b.disabled = false; b.style.pointerEvents = ""; b.style.opacity = "";
+        });
+      } catch (e) {}
+    }
+  };
+
+  /* Wikidata : donnees brutes non validees, retirees de l'affichage des apprenants */
+  var orw = window.renderWolofTabs;
+  if (typeof orw === "function") {
+    window.renderWolofTabs = function () {
+      var r = orw.apply(this, arguments);
+      try {
+        Array.prototype.slice.call($("wolof-tabs").children).forEach(function (b) {
+          if (/^\s*(🔒\s*)?Wikidata\s*$/.test(b.textContent)) b.remove();
+        });
+        filtrer("wolof");
+      } catch (e) {}
+      return r;
+    };
+  }
+
+  function retirer(id) { var e = $(id); if (e) e.remove(); }
+  function haut() { try { window.scrollTo(0, 0); } catch (e) {} }
+
+  /* ---------- Etape 0 : choix du niveau ---------- */
+  function afficherPicker(key) {
+    var c = KEYS[key], box = $(c.tabs), content = $(c.content);
+    if (!box) return;
+    lvl[key] = null; filtrer(key);
+    var counts = [0, 0, 0];
+    Array.prototype.forEach.call(box.children, function (b) { counts[+b.dataset.lvl - 1]++; });
+    var p = $("lvl-" + key);
+    if (!p) { p = document.createElement("div"); p.id = "lvl-" + key; p.className = "lvl-picker"; box.parentNode.insertBefore(p, box); }
+    p.innerHTML = "";
+    var t = document.createElement("p"); t.className = "lvl-title"; t.textContent = "Étape 1 : choisis ton niveau"; p.appendChild(t);
+    var un = unlocked(key);
+    [1, 2, 3].forEach(function (L) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "lvl-btn" + (L > un ? " lock" : "");
+      b.innerHTML = '<span class="lvl-ic">' + (L > un ? "🔒" : ICONS[L - 1]) + '</span><span><span class="lvl-nm">' +
+        NAMES[L - 1] + '</span><br><span class="lvl-sub">' + (L > un ? "Test de passage" : "✅ Ouvert") + " · " + counts[L - 1] + " " + c.unit + "</span></span>";
+      b.onclick = function () { choisir(key, L); };
+      p.appendChild(b);
+    });
+    p.style.display = "";
+    box.classList.add("lvl-hide");
+    if (content) content.classList.add("lvl-hide");
+    retirer("lvlback-" + key); retirer("thbar-" + key); retirer("step-" + key);
+    haut();
+  }
+
+  /* ---------- Etape 1 : choix du theme ---------- */
+  function afficherThemes(key, L) {
+    var c = KEYS[key], box = $(c.tabs), content = $(c.content);
+    lvl[key] = L;
+    $("lvl-" + key).style.display = "none";
+    filtrer(key);
+    box.classList.remove("lvl-hide");
+    if (content) content.classList.add("lvl-hide");
+    retirer("lvlback-" + key); retirer("thbar-" + key); retirer("step-" + key);
+    var back = document.createElement("button");
+    back.type = "button"; back.id = "lvlback-" + key; back.className = "lvl-back";
+    back.textContent = ICONS[L - 1] + " " + NAMES[L - 1] + " : changer de niveau";
+    back.onclick = function () { afficherPicker(key); };
+    box.parentNode.insertBefore(back, box);
+    var s = document.createElement("p");
+    s.id = "step-" + key; s.className = "lvl-step"; s.textContent = "Étape 2 : choisis ton thème";
+    box.parentNode.insertBefore(s, box);
+    haut();
+  }
+
+  /* ---------- Etape 2 : les mots ---------- */
+  function afficherLecon(key, titre) {
+    var c = KEYS[key], box = $(c.tabs), content = $(c.content);
+    if (lvl[key] === null) return;
+    box.classList.add("lvl-hide");
+    if (content) content.classList.remove("lvl-hide");
+    retirer("step-" + key); retirer("thbar-" + key);
+    var th = document.createElement("button");
+    th.type = "button"; th.id = "thbar-" + key; th.className = "lvl-back th";
+    th.textContent = "📚 " + titre + " : changer de thème";
+    th.onclick = function () { afficherThemes(key, lvl[key]); };
+    box.parentNode.insertBefore(th, box);
+    haut();
+  }
+
+  function choisir(key, L) {
+    if (L > unlocked(key)) {
+      try { toast("🔒 Termine d'abord le niveau " + NAMES[L - 2]); } catch (e) {}
+      return;
+    }
+    afficherThemes(key, L);
+  }
+
+  /* Toucher un theme : on passe a l'etape 3 */
+  ["general", "wolof"].forEach(function (key) {
+    var box = $(KEYS[key].tabs);
+    if (!box) return;
+    box.addEventListener("click", function (ev) {
+      var b = ev.target.closest && ev.target.closest("button");
+      if (!b || b.parentNode !== box) return;
+      var titre = b.textContent.trim().replace(/^🔒\s*/, "");
+      setTimeout(function () { if (lvl[key] !== null) afficherLecon(key, titre); }, 0);
+    }, true);
+  });
+
+  /* ---------- Boutons des cartes : icone en haut, mot en bas ---------- */
+  var LIB = "🎤 Maintiens pour parler";
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]; }); }
+  function formater(root) {
+    var list = root.querySelectorAll("button[data-practice]:not(.dii-b)");
+    for (var i = 0; i < list.length; i++) {
+      var b = list[i], t = (b.textContent || "").trim();
+      var m = /^(🔊|🎤)\s+(.+)$/.exec(t);
+      if (!m) continue;
+      var cap = esc(m[2]);
+      if (t === LIB) cap = 'Maintiens<span class="dii-x"> pour parler</span>';
+      b.innerHTML = '<span class="dii-i">' + m[1] + '</span> <span class="dii-c">' + cap + "</span>";
+      b.classList.add("dii-b");
+    }
+  }
+  var plan = false;
+  function planifier() {
+    if (plan) return; plan = true;
+    requestAnimationFrame(function () {
+      plan = false;
+      ["lexicon-container", "general-content", "business-content"].forEach(function (id) { var e = $(id); if (e) formater(e); });
+    });
+  }
+  try {
+    new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true });
+    planifier();
+  } catch (e) {}
+
+  var TXT = {
+    general: "Écoute, répète, puis teste-toi.",
+    wolof: "Écoute le wolof, répète en anglais.",
+    business: "Choisis ton secteur."
+  };
+  function titre(screen, key) {
+    try { var p = document.querySelector("#" + screen + ">div:first-child p"); if (p) p.textContent = TXT[key]; } catch (e) {}
+  }
+
+  function envelopper(nom, key) {
+    var o = window[nom];
+    if (typeof o !== "function") return;
+    window[nom] = function () {
+      var r = o.apply(this, arguments);
+      try { titre(key === "general" ? "screen-general" : key === "wolof" ? "screen-wolof" : "screen-business", key); if (KEYS[key]) afficherPicker(key); } catch (e) { console.warn("[diisoo] orga", e); }
+      return r;
+    };
+  }
+  envelopper("openGeneralModule", "general");
+  envelopper("openWolofModule", "wolof");
+  envelopper("openBusinessModule", "business");
+
+  window.DiisooOrga = { version: 2, niveau: function (k) { return lvl[k]; }, picker: afficherPicker };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-orga.js",e);}
+
+try{
+/* ---- diisoo-wamic.js ---- */
+/* diisoo-wamic.js : etape 3
+   Bouton micro identique au vocal WhatsApp :
+   - maintenir = enregistrer, relacher = envoyer
+   - glisser vers la gauche = annuler
+   - chrono visible, vibration, couleur verte, meme libelle partout */
+(function () {
+  "use strict";
+  var RX = /^\s*practice(GeneralWord|BusinessPhrase|Word)\(/;
+  var holdBtn = null, startX = 0, t0 = 0, timer = null, cancelled = false, pill = null;
+
+  /* CSS */
+  var st = document.createElement("style");
+  st.textContent =
+    "[data-practice][onclick^='practice']{background:#25D366!important;color:#fff!important;min-height:40px;" +
+    "border-radius:999px!important;font-size:11px!important;font-weight:700!important}" +
+    "[data-practice][onclick^='practice'].mic-pulsing-whatsapp{background:#128C7E!important;transform:scale(1.04)}" +
+    "#wa-pill{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:9999;display:none;" +
+    "align-items:center;gap:10px;background:#1F2C34;color:#fff;padding:10px 16px;border-radius:999px;" +
+    "font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.45);white-space:nowrap}" +
+    "#wa-pill .dot{width:10px;height:10px;border-radius:50%;background:#F44336;animation:wablink 1s infinite}" +
+    "#wa-pill.annule{background:#B3261E}" +
+    "@keyframes wablink{0%,100%{opacity:1}50%{opacity:.25}}";
+  document.head.appendChild(st);
+
+  function monterPill() {
+    if (pill) return pill;
+    pill = document.createElement("div");
+    pill.id = "wa-pill";
+    pill.innerHTML = '<span class="dot"></span><span id="wa-time">0:00</span><span id="wa-hint">‹ Glisse pour annuler</span>';
+    document.body.appendChild(pill);
+    return pill;
+  }
+  function fmt(ms) { var s = Math.floor(ms / 1000); return Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + (s % 60); }
+  function vib(n) { try { if (navigator.vibrate) navigator.vibrate(n); } catch (e) {} }
+
+  function arreterUI() {
+    clearInterval(timer); timer = null;
+    if (pill) { pill.style.display = "none"; pill.classList.remove("annule"); }
+  }
+
+  /* Annulation : le resultat de la reconnaissance est jete */
+  var osl = window.startListening;
+  if (typeof osl === "function") {
+    window.startListening = function () {
+      var h = osl.apply(this, arguments);
+      if (!h || !h.promise) return h;
+      var p = h.promise;
+      h.promise = p.then(function (r) {
+        if (window.__waCancel) { window.__waCancel = false; try { toast("Annulé"); } catch (e) {} return { text: "", error: "cancelled" }; }
+        return r;
+      });
+      return h;
+    };
+  }
+
+  document.addEventListener("pointerdown", function (ev) {
+    var b = ev.target.closest && ev.target.closest("[data-practice]");
+    if (!b || b.disabled || holdBtn) return;
+    if (!RX.test(b.getAttribute("onclick") || "")) return;
+    holdBtn = b; startX = ev.clientX; t0 = Date.now(); cancelled = false; window.__waCancel = false;
+    var p = monterPill();
+    p.classList.remove("annule");
+    document.getElementById("wa-time").textContent = "0:00";
+    document.getElementById("wa-hint").textContent = "‹ Glisse pour annuler";
+    p.style.display = "flex";
+    clearInterval(timer);
+    timer = setInterval(function () { document.getElementById("wa-time").textContent = fmt(Date.now() - t0); }, 200);
+    vib(30);
+  }, { capture: true });
+
+  document.addEventListener("pointermove", function (ev) {
+    if (!holdBtn || cancelled) return;
+    if (ev.clientX - startX < -80) {
+      cancelled = true;
+      window.__waCancel = true;
+      if (pill) { pill.classList.add("annule"); document.getElementById("wa-hint").textContent = "Annulé"; }
+      vib([20, 40, 20]);
+      /* declenche le relachement du systeme existant (arret immediat du micro) */
+      document.dispatchEvent(new Event("pointerup"));
+    }
+  }, { capture: true, passive: true });
+
+  ["pointerup", "pointercancel", "touchend", "touchcancel"].forEach(function (t) {
+    document.addEventListener(t, function () {
+      if (!holdBtn) return;
+      holdBtn = null;
+      if (!cancelled) vib(15);
+      setTimeout(arreterUI, cancelled ? 500 : 0);
+    }, { capture: true, passive: true });
+  });
+
+  /* Meme libelle partout */
+  var LIB = "🎤 Maintiens pour parler";
+  function uniformiser(root) {
+    var list = (root || document).querySelectorAll("[data-practice][onclick^='practice']");
+    for (var i = 0; i < list.length; i++) {
+      var b = list[i];
+      if (RX.test(b.getAttribute("onclick") || "") && b.textContent !== LIB) b.textContent = LIB;
+    }
+  }
+  try {
+    new MutationObserver(function () { uniformiser(document); })
+      .observe(document.body, { childList: true, subtree: true });
+    uniformiser(document);
+  } catch (e) {}
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-wamic.js",e);}
+
+try{
+/* ---- diisoo-aide-wolof.js ---- */
+/* diisoo-aide-wolof.js v3 : aide vocale en wolof sur chaque etape
+   - parle tout seul UNE SEULE FOIS par etape (menu, niveau, theme, mots, examens), ensuite seul le bouton 🔊 repete
+   - ta voix d'abord : si la phrase est enregistree avec l'outil #enregistrer-voix, c'est elle qui est lue (instantane)
+   - sinon la voix generee de l'app est utilisee
+   - si le telephone bloque le son, le bouton 🔊 clignote et une bulle affiche la phrase
+   - bouton rond 🔊 en haut a droite : repete l'aide a tout moment */
+(function () {
+  "use strict";
+
+  var P = {
+    menu: "Tànnal li nga bëgg.",
+    niveau: "Tànnal sa niveau.",
+    debutant: "Yomb.",
+    inter: "Digg.",
+    avance: "Jafe.",
+    verrou: "Jàng ba noppi, nga dem ci kanam.",
+    theme: "Tànnal benn thème.",
+    micro: "Téyél, wax, bàyyi.",
+    annule: "Bàyyi ko ci kaw.",
+    bravo: "Baax na !",
+    encore: "Jéemaat.",
+    passage: "Tontul ñetti laaj ngir dem ci kanam.",
+    examen: "Tànnal sa examen.",
+    test: "Tànnal benn test.",
+    retour: "Dellu ginnaaw."
+  };
+  var FR = {
+    menu: "Choisis ce que tu veux.", niveau: "Choisis ton niveau.", debutant: "Facile (Débutant).",
+    inter: "Moyen (Intermédiaire).", avance: "Difficile (Avancé).", verrou: "Étudie d'abord, puis avance.",
+    theme: "Choisis un thème.", micro: "Maintiens, parle, relâche.", annule: "Glisse pour annuler.",
+    bravo: "Bravo !", encore: "Réessaie.", passage: "Réponds aux questions pour passer.",
+    examen: "Choisis ton examen.", test: "Choisis un test.", retour: "Retour."
+  };
+  window.DiisooAideWolof = { phrases: P };
+
+  /* Les phrases apparaissent dans l'outil d'enregistrement #enregistrer-voix (les plus courtes en premier) */
+  try {
+    if (typeof WOLOF_EXTRA === "object" && WOLOF_EXTRA) {
+      WOLOF_EXTRA.__aide = Object.keys(P).map(function (k) { return { wo: P[k], fr: FR[k], en: "" }; });
+    }
+  } catch (e) {}
+
+  /* ---------- lecture ---------- */
+  var jeton = 0, cur = null;
+  function arreter() { try { if (cur) { cur.onended = null; cur.onerror = null; cur.pause(); } } catch (e) {} cur = null; }
+
+  function lireURL(url, jt) {
+    return new Promise(function (resolve) {
+      arreter();
+      var a = new Audio(url);
+      a.setAttribute("playsinline", "");
+      cur = a;
+      a.onended = function () { resolve(true); };
+      a.onerror = function () { resolve(false); };
+      var p = a.play();
+      if (p && p.catch) p.catch(function () { if (jt === jeton) pulser(true); resolve(false); });
+    });
+  }
+
+  async function jouerUne(phrase, jt) {
+    try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+    try {
+      if (window.voixHumaine) {
+        var url = await window.voixHumaine.url(phrase);
+        if (jt !== jeton) return false;
+        if (url) { var ok = await lireURL(url, jt); if (ok) return true; }
+      }
+    } catch (e) {}
+    if (jt !== jeton) return false;
+    if (typeof speakWolofOolel === "function") {
+      try { var r = await speakWolofOolel(phrase); return r !== false; } catch (e) { return false; }
+    }
+    return false;
+  }
+
+  function dire(liste) {
+    var mon = ++jeton;
+    pulser(false);
+    (async function () {
+      for (var i = 0; i < liste.length; i++) {
+        if (mon !== jeton) return;
+        legende(liste[i]);
+        await jouerUne(liste[i], mon);
+      }
+    })();
+  }
+
+  /* ---------- interface ---------- */
+  var st = document.createElement("style");
+  st.textContent =
+    "#dii-aide-wolof{position:fixed;top:10px;right:12px;z-index:9998;width:44px;height:44px;border-radius:50%;" +
+    "border:0;background:#25D366;color:#fff;font-size:20px;display:none;align-items:center;justify-content:center;" +
+    "box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
+    "#dii-aide-wolof:active{background:#128C7E}" +
+    "#dii-aide-wolof.pulse{animation:diipulse 1s infinite}" +
+    "@keyframes diipulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(37,211,102,.7)}50%{transform:scale(1.12);box-shadow:0 0 0 12px rgba(37,211,102,0)}}" +
+    "#dii-aide-bulle{position:fixed;top:60px;right:12px;z-index:9998;max-width:72vw;background:#1F2C34;color:#fff;" +
+    "padding:8px 12px;border-radius:14px;font-size:13px;line-height:1.3;display:none;box-shadow:0 3px 12px rgba(0,0,0,.4)}" +
+    "#dii-aide-bulle small{display:block;color:#A8B8C0;font-size:11px;margin-top:2px}" +
+    ".aide-ic{margin-left:auto;flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#25D366;color:#fff;" +
+    "display:flex;align-items:center;justify-content:center;font-size:20px}";
+  document.head.appendChild(st);
+
+  var btn = document.createElement("button");
+  btn.id = "dii-aide-wolof"; btn.type = "button"; btn.setAttribute("aria-label", "Aide en wolof"); btn.textContent = "🔊";
+  document.body.appendChild(btn);
+  var bulle = document.createElement("div");
+  bulle.id = "dii-aide-bulle";
+  document.body.appendChild(bulle);
+
+  var tBulle = null;
+  function legende(phrase) {
+    var cle = null;
+    Object.keys(P).forEach(function (k) { if (P[k] === phrase) cle = k; });
+    bulle.innerHTML = phrase.replace(/</g, "&lt;") + (cle ? "<small>" + FR[cle] + "</small>" : "");
+    bulle.style.display = "block";
+    clearTimeout(tBulle);
+    tBulle = setTimeout(function () { bulle.style.display = "none"; }, 3500);
+  }
+  function pulser(on) { btn.classList.toggle("pulse", !!on); }
+
+  function visible(id) { var e = document.getElementById(id); return !!(e && e.offsetParent !== null); }
+  function pickerVisible(key) { var e = document.getElementById("lvl-" + key); return !!(e && e.style.display !== "none" && e.offsetParent !== null); }
+
+  /* Quelle aide pour l'etape actuelle ? */
+  function phrasesEcran() {
+    if (visible("dii-passage")) return { sig: "passage", l: [P.passage] };
+    if (visible("screen-dashboard")) return { sig: "menu", l: [P.menu] };
+    if (visible("screen-general") || visible("screen-wolof")) {
+      var key = visible("screen-general") ? "general" : "wolof";
+      if (pickerVisible(key)) return { sig: key + ":niveau", l: [P.niveau] };
+      if (document.getElementById("step-" + key)) return { sig: key + ":theme", l: [P.theme] };
+      return { sig: key + ":mots", l: [P.micro] };
+    }
+    if (visible("screen-business")) {
+      if (pickerVisible("business")) return { sig: "business:niveau", l: [P.niveau] };
+      return visible("business-content") ? { sig: "biz:mots", l: [P.micro] } : { sig: "biz:theme", l: [P.theme] };
+    }
+    if (visible("screen-test-simulation")) {
+      if (visible("exam-grid")) return { sig: "exam:liste", l: [P.examen] };
+      if (visible("exam-tests")) return { sig: "exam:tests", l: [P.test] };
+      return { sig: "exam:live", l: [P.micro] };
+    }
+    return null;
+  }
+
+  btn.onclick = function () { montreJusqua = Date.now() + 6000; pulser(false); var e = phrasesEcran(); try { localStorage.setItem("diisoo_aide_vu", "1"); } catch (x) {} if (e) dire(e.l); };
+
+  /* ---------- declenchement automatique ---------- */
+  var geste = 0;
+  ["pointerdown", "touchstart", "click", "keydown"].forEach(function (ev) {
+    window.addEventListener(ev, function () { geste = Date.now(); }, true);
+  });
+  var MAXAUTO = 1;
+  function compteurs() { try { return JSON.parse(localStorage.getItem("diisoo_aide_n") || "{}") || {}; } catch (e) { return {}; } }
+  function ecrire(o) { try { localStorage.setItem("diisoo_aide_n", JSON.stringify(o)); } catch (e) {} }
+
+  var derniere = "", montreJusqua = 0;
+  function surcouche() { var e = document.getElementById("screen-premium"); return !!(e && !e.classList.contains("hidden")); }
+  setInterval(function () {
+    var e = phrasesEcran();
+    if (e && surcouche()) e = null;
+    /* le bouton ne reste pas affiche en permanence : 10 s a chaque nouvel ecran (20 s s'il clignote), puis il disparait */
+    btn.style.display = (e && Date.now() < montreJusqua) ? "flex" : "none";
+    if (!e) { derniere = ""; return; }
+    if (e.sig === derniere) return;
+    derniere = e.sig;
+    montreJusqua = Date.now() + 10000;
+    var recent = Date.now() - geste < 3000;
+    var c = compteurs(), n = c[e.sig] || 0;
+    if (e.sig === "passage") return;
+    if (recent && n < MAXAUTO) {
+      c[e.sig] = n + 1; ecrire(c);
+      var sig = e.sig;
+      setTimeout(function () { var x = phrasesEcran(); if (x && x.sig === sig) dire(x.l); }, 250);
+    } else if (!recent) {
+      /* pas de geste recent (ouverture de l'app) : le navigateur bloque le son, on attire l'oeil */
+      var vu = false; try { vu = !!localStorage.getItem("diisoo_aide_vu"); } catch (x) {}
+      if (!vu || n < MAXAUTO) { pulser(true); montreJusqua = Date.now() + 20000; }
+    }
+  }, 350);
+
+  /* ---------- 🔊 sur chaque niveau ---------- */
+  var NIV = [P.debutant, P.inter, P.avance];
+  function equiper() {
+    var btns = document.querySelectorAll(".lvl-btn");
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      if (b.querySelector(".aide-ic")) continue;
+      var idx = Array.prototype.indexOf.call(b.parentNode.querySelectorAll(".lvl-btn"), b);
+      var s = document.createElement("span");
+      s.className = "aide-ic"; s.textContent = "🔊";
+      (function (n) {
+        s.addEventListener("click", function (ev) { ev.stopPropagation(); ev.preventDefault(); dire([NIV[n]]); });
+      })(idx);
+      b.appendChild(s);
+    }
+  }
+  try { new MutationObserver(equiper).observe(document.body, { childList: true, subtree: true }); equiper(); } catch (e) {}
+
+  /* Niveau verrouille (si le test de passage n'est pas charge) */
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest(".lvl-btn.lock");
+    if (b && !ev.target.closest(".aide-ic")) dire([P.verrou]);
+  }, true);
+
+  /* Prepare les voix en arriere-plan pour que la premiere ecoute soit immediate */
+  setTimeout(function () {
+    try {
+      var liste = Object.keys(P).map(function (k) { return P[k]; });
+      if (typeof prefetchVoix === "function") prefetchVoix(liste, "wo");
+    } catch (e) {}
+  }, 6000);
+
+  window.DiisooAideWolof.dire = function (cle) { if (P[cle]) dire([P[cle]]); };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-aide-wolof.js",e);}
+
+try{
+/* ---- diisoo-biz.js ---- */
+/* diisoo-biz.js v1 : Business range comme Anglais et Wolof
+   Etape 1 : choisir son niveau (Debutant, Intermediaire, Avance), les niveaux fermes ouvrent le test de passage
+   Etape 2 : choisir son secteur (+ Anglais des marches)
+   Etape 3 : les phrases de CE niveau seulement, une carte a la fois */
+(function () {
+  "use strict";
+
+  var NAMES = ["Débutant", "Intermédiaire", "Avancé"];
+  var ICONS = ["🌱", "🌿", "🌳"];
+  var CODES = ["debutant", "intermediaire", "avance"];
+  var L = null, sect = null, marches = false;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function haut() { try { window.scrollTo(0, 0); } catch (e) {} }
+  function unlocked() { try { return tierState().business.unlocked || 1; } catch (e) { return 1; } }
+  function secteurs() {
+    try { return Object.keys(BUSINESS_SECTORS).filter(function (k) { return CHINA_TRADE_WOLOF[k] && CHINA_TRADE_WOLOF[k].vocab.length; }); } catch (e) { return []; }
+  }
+  function items(k, niv) {
+    var out = [];
+    CHINA_TRADE_WOLOF[k].vocab.forEach(function (v, i) { if (v.niveau === CODES[niv - 1]) out.push({ v: v, i: i }); });
+    return out;
+  }
+  function total(niv) { var n = 0; secteurs().forEach(function (k) { n += items(k, niv).length; }); return n; }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#business-picker,#btn-business-back{display:none!important}" +
+    "#business-tabs,#business-tabs.biz-off{display:none!important}" +
+    "#biz-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}" +
+    "#biz-grid button{display:flex;align-items:center;gap:8px;min-height:64px;padding:8px 10px;border-radius:14px;" +
+    "background:#141A2B;border:1px solid #1E2740;color:#F6F1E7;text-align:left}" +
+    "#biz-grid button:active{border-color:#E1693F}" +
+    "#biz-grid .bz-ic{font-size:24px;line-height:1}" +
+    "#biz-grid .bz-nm{font-size:13px;font-weight:700;line-height:1.2}" +
+    "#biz-grid .bz-n{display:block;font-size:11px;font-weight:400;color:#A69C86;margin-top:2px}" +
+    "#biz-grid button.bz-m{grid-column:1/-1;border-color:#3FAE74}";
+  document.head.appendChild(st);
+
+  function ancre() { return $("business-picker"); }
+  function retirer(id) { var e = $(id); if (e) e.remove(); }
+  function nettoyer() {
+    retirer("biz-grid"); retirer("bizback-lvl"); retirer("bizback-sec"); retirer("bizstep");
+    var c = $("business-content"); if (c) { c.classList.add("hidden"); c.innerHTML = ""; }
+    var v = $("secteurs-vue"); if (v) { v.classList.add("hidden"); v.innerHTML = ""; }
+    var r = $("secteurs-retour"); if (r) r.classList.add("hidden");
+  }
+  function insererAvant(el) { var a = ancre(); if (a && a.parentNode) a.parentNode.insertBefore(el, a); }
+  function barre(id, texte, cls, fn) {
+    var b = document.createElement("button");
+    b.type = "button"; b.id = id; b.className = "lvl-back " + (cls || "");
+    b.textContent = texte; b.onclick = fn;
+    insererAvant(b);
+  }
+
+  /* ---------- Etape 1 : niveau ---------- */
+  function niveaux() {
+    L = null; sect = null; marches = false;
+    nettoyer();
+    var p = $("lvl-business");
+    if (!p) { p = document.createElement("div"); p.id = "lvl-business"; p.className = "lvl-picker"; insererAvant(p); }
+    p.innerHTML = "";
+    var t = document.createElement("p"); t.className = "lvl-title"; t.textContent = "Étape 1 : choisis ton niveau"; p.appendChild(t);
+    var un = unlocked();
+    [1, 2, 3].forEach(function (n) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "lvl-btn" + (n > un ? " lock" : "");
+      b.innerHTML = '<span class="lvl-ic">' + (n > un ? "🔒" : ICONS[n - 1]) + '</span><span><span class="lvl-nm">' + NAMES[n - 1] +
+        '</span><br><span class="lvl-sub">' + (n > un ? "Test de passage" : "✅ Ouvert") + " · " + total(n) + " phrases</span></span>";
+      b.onclick = function () { if (n <= un) liste(n); };
+      p.appendChild(b);
+    });
+    p.style.display = "";
+    haut();
+  }
+
+  /* ---------- Etape 2 : secteur ---------- */
+  function liste(n) {
+    L = n; sect = null; marches = false;
+    nettoyer();
+    var p = $("lvl-business"); if (p) p.style.display = "none";
+    barre("bizback-lvl", ICONS[n - 1] + " " + NAMES[n - 1] + " : changer de niveau", "", niveaux);
+    var s = document.createElement("p"); s.id = "bizstep"; s.className = "lvl-step"; s.textContent = "Étape 2 : choisis ton secteur";
+    insererAvant(s);
+    var g = document.createElement("div"); g.id = "biz-grid";
+    secteurs().forEach(function (k) {
+      var nb = items(k, n).length;
+      if (!nb) return;
+      var b = document.createElement("button");
+      b.type = "button";
+      b.innerHTML = '<span class="bz-ic">' + BUSINESS_SECTORS[k].icon + '</span><span class="bz-nm">' + esc(BUSINESS_SECTORS[k].titre) +
+        '<span class="bz-n">' + nb + " phrases</span></span>";
+      b.onclick = function () { lecon(k); };
+      g.appendChild(b);
+    });
+    if (marchesDispo()) {
+      var m = document.createElement("button");
+      m.type = "button"; m.className = "bz-m";
+      m.innerHTML = '<span class="bz-ic">🛒</span><span class="bz-nm">Anglais des marchés<span class="bz-n">Colobane, Sandaga, Centenaire, Guangzhou</span></span>';
+      m.onclick = ouvrirMarches;
+      g.appendChild(m);
+    }
+    insererAvant(g);
+    haut();
+  }
+
+  /* ---------- Etape 3 : les phrases du niveau ---------- */
+  function lecon(k) {
+    sect = k; marches = false;
+    retirer("biz-grid"); retirer("bizstep"); retirer("bizback-sec");
+    barre("bizback-sec", BUSINESS_SECTORS[k].icon + " " + BUSINESS_SECTORS[k].titre + " : changer de secteur", "th", function () { liste(L); });
+    try { businessModule = k; } catch (e) {}
+    var mod = CHINA_TRADE_WOLOF[k], liste1 = items(k, L);
+    try {
+      var dl = BUSINESS_DIALOGUES[k] || [];
+      prefetchVoix(liste1.map(function (x) { return x.v.wo; }).concat(dl.map(function (l) { return l.wo; })), "wo");
+      prefetchVoix(liste1.map(function (x) { return x.v.en; }).concat(dl.map(function (l) { return l.en; })), "en");
+    } catch (e) {}
+    var box = $("business-content");
+    box.classList.remove("hidden");
+    var html = '<h4 class="text-sm font-bold text-[#F6F1E7] text-center">' + esc(mod.title) + " · " + NAMES[L - 1] + "</h4>";
+    var vb = null;
+    if (L > 1 && liste1.length && typeof verrouBiz === "function") { try { vb = verrouBiz(mod, liste1[0].v, liste1[0].i); } catch (e) { vb = null; } }
+    if (vb) html += vb;
+    else {
+      liste1.forEach(function (x) {
+        var v = x.v, i = x.i;
+        html += '<div class="bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 space-y-1">' +
+          '<p class="text-sm font-semibold text-[#F6F1E7]">' + esc(v.en) + "</p>" +
+          '<p class="text-xs text-[#A69C86]">' + esc(v.fr) + "</p>" +
+          (v.wo ? '<p class="text-xs text-[#5FC98F] italic">🗣️ ' + esc(v.wo) + "</p>" : "") +
+          '<div class="grid grid-cols-2 gap-2 mt-1">' +
+          '<button data-biz="en" data-sec="' + k + '" data-i="' + i + '" data-practice="biz-en:' + k + ":" + i + '" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 English</button>' +
+          (v.wo ? '<button data-biz="wo" data-sec="' + k + '" data-i="' + i + '" data-practice="biz-wo:' + k + ":" + i + '" data-gate="0" class="py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🔊 Wolof</button>' : "") +
+          "</div>" +
+          '<button onclick="practiceBusinessPhrase(\'' + k + "'," + i + ')" data-practice="biz:' + k + ":" + i + '" class="mt-1 w-full py-2 bg-[#1E2740] hover:bg-[#2A3454] rounded-lg text-[11px] font-semibold">🎤 M\'entraîner</button>' +
+          '<p id="biz-res-' + k + "-" + i + '" class="text-[11px] text-[#A69C86]">👂 Écoute d\'abord l\'anglais, puis entraîne-toi.</p>' +
+          "</div>";
+      });
+      if (L >= 2 && BUSINESS_DIALOGUES[k] && BUSINESS_DIALOGUES[k].length && typeof renderBusinessDialogue === "function") html += renderBusinessDialogue(k);
+    }
+    box.innerHTML = html;
+    try { refreshPracticeButtons(); } catch (e) {}
+    haut();
+  }
+
+  /* ---------- Anglais des marches (module existant, ouvert via l'onglet cache) ---------- */
+  function ongletMarches() {
+    var t = $("business-tabs");
+    if (!t) return null;
+    return Array.prototype.slice.call(t.children).filter(function (b) { return /Anglais des march/i.test(b.textContent); })[0] || null;
+  }
+  function marchesDispo() { return !!(ongletMarches() || $("secteurs-ouvrir")); }
+  function ouvrirMarches() {
+    marches = true;
+    retirer("biz-grid"); retirer("bizstep"); retirer("bizback-sec");
+    var bc = $("business-content"); if (bc) { bc.classList.add("hidden"); bc.innerHTML = ""; }
+    barre("bizback-sec", "🛒 Anglais des marchés : changer de secteur", "th", function () { liste(L || 1); });
+    var o = ongletMarches();
+    if (o) o.click(); else { var x = $("secteurs-ouvrir"); if (x) x.click(); }
+    var r = $("secteurs-retour"); if (r) r.classList.add("hidden");
+    haut();
+  }
+
+  /* ---------- entree dans Business ---------- */
+  var orig = window.openBusinessModule;
+  if (typeof orig === "function") {
+    window.openBusinessModule = function () {
+      var r = orig.apply(this, arguments);
+      try {
+        var a = ancre(); if (a) a.classList.add("hidden");
+        niveaux();
+      } catch (e) { console.warn("[diisoo] biz", e); }
+      return r;
+    };
+  }
+
+  window.DiisooBiz = { version: 1, niveau: function () { return L; }, secteur: function () { return sect; } };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-biz.js",e);}
+
+try{
+/* ---- diisoo-passage.js ---- */
+/* diisoo-passage.js v2 : test de passage, organise en 3 ecrans (Presentation, Questions, Resultat)
+   - Toucher Intermediaire : test du niveau Debutant. Reussi (75 %) = Intermediaire ouvert.
+   - Toucher Avance : test du niveau Intermediaire. Reussi = Avance ouvert.
+     Rate (et Intermediaire pas encore ouvert) = test Debutant pour savoir s'il commence Intermediaire ou Debutant.
+   - Une question = un mot entendu (audio) + 3 reponses. 8 questions, 6 bonnes reponses pour reussir.
+   - Apres un echec, le meme test se refait apres 24 heures. */
+(function () {
+  "use strict";
+
+  var NB = 8, SEUIL = 0.7, ATTENTE = 24 * 3600 * 1000;
+  var NOMS = ["Débutant", "Intermédiaire", "Avancé"];
+  var ICONS = ["🌱", "🌿", "🌳"];
+  var KEYF = "diisoo_passage";
+  var etat = null, ov = null;
+  var TABS = { general: "general-tabs", wolof: "wolof-tabs" };
+
+  /* ---------- outils ---------- */
+  function $(id) { return document.getElementById(id); }
+  function melanger(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function lire() { try { return JSON.parse(localStorage.getItem(KEYF) || "{}") || {}; } catch (e) { return {}; } }
+  function ecrire(o) { try { localStorage.setItem(KEYF, JSON.stringify(o)); } catch (e) {} }
+  function aide(cle) { try { return window.DiisooAideWolof.phrases[cle]; } catch (e) { return null; } }
+  function direAide(cle) { try { window.DiisooAideWolof.dire(cle); } catch (e) {} }
+  function dire(t, lang) {
+    try {
+      if (lang === "wo" && typeof speakWolofOolel === "function") return speakWolofOolel(t);
+      if (typeof speak === "function") return speak(t, "en-US", 0.85);
+    } catch (e) {}
+  }
+  function debloque(key) { try { return tierState()[key].unlocked || 1; } catch (e) { return 1; } }
+  function ouvrirNiveau(key, L) {
+    try {
+      var all = tierState();
+      if (L > all[key].unlocked) all[key].unlocked = L;
+      if (typeof TIER_GOALS !== "undefined" && all[key].pts < TIER_GOALS[L - 1]) all[key].pts = TIER_GOALS[L - 1];
+      store.set(TIER_KEY, all);
+    } catch (e) { console.warn("[diisoo] passage", e); }
+  }
+
+  /* ---------- questions a partir du vocabulaire du niveau (meme decoupage que les menus) ---------- */
+  function themesDuNiveau(key, niveau) {
+    var box = $(TABS[key]), data = key === "general" ? GENERAL_THEMES : WOLOF_THEMES, out = [];
+    if (key === "business") return out;
+    if (box) {
+      Array.prototype.forEach.call(box.children, function (b) {
+        if (+b.dataset.lvl !== niveau) return;
+        var t = b.textContent.trim().replace(/^🔒\s*/, "");
+        var th = data.filter(function (x) { return (x.title || x.label || x.name || "") === t; })[0];
+        if (th) out.push(th);
+      });
+    }
+    return out;
+  }
+  function mots(key, niveau) {
+    var out = [];
+    if (key === "business") {
+      try {
+        Object.keys(CHINA_TRADE_WOLOF).forEach(function (k) {
+          ((CHINA_TRADE_WOLOF[k] || {}).vocab || []).forEach(function (v) {
+            if (v.niveau === ["debutant", "intermediaire", "avance"][niveau - 1] && v.en && v.fr) out.push({ q: v.en, a: v.fr, lang: "en" });
+          });
+        });
+      } catch (e) {}
+      return out.filter(function (w) { return w.q.length <= 60 && w.a.length <= 70; });
+    }
+    themesDuNiveau(key, niveau).forEach(function (t) {
+      if (key === "general") (t.vocab || []).forEach(function (w) { if (w.en && w.fr) out.push({ q: w.en, a: w.fr, lang: "en" }); });
+      else (t.words || []).forEach(function (w) { if (w.wo && w.en) out.push({ q: w.wo, a: w.en, lang: "wo" }); });
+    });
+    return out.filter(function (w) { return w.q.length <= 45 && w.a.length <= 45; });
+  }
+  function fabriquer(key, niveau) {
+    var pool = mots(key, niveau);
+    if (pool.length < 4) return [];
+    var tirage = melanger(pool).slice(0, Math.min(NB, pool.length));
+    return tirage.map(function (w) {
+      var autres = melanger(pool.filter(function (x) { return x.a !== w.a; })).slice(0, 2).map(function (x) { return x.a; });
+      return { q: w.q, a: w.a, lang: w.lang, options: melanger([w.a].concat(autres)) };
+    });
+  }
+
+  /* ---------- interface ---------- */
+  var st = document.createElement("style");
+  st.textContent =
+    "#dii-passage{position:fixed;inset:0;z-index:9999;background:#0B0F1C;color:#F6F1E7;display:flex;flex-direction:column;" +
+    "padding:14px 16px 24px;overflow-y:auto;font-family:inherit}" +
+    "#dii-passage .ps-top{display:flex;align-items:center;gap:10px}" +
+    "#dii-passage .ps-x{width:44px;height:44px;border-radius:50%;background:#141A2B;border:1px solid #1E2740;color:#A69C86;font-size:16px}" +
+    "#dii-passage .ps-aide{margin-left:auto;width:44px;height:44px;border-radius:50%;background:#25D366;border:0;color:#fff;font-size:20px}" +
+    "#dii-passage .ps-head{text-align:center;font-size:12px;font-weight:700;letter-spacing:.08em;color:#8C8064;text-transform:uppercase;margin:12px 0 2px}" +
+    "#dii-passage .ps-titre{text-align:center;font-size:20px;font-weight:800;margin:2px 0 6px}" +
+    "#dii-passage .ps-path{display:flex;align-items:center;justify-content:center;gap:0;margin:14px 0}" +
+    "#dii-passage .ps-n{display:flex;flex-direction:column;align-items:center;width:84px;font-size:11px;color:#A69C86;font-weight:700}" +
+    "#dii-passage .ps-n b{display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:#141A2B;" +
+    "border:3px solid #1E2740;font-size:26px;margin-bottom:4px}" +
+    "#dii-passage .ps-n.done b{border-color:#25D366;background:#12351F}" +
+    "#dii-passage .ps-n.on b{border-color:#F3A94E;background:#3A2A10;box-shadow:0 0 0 4px rgba(243,169,78,.25)}" +
+    "#dii-passage .ps-n.lock b{opacity:.55}" +
+    "#dii-passage .ps-l{width:26px;height:4px;background:#1E2740;border-radius:3px;margin-bottom:22px}" +
+    "#dii-passage .ps-regles{display:flex;flex-direction:column;gap:8px;margin:8px 0 16px}" +
+    "#dii-passage .ps-r{display:flex;align-items:center;gap:12px;background:#141A2B;border:1px solid #1E2740;border-radius:14px;padding:10px 14px;font-size:14px}" +
+    "#dii-passage .ps-r span{font-size:22px}" +
+    "#dii-passage .ps-pts{display:flex;justify-content:center;gap:6px;margin:10px 0 4px}" +
+    "#dii-passage .ps-pts i{width:14px;height:14px;border-radius:50%;background:#1E2740}" +
+    "#dii-passage .ps-pts i.ok{background:#25D366}#dii-passage .ps-pts i.ko{background:#E5484D}" +
+    "#dii-passage .ps-pts i.cur{box-shadow:0 0 0 3px rgba(243,169,78,.6);background:#F3A94E}" +
+    "#dii-passage .ps-son{align-self:center;width:84px;height:84px;border-radius:50%;background:#25D366;color:#fff;font-size:36px;border:0;margin:10px 0 12px}" +
+    "#dii-passage .ps-mot{text-align:center;font-size:26px;font-weight:800;line-height:1.25;margin:6px 0 16px;word-break:break-word}" +
+    "#dii-passage .ps-rep{width:100%;min-height:58px;margin-bottom:10px;padding:10px 14px;border-radius:16px;background:#141A2B;" +
+    "border:2px solid #1E2740;color:#F6F1E7;font-size:16px;font-weight:700;text-align:left}" +
+    "#dii-passage .ps-rep.ok{background:#12351F;border-color:#25D366}" +
+    "#dii-passage .ps-rep.ko{background:#3A1515;border-color:#E5484D}" +
+    "#dii-passage .ps-grand{font-size:56px;text-align:center;margin:10px 0 2px}" +
+    "#dii-passage .ps-score{text-align:center;font-size:34px;font-weight:900;margin:0}" +
+    "#dii-passage .ps-msg{text-align:center;font-size:17px;font-weight:800;margin:6px 0}" +
+    "#dii-passage .ps-sub{text-align:center;font-size:13px;color:#A69C86;margin:0 0 14px}" +
+    "#dii-passage .ps-btn{width:100%;min-height:56px;margin-bottom:10px;border-radius:999px;border:0;background:#25D366;color:#fff;font-size:16px;font-weight:800}" +
+    "#dii-passage .ps-btn.sec{background:#141A2B;border:1px solid #1E2740;color:#C9BFA8}";
+  document.head.appendChild(st);
+
+  function fermer() { if (ov) { ov.remove(); ov = null; } etat = null; }
+  function montrer(html) {
+    if (!ov || !document.body.contains(ov)) { ov = document.createElement("div"); ov.id = "dii-passage"; document.body.appendChild(ov); }
+    ov.innerHTML = html;
+    ov.scrollTop = 0;
+  }
+  function retourMenu(key, L) {
+    fermer();
+    try { window[key === "general" ? "openGeneralModule" : key === "wolof" ? "openWolofModule" : "openBusinessModule"](); } catch (e) {}
+    if (L) {
+      setTimeout(function () {
+        var b = document.querySelectorAll("#lvl-" + key + " .lvl-btn")[L - 1];
+        if (b) b.click();
+      }, 150);
+    }
+  }
+
+  /* Chemin Debutant, Intermediaire, Avance : ouvert (vert), test en cours (orange), ferme (cadenas) */
+  function chemin(key, cible) {
+    var un = debloque(key), h = '<div class="ps-path">';
+    for (var L = 1; L <= 3; L++) {
+      var cls = L <= un ? "done" : (L === cible ? "on" : "lock");
+      var ic = L <= un ? "✅" : (L === cible ? ICONS[L - 1] : "🔒");
+      h += '<div class="ps-n ' + cls + '"><b>' + ic + "</b>" + NOMS[L - 1] + "</div>";
+      if (L < 3) h += '<div class="ps-l"></div>';
+    }
+    return h + "</div>";
+  }
+
+  function entete(key) {
+    return '<div class="ps-top"><button class="ps-x" id="ps-close" aria-label="Fermer">✕</button>' +
+      '<button class="ps-aide" id="ps-aide" aria-label="Aide en wolof">🔊</button></div>';
+  }
+  function brancher(key, boutons) {
+    var c = $("ps-close"); if (c) c.onclick = function () { retourMenu(key, 0); };
+    var a = $("ps-aide"); if (a) a.onclick = function () { direAide("passage"); };
+    Array.prototype.forEach.call(ov.querySelectorAll(".ps-btn"), function (el) {
+      el.onclick = function () { boutons[+el.dataset.i].f(); };
+    });
+  }
+  function boutonsHtml(boutons) {
+    var h = "";
+    boutons.forEach(function (b, i) { h += '<button class="ps-btn ' + (b.sec ? "sec" : "") + '" data-i="' + i + '">' + b.t + "</button>"; });
+    return h;
+  }
+
+  /* Ecran 1 : presentation */
+  function presentation(key, cible, niveau, fallback) {
+    var qs = fabriquer(key, niveau);
+    if (!qs.length) { ouvrirNiveau(key, cible); retourMenu(key, cible); return; }
+    var need = Math.ceil(SEUIL * qs.length);
+    etat = { key: key, cible: cible, niveau: niveau, fallback: !!fallback, qs: qs, i: 0, score: 0, verrou: false, hist: [] };
+    var boutons = [
+      { t: "▶ Commencer", f: function () { question(); } },
+      { t: "Plus tard", sec: true, f: function () { retourMenu(key, 0); } }
+    ];
+    montrer(entete(key) +
+      '<div class="ps-head">Test de passage</div>' +
+      '<div class="ps-titre">Pour ouvrir ' + ICONS[cible - 1] + " " + NOMS[cible - 1] + "</div>" +
+      chemin(key, cible) +
+      '<div class="ps-regles">' +
+      '<div class="ps-r"><span>🔊</span>Écoute le mot</div>' +
+      '<div class="ps-r"><span>👆</span>Touche la bonne réponse</div>' +
+      '<div class="ps-r"><span>🎯</span>' + need + " bonnes réponses sur " + qs.length + "</div></div>" +
+      boutonsHtml(boutons));
+    brancher(key, boutons);
+    direAide("passage");
+  }
+
+  /* Ecran 2 : questions */
+  function points(s) {
+    var h = '<div class="ps-pts">';
+    for (var k = 0; k < s.qs.length; k++) h += "<i class=\"" + (k < s.hist.length ? (s.hist[k] ? "ok" : "ko") : (k === s.i ? "cur" : "")) + '"></i>';
+    return h + "</div>";
+  }
+  function question() {
+    var s = etat, q = s.qs[s.i];
+    var h = entete(s.key) +
+      '<div class="ps-head">' + ICONS[s.niveau - 1] + " Test " + NOMS[s.niveau - 1] + " : " + (s.i + 1) + " / " + s.qs.length + "</div>" +
+      points(s) +
+      '<button class="ps-son" id="ps-son" aria-label="Écouter">🔊</button><div class="ps-mot">' + q.q.replace(/</g, "&lt;") + "</div>";
+    q.options.forEach(function (o, i) { h += '<button class="ps-rep" data-i="' + i + '">' + o.replace(/</g, "&lt;") + "</button>"; });
+    montrer(h);
+    brancher(s.key, []);
+    $("ps-aide").onclick = function () { dire(q.q, q.lang); };
+    $("ps-son").onclick = function () { dire(q.q, q.lang); };
+    dire(q.q, q.lang);
+    Array.prototype.forEach.call(ov.querySelectorAll(".ps-rep"), function (el) {
+      el.onclick = function () {
+        if (s.verrou) return;
+        s.verrou = true;
+        var bon = q.options[+el.dataset.i] === q.a;
+        if (bon) s.score++;
+        s.hist.push(bon);
+        el.classList.add(bon ? "ok" : "ko");
+        el.textContent = (bon ? "✅ " : "❌ ") + el.textContent;
+        if (!bon) Array.prototype.forEach.call(ov.querySelectorAll(".ps-rep"), function (x, k) { if (q.options[k] === q.a) x.classList.add("ok"); });
+        setTimeout(function () {
+          s.verrou = false; s.i++;
+          if (s.i < s.qs.length) question(); else fin();
+        }, bon ? 700 : 1400);
+      };
+    });
+  }
+
+  function cooldown(key, niveau) {
+    var f = lire()[key + ":" + niveau];
+    if (f && Date.now() - f < ATTENTE) return Math.ceil((ATTENTE - (Date.now() - f)) / 3600000);
+    return 0;
+  }
+
+  /* Ecran 3 : resultat */
+  function resultat(key, cible, emoji, titre, sous, boutons, histo) {
+    montrer(entete(key) +
+      '<div class="ps-grand">' + emoji + "</div>" + titre + '<div class="ps-sub">' + sous + "</div>" +
+      (histo || "") + chemin(key, cible) + boutonsHtml(boutons));
+    brancher(key, boutons);
+  }
+
+  /* Lance le test du niveau `niveau` pour viser `cible` */
+  function lancer(key, cible, niveau, fallback) {
+    var h = cooldown(key, niveau);
+    if (h > 0) {
+      etat = { key: key };
+      resultat(key, cible, "⏳", '<div class="ps-msg">Pas tout de suite</div>',
+        "Tu pourras refaire ce test dans " + h + " h. Révise d'abord le niveau " + NOMS[niveau - 1] + ".",
+        [{ t: ICONS[niveau - 1] + " Réviser " + NOMS[niveau - 1], f: function () { retourMenu(key, niveau); } }]);
+      direAide("retour");
+      return;
+    }
+    presentation(key, cible, niveau, fallback);
+  }
+
+  function fin() {
+    var s = etat, pct = s.score / s.qs.length, ok = pct >= SEUIL;
+    var note = s.score + " / " + s.qs.length, histo = points({ qs: s.qs, hist: s.hist, i: -1 });
+    var key = s.key, cible = s.cible;
+    var scoreHtml = '<p class="ps-score">' + note + "</p>";
+    if (ok) {
+      ouvrirNiveau(key, cible);
+      resultat(key, cible, "🎉", scoreHtml + '<div class="ps-msg">Baax na ! Niveau débloqué</div>',
+        ICONS[cible - 1] + " " + NOMS[cible - 1] + " est ouvert.",
+        [{ t: ICONS[cible - 1] + " Commencer " + NOMS[cible - 1], f: function () { retourMenu(key, cible); } }], histo);
+      direAide("bravo");
+      return;
+    }
+    var f = lire(); f[key + ":" + s.niveau] = Date.now(); ecrire(f);
+    var deja = debloque(key);
+    direAide("encore");
+    if (!s.fallback && cible === 3 && deja < 2) {
+      resultat(key, cible, "🤔", scoreHtml + '<div class="ps-msg">Pas encore</div>',
+        "On vérifie si tu peux commencer au niveau Intermédiaire.",
+        [{ t: "🌱 Test Débutant", f: function () { lancer(key, 2, 1, true); } },
+         { t: "Rester Débutant", sec: true, f: function () { retourMenu(key, 1); } }], histo);
+      return;
+    }
+    if (s.fallback) {
+      resultat(key, 2, "🌱", scoreHtml + '<div class="ps-msg">Tu commences Débutant</div>',
+        "Tu pourras refaire le test demain.",
+        [{ t: "🌱 Commencer Débutant", f: function () { retourMenu(key, 1); } }], histo);
+      return;
+    }
+    var reste = Math.max(1, deja);
+    resultat(key, cible, "💪", scoreHtml + '<div class="ps-msg">Pas encore</div>',
+      "Il faut " + Math.ceil(SEUIL * s.qs.length) + " bonnes réponses sur " + s.qs.length + ". Tu peux refaire le test demain.",
+      [{ t: ICONS[reste - 1] + " Réviser " + NOMS[reste - 1], f: function () { retourMenu(key, reste); } }], histo);
+  }
+
+  /* ---------- declenchement : toucher un niveau verrouille ---------- */
+  window.addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest(".lvl-btn.lock");
+    if (!b || ev.target.closest(".aide-ic")) return;
+    var box = b.parentNode, key = /lvl-(general|wolof|business)/.exec(box.id || "");
+    if (!key) return;
+    ev.stopImmediatePropagation(); ev.preventDefault();
+    var idx = Array.prototype.indexOf.call(box.querySelectorAll(".lvl-btn"), b) + 1;
+    lancer(key[1], idx, idx - 1, false);
+  }, true);
+
+  window.DiisooPassage = { version: 2, _etat: function () { return etat; } };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-passage.js",e);}
+
+try{
+/* ---- diisoo-stable.js ---- */
+/* diisoo-stable.js v1 : stabilite
+   1. L'ecran ne s'eteint pas pendant un exercice (Wake Lock)
+   2. L'app revient a l'endroit ou tu etais apres un rechargement ou si le telephone a ferme l'onglet
+   3. Dans les dialogues, l'ecran suit la phrase qui est lue (defilement + surlignage)
+   4. Micro plus tolerant : contractions, chiffres, hesitations, 5 propositions du moteur vocal */
+(function () {
+  "use strict";
+
+  function $(id) { return document.getElementById(id); }
+  function visible(id) { var e = $(id); return !!(e && e.offsetParent !== null); }
+
+  /* ---------- 1. Ecran toujours allume ---------- */
+  var verrou = null, veut = false;
+  function demander() {
+    if (!veut || verrou || document.hidden) return;
+    try {
+      if (navigator.wakeLock && navigator.wakeLock.request) {
+        navigator.wakeLock.request("screen").then(function (l) {
+          verrou = l;
+          l.addEventListener("release", function () { verrou = null; });
+        }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+  function liberer() { try { if (verrou) verrou.release(); } catch (e) {} verrou = null; }
+  function ecranActif() {
+    var s = document.querySelectorAll("[id^='screen-']"), id = null;
+    for (var i = 0; i < s.length; i++) { if (!s[i].classList.contains("hidden")) { id = s[i].id; break; } }
+    return id;
+  }
+  setInterval(function () {
+    var id = ecranActif();
+    veut = !!id && id !== "screen-dashboard" && id !== "screen-login" && id !== "screen-register";
+    if (veut) demander(); else liberer();
+  }, 1500);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) { verrou = null; demander(); } });
+
+  /* ---------- 2. Reprise la ou on s'etait arrete ---------- */
+  var CLE = "diisoo_pos", DUREE = 30 * 60 * 1000;
+  var OUVRIR = {
+    "screen-general": ["openGeneralModule", "general"],
+    "screen-wolof": ["openWolofModule", "wolof"],
+    "screen-business": ["openBusinessModule", "business"],
+    "screen-test-simulation": ["startTestSimulation", null]
+  };
+  function niveauActuel(key) {
+    try {
+      if (key === "business") return window.DiisooBiz.niveau();
+      return window.DiisooOrga.niveau(key);
+    } catch (e) { return null; }
+  }
+  var restaure = false;
+  function sauver() {
+    if (!restaure) return;
+    var id = ecranActif();
+    try {
+      if (!id || !OUVRIR[id]) { localStorage.removeItem(CLE); return; }
+      localStorage.setItem(CLE, JSON.stringify({ s: id, l: niveauActuel(OUVRIR[id][1]), t: Date.now() }));
+    } catch (e) {}
+  }
+  function reprendre() {
+    var p = null;
+    try { p = JSON.parse(localStorage.getItem(CLE) || "null"); } catch (e) {}
+    restaure = true;
+    if (!p || !OUVRIR[p.s] || Date.now() - p.t > DUREE) return;
+    if (ecranActif() !== "screen-dashboard") return;
+    var fn = window[OUVRIR[p.s][0]];
+    if (typeof fn !== "function") return;
+    try { fn(); } catch (e) { return; }
+    if (p.l) {
+      setTimeout(function () {
+        var b = document.querySelectorAll("#lvl-" + OUVRIR[p.s][1] + " .lvl-btn")[p.l - 1];
+        if (b && !b.classList.contains("lock")) b.click();
+      }, 400);
+    }
+  }
+  setInterval(sauver, 1000);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) sauver(); });
+  window.addEventListener("pagehide", sauver);
+  /* On attend que l'ecran d'accueil soit pret, puis on reprend (une seule fois) */
+  var essais = 0, tReprise = setInterval(function () {
+    essais++;
+    if (visible("screen-dashboard")) { clearInterval(tReprise); setTimeout(reprendre, 300); }
+    else if (essais > 40) { clearInterval(tReprise); restaure = true; }
+  }, 250);
+
+  /* ---------- 3. L'ecran suit le dialogue ---------- */
+  var st = document.createElement("style");
+  st.textContent = ".dii-suit{background:rgba(225,105,63,.22)!important;outline:2px solid #E1693F;border-radius:10px;transition:background .2s}";
+  document.head.appendChild(st);
+  var dernier = null;
+  function suivre(texte) {
+    try {
+      var t = String(texte || "").trim();
+      if (t.length < 2) return;
+      var cands = document.querySelectorAll("[id^='bdl-'], .dlg-bulle, [data-dlg-line], .dlg-ligne");
+      var trouve = null;
+      for (var i = 0; i < cands.length; i++) {
+        if (cands[i].textContent.indexOf(t) > -1 && cands[i].offsetParent !== null) { trouve = cands[i]; break; }
+      }
+      if (dernier) dernier.classList.remove("dii-suit");
+      if (!trouve) { dernier = null; return; }
+      dernier = trouve;
+      trouve.classList.add("dii-suit");
+      trouve.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (e) {}
+  }
+  function finSuivi() { if (dernier) { dernier.classList.remove("dii-suit"); dernier = null; } }
+  var seqOrig = window.playSequence;
+  if (typeof seqOrig === "function") {
+    window.playSequence = function (items) {
+      var liste = (items || []).map(function (it) {
+        var o = Object.assign({}, it), f = it.onStart;
+        o.onStart = function () { suivre(it.text); if (typeof f === "function") f(); };
+        return o;
+      });
+      var r = seqOrig.call(this, liste);
+      try { Promise.resolve(r).then(finSuivi, finSuivi); } catch (e) {}
+      return r;
+    };
+  }
+
+  /* ---------- 4. Micro plus tolerant ---------- */
+  var CONTR = [
+    [/\bi'm\b/g, "i am"], [/\byou're\b/g, "you are"], [/\bwe're\b/g, "we are"], [/\bthey're\b/g, "they are"],
+    [/\bhe's\b/g, "he is"], [/\bshe's\b/g, "she is"], [/\bit's\b/g, "it is"], [/\bthat's\b/g, "that is"],
+    [/\bwhat's\b/g, "what is"], [/\bwhere's\b/g, "where is"], [/\bhow's\b/g, "how is"], [/\bthere's\b/g, "there is"],
+    [/\bi've\b/g, "i have"], [/\bwe've\b/g, "we have"], [/\byou've\b/g, "you have"], [/\bi'll\b/g, "i will"],
+    [/\byou'll\b/g, "you will"], [/\bwe'll\b/g, "we will"], [/\bi'd\b/g, "i would"], [/\blet's\b/g, "let us"],
+    [/\bdon't\b/g, "do not"], [/\bdoesn't\b/g, "does not"], [/\bdidn't\b/g, "did not"], [/\bcan't\b/g, "can not"],
+    [/\bcannot\b/g, "can not"], [/\bwon't\b/g, "will not"], [/\bisn't\b/g, "is not"], [/\baren't\b/g, "are not"],
+    [/\bwasn't\b/g, "was not"], [/\bcouldn't\b/g, "could not"], [/\bshouldn't\b/g, "should not"], [/\bwouldn't\b/g, "would not"],
+    [/\bgonna\b/g, "going to"], [/\bwanna\b/g, "want to"], [/\bgotta\b/g, "got to"]
+  ];
+  var NB = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+    "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
+  var origNorm = window.normalize;
+  if (typeof origNorm === "function") {
+    window.normalize = function (s) {
+      var t = String(s == null ? "" : s).toLowerCase().replace(/[‘’ʼ`]/g, "'");
+      CONTR.forEach(function (c) { t = t.replace(c[0], c[1]); });
+      t = t.replace(/\b(\d{1,2})\b/g, function (m, n) { n = +n; return n <= 20 ? NB[n] : m; });
+      t = t.replace(/\b(uh|um|umm|uhm|erm|er|hmm|ah|oh)\b/g, " ");
+      t = t.replace(/\b(ok|okay)\b/g, "okay");
+      return origNorm(t);
+    };
+  }
+
+  /* 5 propositions du moteur vocal au lieu d'une : la meilleure par rapport a la phrase attendue est gardee */
+  try {
+    var SRc = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SRc && SRc.prototype) {
+      var P = SRc.prototype;
+      var dm = Object.getOwnPropertyDescriptor(P, "maxAlternatives");
+      if (dm && dm.set) {
+        Object.defineProperty(P, "maxAlternatives", {
+          configurable: true, enumerable: dm.enumerable,
+          get: dm.get, set: function () { dm.set.call(this, 5); }
+        });
+      }
+      var dr = Object.getOwnPropertyDescriptor(P, "onresult");
+      if (dr && dr.set) {
+        Object.defineProperty(P, "onresult", {
+          configurable: true, enumerable: dr.enumerable,
+          get: dr.get,
+          set: function (fn) {
+            if (typeof fn !== "function") { dr.set.call(this, fn); return; }
+            dr.set.call(this, function (e) {
+              var ev = e;
+              try { ev = choisirMeilleur(e); } catch (x) { ev = e; }
+              return fn.call(this, ev);
+            });
+          }
+        });
+      }
+    }
+  } catch (e) {}
+
+  /* Phrase attendue : lue sur le bouton micro touche en dernier */
+  var cible = "";
+  function lireCible(btn) {
+    try {
+      var d = (btn.dataset.practice || "").split(":");
+      if (d[0] === "biz" && window.CHINA_TRADE_WOLOF) return CHINA_TRADE_WOLOF[d[1]].vocab[+d[2]].en;
+      var carte = btn.closest(".fx-em, .bg-\\[\\#141A2B\\], .dlg-bulle, div");
+      var p = carte && carte.querySelector("p");
+      return p ? p.textContent : "";
+    } catch (e) { return ""; }
+  }
+  document.addEventListener("pointerdown", function (ev) {
+    var b = ev.target.closest && ev.target.closest("[data-practice]");
+    cible = b && !/^(biz-|.*-en|.*-wo)/.test(b.dataset.practice || "") ? lireCible(b) : "";
+  }, true);
+
+  function score(a, b) {
+    a = window.normalize(a); b = window.normalize(b);
+    if (!a || !b) return 0;
+    var A = a.split(" "), B = b.split(" "), ok = 0;
+    B.forEach(function (w) { if (A.indexOf(w) > -1) ok++; });
+    return ok / B.length;
+  }
+  /* Renvoie un evenement equivalent ou la meilleure proposition est en position 0 */
+  function choisirMeilleur(e) {
+    if (!cible || !e.results) return e;
+    var res = [];
+    for (var i = 0; i < e.results.length; i++) {
+      var r = e.results[i], best = 0, bs = -1;
+      for (var k = 0; k < r.length; k++) {
+        var sc = score(r[k].transcript, cible);
+        if (sc > bs) { bs = sc; best = k; }
+      }
+      var x = [r[best]];
+      x.isFinal = r.isFinal;
+      res.push(x);
+    }
+    return { resultIndex: e.resultIndex, results: res, type: e.type };
+  }
+
+  window.DiisooStable = { version: 1, reprendre: reprendre };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-stable.js",e);}
+
+try{
+/* ---- diisoo-tourisme.js ---- */
+/* diisoo-tourisme.js v1 : le tourisme au coeur de Diisoo
+   12 themes de situations reelles (accueil, taxi, restaurant, Goree, monuments, artisanat, excursions, plage,
+   vendre un circuit, urgences, agence de voyage, culture). Chaque theme : 8 mots, un dialogue, 3 questions.
+   Marques par le pictogramme 🏝️ et classes en N1 / N2 / N3 comme les autres themes.
+   Wolof : premiere version a faire valider par un locuteur natif. */
+(function () {
+  "use strict";
+  if (window.__diisooTourisme) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooTourisme = true;
+
+  function V(a) { return a.map(function (x) { return { en: x[0], fr: x[1], wo: x[2] }; }); }
+  function D(a) { return a.map(function (x) { return { who: x[0], en: x[1], fr: x[2], wo: x[3] }; }); }
+  function Q(a) { return a.map(function (x) { return { q: x[0], o: x[1], a: 0, why: x[2] }; }); }
+
+  var T = [
+    /* ---------------- N1 ---------------- */
+    { id: "tour-accueil", niv: 1, title: "Accueillir un touriste",
+      vocab: V([
+        ["Welcome to Senegal", "Bienvenue au Sénégal", "Dalal ak jàmm ci Senegaal"],
+        ["Hello, how are you?", "Bonjour, comment allez-vous ?", "Salaamaleekum, naka nga def ?"],
+        ["My name is Awa", "Je m'appelle Awa", "Maa ngi tudd Awa"],
+        ["Where are you from?", "D'où venez-vous ?", "Fan nga jóge ?"],
+        ["I am from France", "Je viens de France", "Maa ngi jóge Faraas"],
+        ["Nice to meet you", "Enchanté", "Neex na ma xam la"],
+        ["Is it your first visit?", "C'est votre première visite ?", "Ndax yoon wu jëkk la ?"],
+        ["Enjoy your stay", "Bon séjour", "Jàmm ak jàmm ci sa fanaan"]
+      ]),
+      dialogue: D([
+        ["A", "Welcome to Senegal. How are you?", "Bienvenue au Sénégal. Comment allez-vous ?", "Dalal ak jàmm ci Senegaal. Naka nga def ?"],
+        ["B", "I am fine, thank you. My name is Anna.", "Je vais bien, merci. Je m'appelle Anna.", "Maa ngi fi, jërëjëf. Maa ngi tudd Anna."],
+        ["A", "Nice to meet you, Anna. Where are you from?", "Enchanté, Anna. D'où venez-vous ?", "Neex na ma xam la, Anna. Fan nga jóge ?"],
+        ["B", "I am from Germany. It is my first visit.", "Je viens d'Allemagne. C'est ma première visite.", "Maa ngi jóge Almaañ. Yoon wu jëkk la."],
+        ["A", "Very good. I will show you the city.", "Très bien. Je vais vous montrer la ville.", "Baax na. Dinaa la won dëkk bi."],
+        ["B", "Thank you, you are very kind.", "Merci, vous êtes très gentil.", "Jërëjëf, jàmm nga ci lool."]
+      ]),
+      quiz: Q([
+        ["___ to Senegal!", ["Welcome", "Welcomed", "Well come"], "« Welcome to » = bienvenue à."],
+        ["Where are you ___?", ["from", "of", "at"], "« Where are you from? » = d'où venez-vous ?"],
+        ["Nice to ___ you.", ["meet", "met", "meeting"], "Après « to », le verbe reste à l'infinitif."]
+      ]) },
+
+    { id: "tour-taxi", niv: 1, title: "Taxi et transport",
+      vocab: V([
+        ["Taxi", "Taxi", "Taksi bi"],
+        ["Airport", "Aéroport", "Ayeropoor bi"],
+        ["Hotel", "Hôtel", "Otel bi"],
+        ["Where do you want to go?", "Où voulez-vous aller ?", "Fan nga bëgg a dem ?"],
+        ["Take me to the hotel", "Emmenez-moi à l'hôtel", "Yóbbu ma ci otel bi"],
+        ["How much is the ride?", "Combien coûte la course ?", "Ñaata la yoon wi ?"],
+        ["Please stop here", "Arrêtez-vous ici, s'il vous plaît", "Taxawal fii, baal ma"],
+        ["Keep the change", "Gardez la monnaie", "Bàyyil ko ñaanu"]
+      ]),
+      dialogue: D([
+        ["A", "Hello. Where do you want to go?", "Bonjour. Où voulez-vous aller ?", "Salaamaleekum. Fan nga bëgg a dem ?"],
+        ["B", "Take me to the Hotel Teranga, please.", "Emmenez-moi à l'hôtel Teranga, s'il vous plaît.", "Yóbbu ma ci otel Teranga, baal ma."],
+        ["B", "How much is the ride?", "Combien coûte la course ?", "Ñaata la yoon wi ?"],
+        ["A", "Five thousand francs.", "Cinq mille francs.", "Juróom junni franc."],
+        ["B", "That is a bit expensive. Can you do four thousand?", "C'est un peu cher. Pouvez-vous faire quatre mille ?", "Dafa seer tuuti. Mën nga def ñaar junni ak ñaar ?"],
+        ["A", "Okay, four thousand. Let us go.", "D'accord, quatre mille. Allons-y.", "Baax na, ñeent junni. Ñu dem."]
+      ]),
+      quiz: Q([
+        ["Take me ___ the hotel.", ["to", "at", "in"], "« take me to » = emmenez-moi à."],
+        ["How ___ is the ride?", ["much", "many", "long-much"], "Le prix : « how much »."],
+        ["Please ___ here.", ["stop", "stops", "stopping"], "Impératif poli : « please stop here »."]
+      ]) },
+
+    { id: "tour-resto", niv: 1, title: "Au restaurant",
+      vocab: V([
+        ["Menu", "Carte", "Menu bi"],
+        ["Water", "Eau", "Ndox mi"],
+        ["Rice and fish", "Riz et poisson", "Ceebu jën"],
+        ["I would like chicken", "Je voudrais du poulet", "Bëgg naa ganaar"],
+        ["Is it spicy?", "Est-ce pimenté ?", "Ndax dafa xonq ?"],
+        ["No pepper, please", "Sans piment, s'il vous plaît", "Amul sàkka, baal ma"],
+        ["The bill, please", "L'addition, s'il vous plaît", "Faktiir bi, baal ma"],
+        ["It was delicious", "C'était délicieux", "Neex na lool"]
+      ]),
+      dialogue: D([
+        ["A", "Good evening. Here is the menu.", "Bonsoir. Voici la carte.", "Bonsoir. Nii mooy menu bi."],
+        ["B", "Thank you. What is the dish of the day?", "Merci. Quel est le plat du jour ?", "Jërëjëf. Lan mooy añu bi tey ?"],
+        ["A", "It is thieboudienne, rice with fish.", "C'est le thieboudienne, du riz au poisson.", "Ceebu jën la."],
+        ["B", "Is it spicy? I do not like pepper.", "Est-ce pimenté ? Je n'aime pas le piment.", "Ndax dafa xonq ? Bëgguma sàkka."],
+        ["A", "No problem, I will ask the cook.", "Pas de souci, je demande au cuisinier.", "Amul solo, dinaa ko wax kuisinie bi."],
+        ["B", "Perfect. And a bottle of water, please.", "Parfait. Et une bouteille d'eau, s'il vous plaît.", "Baax na. Ak benn butel ndox, baal ma."]
+      ]),
+      quiz: Q([
+        ["I ___ like chicken.", ["would", "will", "am"], "« I would like » = je voudrais (poli)."],
+        ["The ___, please.", ["bill", "bell", "bull"], "« the bill » = l'addition."],
+        ["Is it ___?", ["spicy", "spice", "spicing"], "Adjectif après « is it » : spicy."]
+      ]) },
+
+    /* ---------------- N2 ---------------- */
+    { id: "tour-goree", niv: 2, title: "Visiter l'île de Gorée",
+      vocab: V([
+        ["Island", "Île", "Dun gi"],
+        ["Ferry", "Bateau", "Pirogue bu mag bi"],
+        ["Ticket", "Billet", "Tikke bi"],
+        ["History", "Histoire", "Taarix bi"],
+        ["The House of Slaves", "La Maison des Esclaves", "Kër gu jaam yi"],
+        ["The ferry leaves at ten o'clock", "Le bateau part à dix heures", "Bato bi dina dem ci fukk i waxtu"],
+        ["How long is the crossing?", "Combien dure la traversée ?", "Ñaata la yoon wi di yagg ?"],
+        ["Can I take photos here?", "Puis-je prendre des photos ici ?", "Mën naa foto fii ?"]
+      ]),
+      dialogue: D([
+        ["A", "Good morning. Two tickets for Gorée, please.", "Bonjour. Deux billets pour Gorée, s'il vous plaît.", "Salaamaleekum. Ñaari tikke ngir Beer, baal ma."],
+        ["B", "Here you are. The ferry leaves at ten o'clock.", "Voilà. Le bateau part à dix heures.", "Nii la. Bato bi dina dem ci fukk i waxtu."],
+        ["A", "How long is the crossing?", "Combien dure la traversée ?", "Ñaata la yoon wi di yagg ?"],
+        ["B", "About twenty minutes.", "Environ vingt minutes.", "Ni ñaar fukk i miniit."],
+        ["A", "Can I take photos in the House of Slaves?", "Puis-je prendre des photos dans la Maison des Esclaves ?", "Mën naa foto ci kër gu jaam yi ?"],
+        ["B", "Yes, but please be respectful. It is a place of memory.", "Oui, mais soyez respectueux. C'est un lieu de mémoire.", "Waaw, waaye teral fi. Barab la bu ñuy fàttali."]
+      ]),
+      quiz: Q([
+        ["The ferry ___ at ten o'clock.", ["leaves", "leave", "leaving"], "Sujet singulier : leaves."],
+        ["How ___ is the crossing?", ["long", "far", "many"], "La durée : « how long »."],
+        ["Can I ___ photos here?", ["take", "taking", "took"], "Après « can » : verbe de base."]
+      ]) },
+
+    { id: "tour-monuments", niv: 2, title: "Monuments et lieux célèbres",
+      vocab: V([
+        ["The African Renaissance Monument", "Le Monument de la Renaissance africaine", "Mónumaa Mucc-Afrig bi"],
+        ["The Pink Lake", "Le Lac Rose", "Lac Rose bi"],
+        ["The museum", "Le musée", "Musée bi"],
+        ["The cathedral", "La cathédrale", "Katedraal bi"],
+        ["It is open every day", "C'est ouvert tous les jours", "Dafa ubbeeku bés bu nekk"],
+        ["How much is the entrance fee?", "Combien coûte l'entrée ?", "Ñaata la dugg bi ?"],
+        ["Is there a guide?", "Y a-t-il un guide ?", "Ndax am na ab gid ?"],
+        ["It is very beautiful", "C'est très beau", "Dafa rafet lool"]
+      ]),
+      dialogue: D([
+        ["A", "Is the museum open today?", "Le musée est-il ouvert aujourd'hui ?", "Ndax musée bi dafa ubbeeku tey ?"],
+        ["B", "Yes, from nine to five.", "Oui, de neuf heures à dix-sept heures.", "Waaw, ci juróom-ñaar waxtu ba ci juróom i waxtu."],
+        ["A", "How much is the entrance fee?", "Combien coûte l'entrée ?", "Ñaata la dugg bi ?"],
+        ["B", "Two thousand francs for adults.", "Deux mille francs pour les adultes.", "Ñaar junni franc ngir ñi mag."],
+        ["A", "Is there a guide who speaks English?", "Y a-t-il un guide qui parle anglais ?", "Ndax am na gid bu wax Àngale ?"],
+        ["B", "Yes, he will meet you at the door.", "Oui, il vous attendra à la porte.", "Waaw, dina la xaar ci bunt bi."]
+      ]),
+      quiz: Q([
+        ["The museum is open ___ day.", ["every", "all", "each of"], "« every day » = tous les jours."],
+        ["How much is the ___ fee?", ["entrance", "enter", "entering"], "« entrance fee » = prix d'entrée."],
+        ["Is there a guide who ___ English?", ["speaks", "speak", "speaking"], "Sujet singulier (who = a guide) : speaks."]
+      ]) },
+
+    { id: "tour-artisanat", niv: 2, title: "Artisanat et marchandage",
+      vocab: V([
+        ["Souvenir", "Souvenir", "Fàttaliku"],
+        ["Mask", "Masque", "Maske bi"],
+        ["Fabric", "Tissu", "Almba bi"],
+        ["Handmade", "Fait main", "Ñaw ci loxo"],
+        ["How much is this?", "C'est combien ?", "Ñaata la bii ?"],
+        ["That is too expensive", "C'est trop cher", "Dafa seer lool"],
+        ["Can you lower the price?", "Pouvez-vous baisser le prix ?", "Mën nga wàññi njëg gi ?"],
+        ["I will take it", "Je le prends", "Dinaa ko jënd"]
+      ]),
+      dialogue: D([
+        ["A", "Welcome. Look, it is handmade.", "Bienvenue. Regardez, c'est fait main.", "Dalal ak jàmm. Xoolal, ñaw ci loxo la."],
+        ["B", "It is beautiful. How much is this mask?", "C'est beau. Combien coûte ce masque ?", "Dafa rafet. Ñaata la maske bii ?"],
+        ["A", "Twenty thousand francs.", "Vingt mille francs.", "Ñaar fukk junni franc."],
+        ["B", "That is too expensive. Can you lower the price?", "C'est trop cher. Pouvez-vous baisser le prix ?", "Dafa seer lool. Mën nga wàññi njëg gi ?"],
+        ["A", "For you, fifteen thousand.", "Pour vous, quinze mille.", "Ngir yow, fukk ak juróom junni."],
+        ["B", "Twelve thousand and I will take it.", "Douze mille et je le prends.", "Fukk ak ñaar junni te dinaa ko jënd."]
+      ]),
+      quiz: Q([
+        ["That is ___ expensive.", ["too", "to", "two"], "« too expensive » = trop cher."],
+        ["Can you ___ the price?", ["lower", "lowering", "lowered"], "Après « can » : verbe de base."],
+        ["I will ___ it.", ["take", "took", "taking"], "« I will take it » = je le prends."]
+      ]) },
+
+    { id: "tour-excursion", niv: 2, title: "Excursions et safari",
+      vocab: V([
+        ["Tour", "Circuit, visite", "Tuur bi"],
+        ["Guide", "Guide", "Gid bi"],
+        ["Animals", "Animaux", "Mala yi"],
+        ["Bird", "Oiseau", "Picc mi"],
+        ["The Saloum Delta", "Le delta du Saloum", "Saloum bi"],
+        ["What time does the tour start?", "À quelle heure commence la visite ?", "Ban waxtu la tuur bi di tambali ?"],
+        ["Bring water and a hat", "Apportez de l'eau et un chapeau", "Indil ndox ak mbaxanaas"],
+        ["We will see lions and giraffes", "Nous verrons des lions et des girafes", "Dinanu gis gaynde ak jiraaf"]
+      ]),
+      dialogue: D([
+        ["A", "I would like to book a tour of the Bandia reserve.", "Je voudrais réserver une visite de la réserve de Bandia.", "Bëgg naa jàppe tuur ci rezerw Bandia."],
+        ["B", "Of course. What time do you want to start?", "Bien sûr. À quelle heure voulez-vous commencer ?", "Waaw. Ban waxtu nga bëgg a tambali ?"],
+        ["A", "At nine o'clock. How long is the tour?", "À neuf heures. Combien de temps dure la visite ?", "Ci juróom-ñett i waxtu. Ñaata la tuur bi di yagg ?"],
+        ["B", "Three hours. You will see giraffes and rhinos.", "Trois heures. Vous verrez des girafes et des rhinocéros.", "Ñetti waxtu. Dinga gis jiraaf ak rinoseros."],
+        ["A", "What should I bring?", "Que dois-je apporter ?", "Lan laa war a indi ?"],
+        ["B", "Water, a hat and sun cream.", "De l'eau, un chapeau et de la crème solaire.", "Ndox, mbaxanaas ak krem bu jant."]
+      ]),
+      quiz: Q([
+        ["What time ___ the tour start?", ["does", "do", "is"], "Question au présent : « does » avec the tour."],
+        ["We will ___ lions.", ["see", "saw", "seeing"], "« will » + verbe de base."],
+        ["Bring water ___ a hat.", ["and", "or", "but"], "« and » = et."]
+      ]) },
+
+    { id: "tour-plage", niv: 2, title: "Plage et activités",
+      vocab: V([
+        ["Beach", "Plage", "Tefes gi"],
+        ["Sea", "Mer", "Géej gi"],
+        ["Sun cream", "Crème solaire", "Krem bu jant"],
+        ["Surfboard", "Planche de surf", "Planch surf"],
+        ["Is it safe to swim here?", "Peut-on nager ici sans danger ?", "Ndax mën nañu bëre fii ci jàmm ?"],
+        ["The water is warm", "L'eau est chaude", "Ndox mi dafa tàng"],
+        ["I want to rent a boat", "Je veux louer une pirogue", "Bëgg naa fey pirog"],
+        ["What a beautiful sunset", "Quel beau coucher de soleil", "Jant bi dafa rafet"]
+      ]),
+      dialogue: D([
+        ["A", "Excuse me, is it safe to swim here?", "Excusez-moi, peut-on nager ici sans danger ?", "Baal ma, ndax mën nañu bëre fii ci jàmm ?"],
+        ["B", "Yes, but stay near the flags.", "Oui, mais restez près des drapeaux.", "Waaw, waaye nekkal ci wetu drapo yi."],
+        ["A", "Can I rent a surfboard?", "Puis-je louer une planche de surf ?", "Mën naa fey planch surf ?"],
+        ["B", "Yes, ten thousand francs for two hours.", "Oui, dix mille francs pour deux heures.", "Waaw, fukk junni franc ngir ñaari waxtu."],
+        ["A", "Thank you. The water is warm today.", "Merci. L'eau est chaude aujourd'hui.", "Jërëjëf. Ndox mi dafa tàng tey."],
+        ["B", "Enjoy the sunset at the end of the day.", "Profitez du coucher de soleil en fin de journée.", "Bégal ak jant bi ci ngoon."]
+      ]),
+      quiz: Q([
+        ["Is it ___ to swim here?", ["safe", "save", "sure"], "« safe » = sans danger."],
+        ["I want to ___ a boat.", ["rent", "rents", "renting"], "« want to » + verbe de base."],
+        ["The water ___ warm.", ["is", "are", "be"], "Sujet singulier : is."]
+      ]) },
+
+    /* ---------------- N3 ---------------- */
+    { id: "tour-circuit", niv: 3, title: "Vendre un circuit touristique",
+      vocab: V([
+        ["Itinerary", "Itinéraire", "Yoon wi"],
+        ["Package", "Forfait", "Pak bi"],
+        ["All inclusive", "Tout compris", "Lépp ci biir"],
+        ["Group discount", "Réduction de groupe", "Wàññi njëg ngir mbooloo"],
+        ["Our tours include transport, meals and a guide", "Nos circuits comprennent le transport, les repas et un guide", "Sunu tuur yi am nañu yoon, añ ak gid"],
+        ["We can adapt the program to your needs", "Nous pouvons adapter le programme à vos besoins", "Mën nanu soppi porogaram bi ci li ngeen soxla"],
+        ["A deposit of thirty percent is required", "Un acompte de trente pour cent est demandé", "Ñu di laaj fanweer ci téeméer ci ndoorte"],
+        ["The price is per person", "Le prix est par personne", "Njëg gi ci nit la"]
+      ]),
+      dialogue: D([
+        ["A", "We would like a five-day tour of Senegal.", "Nous voudrions un circuit de cinq jours au Sénégal.", "Bëgg nanu ab tuur ci juróom fan ci Senegaal."],
+        ["B", "Certainly. We offer a package with Dakar, Gorée, Saly and the Saloum Delta.", "Bien sûr. Nous proposons un forfait avec Dakar, Gorée, Saly et le delta du Saloum.", "Waaw. Dinanu la jox pak bu am Ndakaaru, Beer, Saly ak Saloum."],
+        ["A", "What is included in the price?", "Qu'est-ce qui est compris dans le prix ?", "Lan la njëg gi ëmb ?"],
+        ["B", "Transport, hotels, breakfast and an English-speaking guide.", "Le transport, les hôtels, le petit-déjeuner et un guide anglophone.", "Yoon, otel yi, ndekki ak gid bu xam Àngale."],
+        ["A", "Is there a discount for a group of ten?", "Y a-t-il une réduction pour un groupe de dix ?", "Ndax am na wàññi njëg ngir mbooloo mu fukk ?"],
+        ["B", "Yes, ten percent. A deposit of thirty percent confirms the booking.", "Oui, dix pour cent. Un acompte de trente pour cent confirme la réservation.", "Waaw, fukk ci téeméer. Ndoorte bu fanweer ci téeméer mooy dëggal réserwasioŋ bi."]
+      ]),
+      quiz: Q([
+        ["The price is ___ person.", ["per", "for each of", "by"], "« per person » = par personne."],
+        ["We can ___ the program.", ["adapt", "adopt", "adept"], "« adapt » = adapter."],
+        ["A ___ of thirty percent is required.", ["deposit", "depose", "deposition"], "« deposit » = acompte."]
+      ]) },
+
+    { id: "tour-urgence", niv: 3, title: "Santé, sécurité et urgences",
+      vocab: V([
+        ["I need a doctor", "J'ai besoin d'un médecin", "Soxla naa doktoor"],
+        ["Pharmacy", "Pharmacie", "Farmasi bi"],
+        ["My bag was stolen", "On m'a volé mon sac", "Sama sàq bi sàcc nañu ko"],
+        ["Call the police", "Appelez la police", "Woowal poliis yi"],
+        ["I have lost my passport", "J'ai perdu mon passeport", "Réer naa sama paspoor"],
+        ["Where is the nearest hospital?", "Où est l'hôpital le plus proche ?", "Fan la opitaal bi gën a jege nekk ?"],
+        ["I am allergic to peanuts", "Je suis allergique aux arachides", "Maa ngi am alerji ci gerte"],
+        ["Please help me", "Aidez-moi, s'il vous plaît", "Dimbali ma, baal ma"]
+      ]),
+      dialogue: D([
+        ["A", "Help! My bag was stolen.", "Au secours ! On m'a volé mon sac.", "Dimbali ma ! Sama sàq bi sàcc nañu ko."],
+        ["B", "Stay calm. What was in the bag?", "Restez calme. Qu'y avait-il dans le sac ?", "Dal-leen. Lan la sàq bi doon ëmb ?"],
+        ["A", "My passport and my phone.", "Mon passeport et mon téléphone.", "Sama paspoor ak sama telefon."],
+        ["B", "We will call the police. Where were you?", "Nous allons appeler la police. Où étiez-vous ?", "Dinanu woowal poliis yi. Fan nga nekkoon ?"],
+        ["A", "Near the market. Where is the nearest police station?", "Près du marché. Où est le commissariat le plus proche ?", "Ci wetu marse bi. Fan la komiseriya bi gën a jege nekk ?"],
+        ["B", "I will take you there. Do not worry.", "Je vous y emmène. Ne vous inquiétez pas.", "Dinaa la yóbbu foofu. Bul jaaxle."]
+      ]),
+      quiz: Q([
+        ["My bag was ___.", ["stolen", "stole", "steal"], "Passif : « was stolen » = a été volé."],
+        ["I have ___ my passport.", ["lost", "lose", "loose"], "« have lost » = ai perdu."],
+        ["Where is the ___ hospital?", ["nearest", "near", "nearly"], "Superlatif : « the nearest »."]
+      ]) },
+
+    { id: "tour-agence", niv: 3, title: "Agence de voyage : vols et billets",
+      vocab: V([
+        ["Flight", "Vol", "Vol bi"],
+        ["Round trip", "Aller-retour", "Dem ak dellusi"],
+        ["One way", "Aller simple", "Dem rekk"],
+        ["Departure", "Départ", "Dem bi"],
+        ["Arrival", "Arrivée", "Agsi bi"],
+        ["I would like to book a flight to Paris", "Je voudrais réserver un vol pour Paris", "Bëgg naa jàppe vol ngir Pari"],
+        ["Do you have a visa?", "Avez-vous un visa ?", "Ndax am nga visa ?"],
+        ["The luggage limit is twenty-three kilos", "La limite de bagage est de vingt-trois kilos", "Bagaas bi ñetti fukk ak ñaar kilo la"]
+      ]),
+      dialogue: D([
+        ["A", "Good morning. I would like to book a round trip to Paris.", "Bonjour. Je voudrais réserver un aller-retour pour Paris.", "Salaamaleekum. Bëgg naa jàppe dem ak dellusi ngir Pari."],
+        ["B", "When do you want to leave?", "Quand voulez-vous partir ?", "Kañ nga bëgg a dem ?"],
+        ["A", "On the fifteenth of December, and return on the second of January.", "Le quinze décembre, et retour le deux janvier.", "Ci fukk ak juróom i desàmbar, te dellusi ci ñaar i sanwiyee."],
+        ["B", "The price is five hundred thousand francs. Do you have a valid passport?", "Le prix est de cinq cent mille francs. Avez-vous un passeport valide ?", "Njëg gi juróom téeméer junni la. Ndax am nga paspoor bu baax ?"],
+        ["A", "Yes. Is the luggage included?", "Oui. Les bagages sont-ils compris ?", "Waaw. Ndax bagaas bi ci biir la ?"],
+        ["B", "One bag of twenty-three kilos is included.", "Un bagage de vingt-trois kilos est inclus.", "Benn bagaas bu ñetti fukk ak ñaar kilo ci biir la."]
+      ]),
+      quiz: Q([
+        ["I would like to ___ a flight.", ["book", "booking", "booked"], "« would like to » + verbe de base."],
+        ["A ___ trip means going and coming back.", ["round", "circle", "double"], "« round trip » = aller-retour."],
+        ["Is the luggage ___?", ["included", "include", "including"], "« Is ... included? » = est-ce compris ?"]
+      ]) },
+
+    { id: "tour-culture", niv: 3, title: "Parler de la culture sénégalaise",
+      vocab: V([
+        ["Teranga means hospitality", "La teranga veut dire l'hospitalité", "Teranga mooy dalal ak jàmm"],
+        ["Wrestling is our national sport", "La lutte est notre sport national", "Làmb mooy sunu ay ndaje"],
+        ["Thieboudienne is the national dish", "Le thieboudienne est le plat national", "Ceebu jën mooy añu réew mi"],
+        ["We say hello with a handshake", "On se salue en se serrant la main", "Nuyoo nanu ak loxo"],
+        ["Tea is shared with friends", "Le thé se partage entre amis", "Attaaya mi, ñépp a ko séddoo"],
+        ["Music and dance are very important", "La musique et la danse sont très importantes", "Xalam ak fecc am nañu solo bu réy"],
+        ["Many languages are spoken in Senegal", "On parle beaucoup de langues au Sénégal", "Ay làkk a bari ci Senegaal"],
+        ["Wolof is the most widely spoken language", "Le wolof est la langue la plus parlée", "Wolof mooy làkk wi gën a jëfandikoo"]
+      ]),
+      dialogue: D([
+        ["A", "What is the meaning of teranga?", "Que signifie la teranga ?", "Lan mooy tekki teranga ?"],
+        ["B", "It means hospitality. We welcome everyone as family.", "Cela veut dire l'hospitalité. Nous accueillons chacun comme de la famille.", "Mooy dalal ak jàmm. Danuy dalal ñépp ni njabootu."],
+        ["A", "What do people eat for lunch?", "Que mange-t-on au déjeuner ?", "Lan la nit ñi di añ ?"],
+        ["B", "Usually thieboudienne. We eat from one big plate.", "Généralement le thieboudienne. On mange dans un grand plat.", "Ceebu jën la lu ëpp. Danuy lekk ci benn bàttu."],
+        ["A", "And after the meal?", "Et après le repas ?", "Ak ginnaaw añ bi ?"],
+        ["B", "We drink attaya, three small glasses, slowly and with friends.", "On boit l'attaya, trois petits verres, doucement et entre amis.", "Danuy naan attaaya, ñetti kaas yu ndaw, ak jàmm ak xarit yi."]
+      ]),
+      quiz: Q([
+        ["Wolof is the ___ widely spoken language.", ["most", "more", "much"], "Superlatif long : « the most widely »."],
+        ["Many languages ___ spoken in Senegal.", ["are", "is", "be"], "Sujet pluriel : are."],
+        ["Tea is ___ with friends.", ["shared", "share", "sharing"], "Passif : « is shared »."]
+      ]) }
+  ];
+
+  var ids = {};
+  G.forEach(function (t) { ids[t.id] = true; });
+  T.forEach(function (t) {
+    if (ids[t.id]) return;
+    G.push({
+      id: t.id, niveau: t.niv, tourisme: true,
+      title: "N" + t.niv + " · 🏝️ " + t.title,
+      vocab: t.vocab, dialogue: t.dialogue, quiz: t.quiz
+    });
+  });
+  G.sort(function (a, b) {
+    var d = (a.niveau || 3) - (b.niveau || 3);
+    if (d) return d;
+    return (b.tourisme ? 1 : 0) - (a.tourisme ? 1 : 0); /* le tourisme en tete de chaque niveau */
+  });
+  window.DiisooTourisme = { themes: T.length };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-tourisme.js",e);}
+
+try{
+/* ---- diisoo-son.js ---- */
+/* diisoo-son.js v1 : sons de retour, comme les assistants vocaux
+   - bip montant quand le micro s'ouvre (tu peux parler)
+   - bip descendant quand le micro se ferme
+   - petit carillon quand la reponse est juste (✅), son doux quand il faut reessayer
+   Aucun fichier audio : les sons sont generes par le telephone. Desactiver : localStorage diisoo_son = "0". */
+(function () {
+  "use strict";
+
+  var ctx = null;
+  function actif() { try { return localStorage.getItem("diisoo_son") !== "0"; } catch (e) { return true; } }
+  function audio() {
+    if (ctx) return ctx;
+    try { var C = window.AudioContext || window.webkitAudioContext; if (C) ctx = new C(); } catch (e) {}
+    return ctx;
+  }
+  /* notes : [frequence Hz, debut s, duree s] */
+  function jouer(notes, vol) {
+    if (!actif()) return;
+    var c = audio(); if (!c) return;
+    try { if (c.state === "suspended") c.resume(); } catch (e) {}
+    var t0 = c.currentTime + 0.01;
+    notes.forEach(function (n) {
+      try {
+        var o = c.createOscillator(), g = c.createGain();
+        o.type = "sine"; o.frequency.value = n[0];
+        g.gain.setValueAtTime(0.0001, t0 + n[1]);
+        g.gain.exponentialRampToValueAtTime(vol || 0.18, t0 + n[1] + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+        o.connect(g); g.connect(c.destination);
+        o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + 0.05);
+      } catch (e) {}
+    });
+  }
+  var SONS = {
+    ouvre: [[660, 0, 0.09], [880, 0.09, 0.12]],
+    ferme: [[880, 0, 0.08], [587, 0.08, 0.12]],
+    juste: [[784, 0, 0.1], [988, 0.1, 0.1], [1319, 0.2, 0.22]],
+    reessaie: [[392, 0, 0.14], [349, 0.14, 0.2]]
+  };
+  function son(nom) { if (SONS[nom]) jouer(SONS[nom], nom === "juste" ? 0.2 : 0.16); }
+  function vibre(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
+
+  /* Le moteur audio se reveille au premier toucher (exigence des navigateurs) */
+  ["pointerdown", "touchstart", "click"].forEach(function (ev) {
+    window.addEventListener(ev, function () { var c = audio(); try { if (c && c.state === "suspended") c.resume(); } catch (e) {} }, { capture: true, passive: true });
+  });
+
+  /* Sons du micro : on enveloppe l'ouverture et la fin de l'ecoute */
+  var orig = window.startListening;
+  if (typeof orig === "function") {
+    window.startListening = function () {
+      var h = orig.apply(this, arguments);
+      try {
+        son("ouvre"); vibre(15);
+        if (h && h.promise && h.promise.then) {
+          h.promise.then(function () { son("ferme"); }, function () {});
+        }
+      } catch (e) {}
+      return h;
+    };
+  }
+
+  /* Reponse juste : un ✅ apparait dans une zone de resultat */
+  var dernier = 0;
+  function verifier(noeud) {
+    try {
+      var el = noeud.nodeType === 3 ? noeud.parentNode : noeud;
+      if (!el || !el.closest) return;
+      var zone = el.closest("[id*='res'], [id*='-res'], .res, [data-res]");
+      if (!zone) return;
+      var t = zone.textContent || "";
+      if (Date.now() - dernier < 900) return;
+      if (t.indexOf("✅") > -1) { dernier = Date.now(); son("juste"); vibre([20, 40, 20]); }
+      else if (/Réessaie|Reessaie|Rien entendu|Objectif/i.test(t)) { dernier = Date.now(); son("reessaie"); }
+    } catch (e) {}
+  }
+  try {
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        var m = muts[i];
+        if (m.type === "childList") { for (var k = 0; k < m.addedNodes.length; k++) verifier(m.addedNodes[k]); }
+        else if (m.type === "characterData") verifier(m.target);
+      }
+    }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  } catch (e) {}
+
+  window.DiisooSon = { jouer: son, version: 1 };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-son.js",e);}
+
+try{
+/* ---- diisoo-objectif.js ---- */
+/* diisoo-objectif.js v1 : un objectif personnel qu'on peut toucher du doigt
+   - Apres le premier exercice, une fiche demande : ton but (visa, business, tourisme, wolof), ton rythme (3, 5 ou 10 exercices par jour), ta duree (30, 60 ou 90 jours)
+   - Le tableau de bord montre : exercices du jour, jour X sur N, et le but choisi
+   - Rappel quotidien : un fichier calendrier (.ics) qui sonne chaque jour a l'heure choisie, meme si l'app est fermee
+   - A l'ouverture de l'app, si l'objectif du jour n'est pas fini, un message le rappelle */
+(function () {
+  "use strict";
+
+  var CLE = "diisoo_obj";
+  var BUTS = [
+    ["visa", "🛂", "Visa et examen"],
+    ["business", "💼", "Business et commerce"],
+    ["tourisme", "🏝️", "Tourisme"],
+    ["wolof", "🗣️", "Parler wolof"]
+  ];
+  var RYTHMES = [[3, "Doux", "3 par jour"], [5, "Régulier", "5 par jour"], [10, "Intense", "10 par jour"]];
+  var DUREES = [30, 60, 90];
+
+  function $(id) { return document.getElementById(id); }
+  function lire() { try { return JSON.parse(localStorage.getItem(CLE) || "null"); } catch (e) { return null; } }
+  function ecrire(o) { try { localStorage.setItem(CLE, JSON.stringify(o)); } catch (e) {} }
+  function aujourd() { return new Date().toISOString().slice(0, 10); }
+  function jours(a, b) { return Math.floor((new Date(b) - new Date(a)) / 86400000); }
+  function cible() { var o = lire(); return (o && o.rythme) || (typeof DAILY_TARGET !== "undefined" ? DAILY_TARGET : 5); }
+  function nomBut(o) { var x = BUTS.filter(function (b) { return b[0] === (o && o.but); })[0]; return x ? x[1] + " " + x[2] : ""; }
+
+  /* ---------- tableau de bord ---------- */
+  function rendre() {
+    var el = $("daily-goal");
+    if (!el) return;
+    var g = typeof getDailyGoal === "function" ? getDailyGoal() : { done: 0 };
+    var T = cible(), done = Math.min(g.done, T), o = lire();
+    var h = '<div class="flex justify-between items-center text-[11px] text-[#A69C86] mb-1"><span>🎯 Objectif du jour</span><span class="flex items-center"><span id="slot-save"></span>' + done + "/" + T + "</span></div>" +
+      '<div class="w-full bg-[#141A2B] h-1.5 rounded-full overflow-hidden"><div class="bg-[#3FAE74] h-full transition-all" style="width:' + Math.round(done / T * 100) + '%"></div></div>';
+    if (o && o.debut) {
+      var j = Math.min(o.duree, jours(o.debut, aujourd()) + 1);
+      h += '<div class="flex justify-between text-[10px] text-[#8C8064] mt-1"><span>' + nomBut(o) + "</span><span>Jour " + j + " sur " + o.duree + "</span></div>";
+      h += '<div class="w-full bg-[#141A2B] h-1 rounded-full overflow-hidden mt-1"><div class="bg-[#E1693F] h-full" style="width:' + Math.round(j / o.duree * 100) + '%"></div></div>';
+      h += '<button type="button" id="obj-modif" class="mt-1 text-[10px] text-[#A69C86] underline">Changer mon objectif ou mon rappel</button>';
+    }
+    el.innerHTML = h;
+    var m = $("obj-modif"); if (m) m.onclick = function () { fiche(true); };
+    if (window.montrerSauvegarde) { try { window.montrerSauvegarde(); } catch (e) {} }
+  }
+  window.renderDailyGoal = rendre;
+  window.bumpDailyGoal = function (n) {
+    var g = getDailyGoal(), T = cible(), avant = g.done >= T;
+    g.done += n; store.set("diisoo_goal", g);
+    rendre();
+    if (!avant && g.done >= T) { try { toast("🎯 Objectif du jour atteint ! Reviens demain pour continuer ta série."); } catch (e) {} }
+    setTimeout(proposer, 1500);
+  };
+
+  /* ---------- fiche : but, rythme, duree, rappel ---------- */
+  var st = document.createElement("style");
+  st.textContent =
+    "#dii-obj{position:fixed;inset:0;z-index:9990;background:rgba(5,8,16,.86);display:flex;align-items:flex-end;justify-content:center}" +
+    "#dii-obj .ob-box{width:100%;max-width:480px;max-height:94vh;overflow-y:auto;background:#0B0F1C;border:1px solid #1E2740;" +
+    "border-radius:22px 22px 0 0;padding:18px 16px 24px;color:#F6F1E7}" +
+    "#dii-obj h3{font-size:18px;font-weight:800;text-align:center;margin:0 0 4px}" +
+    "#dii-obj .ob-sub{text-align:center;font-size:12px;color:#A69C86;margin:0 0 12px}" +
+    "#dii-obj .ob-q{font-size:12px;font-weight:700;color:#C9BFA8;margin:12px 0 6px}" +
+    "#dii-obj .ob-g{display:grid;gap:8px}" +
+    "#dii-obj .ob-g.c2{grid-template-columns:1fr 1fr}#dii-obj .ob-g.c3{grid-template-columns:1fr 1fr 1fr}" +
+    "#dii-obj .ob-c{min-height:56px;padding:8px;border-radius:14px;background:#141A2B;border:2px solid #1E2740;color:#F6F1E7;font-size:13px;font-weight:700;text-align:center}" +
+    "#dii-obj .ob-c small{display:block;font-size:11px;font-weight:400;color:#A69C86}" +
+    "#dii-obj .ob-c.on{border-color:#25D366;background:#12351F}" +
+    "#dii-obj .ob-ok{width:100%;min-height:56px;margin-top:16px;border-radius:999px;border:0;background:#25D366;color:#fff;font-size:16px;font-weight:800}" +
+    "#dii-obj .ob-no{width:100%;min-height:44px;margin-top:8px;background:none;border:0;color:#A69C86;font-size:13px}" +
+    "#dii-obj input[type=time]{width:100%;min-height:48px;border-radius:14px;background:#141A2B;border:2px solid #1E2740;color:#F6F1E7;font-size:18px;text-align:center}";
+  document.head.appendChild(st);
+
+  function fiche(modif) {
+    if ($("dii-obj")) return;
+    var o = lire() || { but: "visa", rythme: 5, duree: 30, heure: "18:00" };
+    var ov = document.createElement("div"); ov.id = "dii-obj";
+    var b = '<div class="ob-box"><h3>🎯 Fixe ton objectif</h3><p class="ob-sub">Un but clair, un rythme, une date. Tu avances chaque jour.</p>';
+    b += '<p class="ob-q">1. Pourquoi tu apprends ?</p><div class="ob-g c2" data-k="but">';
+    BUTS.forEach(function (x) { b += '<button type="button" class="ob-c' + (o.but === x[0] ? " on" : "") + '" data-v="' + x[0] + '">' + x[1] + "<br>" + x[2] + "</button>"; });
+    b += '</div><p class="ob-q">2. Combien d\'exercices par jour ?</p><div class="ob-g c3" data-k="rythme">';
+    RYTHMES.forEach(function (x) { b += '<button type="button" class="ob-c' + (o.rythme === x[0] ? " on" : "") + '" data-v="' + x[0] + '">' + x[1] + "<small>" + x[2] + "</small></button>"; });
+    b += '</div><p class="ob-q">3. En combien de jours ?</p><div class="ob-g c3" data-k="duree">';
+    DUREES.forEach(function (x) { b += '<button type="button" class="ob-c' + (o.duree === x ? " on" : "") + '" data-v="' + x + '">' + x + "<small>jours</small></button>"; });
+    b += '</div><p class="ob-q">4. Rappel chaque jour (sonne même si l\'app est fermée)</p><input type="time" id="ob-heure" value="' + (o.heure || "18:00") + '">';
+    b += '<button type="button" class="ob-ok" id="ob-valider">✅ Valider mon objectif</button>';
+    b += '<button type="button" class="ob-no" id="ob-plus">' + (modif ? "Fermer" : "Plus tard") + "</button></div>";
+    ov.innerHTML = b;
+    document.body.appendChild(ov);
+    Array.prototype.forEach.call(ov.querySelectorAll(".ob-g"), function (g) {
+      var k = g.getAttribute("data-k");
+      Array.prototype.forEach.call(g.children, function (c) {
+        c.onclick = function () {
+          Array.prototype.forEach.call(g.children, function (x) { x.classList.remove("on"); });
+          c.classList.add("on");
+          var v = c.getAttribute("data-v"); o[k] = k === "but" ? v : +v;
+        };
+      });
+    });
+    $("ob-plus").onclick = function () {
+      ov.remove();
+      if (!modif) { try { localStorage.setItem("diisoo_obj_plus", aujourd()); } catch (e) {} }
+    };
+    $("ob-valider").onclick = function () {
+      o.heure = $("ob-heure").value || "18:00";
+      o.debut = (lire() && lire().debut) || aujourd();
+      ecrire(o);
+      ov.remove();
+      rendre();
+      telechargerRappel(o);
+      try { toast("🎯 Objectif enregistré. Ouvre le fichier pour activer ton rappel."); } catch (e) {}
+    };
+  }
+
+  /* ---------- rappel : fichier calendrier quotidien ---------- */
+  function telechargerRappel(o) {
+    try {
+      var h = (o.heure || "18:00").split(":"), d = new Date();
+      var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+      var jour = d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
+      var ics = [
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Diisoo//FR", "CALSCALE:GREGORIAN",
+        "BEGIN:VEVENT", "UID:diisoo-rappel-quotidien@diisoo.sn", "DTSTAMP:" + jour + "T000000Z",
+        "DTSTART:" + jour + "T" + pad(+h[0]) + pad(+h[1]) + "00",
+        "DTEND:" + jour + "T" + pad(+h[0]) + pad(+h[1] + 10 > 59 ? 59 : +h[1] + 10) + "00",
+        "RRULE:FREQ=DAILY;COUNT=" + (o.duree || 30),
+        "SUMMARY:Diisoo : " + (o.rythme || 5) + " exercices aujourd'hui",
+        "DESCRIPTION:Ouvre https://diisoo.sn et fais ton objectif du jour. Une série à ne pas casser !",
+        "URL:https://diisoo.sn/",
+        "BEGIN:VALARM", "TRIGGER:PT0M", "ACTION:DISPLAY", "DESCRIPTION:Diisoo : ton objectif du jour t'attend", "END:VALARM",
+        "END:VEVENT", "END:VCALENDAR"
+      ].join("\r\n");
+      var blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "rappel-diisoo.ics";
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    } catch (e) {}
+  }
+
+  /* ---------- quand proposer la fiche, et le rappel a l'ouverture ---------- */
+  function ecran() { var e = $("screen-dashboard"); return !!(e && e.offsetParent !== null); }
+  function proposer() {
+    if (lire() || !ecran()) return;
+    var g = typeof getDailyGoal === "function" ? getDailyGoal() : { done: 0 };
+    var plus = ""; try { plus = localStorage.getItem("diisoo_obj_plus") || ""; } catch (e) {}
+    if (g.done >= 1 && plus !== aujourd()) fiche(false);
+  }
+  setInterval(function () { if (ecran()) proposer(); }, 4000);
+
+  var rappele = false;
+  setTimeout(function () {
+    var o = lire();
+    if (rappele || !o || !ecran()) return;
+    var g = getDailyGoal();
+    if (g.done < cible()) {
+      rappele = true;
+      try { toast("🎯 Il te reste " + (cible() - g.done) + " exercice" + (cible() - g.done > 1 ? "s" : "") + " pour ton objectif du jour."); } catch (e) {}
+    }
+  }, 6000);
+
+  rendre();
+  window.DiisooObjectif = { version: 1, fiche: fiche, cible: cible };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-objectif.js",e);}
+
+try{
+/* ---- diisoo-installer.js ---- */
+/* diisoo-installer.js v1 : installer Diisoo comme une vraie application, en un geste
+   - Carte claire "Mets Diisoo sur ton telephone" (apres un premier exercice, une fois par semaine au maximum)
+   - Android / Chrome / Samsung Internet : un seul bouton, la fenetre d'installation du telephone s'ouvre
+   - iPhone / Safari : 3 etapes illustrees (Partager, Sur l'ecran d'accueil, Ajouter)
+   - Jamais affichee si l'app est deja installee */
+(function () {
+  "use strict";
+  var CLE = "diisoo_install_plus";
+  function dejaInstallee() { return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }
+  var iOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  var promptEvt = null;
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); promptEvt = e; });
+  window.addEventListener("appinstalled", function () { promptEvt = null; fermer(); try { localStorage.setItem(CLE, "9999999999999"); } catch (x) {} });
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#dii-inst{position:fixed;inset:0;z-index:9991;background:rgba(5,8,16,.86);display:flex;align-items:flex-end;justify-content:center}" +
+    "#dii-inst .in-box{width:100%;max-width:480px;background:#0B0F1C;border:1px solid #1E2740;border-radius:22px 22px 0 0;padding:20px 16px 26px;color:#F6F1E7;text-align:center}" +
+    "#dii-inst .in-ic{width:72px;height:72px;border-radius:18px;margin:0 auto 8px;display:block}" +
+    "#dii-inst h3{font-size:19px;font-weight:800;margin:0 0 4px}" +
+    "#dii-inst p{font-size:13px;color:#A69C86;margin:0 0 12px}" +
+    "#dii-inst .in-liste{text-align:left;margin:8px 0 14px}" +
+    "#dii-inst .in-l{display:flex;align-items:center;gap:12px;background:#141A2B;border:1px solid #1E2740;border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:14px;font-weight:700}" +
+    "#dii-inst .in-l b{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#25D366;color:#fff;flex:0 0 auto}" +
+    "#dii-inst .in-l span{font-size:22px;margin-left:auto}" +
+    "#dii-inst .in-ok{width:100%;min-height:56px;border-radius:999px;border:0;background:#25D366;color:#fff;font-size:16px;font-weight:800}" +
+    "#dii-inst .in-no{width:100%;min-height:44px;margin-top:6px;background:none;border:0;color:#A69C86;font-size:13px}";
+  document.head.appendChild(st);
+
+  function fermer() { var e = document.getElementById("dii-inst"); if (e) e.remove(); }
+  function repousser(jours) { try { localStorage.setItem(CLE, String(Date.now() + jours * 86400000)); } catch (e) {} }
+
+  function ouvrir() {
+    if (document.getElementById("dii-inst") || dejaInstallee()) return;
+    var ov = document.createElement("div"); ov.id = "dii-inst";
+    var h = '<div class="in-box"><img class="in-ic" src="icon-192.png" alt="Diisoo"><h3>📲 Mets Diisoo sur ton téléphone</h3>';
+    if (iOS) {
+      h += '<p>Comme une vraie application, sans magasin d\'applications. 3 gestes :</p><div class="in-liste">' +
+        '<div class="in-l"><b>1</b>Touche « Partager » en bas de Safari<span>⬆️</span></div>' +
+        '<div class="in-l"><b>2</b>Choisis « Sur l\'écran d\'accueil »<span>➕</span></div>' +
+        '<div class="in-l"><b>3</b>Touche « Ajouter »<span>✅</span></div></div>' +
+        '<button type="button" class="in-ok" id="in-fait">J\'ai compris</button>';
+    } else if (promptEvt) {
+      h += '<p>Ouvre Diisoo en un geste, même sans connexion, sans chercher dans Google.</p>' +
+        '<button type="button" class="in-ok" id="in-go">📲 Installer Diisoo</button>';
+    } else {
+      h += '<p>Comme une vraie application. 2 gestes :</p><div class="in-liste">' +
+        '<div class="in-l"><b>1</b>Touche le menu du navigateur<span>⋮</span></div>' +
+        '<div class="in-l"><b>2</b>Choisis « Installer l\'application » ou « Ajouter à l\'écran d\'accueil »<span>✅</span></div></div>' +
+        '<button type="button" class="in-ok" id="in-fait">J\'ai compris</button>';
+    }
+    h += '<button type="button" class="in-no" id="in-plus">Plus tard</button></div>';
+    ov.innerHTML = h; document.body.appendChild(ov);
+    var go = document.getElementById("in-go");
+    if (go) go.onclick = function () {
+      var e = promptEvt; if (!e) { fermer(); return; }
+      try { e.prompt(); e.userChoice.then(function (r) { if (r && r.outcome !== "accepted") repousser(7); }); } catch (x) {}
+      promptEvt = null; fermer();
+    };
+    var fait = document.getElementById("in-fait"); if (fait) fait.onclick = function () { repousser(30); fermer(); };
+    document.getElementById("in-plus").onclick = function () { repousser(7); fermer(); };
+  }
+
+  function pret() {
+    if (dejaInstallee()) return false;
+    var t = 0; try { t = +localStorage.getItem(CLE) || 0; } catch (e) {}
+    if (Date.now() < t) return false;
+    var d = document.getElementById("screen-dashboard");
+    if (!d || d.offsetParent === null) return false;
+    if (document.getElementById("dii-obj") || document.getElementById("dii-passage")) return false;
+    var g = null; try { g = JSON.parse(localStorage.getItem("diisoo_goal") || "null"); } catch (e) {}
+    return !!(g && g.done >= 1) && !!localStorage.getItem("diisoo_obj");
+  }
+  /* Apres le premier exercice ET l'objectif fixe : c'est le bon moment */
+  setInterval(function () { if (pret()) ouvrir(); }, 5000);
+
+  window.DiisooInstaller = { version: 1, ouvrir: ouvrir };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-installer.js",e);}
+
+try{
+/* ---- diisoo-assistant.js ---- */
+/* diisoo-assistant.js v1 : assistant d'equivalences dans les lecons
+   Sous chaque mot ou phrase d'anglais (Anglais general, Business), un bouton « 💡 Autre façon de le dire » :
+   - des equivalents : plus poli, plus simple, plus courant (regles et synonymes courants)
+   - des phrases de la meme situation qui utilisent le meme mot
+   Chaque proposition se lit a voix haute (🔊). Rien n'est affiche s'il n'y a rien d'utile a ajouter.
+   Fonctionne sans connexion : aucune requete reseau. */
+(function () {
+  "use strict";
+
+  /* ---------- equivalents ---------- */
+  var REGLES = [
+    [/^I want to (.+?)([.!?]?)$/i, function (m) { return [["I would like to " + m[1] + m[2], "Plus poli"]]; }],
+    [/^I want (a |an |the |some )?(.+?)([.!?]?)$/i, function (m) { return [["I would like " + (m[1] || "") + m[2] + m[3], "Plus poli"]]; }],
+    [/^I need (.+?)([.!?]?)$/i, function (m) { return [["I am looking for " + m[1] + m[2], "Plus courant au magasin"], ["I would like " + m[1] + m[2], "Plus poli"]]; }],
+    [/^Can I (.+?)\?$/i, function (m) { return [["May I " + m[1] + "?", "Plus formel"], ["Could I " + m[1] + "?", "Plus poli"]]; }],
+    [/^Can you (.+?)\?$/i, function (m) { return [["Could you " + m[1] + "?", "Plus poli"], ["Would you mind helping me to " + m[1] + "?", "Très poli"]]; }],
+    [/^How much is (it|this|that)\?$/i, function () { return [["What is the price?", "Autre façon de demander le prix"], ["How much does it cost?", "Même sens"]]; }],
+    [/^How much is (.+?)\?$/i, function (m) { return [["What is the price of " + m[1] + "?", "Autre façon de demander le prix"], ["How much does " + m[1] + " cost?", "Même sens"]]; }],
+    [/^Where is (.+?)\?$/i, function (m) { return [["Could you tell me where " + m[1] + " is?", "Plus poli"], ["Do you know where " + m[1] + " is?", "Plus courant"]]; }],
+    [/^Do you have (.+?)\?$/i, function (m) { return [["Is there " + m[1] + " available?", "Plus formel"], ["Have you got " + m[1] + "?", "Anglais britannique"]]; }],
+    [/^I am from (.+?)([.!?]?)$/i, function (m) { return [["I come from " + m[1] + m[2], "Même sens"]]; }],
+    [/^My name is (.+?)([.!?]?)$/i, function (m) { return [["I am " + m[1] + m[2], "Plus court"], ["Call me " + m[1] + m[2], "Plus amical"]]; }],
+    [/^Thank you( very much)?([.!?]?)$/i, function () { return [["Thanks a lot!", "Plus amical"], ["I really appreciate it.", "Plus fort"]]; }],
+    [/^You are welcome([.!?]?)$/i, function () { return [["No problem!", "Plus amical"], ["My pleasure.", "Plus poli"]]; }],
+    [/^Nice to meet you([.!?]?)$/i, function () { return [["Pleased to meet you.", "Plus formel"]]; }],
+    [/^I do not understand([.!?]?)$/i, function () { return [["Could you repeat that, please?", "Plus utile pour continuer"], ["Sorry, I did not catch that.", "Plus courant"]]; }],
+    [/^That is too expensive([.!?]?)$/i, function () { return [["That is a bit pricey.", "Plus doux"], ["Can you give me a better price?", "Pour négocier"]]; }],
+    [/^I will take it([.!?]?)$/i, function () { return [["I will buy it.", "Plus simple"], ["I will have it.", "Plus courant"]]; }],
+    [/^I have a reservation([.!?]?)$/i, function () { return [["I booked a room.", "Plus simple"]]; }],
+    [/^Excuse me(,)? (.+)$/i, function (m) { return [["Sorry to bother you, " + m[2].charAt(0).toLowerCase() + m[2].slice(1), "Plus poli"]]; }]
+  ];
+  var SYN = {
+    cheap: ["inexpensive", "Plus formel"], expensive: ["pricey", "Plus courant"], big: ["large", "Plus formel"],
+    small: ["little", "Plus simple"], buy: ["purchase", "Plus formel"], start: ["begin", "Plus formel"],
+    help: ["assist", "Plus formel"], ask: ["request", "Plus formel"], fast: ["quick", "Même sens"],
+    beautiful: ["lovely", "Plus courant"], delicious: ["tasty", "Plus simple"], hello: ["hi", "Plus amical"],
+    goodbye: ["see you later", "Plus amical"], yes: ["of course", "Plus fort"], house: ["home", "Plus chaleureux"],
+    car: ["vehicle", "Plus formel"], money: ["cash", "Plus précis"], job: ["work", "Plus simple"],
+    tired: ["exhausted", "Plus fort"], happy: ["glad", "Plus simple"], hungry: ["starving", "Plus fort"],
+    friend: ["buddy", "Plus amical"], shop: ["store", "Américain"], boss: ["manager", "Plus formel"],
+    problem: ["issue", "Plus formel"], price: ["cost", "Même sens"], order: ["request", "Même sens"],
+    near: ["close", "Même sens"], far: ["distant", "Plus formel"], wrong: ["incorrect", "Plus formel"]
+  };
+
+  function equivalents(en) {
+    var out = [], t = String(en || "").trim();
+    for (var i = 0; i < REGLES.length; i++) {
+      var m = REGLES[i][0].exec(t);
+      if (m) { out = out.concat(REGLES[i][1](m)); break; }
+    }
+    var mot = t.toLowerCase().replace(/[^a-z]/g, "");
+    if (!out.length && SYN[mot]) out.push([SYN[mot][0].charAt(0).toUpperCase() + SYN[mot][0].slice(1), SYN[mot][1]]);
+    return out.filter(function (x) { return x[0].toLowerCase() !== t.toLowerCase(); }).slice(0, 2);
+  }
+
+  /* ---------- phrases de la meme situation ---------- */
+  var STOP = /^(the|and|you|are|was|for|with|have|this|that|what|your|from|please|would|could|there|will|can|how|not|but|any|our|its|his|her|she|him|they|them|who|why|may)$/;
+  function motsCles(s) {
+    return String(s || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter(function (w) { return w.length > 3 && !STOP.test(w); });
+  }
+  function voisines(item, banque, deja) {
+    var ks = motsCles(item.en), out = [];
+    if (!ks.length) return out;
+    banque.forEach(function (x) {
+      if (!x || !x.en || x.en === item.en || deja[x.en]) return;
+      var kx = motsCles(x.en), commun = ks.filter(function (k) { return kx.indexOf(k) > -1; }).length;
+      if (commun) { out.push({ en: x.en, fr: x.fr || "", n: commun }); deja[x.en] = 1; }
+    });
+    out.sort(function (a, b) { return b.n - a.n || a.en.length - b.en.length; });
+    return out.slice(0, 2);
+  }
+
+  /* ---------- source de chaque carte ---------- */
+  function sourceDe(card) {
+    var b = card.querySelector("[data-practice]");
+    var bl = card.querySelector("[data-practice^='gen-l:']");
+    try {
+      if (bl) {
+        var p = bl.dataset.practice.split(":"), th = GENERAL_THEMES.filter(function (t) { return t.id === p[1]; })[0];
+        if (!th) return null;
+        var banque = (th.vocab || []).concat((th.dialogue || []).map(function (d) { return { en: d.en, fr: d.fr }; }));
+        return { item: th.vocab[+p[2]], banque: banque };
+      }
+      var bb = card.querySelector("[data-practice^='biz:']");
+      if (bb) {
+        var q = bb.dataset.practice.split(":"), mod = CHINA_TRADE_WOLOF[q[1]];
+        var dl = (BUSINESS_DIALOGUES[q[1]] || []).map(function (d) { return { en: d.en, fr: d.fr }; });
+        return { item: mod.vocab[+q[2]], banque: mod.vocab.concat(dl) };
+      }
+    } catch (e) {}
+    void b;
+    return null;
+  }
+
+  /* ---------- interface ---------- */
+  var st = document.createElement("style");
+  st.textContent =
+    ".as-btn{width:100%;min-height:44px;margin-top:8px;border-radius:14px;background:#1A1530;border:1px solid #5B3FA0;color:#C9B6F2;font-size:12px;font-weight:700}" +
+    ".as-box{margin-top:8px;display:flex;flex-direction:column;gap:6px}" +
+    ".as-l{display:flex;align-items:center;gap:10px;background:#141A2B;border:1px solid #1E2740;border-radius:12px;padding:8px 10px}" +
+    ".as-t{flex:1;font-size:13px;font-weight:700;color:#F6F1E7;line-height:1.25}" +
+    ".as-t small{display:block;font-size:11px;font-weight:400;color:#A69C86;margin-top:1px}" +
+    ".as-s{flex:0 0 auto;width:44px;height:44px;border-radius:50%;background:#25D366;border:0;color:#fff;font-size:18px}" +
+    ".as-h{font-size:11px;font-weight:700;color:#8C8064;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}";
+  document.head.appendChild(st);
+
+  function ligne(en, note) {
+    var d = document.createElement("div"); d.className = "as-l";
+    var t = document.createElement("div"); t.className = "as-t";
+    t.textContent = en;
+    if (note) { var s = document.createElement("small"); s.textContent = note; t.appendChild(s); }
+    var b = document.createElement("button"); b.type = "button"; b.className = "as-s"; b.textContent = "🔊";
+    b.setAttribute("aria-label", "Écouter : " + en);
+    b.onclick = function (ev) { ev.stopPropagation(); try { speak(en, "en-US", 0.85); } catch (e) {} };
+    d.appendChild(t); d.appendChild(b);
+    return d;
+  }
+
+  function equiper(card) {
+    if (card.__as) return;
+    var src = sourceDe(card);
+    if (!src || !src.item) return;
+    card.__as = true;
+    var eq = equivalents(src.item.en);
+    var deja = {}; deja[src.item.en] = 1;
+    eq.forEach(function (x) { deja[x[0]] = 1; });
+    var vo = voisines(src.item, src.banque || [], deja);
+    if (!eq.length && !vo.length) return;
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "as-btn"; btn.textContent = "💡 Autre façon de le dire";
+    var box = document.createElement("div"); box.className = "as-box"; box.style.display = "none";
+    if (eq.length) {
+      var h1 = document.createElement("div"); h1.className = "as-h"; h1.textContent = "Même idée"; box.appendChild(h1);
+      eq.forEach(function (x) { box.appendChild(ligne(x[0], x[1])); });
+    }
+    if (vo.length) {
+      var h2 = document.createElement("div"); h2.className = "as-h"; h2.textContent = "Dans la même situation"; box.appendChild(h2);
+      vo.forEach(function (x) { box.appendChild(ligne(x.en, x.fr)); });
+    }
+    btn.onclick = function () {
+      var ouvert = box.style.display !== "none";
+      box.style.display = ouvert ? "none" : "flex";
+      btn.textContent = ouvert ? "💡 Autre façon de le dire" : "💡 Masquer";
+    };
+    var grille = card.querySelector(".grid") || card.lastElementChild;
+    if (grille && grille.parentNode === card) card.insertBefore(btn, grille.nextSibling); else card.appendChild(btn);
+    card.insertBefore(box, btn.nextSibling);
+  }
+
+  var plan = false;
+  function balayer() {
+    if (plan) return; plan = true;
+    requestAnimationFrame(function () {
+      plan = false;
+      ["general-content", "business-content"].forEach(function (id) {
+        var r = document.getElementById(id); if (!r) return;
+        var bs = r.querySelectorAll("[data-practice^='gen-l:'], [data-practice^='biz:']");
+        for (var i = 0; i < bs.length; i++) {
+          var card = bs[i].closest(".rounded-2xl, .rounded-xl, .fx-em") || bs[i].parentNode.parentNode;
+          if (card) equiper(card);
+        }
+      });
+    });
+  }
+  try { new MutationObserver(balayer).observe(document.body, { childList: true, subtree: true }); balayer(); } catch (e) {}
+
+  window.DiisooAssistant = { version: 1, equivalents: equivalents };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-assistant.js",e);}
+
+try{
+/* ---- diisoo-coach2.js ---- */
+/* diisoo-coach2.js v1 : coach vocal en un seul geste
+   Remplace le parcours en 3 boutons par une boucle guidee :
+   1. Le modele s'ecoute tout seul (anglais, voix de l'app)
+   2. Un gros bouton micro : maintiens, parle, relache (comme le vocal WhatsApp)
+   3. Resultat mot par mot : vert = bien, orange = proche, rouge = a reprendre. Touche un mot pour l'entendre doucement
+   4. Reessaie jusqu'a reussir, puis la phrase suivante. Apres 2 essais ratés, le modele est relu lentement.
+   Meme appel que l'ancien coach : DiisooCoach.ouvrir({ en, pron, wo, fr, suivant, onFin }). */
+(function () {
+  "use strict";
+  var ancien = window.DiisooCoach || {};
+  var SEUIL = 0.8;
+
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function mots(s) { try { return normalize(s).split(" ").filter(Boolean); } catch (e) { return String(s).toLowerCase().replace(/[^a-z' ]/g, " ").split(/\s+/).filter(Boolean); } }
+  function lev(a, b) {
+    var d = [], i, j;
+    for (i = 0; i <= a.length; i++) d[i] = [i];
+    for (j = 1; j <= b.length; j++) d[0][j] = j;
+    for (i = 1; i <= a.length; i++) for (j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+  var HOMO = [["two", "too", "to"], ["for", "four", "fore"], ["night", "knight"], ["no", "know"], ["write", "right"], ["there", "their", "theyre"],
+    ["hear", "here"], ["one", "won"], ["buy", "by", "bye"], ["sea", "see"], ["i", "eye"], ["our", "hour"], ["wait", "weight"], ["week", "weak"],
+    ["son", "sun"], ["meet", "meat"], ["wear", "where", "ware"], ["whole", "hole"], ["would", "wood"], ["your", "youre"], ["its", "it's"], ["new", "knew"]];
+  var PETITS = { a: 1, an: 1, the: 1, of: 1 };
+  function memeSon(a, b) {
+    for (var i = 0; i < HOMO.length; i++) { if (HOMO[i].indexOf(a) > -1 && HOMO[i].indexOf(b) > -1) return true; }
+    return false;
+  }
+  function proche(a, b) { var m = Math.max(a.length, b.length); return m ? 1 - lev(a, b) / m : 1; }
+
+  /* Compare mot a mot : 2 = bien, 1 = proche, 0 = a reprendre */
+  function comparer(cible, entendu) {
+    var C = mots(cible), H = mots(entendu), res = [], pts = 0;
+    C.forEach(function (w) {
+      var best = 0;
+      H.forEach(function (h) { var s = (h === w || memeSon(w, h)) ? 1 : proche(w, h); if (s > best) best = s; });
+      var etat = best >= 0.99 ? 2 : (best >= 0.7 ? 1 : 0);
+      if (etat === 0 && PETITS[w]) { etat = 1; best = 0.8; } /* petits mots souvent avales par la reconnaissance */
+      pts += etat === 2 ? 1 : (etat === 1 ? (PETITS[w] ? 0.9 : 0.6) : 0);
+      res.push({ w: w, etat: etat });
+    });
+    return { mots: res, score: C.length ? pts / C.length : 0 };
+  }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#dii-coach{position:fixed;inset:0;z-index:99999;background:rgba(5,8,18,.94);display:flex;align-items:flex-end;justify-content:center}" +
+    "#dii-coach .co-box{width:100%;max-width:520px;max-height:96vh;overflow-y:auto;background:#0B0F1C;border:1px solid #1E2740;border-radius:22px 22px 0 0;padding:16px 16px 22px;color:#F6F1E7;font-family:inherit}" +
+    "#dii-coach .co-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}" +
+    "#dii-coach .co-x{width:44px;height:44px;border-radius:50%;background:#141A2B;border:1px solid #1E2740;color:#A69C86;font-size:16px}" +
+    "#dii-coach .co-tt{flex:1;text-align:center;font-size:11px;font-weight:700;letter-spacing:.1em;color:#8C8064;text-transform:uppercase}" +
+    "#dii-coach .co-en{font-size:26px;font-weight:800;line-height:1.2;text-align:center;margin:6px 0 4px}" +
+    "#dii-coach .co-pron{text-align:center;font-size:16px;color:#F3A94E;margin:0 0 4px}" +
+    "#dii-coach .co-aide{text-align:center;font-size:13px;color:#A69C86;margin:0 0 2px}" +
+    "#dii-coach .co-mots{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0 6px}" +
+    "#dii-coach .co-m{min-height:44px;padding:6px 12px;border-radius:12px;border:2px solid #1E2740;background:#141A2B;color:#F6F1E7;font-size:17px;font-weight:700}" +
+    "#dii-coach .co-m.v{border-color:#25D366;background:#12351F}#dii-coach .co-m.o{border-color:#F3A94E;background:#3A2A10}#dii-coach .co-m.r{border-color:#E5484D;background:#3A1515}" +
+    "#dii-coach .co-msg{min-height:44px;text-align:center;font-size:15px;line-height:1.35;margin:6px 0}" +
+    "#dii-coach .co-ecoute{display:flex;gap:8px;margin:6px 0}" +
+    "#dii-coach .co-ecoute button{flex:1;min-height:48px;border-radius:14px;background:#141A2B;border:1px solid #1E2740;color:#E4DCC9;font-size:13px;font-weight:700}" +
+    "#dii-coach .co-mic{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:96px;border-radius:24px;border:0;background:#25D366;color:#fff;font-size:15px;font-weight:800;touch-action:none;user-select:none;-webkit-user-select:none;margin-top:6px}" +
+    "#dii-coach .co-mic span{font-size:34px;line-height:1}" +
+    "#dii-coach .co-mic.on{background:#E5484D;animation:copulse 1s infinite}" +
+    "@keyframes copulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.6)}50%{box-shadow:0 0 0 14px rgba(229,72,77,0)}}" +
+    "#dii-coach .co-pts{display:flex;justify-content:center;gap:6px;margin:8px 0 0}" +
+    "#dii-coach .co-pts i{width:12px;height:12px;border-radius:50%;background:#1E2740}#dii-coach .co-pts i.ko{background:#E5484D}#dii-coach .co-pts i.ok{background:#25D366}" +
+    "#dii-coach .co-suiv{width:100%;min-height:56px;margin-top:10px;border-radius:999px;border:0;background:#25D366;color:#fff;font-size:16px;font-weight:800}" +
+    "#dii-coach .co-sec{width:100%;min-height:46px;margin-top:6px;background:none;border:0;color:#A69C86;font-size:13px}";
+  document.head.appendChild(st);
+
+  function parler(txt, rate) { try { if (typeof speak === "function") return speak(txt, "en-US", rate || 0.85); } catch (e) {} }
+  function son(n) { try { if (window.DiisooSon) window.DiisooSon.jouer(n); } catch (e) {} }
+
+  function ouvrir(o) {
+    o = o || {};
+    if (!o.en) return;
+    if (document.getElementById("dii-coach")) return;
+    try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+    var fond = el("div"); fond.id = "dii-coach";
+    var box = el("div", "co-box"); fond.appendChild(box); document.body.appendChild(fond);
+    var essais = [], fini = false, h = null, actif = false;
+
+    function fermer() {
+      try { if (h) h.stop(); } catch (e) {}
+      try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+      fond.remove();
+      if (o.onFin) { try { o.onFin(); } catch (e) {} }
+    }
+
+    var top = el("div", "co-top");
+    var x = el("button", "co-x", "✕"); x.type = "button"; x.setAttribute("aria-label", "Fermer"); x.onclick = fermer;
+    top.appendChild(x); top.appendChild(el("div", "co-tt", "Coach vocal"));
+    box.appendChild(top);
+    box.appendChild(el("div", "co-en", o.en));
+    if (o.pron) box.appendChild(el("div", "co-pron", o.pron));
+    if (o.fr) box.appendChild(el("div", "co-aide", o.fr));
+    if (o.wo) box.appendChild(el("div", "co-aide", "🗣️ " + o.wo));
+    var zoneMots = el("div", "co-mots"); box.appendChild(zoneMots);
+    var msg = el("div", "co-msg", "Écoute le modèle, puis maintiens le bouton vert et dis la phrase."); msg.setAttribute("aria-live", "polite");
+    box.appendChild(msg);
+
+    var ec = el("div", "co-ecoute");
+    var bMod = el("button", null, "🔊 Modèle"); bMod.type = "button";
+    var bLent = el("button", null, "🐢 Lentement"); bLent.type = "button";
+    bMod.onclick = function () { msg.textContent = "Écoute..."; parler(o.en, 0.9); };
+    bLent.onclick = function () { msg.textContent = "Écoute doucement..."; parler(o.en, 0.6); };
+    ec.appendChild(bMod); ec.appendChild(bLent);
+    if (o.wo) {
+      var bWo = el("button", null, "🗣️ Wolof"); bWo.type = "button";
+      bWo.onclick = function () { try { if (typeof speakWolofOolel === "function") speakWolofOolel(o.wo); } catch (e) {} };
+      ec.appendChild(bWo);
+    }
+    box.appendChild(ec);
+
+    var mic = el("button", "co-mic"); mic.type = "button";
+    mic.innerHTML = "<span>🎤</span>Maintiens pour parler";
+    box.appendChild(mic);
+    var pts = el("div", "co-pts"); box.appendChild(pts);
+    function points() {
+      pts.innerHTML = "";
+      for (var i = 0; i < Math.max(3, essais.length); i++) {
+        var p = el("i", essais[i] === undefined ? "" : (essais[i] ? "ok" : "ko")); pts.appendChild(p);
+      }
+    }
+    points();
+    var zoneSuite = el("div"); box.appendChild(zoneSuite);
+
+    function afficher(res) {
+      zoneMots.innerHTML = "";
+      res.mots.forEach(function (m) {
+        var b = el("button", "co-m " + (m.etat === 2 ? "v" : m.etat === 1 ? "o" : "r"), m.w); b.type = "button";
+        b.setAttribute("aria-label", "Écouter le mot " + m.w);
+        b.onclick = function () { parler(m.w, 0.6); };
+        zoneMots.appendChild(b);
+      });
+    }
+
+    function suite(reussi) {
+      zoneSuite.innerHTML = "";
+      if (reussi) {
+        var s = el("button", "co-suiv", o.suivant ? "➡️ Phrase suivante" : "✅ Terminer"); s.type = "button";
+        s.onclick = function () { fermer(); if (o.suivant) o.suivant(); };
+        zoneSuite.appendChild(s);
+        var r = el("button", "co-sec", "Refaire encore une fois"); r.type = "button";
+        r.onclick = function () { zoneSuite.innerHTML = ""; zoneMots.innerHTML = ""; msg.textContent = "Maintiens le bouton vert et dis la phrase."; };
+        zoneSuite.appendChild(r);
+      } else if (o.suivant && essais.length >= 3) {
+        var p = el("button", "co-sec", "Passer à la phrase suivante"); p.type = "button";
+        p.onclick = function () { fermer(); o.suivant(); };
+        zoneSuite.appendChild(p);
+      }
+    }
+
+    function resultat(texte) {
+      actif = false; mic.classList.remove("on"); mic.innerHTML = "<span>🎤</span>Maintiens pour parler";
+      if (!texte) {
+        msg.textContent = "Je n'ai rien entendu. Rapproche-toi du micro, garde le doigt appuyé pendant que tu parles.";
+        return;
+      }
+      var res = comparer(o.en, texte);
+      afficher(res);
+      var ok = res.score >= SEUIL;
+      essais.push(ok); points();
+      if (ok) {
+        fini = true; son("juste");
+        try { if (typeof addXP === "function") addXP(3); if (typeof bumpDailyGoal === "function") bumpDailyGoal(1); } catch (e) {}
+        msg.textContent = "Bravo ! " + Math.round(res.score * 100) + " % des mots sont justes.";
+        suite(true);
+      } else {
+        son("reessaie");
+        var rouges = res.mots.filter(function (m) { return m.etat === 0; }).map(function (m) { return m.w; });
+        msg.textContent = "J'ai entendu : « " + texte + " ».\n" + (rouges.length ? "À reprendre : " + rouges.slice(0, 3).join(", ") + ". Touche un mot pour l'écouter." : "Presque ! Réessaie plus doucement.");
+        msg.style.whiteSpace = "pre-line";
+        if (essais.filter(function (v) { return !v; }).length >= 2 && !fini) { setTimeout(function () { parler(o.en, 0.6); }, 500); }
+        suite(false);
+      }
+    }
+
+    function debut(ev) {
+      if (actif) return;
+      ev.preventDefault();
+      try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+      actif = true; mic.classList.add("on"); mic.innerHTML = "<span>🎙️</span>Je t'écoute... relâche à la fin";
+      zoneSuite.innerHTML = "";
+      try {
+        h = startListening("en-US", 12000, true);
+        h.promise.then(function (r) { resultat(r && r.text); }, function () { resultat(""); });
+      } catch (e) { actif = false; resultat(""); }
+    }
+    function fin() { if (actif && h) { try { h.stop(); } catch (e) {} } }
+    mic.addEventListener("pointerdown", debut);
+    mic.addEventListener("pointerup", fin);
+    mic.addEventListener("pointercancel", fin);
+    mic.addEventListener("pointerleave", fin);
+    mic.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    mic.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") { if (!actif) debut(e); else fin(); } });
+
+    /* Le modele se lit tout seul a l'ouverture */
+    setTimeout(function () { parler(o.en, 0.9); }, 350);
+    return { fermer: fermer };
+  }
+
+  window.DiisooCoach = { ouvrir: ouvrir, supporte: ancien.supporte || { enregistrement: false, reconnaissance: true }, version: 2, _comparer: comparer };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-coach2.js",e);}
+
+try{
+/* ---- diisoo-parrainage.js ---- */
+/* diisoo-parrainage.js v1 : parrainage plus parlant
+   - Carte d'accueil : barre de progression vers 3 amis (1 mois Premium) puis 10 amis (Pack Commerçants)
+   - Partage en un geste (menu de partage du téléphone, sinon WhatsApp), message adapté à l'objectif et à la série
+   - Ami invité : message d'accueil « un ami t'invite », qui explique que son premier exercice récompense son parrain
+   - Palier atteint : bouton « Réclamer ma récompense » qui ouvre WhatsApp avec un message prêt (code + numéro)
+   S'appuie sur le système existant (monCodeRef, compter_parrainages, valider au premier exercice). Aucune table en plus. */
+(function () {
+  "use strict";
+
+  var WA = "221772882109";
+  function $(id) { return document.getElementById(id); }
+  function lire(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+  function ecrire(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function code() { try { return monCodeRef(); } catch (e) { return lire("diisoo_ref_code", ""); } }
+  function nb() { return lire("diisoo_ref_nb", 0) | 0; }
+
+  /* ---------- partage en un geste ---------- */
+  var PHRASE = {
+    visa: "pour préparer son visa et son examen d'anglais",
+    business: "pour l'anglais du commerce et des affaires",
+    tourisme: "pour parler anglais avec les touristes",
+    wolof: "pour apprendre le wolof et l'anglais"
+  };
+  function message() {
+    var o = lire("diisoo_obj", null), s = lire("diisoo_streak", null);
+    var jours = s && typeof s === "object" ? (s.count || s.n || 0) : (+s || 0);
+    var but = o && PHRASE[o.but] ? PHRASE[o.but] : "pour apprendre l'anglais et le wolof avec la voix";
+    var deb = jours > 1 ? "🔥 " + jours + " jours d'affilée sur Diisoo, l'application " + but + ". " : "Je te recommande Diisoo, l'application " + but + ". ";
+    return deb + "C'est gratuit, ça marche sur téléphone : https://diisoo.sn/?ref=" + code();
+  }
+  window.partagerDiisoo = function () {
+    var m = message();
+    if (navigator.share) {
+      navigator.share({ title: "Diisoo", text: m }).catch(function () {});
+    } else {
+      window.open("https://wa.me/?text=" + encodeURIComponent(m), "_blank", "noopener");
+    }
+    setTimeout(function () { try { majCompteurParrainage(); } catch (e) {} }, 2000);
+  };
+
+  /* ---------- carte avec progression ---------- */
+  var st = document.createElement("style");
+  st.textContent =
+    ".pr-b{height:8px;border-radius:99px;background:#0B0F1C;overflow:hidden;margin:6px 0 4px;position:relative}" +
+    ".pr-b i{display:block;height:100%;background:linear-gradient(90deg,#3FAE74,#F3A94E);border-radius:99px;transition:width .4s}" +
+    ".pr-r{display:block;width:100%;min-height:44px;margin-top:6px;border:0;border-radius:12px;background:#25D366;color:#fff;font-size:13px;font-weight:800}" +
+    "#pr-accueil{position:fixed;left:12px;right:12px;bottom:12px;z-index:9985;background:#12351F;border:1px solid #3FAE74;border-radius:16px;padding:12px 14px;color:#F6F1E7;font-size:13px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.5)}" +
+    "#pr-accueil button{margin-top:8px;min-height:44px;width:100%;border:0;border-radius:12px;background:#25D366;color:#fff;font-weight:800;font-size:14px}";
+  document.head.appendChild(st);
+
+  function dessiner() {
+    var el = $("ref-compteur");
+    if (!el) return;
+    var n = nb(), cible = n >= 3 ? 10 : 3, pct = Math.min(100, Math.round(n / cible * 100));
+    var txt = n >= 10 ? "🎁 " + n + " amis actifs : Pack Commerçants offert !"
+      : n >= 3 ? "🎁 " + n + " amis actifs : 1 mois Premium gagné. Encore " + (10 - n) + " pour le Pack Commerçants."
+      : n + " / 3 amis actifs. Encore " + (3 - n) + " pour 1 mois Premium.";
+    var h = '<span style="display:block">' + txt + '</span><span class="pr-b"><i style="width:' + pct + '%"></i></span>' +
+      '<span style="display:block;font-size:10px;color:#A69C86;font-weight:400">Un ami compte quand il a fait son premier exercice.</span>';
+    var fait = lire("diisoo_ref_reclame", 0) | 0, palier = n >= 10 ? 10 : n >= 3 ? 3 : 0;
+    el.innerHTML = h;
+    if (palier && fait < palier) {
+      var b = document.createElement("span");
+      b.className = "pr-r"; b.setAttribute("role", "button"); b.style.lineHeight = "44px"; b.style.textAlign = "center";
+      b.textContent = "🎁 Activée automatiquement. Un souci ? Écris-nous";
+      b.onclick = function (ev) {
+        ev.stopPropagation();
+        var p = lire("diisoo_profile", {}) || {};
+        var m = "Bonjour Diisoo, ma récompense de parrainage n'est pas activée. J'ai invité " + n + " amis. Mon code : " + code() + (p.phone ? ". Mon numéro WhatsApp : " + p.phone : "") +
+          ". Récompense attendue : " + (palier >= 10 ? "le Pack Commerçants" : "1 mois Premium") + ".";
+        window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(m), "_blank", "noopener");
+        ecrire("diisoo_ref_reclame", palier);
+        setTimeout(dessiner, 500);
+      };
+      el.appendChild(b);
+    }
+  }
+
+  /* chaque mise à jour du compteur existant est redessinée avec la barre */
+  var orig = window.majCompteurParrainage;
+  if (typeof orig === "function") {
+    window.majCompteurParrainage = function () {
+      var r; try { r = orig.apply(this, arguments); } catch (e) {}
+      Promise.resolve(r).then(dessiner, dessiner);
+      return r;
+    };
+  }
+  try { new MutationObserver(function () { var e = $("ref-compteur"); if (e && !e.querySelector(".pr-b")) dessiner(); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+  setTimeout(dessiner, 1500);
+
+  /* ---------- lien code -> numéro : la récompense s'accorde alors toute seule ---------- */
+  function lier() {
+    try {
+      var pr = lire("diisoo_profile", {}) || {};
+      if (!pr.phone || typeof db === "undefined" || !db || lire("diisoo_ref_lie", "") === pr.phone + code()) return;
+      db.rpc("lier_code_parrain", { p_code: code(), p_whatsapp: pr.phone }).then(function (r) {
+        if (r && !r.error) {
+          ecrire("diisoo_ref_lie", pr.phone + code());
+          try { if (typeof majStatutAcces === "function") majStatutAcces(); } catch (e) {}
+        }
+      }, function () {});
+    } catch (e) {}
+  }
+  setTimeout(lier, 4000);
+  window.addEventListener("online", lier);
+  setInterval(function () { try { if (typeof majStatutAcces === "function" && nb() >= 3) majStatutAcces(); } catch (e) {} }, 60000);
+
+  /* ---------- accueil de l'ami invité ---------- */
+  setTimeout(function () {
+    var parrain = lire("diisoo_ref_parrain", ""), vu = lire("diisoo_ref_accueil", 0);
+    var ecran = $("screen-dashboard");
+    if (!parrain || vu || !ecran || ecran.offsetParent === null) return;
+    ecrire("diisoo_ref_accueil", 1);
+    var d = document.createElement("div"); d.id = "pr-accueil";
+    d.innerHTML = "🎁 <b>Un ami t'a invité sur Diisoo.</b><br>Fais ton premier exercice : cela lui compte pour sa récompense, et tu démarres ton objectif.";
+    var b = document.createElement("button"); b.type = "button"; b.textContent = "C'est parti";
+    b.onclick = function () { d.remove(); };
+    d.appendChild(b); document.body.appendChild(d);
+    setTimeout(function () { if (d.parentNode) d.remove(); }, 15000);
+  }, 5000);
+
+  window.DiisooParrainage = { version: 1, message: message };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-parrainage.js",e);}
+
+try{
+/* ---- diisoo-oral.js ---- */
+/* diisoo-oral.js v1 : analyse d'une réponse orale (sans réseau, instantanée)
+   window.DiisooOral.analyser(texte, question, opts) -> { corrections:[{avant,apres,note}], conseils:[texte], exemple }
+   - corrections : fautes fréquentes des francophones en anglais (I am agree, since 3 years, she have...)
+   - conseils : phrase complète, début de phrase attendu, oui/non, liens entre idées (because, and, but), nombre de questions posées
+   Utilisé par diisoo-exams2.js après chaque réponse. Les règles se complètent ici, sans toucher au moteur. */
+(function () {
+  "use strict";
+
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  var IRR = { go: "goes", have: "has", do: "does", study: "studies", watch: "watches", pass: "passes", carry: "carries" };
+  function troisieme(v) { return IRR[v] || (v + "s"); }
+
+  /* [motif, remplacement (fonction), note en français] */
+  var REGLES = [
+    [/\b(i|we) am agree\b/i, function (m) { return m[1] + " agree"; }, "En anglais on dit « I agree », sans « am »."],
+    [/\bi have (\d+) years?( old)?\b/i, function (m) { return "I am " + m[1] + " years old"; }, "L'âge se dit avec « to be » : « I am 25 years old »."],
+    [/\bi am (\d{1,2})\b(?! years)/i, function (m) { return "I am " + m[1] + " years old"; }, "Pour l'âge, ajoute « years old »."],
+    [/\b(he|she|it) (have)\b/i, function (m) { return m[1] + " has"; }, "À la 3e personne : he / she / it « has »."],
+    [/\b(he|she) (go|do|like|live|work|come|want|need|eat|play|make|take|love|study|watch|speak|read)\b/i, function (m) { return m[1] + " " + troisieme(m[2].toLowerCase()); }, "À la 3e personne du singulier, le verbe prend un « s »."],
+    [/\bpeoples\b/i, function () { return "people"; }, "« people » n'a pas de « s »."],
+    [/\binformations\b/i, function () { return "information"; }, "« information » ne se met pas au pluriel."],
+    [/\badvices\b/i, function () { return "advice"; }, "« advice » ne se met pas au pluriel."],
+    [/\b(luggages|furnitures|moneys|homeworks)\b/i, function (m) { return m[1].slice(0, -1); }, "Ce mot ne se met pas au pluriel en anglais."],
+    [/\bi am (go|come|work|live|eat|play|study)\b/i, function (m) { return "I " + m[1]; }, "Après « I am », mets « -ing » (« I am going ») ou utilise le présent simple (« I go »)."],
+    [/\bsince (\d+|one|two|three|four|five|six|ten|a few) (years?|months?|weeks?|days?)\b/i, function (m) { return "for " + m[1] + " " + m[2]; }, "Pour une durée, on dit « for » ; « since » s'utilise avec une date."],
+    [/\bcan to\b/i, function () { return "can"; }, "Après « can », pas de « to »."],
+    [/\bmore better\b/i, function () { return "better"; }, "« better » suffit."],
+    [/\bvery much (people|money|children|friends|food)\b/i, function (m) { return "a lot of " + m[1]; }, "Utilise « a lot of » avec un nom."],
+    [/\bi want that you\b/i, function () { return "I want you to"; }, "On dit « I want you to… »."],
+    [/\bmake (a )?sport\b/i, function () { return "do sport"; }, "On dit « do sport » ou « play sport »."],
+    [/\bmake (my |the )?homework\b/i, function (m) { return "do " + (m[1] || "") + "homework"; }, "On dit « do homework »."],
+    [/\bi live to\b/i, function () { return "I live in"; }, "On dit « I live in… »."],
+    [/\bi am from in\b/i, function () { return "I am from"; }, "« from » suffit, sans « in »."],
+    [/\bmy name ((?!is\b)[a-z]+)\b/i, function (m) { return "my name is " + m[1]; }, "N'oublie pas « is » : « My name is… »."],
+    [/\bi have (hunger|thirst|cold)\b/i, function (m) { return "I am " + ({ hunger: "hungry", thirst: "thirsty", cold: "cold" })[m[1].toLowerCase()]; }, "Pour la faim, la soif et le froid, on utilise « to be »."],
+    [/\bthe (people|life|love|nature) is\b/i, function (m) { return m[1].toLowerCase() === "people" ? "people are" : m[1].toLowerCase() + " is"; }, "On évite « the » devant un mot général."]
+  ];
+
+  /* début de phrase attendu selon la question */
+  var DEBUTS = [
+    [/what('?s| is) your name/i, /\bmy name\b|\bi am\b|\bi'm\b/i, "My name is …"],
+    [/where are you from|where do you come from/i, /\bi am from\b|\bi'm from\b|\bi come from\b/i, "I am from …"],
+    [/where do you live/i, /\bi live\b|\bi'm living\b|\bi am living\b/i, "I live in …"],
+    [/how old are you/i, /\bi am\b|\bi'm\b/i, "I am … years old."],
+    [/what do you do|what is your job|what's your job/i, /\bi am\b|\bi'm\b|\bi work\b/i, "I am a … / I work as a …"],
+    [/what time/i, /\bat\b|\baround\b|\bo'clock\b|\b\d/i, "I … at seven o'clock."]
+  ];
+  var OUINON = /^(do|does|did|are|is|can|have|has|will|would|could)\b/i;
+
+  var CONNECTEURS = /\b(because|and|but|so|also|then|after that|before|for example|when)\b/i;
+  var DEBUT_QUESTION = /\b(what|where|when|who|why|how|do you|did you|are you|is it|can you|have you|would you|could you|does he|does she)\b/gi;
+  var VERBES = /\b(am|is|are|was|were|have|has|had|like|likes|love|live|lives|work|works|go|goes|come|comes|eat|eats|play|plays|want|need|do|does|make|take|study|buy|drink|cook|read|watch|visit|get|help|see|use|call|speak|think|feel)\b/i;
+
+  function mots(s) { return String(s || "").trim().split(/\s+/).filter(Boolean); }
+
+  function analyser(texte, question, opts) {
+    opts = opts || {};
+    var t = String(texte || "").trim(), q = String(question || ""), out = { corrections: [], conseils: [], exemple: "" };
+    if (!t) return out;
+    var n = mots(t).length;
+
+    REGLES.forEach(function (r) {
+      var m = r[0].exec(t);
+      if (m && out.corrections.length < 3) out.corrections.push({ avant: m[0], apres: r[1](m), note: r[2] });
+    });
+
+    if (!opts.court && !opts.libre) {
+      var attendu = null;
+      DEBUTS.forEach(function (d) { if (!attendu && d[0].test(q)) attendu = d; });
+      if (attendu) {
+        out.exemple = attendu[2];
+        if (!attendu[1].test(t)) out.conseils.push("Commence par une phrase complète, par exemple : « " + attendu[2] + " »");
+      } else if (OUINON.test(q) && !/\b(yes|no|sometimes|never|always|usually|of course|not really)\b/i.test(t)) {
+        out.conseils.push("Pour une question en « Do / Are / Can… », commence par « Yes, I do. » ou « No, I don't. », puis explique.");
+      }
+      if (n < 4 && !out.conseils.length && !VERBES.test(t)) out.conseils.push("Réponds par une phrase complète (sujet + verbe), pas par un seul mot.");
+    }
+
+    if (opts.ask) {
+      var qs = (t.match(DEBUT_QUESTION) || []).length;
+      out.conseils.push(qs >= 3 ? "Bien : tu as posé environ " + qs + " questions." : "Il te faut poser 3 questions : j'en ai compté " + qs + ". Commence chacune par What, Where, Do you…");
+    } else if (opts.duree >= 25 && n >= 25 && !CONNECTEURS.test(t)) {
+      out.conseils.push("Relie tes idées avec « because », « and », « but » pour parler plus longtemps et plus naturellement.");
+    } else if (opts.duree >= 20 && n < Math.round(opts.duree * 0.6) && !opts.court) {
+      out.conseils.push("Ta réponse est courte : ajoute une raison (« because… ») ou un exemple (« for example… »).");
+    }
+    return out;
+  }
+
+  window.DiisooOral = { version: 1, analyser: analyser };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-oral.js",e);}
+
+try{
+/* ---- diisoo-exams2.js ---- */
+/* diisoo-exams2.js v5 : « Format réel » des examens, piloté par un registre
+   Lit exam-formats.json : pour chaque examen, les tâches (type, nombre, préparation, durée de réponse) et les tests.
+   Types gérés : repeat (écoute et répète), readaloud (lire à voix haute), question (réponse orale chronométrée),
+   prompt (consigne affichée), describe (photo ou graphique), info (document puis questions),
+   retell (résumer un cours entendu), short (réponse courte).
+   v3 : fin de parole détectée par le micro, correction et suggestions (diisoo-oral.js), passage automatique à la question suivante,
+   import des anciens thèmes IELTS (TEST_BANK) enrichis d'un enregistrement et de la partie « poser des questions ».
+   Pour suivre un changement du vrai examen, on modifie exam-formats.json seulement : aucun code à toucher. */
+(function () {
+  "use strict";
+
+  var REG = null, PROM = null;
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function charger() {
+    if (PROM) return PROM;
+    PROM = fetch("exam-formats.json", { cache: "no-cache" }).then(function (r) { return r.json(); })
+      .then(function (j) { REG = j; return j; }).catch(function () { PROM = null; return null; });
+    return PROM;
+  }
+  function son(n) { try { if (window.DiisooSon && window.DiisooSon.jouer) window.DiisooSon.jouer(n); } catch (e) {} }
+  function attendre(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+
+  /* ---------- comparaison ---------- */
+  function mots(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9' ]+/g, " ").replace(/\s+/g, " ").trim().split(" ").filter(Boolean); }
+  function comparer(cible, entendu) {
+    if (window.DiisooCoach && window.DiisooCoach._comparer) return window.DiisooCoach._comparer(cible, entendu);
+    var H = mots(entendu), res = [], ok = 0;
+    mots(cible).forEach(function (w) { var v = H.indexOf(w) > -1; if (v) ok++; res.push({ w: w, etat: v ? 2 : 0 }); });
+    return { mots: res, score: res.length ? ok / res.length : 0 };
+  }
+
+  /* ---------- graphique en barres (PTE : décrire un graphique) ---------- */
+  function graphique(g) {
+    var W = 320, H = 190, m = 28, max = Math.max.apply(null, g.valeurs), n = g.valeurs.length, bw = (W - 2 * m) / n * 0.6, gap = (W - 2 * m) / n, s = "";
+    s += '<svg viewBox="0 0 ' + W + " " + H + '" xmlns="http://www.w3.org/2000/svg" style="width:100%;background:#fff;border-radius:12px">';
+    s += '<text x="' + W / 2 + '" y="16" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#222">' + esc(g.titre) + "</text>";
+    s += '<line x1="' + m + '" y1="' + (H - 28) + '" x2="' + (W - m + 6) + '" y2="' + (H - 28) + '" stroke="#444"/>';
+    g.valeurs.forEach(function (v, i) {
+      var h = (H - 70) * v / max, x = m + i * gap + (gap - bw) / 2, y = H - 28 - h;
+      s += '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + h + '" fill="#2f5ca3" rx="3"/>';
+      s += '<text x="' + (x + bw / 2) + '" y="' + (y - 4) + '" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#222">' + v + "</text>";
+      s += '<text x="' + (x + bw / 2) + '" y="' + (H - 12) + '" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#222">' + esc(g.labels[i]) + "</text>";
+    });
+    return s + "</svg>";
+  }
+
+  /* ---------- styles ---------- */
+  var st = document.createElement("style");
+  st.textContent =
+    ".fx-reel{width:100%;min-height:56px;margin:6px 0 4px;border-radius:16px;border:0;background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;font-size:15px;font-weight:800;text-align:left;padding:8px 14px}" +
+    ".fx-reel small{display:block;font-size:11px;font-weight:600;opacity:.85}" +
+    "#dii-fmt{position:fixed;inset:0;z-index:99980;background:rgba(5,8,18,.96);display:flex;align-items:flex-end;justify-content:center}" +
+    "#dii-fmt .fm-box{width:100%;max-width:520px;max-height:96vh;overflow-y:auto;background:#0B0F1C;border:1px solid #1E2740;border-radius:22px 22px 0 0;padding:16px 16px 22px;color:#F6F1E7}" +
+    "#dii-fmt .fm-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}" +
+    "#dii-fmt .fm-x{width:44px;height:44px;border-radius:50%;background:#141A2B;border:1px solid #1E2740;color:#A69C86;font-size:16px;flex:none}" +
+    "#dii-fmt .fm-tt{flex:1;text-align:center;font-size:11px;font-weight:700;letter-spacing:.08em;color:#8C8064;text-transform:uppercase}" +
+    "#dii-fmt .fm-pg{height:6px;border-radius:99px;background:#141A2B;overflow:hidden;margin:0 0 12px}" +
+    "#dii-fmt .fm-pg i{display:block;height:100%;background:#3FAE74}" +
+    "#dii-fmt h3{font-size:20px;font-weight:800;margin:4px 0;text-align:center}" +
+    "#dii-fmt .fm-p{font-size:13px;color:#A69C86;line-height:1.45;margin:6px 0;text-align:center}" +
+    "#dii-fmt .fm-big{font-size:20px;font-weight:700;line-height:1.35;text-align:center;margin:12px 0}" +
+    "#dii-fmt .fm-ico{font-size:50px;text-align:center;margin:8px 0}" +
+    "#dii-fmt .fm-b{display:block;width:100%;min-height:52px;margin-top:8px;border:0;border-radius:14px;background:#25D366;color:#fff;font-size:16px;font-weight:800}" +
+    "#dii-fmt .fm-b.s{background:#141A2B;border:1px solid #1E2740;color:#E4DCC9;font-weight:700;font-size:14px}" +
+    "#dii-fmt .fm-b.l{opacity:.55}" +
+    "#dii-fmt .fm-cd{height:10px;border-radius:99px;background:#141A2B;overflow:hidden;margin:12px 0 4px}" +
+    "#dii-fmt .fm-cd i{display:block;height:100%;background:#E5484D;transition:width .25s linear}" +
+    "#dii-fmt .fm-sec{text-align:center;font-size:30px;font-weight:800;color:#F3A94E}" +
+    "#dii-fmt .fm-mots{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}" +
+    "#dii-fmt .fm-m{padding:6px 10px;border-radius:10px;border:2px solid #1E2740;background:#141A2B;font-size:16px;font-weight:700}" +
+    "#dii-fmt .fm-m.v{border-color:#25D366;background:#12351F}#dii-fmt .fm-m.o{border-color:#F3A94E;background:#3A2A10}#dii-fmt .fm-m.r{border-color:#E5484D;background:#3A1515}" +
+    "#dii-fmt .fm-tr{background:#141A2B;border:1px solid #1E2740;border-radius:12px;padding:10px;font-size:14px;line-height:1.4;margin:8px 0;color:#C9BFA8}" +
+    "#dii-fmt .fm-doc{background:#F6F1E7;color:#1b1b1b;border-radius:12px;padding:12px;margin:8px 0;font-size:14px;line-height:1.6}" +
+    "#dii-fmt .fm-doc b{display:block;margin-bottom:4px}" +
+    "#dii-fmt .fm-img{margin:8px 0;border-radius:12px;overflow:hidden}#dii-fmt .fm-img svg{width:100%;height:auto;display:block}" +
+    "#dii-fmt .fm-src{font-size:11px;color:#8C8064;text-align:center;margin-top:10px;line-height:1.4}";
+  document.head.appendChild(st);
+  var st2 = document.createElement("style");
+  st2.textContent =
+    "@keyframes fmpulse{0%{transform:scale(1)}50%{transform:scale(1.12)}100%{transform:scale(1)}}" +
+    "#dii-fmt .fm-ico.on{animation:fmpulse 1.1s infinite}" +
+    "#dii-fmt .fm-live{min-height:42px;background:#141A2B;border:1px dashed #2a3350;border-radius:12px;padding:8px 10px;font-size:14px;color:#E4DCC9;line-height:1.35;margin:8px 0;text-align:center}" +
+    "#dii-fmt .fm-sug{background:#141A2B;border:1px solid #1E2740;border-radius:12px;padding:10px;margin:8px 0;font-size:13px;line-height:1.5;color:#E4DCC9}" +
+    "#dii-fmt .fm-sug b{display:block;color:#F3A94E;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}" +
+    "#dii-fmt .fm-sug small{display:block;color:#A69C86;font-size:11px;margin:1px 0 6px}" +
+    "#dii-fmt .fm-auto{height:6px;border-radius:99px;background:#141A2B;overflow:hidden;margin:10px 0 4px}" +
+    "#dii-fmt .fm-auto i{display:block;height:100%;width:100%;background:#25D366}" +
+    "#exam-tests.fx-seul>*:not(.et-retour):not(.fx-reel){display:none!important}";
+  document.head.appendChild(st2);
+
+  var st3 = document.createElement("style");
+  st3.textContent =
+    "#dii-fmt .fm-box{background:radial-gradient(120% 70% at 50% 0%,#18233f 0%,#0B0F1C 62%);border-color:#2a3558}" +
+    "#dii-fmt .fm-top{margin-bottom:10px}" +
+    "#dii-fmt .fm-bd{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;background:linear-gradient(90deg,#F3A94E,#E2703E);color:#1a1206;font-size:12px;font-weight:900;letter-spacing:.06em}" +
+    "#dii-fmt .fm-tt{font-size:12px;color:#9fb4ff}" +
+    "#dii-fmt .fm-pg{height:5px;margin-bottom:14px}#dii-fmt .fm-pg i{background:linear-gradient(90deg,#3FAE74,#8fe3b0);transition:width .4s}" +
+    "#dii-fmt .fm-in{display:flex;justify-content:center;margin:2px 0 10px}" +
+    "#dii-fmt .fm-chip{display:inline-block;padding:5px 12px;border-radius:99px;background:#1a2340;border:1px solid #2a3558;font-size:11px;font-weight:800;letter-spacing:.05em;color:#9fb4ff;text-transform:uppercase}" +
+    "#dii-fmt .fm-q{background:#121a30;border:1px solid #2a3558;border-radius:20px;padding:18px 14px;font-size:21px;font-weight:800;text-align:center;line-height:1.3;margin:6px 0 10px}" +
+    "#dii-fmt .fm-q.sm{font-size:16px;font-weight:700}" +
+    "#dii-fmt .fm-ring{position:relative;width:118px;height:118px;margin:8px auto 2px}" +
+    "#dii-fmt .fm-ring svg{width:118px;height:118px;transform:rotate(-90deg)}" +
+    "#dii-fmt .fm-ring .t{fill:none;stroke:#1b2542;stroke-width:9}#dii-fmt .fm-ring .p{fill:none;stroke:#F3A94E;stroke-width:9;stroke-linecap:round;stroke-dasharray:314.2;stroke-dashoffset:0;transition:stroke-dashoffset .25s linear}" +
+    "#dii-fmt .fm-ring .n{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#F6F1E7;line-height:1}" +
+    "#dii-fmt .fm-ring .n small{font-size:20px;margin-bottom:2px}" +
+    "#dii-fmt .fm-ring.rec .p{stroke:#E5484D}#dii-fmt .fm-ring.rec::after{content:'';position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(229,72,77,.55);animation:fmhalo 1.3s infinite}" +
+    "@keyframes fmhalo{0%{transform:scale(.96);opacity:.9}100%{transform:scale(1.12);opacity:0}}" +
+    "#dii-fmt .fm-state{text-align:center;font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#8C8064;margin:4px 0 8px}" +
+    "#dii-fmt .fm-state.rec{color:#E5484D}" +
+    "#dii-fmt .fm-kw{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}" +
+    "#dii-fmt .fm-w{padding:6px 10px;border-radius:10px;background:#141A2B;border:1.5px solid #243055;font-size:16px;font-weight:700;color:#7d86a3;transition:all .2s}" +
+    "#dii-fmt .fm-w.ok{color:#fff;background:#12351F;border-color:#25D366;transform:scale(1.05)}" +
+    "#dii-fmt .fm-id{width:44px;height:44px;border-radius:50%;background:#141A2B;border:2px dashed #243055;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .25s}" +
+    "#dii-fmt .fm-id.ok{border-style:solid;border-color:#25D366;background:#12351F}" +
+    "#dii-fmt .fm-ids{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}" +
+    "#dii-fmt .fm-mt{height:8px;border-radius:99px;background:#141A2B;overflow:hidden;margin:6px 0 2px}#dii-fmt .fm-mt i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4f8cff,#8fe3b0);transition:width .3s}" +
+    "#dii-fmt .fm-mtl{display:flex;justify-content:space-between;font-size:11px;color:#8C8064;font-weight:700}" +
+    "#dii-fmt .fm-cn{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0}#dii-fmt .fm-cn span{padding:3px 9px;border-radius:99px;border:1px solid #243055;font-size:11px;font-weight:700;color:#5d6685}#dii-fmt .fm-cn span.ok{color:#8fe3b0;border-color:#25D366;background:#12351F}" +
+    "#dii-fmt .fm-row{display:flex;gap:8px;margin-top:8px}#dii-fmt .fm-row .fm-b{margin-top:0;flex:1;min-height:46px;font-size:13px}" +
+    "#dii-fmt .fm-nx{position:relative;overflow:hidden}#dii-fmt .fm-nx i{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.22)}#dii-fmt .fm-nx span{position:relative}" +
+    "#dii-fmt .fm-sc{display:flex;align-items:center;gap:14px;margin:6px 0 8px}" +
+    "#dii-fmt .fm-sc .c{flex:none;width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;border:6px solid #25D366;color:#F6F1E7}" +
+    "#dii-fmt .fm-sc .c.o{border-color:#F3A94E}#dii-fmt .fm-sc .c.r{border-color:#E5484D}" +
+    "#dii-fmt .fm-sc .d{flex:1;font-size:13px;color:#C9BFA8;line-height:1.4}#dii-fmt .fm-sc .d b{display:block;font-size:16px;color:#F6F1E7;margin-bottom:2px}" +
+    "#dii-fmt .fm-hr{font-size:12px;color:#8C8064;text-align:center;margin:4px 0}" +
+    "#dii-fmt .fm-tl{margin:8px 0}#dii-fmt .fm-tl div{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #1b2542;font-size:14px;font-weight:700}#dii-fmt .fm-tl em{margin-left:auto;font-style:normal;font-size:11px;color:#8C8064;font-weight:700}" +
+    "#dii-fmt .fm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}" +
+    "#dii-fmt .fm-tc{border:1.5px solid #2a3558;border-radius:16px;background:#121a30;color:#F6F1E7;padding:12px 10px;text-align:left;min-height:84px}#dii-fmt .fm-tc b{display:block;font-size:22px;color:#F3A94E}#dii-fmt .fm-tc small{font-size:12px;color:#A69C86;line-height:1.3}#dii-fmt .fm-tc.l{opacity:.6}" +
+    "#dii-fmt .fm-st{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}" +
+    "#dii-fmt .fm-sk{margin:8px 0}#dii-fmt .fm-sk div.h{display:flex;justify-content:space-between;font-size:13px;font-weight:800}#dii-fmt .fm-sk .b{height:10px;border-radius:99px;background:#141A2B;overflow:hidden;margin-top:4px}#dii-fmt .fm-sk .b i{display:block;height:100%;border-radius:99px}" +
+    "#dii-fmt .fm-doc{cursor:pointer}#dii-fmt .fm-doc div.hl{background:#ffe58a;border-radius:4px}" +
+    "#dii-fmt details{margin-top:12px;font-size:11px;color:#8C8064}#dii-fmt summary{cursor:pointer;text-align:center}";
+  document.head.appendChild(st3);
+
+  /* ---------- lecteur ---------- */
+  var ov = null, jeton = 0, minuteur = null, ecoute = null, vadT = null, autoT = null;
+  function AUTO() { try { return localStorage.getItem("diisoo_fmt_auto") !== "0"; } catch (e) { return true; } }
+
+  function nettoyer() {
+    jeton++;
+    if (minuteur) { clearInterval(minuteur); minuteur = null; }
+    if (vadT) { clearInterval(vadT); vadT = null; }
+    if (autoT) { clearTimeout(autoT); autoT = null; }
+    if (ecoute) { try { ecoute.stop(); } catch (e) {} ecoute = null; }
+    try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+  }
+  function fermer() { nettoyer(); if (ov) { ov.remove(); ov = null; } }
+
+  var BADGE = "";
+  function cadre(titre, prog) {
+    if (!ov) {
+      ov = el("div"); ov.id = "dii-fmt"; ov.setAttribute("role", "dialog");
+      ov.appendChild(el("div", "fm-box")); document.body.appendChild(ov);
+    }
+    var box = ov.firstChild; box.innerHTML = ""; box.scrollTop = 0;
+    var top = el("div", "fm-top");
+    var x = el("button", "fm-x", "✕"); x.type = "button"; x.setAttribute("aria-label", "Fermer"); x.onclick = fermer;
+    top.appendChild(x);
+    var mid = el("div", "fm-tt"); mid.style.display = "flex"; mid.style.flexDirection = "column"; mid.style.alignItems = "center"; mid.style.gap = "3px";
+    if (BADGE) mid.appendChild(el("span", "fm-bd", BADGE));
+    mid.appendChild(el("span", null, titre || ""));
+    top.appendChild(mid); top.appendChild(el("div")); top.lastChild.style.width = "44px";
+    box.appendChild(top);
+    if (prog != null) { var pg = el("div", "fm-pg"); var i = el("i"); i.style.width = Math.round(prog * 100) + "%"; pg.appendChild(i); box.appendChild(pg); }
+    return box;
+  }
+  function bouton(box, txt, fn, cls) { var b = el("button", "fm-b" + (cls ? " " + cls : ""), txt); b.type = "button"; b.onclick = fn; box.appendChild(b); return b; }
+
+  /* contenu visuel d'un item : photo, graphique, document (lignes à surligner du doigt) */
+  function support(box, e, sansTexte) {
+    var it = e.item;
+    if (it && typeof it === "object") {
+      if (it.scene) {
+        var im = el("div", "fm-img");
+        try { im.innerHTML = window.DiisooExams ? window.DiisooExams.scene(it.scene) : ""; } catch (x) {}
+        box.appendChild(im);
+      }
+      if (it.graphique) { var gi = el("div", "fm-img"); gi.innerHTML = graphique(it.graphique); box.appendChild(gi); }
+    }
+    if (e.doc) {
+      var d = el("div", "fm-doc"); var t = el("b", null, e.doc.titre); d.appendChild(t);
+      e.doc.lignes.forEach(function (l) { var r = el("div", null, l); r.onclick = function () { r.classList.toggle("hl"); }; d.appendChild(r); });
+      box.appendChild(d);
+      box.appendChild(el("div", "fm-hr", "Touche une ligne pour la surligner"));
+    }
+    if (e.visible && !sansTexte) box.appendChild(el("div", "fm-q", e.visible));
+  }
+  var ICONES = { repeat: "🔁", readaloud: "📖", question: "❓", prompt: "💬", describe: "🖼️", info: "📄", retell: "🎧", short: "⚡" };
+  function courte(t) { var c = String(t || "").split(/[.:]/)[0]; return c.length > 60 ? c.slice(0, 57) + "…" : c; }
+  function faibles() { try { return JSON.parse(localStorage.getItem("diisoo_fmt_faibles") || "[]") || []; } catch (e) { return []; } }
+  function memoFaibles(liste) {
+    try { var f = faibles(); liste.forEach(function (w) { if (f.indexOf(w) < 0) f.push(w); }); localStorage.setItem("diisoo_fmt_faibles", JSON.stringify(f.slice(-40))); } catch (e) {}
+  }
+
+  /* ---------- accueil d'un examen ---------- */
+  var BANAL = /^(about|every|there|their|would|which|always|because|today|while|other|these|those|after|before|again|really|still|three|small)$/;
+  function clesDe(txt) {
+    var vus = {}, out = [];
+    (txt.match(/[A-Za-z']{5,}|\b\d+\b/g) || []).forEach(function (w) {
+      var k = w.toLowerCase(); if (BANAL.test(k) || vus[k]) return; vus[k] = 1; if (out.length < 8) out.push(k);
+    });
+    return out;
+  }
+  function enrichir() {
+    try {
+      Object.keys(REG.examens).forEach(function (k) {
+        var ex = REG.examens[k];
+        if (!ex.import_ancien || !ex.enregistrements || ex._imp || typeof TEST_BANK === "undefined") return;
+        ex._imp = true;
+        TEST_BANK.forEach(function (t) {
+          var rec = ex.enregistrements[t.id];
+          if (!rec || ex.tests.some(function (x) { return x.id === "ie-" + t.id; })) return;
+          var ph = {}; (t.phases || []).forEach(function (p) { ph[p.id] = p.questions || []; });
+          var th = t.topic;
+          ex.tests.push({ id: "ie-" + t.id, titre: th,
+            p1a: (ph["1a"] || []).slice(0, 3), p1b: (ph["1b"] || []).slice(0, 5),
+            ask: ["Ask the examiner three questions about this theme: " + th + ". Start with What, Where or Do you."],
+            p2a: [{ t: rec, cles: clesDe(rec) }],
+            p2b: (ph["2b"] || []).slice(0, 2).concat(["What do you like or dislike about " + th.toLowerCase().replace(/&/g, "and") + "? Explain why."]) });
+        });
+      });
+    } catch (e) { console.warn("[diisoo] import examens", e); }
+  }
+  function nbReel(ex, t) {
+    var test = ex.tests[0], b = test[t.banque || t.type];
+    if (t.type === "info") return t.nb;
+    return b ? Math.min(t.nb, b.length) : t.nb;
+  }
+  function ouvrir(cle) {
+    var ex = REG && REG.examens && REG.examens[cle]; if (!ex) return;
+    enrichir();
+    nettoyer();
+    BADGE = ex.bouton ? ex.groupe + " " + ex.bouton : ex.court;
+    var box = cadre("Format réel");
+    box.appendChild(el("h3", null, ex.nom));
+    var minutes = Math.max(1, Math.round(ex.taches.reduce(function (s, t) {
+      return s + (t.type === "info" ? t.nb * ((t.lecture_s || 0) / Math.max(1, t.nb) + 20) : t.nb * ((t.prep_s || 0) + (t.rep_s || 10) + 8));
+    }, 0) / 60));
+    var st = el("div", "fm-st");
+    st.appendChild(el("span", "fm-chip", "⏱ ~" + minutes + " min"));
+    st.appendChild(el("span", "fm-chip", ex.taches.length + " parties"));
+    st.appendChild(el("span", "fm-chip", "🎙️ Micro"));
+    box.appendChild(st);
+    var tl = el("div", "fm-tl");
+    ex.taches.forEach(function (t) {
+      var r = el("div"); r.appendChild(el("span", null, (ICONES[t.type] || "•") + " " + t.titre));
+      r.appendChild(el("em", null, nbReel(ex, t) + " × " + (t.type === "info" ? t.reps.join("/") : t.rep_s) + " s"));
+      tl.appendChild(r);
+    });
+    box.appendChild(tl);
+    var libre = false; try { libre = typeof aAcces === "function" && aAcces("premium"); } catch (e) {}
+    var grille = el("div", "fm-grid");
+    ex.tests.forEach(function (t, i) {
+      var verrou = i >= (ex.gratuits || 1) && !libre;
+      var b = el("button", "fm-tc" + (verrou ? " l" : "")); b.type = "button";
+      b.innerHTML = "<b>" + (verrou ? "⭐ " : "") + (i + 1) + "</b><small>" + esc(t.titre) + "</small>";
+      b.onclick = function () {
+        if (verrou) { try { toast("Ce test est réservé aux abonnés Diisoo Plus."); openPremium(); } catch (e) {} return; }
+        lancer(cle, i);
+      };
+      grille.appendChild(b);
+    });
+    box.appendChild(grille);
+    var fb = faibles();
+    if (fb.length) bouton(box, "📌 Mots à revoir (" + fb.length + ")", function () { revoir(cle); }, "s");
+    var ba = bouton(box, "", function () {
+      try { localStorage.setItem("diisoo_fmt_auto", AUTO() ? "0" : "1"); } catch (e) {}
+      ba.textContent = "⚙️ Question suivante automatique : " + (AUTO() ? "oui" : "non");
+    }, "s");
+    ba.textContent = "⚙️ Question suivante automatique : " + (AUTO() ? "oui" : "non");
+    var dt = el("details"); dt.appendChild(el("summary", null, "À propos de ce test"));
+    dt.appendChild(el("p", "fm-src", ex.confiance + " Dernière vérification : " + ex.verifie_le + ". Tests créés par Diisoo, sans affiliation avec les organismes d'examen."));
+    box.appendChild(dt);
+  }
+
+  /* mots à revoir : touche un mot pour l'entendre, redis-le, puis efface-le de la liste */
+  function revoir(cle) {
+    var box = cadre("Mots à revoir");
+    box.appendChild(el("h3", null, "📌 Mots à travailler"));
+    box.appendChild(el("div", "fm-hr", "Touche un mot : tu l'entends. Dis-le à voix haute. Appui long pour l'effacer."));
+    var wrap = el("div", "fm-kw");
+    faibles().forEach(function (w) {
+      var c = el("button", "fm-w", w); c.type = "button";
+      var t0 = 0;
+      c.onclick = function () { try { speak(w, "en-US", 0.8); } catch (x) {} };
+      c.oncontextmenu = function (ev) { ev.preventDefault(); try { localStorage.setItem("diisoo_fmt_faibles", JSON.stringify(faibles().filter(function (z) { return z !== w; }))); } catch (x) {} c.remove(); };
+      c.addEventListener("touchstart", function () { t0 = Date.now(); c._lp = setTimeout(function () { try { localStorage.setItem("diisoo_fmt_faibles", JSON.stringify(faibles().filter(function (z) { return z !== w; }))); } catch (x) {} c.remove(); }, 700); }, { passive: true });
+      c.addEventListener("touchend", function () { clearTimeout(c._lp); }, { passive: true });
+      wrap.appendChild(c);
+    });
+    box.appendChild(wrap);
+    bouton(box, "Retour", function () { ouvrir(cle); }, "s");
+  }
+
+  /* ---------- déroulé d'un test ---------- */
+  function lancer(cle, ti) {
+    var ex = REG.examens[cle], test = ex.tests[ti], etapes = [];
+    ex.taches.forEach(function (t) {
+      var banque = test[t.banque || t.type] || [];
+      if (t.type === "info") {
+        banque.forEach(function (g) {
+          g.questions.forEach(function (q, j) {
+            etapes.push({ tache: { id: t.id, type: "question", titre: t.titre, prep_s: t.prep_s, rep_s: t.reps[j] || 15, consigne: t.consigne },
+              i: j, n: g.questions.length, item: q, doc: g.doc, lecture: j === 0 ? t.lecture_s : 0 });
+          });
+        });
+        return;
+      }
+      for (var i = 0; i < t.nb && i < banque.length; i++) etapes.push({ tache: t, i: i, n: Math.min(t.nb, banque.length), item: banque[i] });
+    });
+    var bilan = { precision: [], courtes: [], oraux: [], cles: [], corr: [], mots: [], expr: [] };
+
+    function texteDe(e) { var it = e.item; return typeof it === "string" ? it : (it.t || it.q || it.consigne || ""); }
+    function etape(k) {
+      if (k >= etapes.length) return fin(cle, ti, bilan);
+      var e = etapes[k], mon = ++jeton, ty = e.tache.type;
+      e.k = k; e.mon = mon; e.prog = k / etapes.length; e.titre = e.tache.titre + (e.n > 1 ? " " + (e.i + 1) + "/" + e.n : "");
+      if (ty === "readaloud") return lire(e);
+      if (ty === "prompt") return consigne(e);
+      if (ty === "describe") return decrire(e);
+      return ecouter(e);   /* repeat, question, retell, short */
+    }
+
+    function compte(box, sec, surFin, rec) {
+      var ring = el("div", "fm-ring" + (rec ? " rec" : ""));
+      ring.innerHTML = '<svg viewBox="0 0 118 118"><circle class="t" cx="59" cy="59" r="50"/><circle class="p" cx="59" cy="59" r="50"/></svg><div class="n"></div>';
+      var tx = ring.querySelector(".n"), pr = ring.querySelector(".p");
+      tx.textContent = String(sec); box.appendChild(ring);
+      var t0 = Date.now(), tot = sec * 1000;
+      if (minuteur) clearInterval(minuteur);
+      minuteur = setInterval(function () {
+        var r = Math.max(0, tot - (Date.now() - t0));
+        tx.textContent = String(Math.ceil(r / 1000)); pr.style.strokeDashoffset = String(314.2 * (1 - r / tot));
+        if (r <= 0) { clearInterval(minuteur); minuteur = null; if (surFin) surFin(); }
+      }, 250);
+      return ring;
+    }
+    function arret() { if (minuteur) { clearInterval(minuteur); minuteur = null; } }
+    function puce(box, txt) { var w = el("div", "fm-in"); w.appendChild(el("span", "fm-chip", txt)); box.appendChild(w); }
+
+    /* attente avant de parler : lecture du document, préparation */
+    function preparer(e, secondes, libelle, suite, avecSupport) {
+      var box = cadre(e.titre, e.prog);
+      puce(box, courte(libelle));
+      if (avecSupport) support(box, e);
+      var go = function () { if (e.mon === jeton) { arret(); suite(); } };
+      compte(box, secondes, go, false);
+      box.appendChild(el("div", "fm-state", "Prépare-toi"));
+      bouton(box, "Je suis prêt", go, "s");
+    }
+
+    function silenceMs(t) {
+      if (t.silence_ms) return t.silence_ms;
+      if (t.type === "short") return 1100;
+      if (t.type === "repeat") return 1400;
+      if (t.type === "question") return t.rep_s <= 20 ? 1800 : (t.rep_s <= 30 ? 2100 : 2600);
+      return 2800;
+    }
+
+    /* lecture karaoké : chaque mot s'allume quand tu le dis (cacher = mots masqués, comme à l'examen) */
+    function karaoke(box, cible, cacher, petit) {
+      var wrap = el("div", "fm-kw"), chips = [];
+      cible.split(/\s+/).filter(Boolean).forEach(function (tok) {
+        var n = mots(tok)[0] || ""; var c = el("span", "fm-w", cacher ? Array(Math.min(Math.max(n.length, 2), 6) + 1).join("•") : tok);
+        if (petit) { c.style.fontSize = "14px"; c.style.padding = "3px 6px"; }
+        c._n = n; c._t = tok; wrap.appendChild(c); chips.push(c);
+      });
+      box.appendChild(wrap);
+      return function (txt) {
+        var H = mots(txt);
+        chips.forEach(function (c) { if (c.classList.contains("ok") || !c._n) return; if (H.indexOf(c._n) > -1) { c.classList.add("ok"); c.textContent = c._t; } });
+      };
+    }
+    function aMatch(dit, spec) {
+      var d = " " + mots(dit).join(" ") + " ";
+      return String(spec).split("|").some(function (a) { var m = mots(a).join(" "); return m && d.indexOf(" " + m + " ") > -1; });
+    }
+    function ideesLive(box, cles) {
+      var wrap = el("div", "fm-kw"), ch = [];
+      cles.forEach(function (k) { var c = el("span", "fm-w", "•••"); c._k = k; wrap.appendChild(c); ch.push(c); });
+      box.appendChild(wrap);
+      return function (txt) { ch.forEach(function (c) { if (!c.classList.contains("ok") && aMatch(txt, c._k)) { c.classList.add("ok"); c.textContent = String(c._k).split("|")[0]; } }); };
+    }
+    var CONN = ["because", "and", "but", "for example"], QDEB = /\b(what|where|when|who|why|how|do you|did you|are you|is it|can you|have you|would you|could you)\b/gi;
+    function metreLive(box, objectif, ask) {
+      var up;
+      if (ask) {
+        var ids = el("div", "fm-ids"), pts = [];
+        [1, 2, 3].forEach(function (n) { var c = el("div", "fm-id", String(n)); ids.appendChild(c); pts.push(c); });
+        box.appendChild(ids);
+        up = function (txt) { var q = (txt.match(QDEB) || []).length; pts.forEach(function (c, i) { if (i < q) { c.classList.add("ok"); c.textContent = "✓"; } }); };
+      } else {
+        var mt = el("div", "fm-mt"), bi = el("i"); mt.appendChild(bi); box.appendChild(mt);
+        var lg = el("div", "fm-mtl"), l1 = el("span", null, "0 mot"), l2 = el("span", null, "objectif ~" + objectif); lg.appendChild(l1); lg.appendChild(l2); box.appendChild(lg);
+        var cn = el("div", "fm-cn"), cs = []; CONN.forEach(function (w) { var c = el("span", null, w); cn.appendChild(c); cs.push(c); }); box.appendChild(cn);
+        up = function (txt) {
+          var n = mots(txt).length; bi.style.width = Math.min(100, Math.round(n / objectif * 100)) + "%"; l1.textContent = n + (n > 1 ? " mots" : " mot");
+          var d = txt.toLowerCase(); cs.forEach(function (c, i) { if (d.indexOf(CONN[i]) > -1) c.classList.add("ok"); });
+        };
+      }
+      return up;
+    }
+
+    function parler(e) {
+      var t = e.tache, ty = t.type, cible = texteDe(e), box = cadre(e.titre, e.prog);
+      puce(box, courte(t.consigne));
+      var objectif = Math.round(t.rep_s * 1.2), maj = function () {};
+      if (ty === "repeat") maj = karaoke(box, cible, true, false);
+      else if (ty === "readaloud") maj = karaoke(box, cible, false, true);
+      else if (ty === "retell" && e.item.cles) maj = ideesLive(box, e.item.cles);
+      else {
+        support(box, e);
+        if (ty !== "short") maj = (e.item && e.item.cles) ? ideesLive(box, e.item.cles) : metreLive(box, objectif, t.id === "ask");
+      }
+      var ring = null, etat = el("div", "fm-state rec", "● Je t'écoute");
+      var live = el("div", "fm-hr", "");
+      var debut = Date.now(), fini = false, aParle = false, dernier = Date.now();
+      var seuil = silenceMs(t), minM = ty === "repeat" ? 2 : 1, attenteMax = Math.min(9000, t.rep_s * 600);
+      function terminer(res) {
+        if (fini || e.mon !== jeton) return; fini = true;
+        if (vadT) { clearInterval(vadT); vadT = null; }
+        arret(); ecoute = null;
+        resultat(e, res || { text: "" }, (Date.now() - debut) / 1000);
+      }
+      function stopper(raison) {
+        if (fini) return;
+        if (raison === "silence") { son("ferme"); etat.textContent = "✅ Terminé"; etat.className = "fm-state"; if (ring) ring.classList.remove("rec"); }
+        else if (raison === "rien") { etat.textContent = "Je n'ai rien entendu"; etat.className = "fm-state"; }
+        try { ecoute && ecoute.stop(); } catch (x) {}
+      }
+      son("ouvre");
+      try {
+        ecoute = startListening("en-US", t.rep_s * 1000, true, function (txt) {
+          dernier = Date.now();
+          if (!aParle && mots(txt).length >= minM) aParle = true;
+          maj(txt); live.textContent = txt.length > 90 ? "…" + txt.slice(-90) : txt;
+        });
+        ecoute.promise.then(terminer, function () { terminer({ text: "" }); });
+      } catch (err) { terminer({ text: "", unsupported: true }); }
+      if (vadT) clearInterval(vadT);
+      vadT = setInterval(function () {
+        var now = Date.now();
+        if (aParle && now - dernier >= seuil) stopper("silence");
+        else if (!aParle && now - debut >= attenteMax) stopper("rien");
+      }, 150);
+      ring = compte(box, t.rep_s, function () { try { ecoute && ecoute.stop(); } catch (x) {} }, true);
+      box.appendChild(etat); box.appendChild(live);
+      bouton(box, "✋ J'ai fini", function () { try { ecoute && ecoute.stop(); } catch (x) {} }, "s");
+    }
+
+    /* la consigne est dite une seule fois, puis préparation éventuelle, puis réponse */
+    function ecouter(e) {
+      var ty = e.tache.type, box = cadre(e.titre, e.prog);
+      if (e.lecture) {
+        e.lecture0 = e.lecture; e.lecture = 0;
+        return preparer(e, e.lecture0, "Lis le document", function () { ecouter(e); }, true);
+      }
+      puce(box, courte(e.tache.consigne));
+      box.appendChild(el("div", "fm-ico on", "🔊"));
+      box.appendChild(el("div", "fm-state", "Écoute : une seule fois"));
+      if (e.doc) support(box, e);
+      Promise.race([Promise.resolve().then(function () { return speak(texteDe(e), "en-US", 0.95); }), attendre(40000)]).then(function () {
+        if (e.mon !== jeton) return;
+        if (ty === "question") e.visible = texteDe(e);
+        if (ty === "retell") e.visible = "";
+        if (e.tache.prep_s) preparer(e, e.tache.prep_s, "Temps de préparation", function () { parler(e); }, true);
+        else parler(e);
+      }, function () { if (e.mon === jeton) { e.visible = texteDe(e); parler(e); } });
+    }
+
+    function lire(e) {
+      var go = function () { parler(e); };
+      e.visible = texteDe(e);
+      if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, go, false);
+      else go();
+    }
+    function consigne(e) {
+      e.visible = texteDe(e);
+      var run = function () {
+        if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, function () { parler(e); }, true);
+        else parler(e);
+      };
+      if (e.tache.lue) { try { speak(e.visible, "en-US", 0.95); } catch (x) {} }
+      run();
+    }
+    function decrire(e) {
+      e.visible = "";
+      if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, function () { parler(e); }, true);
+      else { var b = cadre(e.titre, e.prog); puce(b, courte(e.tache.consigne)); support(b, e); bouton(b, "🎙️ Commencer à parler", function () { parler(e); }); }
+    }
+
+    function resultat(e, res, dur) {
+      var ty = e.tache.type, k = e.k, box = cadre(e.titre, (k + 1) / etapes.length);
+      var texte = (res.text || "").trim(), cible = texteDe(e);
+      var suite = function (nSug, manuel) {
+        var dernierEl = k + 1 >= etapes.length, mon2 = jeton, ms = Math.min(10000, 4000 + 1500 * (nSug || 0));
+        var go = function () { if (mon2 !== jeton) return; if (autoT) { clearTimeout(autoT); autoT = null; } etape(k + 1); };
+        var row = el("div", "fm-row");
+        var nx = el("button", "fm-b fm-nx"); nx.type = "button"; nx.style.flex = "3";
+        var fill = el("i"); nx.appendChild(fill); nx.appendChild(el("span", null, dernierEl ? "Voir mon bilan" : "Suivant ›")); nx.onclick = go; row.appendChild(nx);
+        if (AUTO() && !manuel) {
+          fill.style.transition = "width " + ms + "ms linear";
+          requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = "100%"; }); });
+          var pz = el("button", "fm-b s", "⏸"); pz.type = "button"; pz.setAttribute("aria-label", "Rester ici");
+          pz.onclick = function () { if (autoT) { clearTimeout(autoT); autoT = null; } fill.style.transition = "none"; fill.style.width = "0"; pz.remove(); };
+          row.appendChild(pz); autoT = setTimeout(go, ms);
+        }
+        box.appendChild(row);
+      };
+      var conseils = function (libre) {
+        if (!window.DiisooOral) return 0;
+        var a = window.DiisooOral.analyser(texte, texteDe(e), { duree: e.tache.rep_s, ask: e.tache.id === "ask", court: ty === "short", libre: libre });
+        var n = 0;
+        bilan.corr.push(a.corrections.length ? 1 : 0);
+        if (a.corrections.length) {
+          var c = el("div", "fm-sug"); c.appendChild(el("b", null, "À corriger"));
+          a.corrections.forEach(function (f) { var d = el("div"); d.innerHTML = "❌ <s>" + esc(f.avant) + "</s> → ✅ <b>" + esc(f.apres) + "</b><small>" + esc(f.note) + "</small>"; c.appendChild(d); n++; });
+          box.appendChild(c);
+        }
+        if (a.conseils.length) {
+          var g = el("div", "fm-sug"); g.appendChild(el("b", null, "Pour progresser"));
+          a.conseils.forEach(function (x) { g.appendChild(el("div", null, "💡 " + x)); n++; });
+          box.appendChild(g);
+        }
+        return n;
+      };
+      var rejouer = function () { bouton(box, "↻ Recommencer cette question", function () { var m = ++jeton; e.mon = m; ecouter(e); }, "s"); };
+      function carte(val, cls, titre, detail) {
+        var c = el("div", "fm-sc"); c.appendChild(el("div", "c " + cls, val));
+        var d = el("div", "d"); d.appendChild(el("b", null, titre)); d.appendChild(document.createTextNode(detail)); c.appendChild(d); box.appendChild(c);
+      }
+      function entendu() { box.appendChild(el("div", "fm-hr", "Entendu : « " + (texte.length > 140 ? texte.slice(0, 137) + "…" : texte) + " »")); }
+
+      if (res.unsupported) {
+        puce(box, "Micro non disponible");
+        if (ty === "repeat" || ty === "readaloud") box.appendChild(el("div", "fm-q sm", cible));
+        bouton(box, "✅ C'était bien", function () { noter(e, ty, 1, dur, 0); etape(k + 1); });
+        bouton(box, "❌ Pas encore", function () { noter(e, ty, 0, dur, 0); etape(k + 1); }, "s");
+        return;
+      }
+      if (!texte) {
+        box.appendChild(el("div", "fm-ico", "🤔"));
+        box.appendChild(el("div", "fm-state", "Rien entendu : rapproche le téléphone"));
+        noter(e, ty, 0, dur, 0);
+        suite(0, true); rejouer(); return;
+      }
+      if (ty === "repeat" || ty === "readaloud") {
+        var cmp = comparer(cible, texte), pc = Math.round(cmp.score * 100);
+        bilan.precision.push(cmp.score);
+        var rates = []; cmp.mots.forEach(function (m) { if (m.etat === 0 && m.w.length >= 3 && rates.indexOf(m.w) < 0) rates.push(m.w); });
+        bilan.mots = bilan.mots.concat(rates); if (rates.length) memoFaibles(rates);
+        carte(pc + "%", pc >= 80 ? "" : (pc >= 50 ? "o" : "r"), pc >= 80 ? "Très bien" : (pc >= 50 ? "Presque" : "À refaire"), cmp.mots.filter(function (m) { return m.etat === 2; }).length + " mots sur " + cmp.mots.length);
+        var wrap = el("div", "fm-mots");
+        cmp.mots.forEach(function (m) { wrap.appendChild(el("span", "fm-m " + (m.etat === 2 ? "v" : (m.etat === 1 ? "o" : "r")), m.w)); });
+        box.appendChild(wrap);
+        son(pc >= 80 ? "juste" : "reessaie");
+        var r1 = el("div", "fm-row");
+        var b1 = el("button", "fm-b s", "🔊 Modèle"); b1.type = "button"; b1.onclick = function () { try { speak(cible, "en-US", 0.85); } catch (x) {} };
+        var b2 = el("button", "fm-b s", "↻ Refaire"); b2.type = "button"; b2.onclick = function () { var m = ++jeton; e.mon = m; ecouter(e); };
+        r1.appendChild(b1); r1.appendChild(b2); box.appendChild(r1);
+        suite(pc >= 80 ? 0 : 1); return;
+      }
+      if (ty === "short") {
+        var rep = mots(texte), bonnes = e.item.a || [], jn = " " + rep.join(" ") + " ", jn2 = jn.replace(/(\d) (?=\d{3}(?!\d))/g, "$1");
+        var ok = bonnes.some(function (a) { var x = " " + String(a).toLowerCase() + " "; return jn.indexOf(x) > -1 || jn2.indexOf(x) > -1; });
+        bilan.courtes.push(ok ? 1 : 0);
+        carte(ok ? "✓" : "✗", ok ? "" : "r", ok ? "Bonne réponse" : "Réponse attendue", ok ? "« " + texte + " »" : bonnes.join(" / "));
+        son(ok ? "juste" : "reessaie"); suite(ok ? 0 : 1); return;
+      }
+      var n = mots(texte).length, objectif = Math.round(e.tache.rep_s * 1.2), plein = n >= objectif * 0.6, wpm = dur > 3 ? Math.round(n / dur * 60) : 0;
+      bilan.oraux.push({ mots: n, obj: objectif });
+      carte(String(n), plein ? "" : "o", plein ? "Bonne longueur" : "Développe un peu", "mots en " + Math.round(dur) + " s" + (wpm ? " · " + wpm + " mots/min" : "") + " · objectif ~" + objectif);
+      entendu();
+      if (ty === "retell" && e.item.cles) {
+        var dit = texte.toLowerCase(), trouves = e.item.cles.filter(function (c) { return dit.indexOf(c.toLowerCase()) > -1; });
+        bilan.cles.push(trouves.length / e.item.cles.length);
+        var iw = el("div", "fm-kw");
+        e.item.cles.forEach(function (c) { var ok2 = trouves.indexOf(c) > -1; iw.appendChild(el("span", "fm-w" + (ok2 ? " ok" : ""), ok2 ? c : "▢ " + c)); });
+        box.appendChild(iw);
+        box.appendChild(el("div", "fm-hr", "Idées retrouvées : " + trouves.length + " / " + e.item.cles.length));
+      }
+      if (ty !== "retell" && e.item && e.item.cles) {
+        var ok3 = 0, wr = el("div", "fm-kw");
+        e.item.cles.forEach(function (c) { var hit = aMatch(texte, c); if (hit) ok3++; wr.appendChild(el("span", "fm-w" + (hit ? " ok" : ""), (hit ? "" : "▢ ") + String(c).split("|")[0])); });
+        bilan.expr.push(ok3 / e.item.cles.length);
+        box.appendChild(el("div", "fm-hr", "Expressions utiles : " + ok3 + " / " + e.item.cles.length));
+        box.appendChild(wr);
+      }
+      if (e.item && e.item.modele) {
+        var mo = el("div", "fm-sug"); mo.appendChild(el("b", null, "Réponse modèle")); mo.appendChild(el("div", null, e.item.modele));
+        var mb = el("button", "fm-b s", "🔊 Écouter le modèle"); mb.type = "button"; mb.style.minHeight = "40px"; mb.onclick = function () { try { speak(e.item.modele, "en-US", 0.9); } catch (x) {} };
+        mo.appendChild(mb); box.appendChild(mo);
+      }
+      var nS = conseils(ty !== "question");
+      suite(nS);
+    }
+    function noter(e, ty, v, dur, n) {
+      if (ty === "repeat" || ty === "readaloud") bilan.precision.push(v);
+      else if (ty === "short") bilan.courtes.push(v);
+      else bilan.oraux.push({ mots: n, obj: Math.round(e.tache.rep_s * 1.2), manuel: v });
+    }
+    etape(0);
+  }
+
+  function fin(cle, ti, bilan) {
+    nettoyer();
+    var ex = REG.examens[cle];
+    var box = cadre("Bilan");
+    function moy(a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; }
+    var sk = [];
+    if (bilan.precision.length) sk.push({ k: "pron", n: "Prononciation", v: moy(bilan.precision), c: "Répète à voix haute les mots à revoir, 5 minutes par jour." });
+    if (bilan.oraux.length) sk.push({ k: "flu", n: "Fluidité", v: moy(bilan.oraux.map(function (o) { return Math.min(1, o.mots / o.obj); })), c: "Parle plus longtemps : une idée, une raison, un exemple." });
+    if (bilan.expr.length) sk.push({ k: "expr", n: "Expressions pro", v: moy(bilan.expr), c: "Utilise les expressions du métier : demande polie, prix, garantie, livraison." });
+    if (bilan.cles.length) sk.push({ k: "cont", n: "Compréhension", v: moy(bilan.cles), c: "Avant de répondre, retiens 3 idées clés de ce que tu entends." });
+    if (bilan.corr.length) sk.push({ k: "gram", n: "Grammaire", v: 1 - moy(bilan.corr), c: "Relis tes corrections et refais la phrase correctement à voix haute." });
+    if (bilan.courtes.length) sk.push({ k: "vit", n: "Réponses rapides", v: moy(bilan.courtes), c: "Réponds vite, en un ou deux mots, sans chercher la phrase parfaite." });
+    var indice = sk.length ? Math.round(moy(sk.map(function (x) { return x.v; })) * 100) : 0;
+    var carte = el("div", "fm-sc"); carte.appendChild(el("div", "c " + (indice >= 70 ? "" : (indice >= 45 ? "o" : "r")), String(indice)));
+    var d = el("div", "d"); d.appendChild(el("b", null, "Indice Diisoo")); d.appendChild(document.createTextNode("sur 100, mesuré à partir de tes réponses. Pas une note officielle.")); carte.appendChild(d); box.appendChild(carte);
+    sk.forEach(function (x) {
+      var p = Math.round(x.v * 100), col = p >= 70 ? "#25D366" : (p >= 45 ? "#F3A94E" : "#E5484D");
+      var r = el("div", "fm-sk"); r.innerHTML = '<div class="h"><span>' + x.n + '</span><span style="color:' + col + '">' + p + ' %</span></div><div class="b"><i style="width:' + p + '%;background:' + col + '"></i></div>';
+      box.appendChild(r);
+    });
+    if (sk.length) {
+      var faible = sk.slice().sort(function (a, b) { return a.v - b.v; })[0];
+      var g = el("div", "fm-sug"); g.appendChild(el("b", null, "Ton objectif pour la prochaine fois")); g.appendChild(el("div", null, "🎯 " + faible.n + " : " + faible.c)); box.appendChild(g);
+    }
+    var uniq = []; bilan.mots.forEach(function (w) { if (uniq.indexOf(w) < 0) uniq.push(w); });
+    if (uniq.length) {
+      box.appendChild(el("div", "fm-hr", "📌 Mots à revoir (enregistrés) : touche pour écouter"));
+      var wrap = el("div", "fm-kw");
+      uniq.slice(0, 12).forEach(function (w) { var c = el("button", "fm-w", w); c.type = "button"; c.onclick = function () { try { speak(w, "en-US", 0.8); } catch (x) {} }; wrap.appendChild(c); });
+      box.appendChild(wrap);
+    }
+    try { if (typeof addXP === "function") addXP(8); if (typeof bumpDailyGoal === "function") bumpDailyGoal(1); } catch (e) {}
+    try {
+      var h = JSON.parse(localStorage.getItem("diisoo_fmt") || "[]"); h.push({ e: cle, t: ex.tests[ti].id, d: new Date().toISOString().slice(0, 10), i: indice });
+      localStorage.setItem("diisoo_fmt", JSON.stringify(h.slice(-60)));
+    } catch (e) {}
+    bouton(box, "↻ Refaire ce test", function () { lancer(cle, ti); });
+    var rw = el("div", "fm-row");
+    var b2 = el("button", "fm-b s", "Autre test"); b2.type = "button"; b2.onclick = function () { ouvrir(cle); };
+    var b3 = el("button", "fm-b s", "Fermer"); b3.type = "button"; b3.onclick = fermer;
+    rw.appendChild(b2); rw.appendChild(b3); box.appendChild(rw);
+  }
+
+  /* ---------- boutons dans la liste des tests ---------- */
+  function brancherBiz() {
+    var a = $("business-picker");
+    if (!a || !a.parentNode || $("fx-biz-btn")) return;
+    if (!REG) { charger().then(brancherBiz); return; }
+    if (!REG.examens || !REG.examens.business) return;
+    var b = el("button", "fx-reel"); b.id = "fx-biz-btn"; b.type = "button";
+    b.innerHTML = "🎯 Simulation professionnelle<small>Vends, achète, négocie : comme en vrai</small>";
+    b.onclick = function () { ouvrir("business"); };
+    a.parentNode.insertBefore(b, a);
+  }
+  function brancher() {
+    brancherBiz();
+    var box = $("exam-tests");
+    if (box && box.style.display === "none") delete box.dataset.auto;
+    if (!box || box.style.display === "none" || box.querySelector(".fx-reel")) return;
+    var titre = box.querySelector(".et-titre");
+    if (!titre) return;
+    if (!REG) { charger().then(brancher); return; }
+    var txt = (titre.textContent || "").toLowerCase(), cles = [];
+    Object.keys(REG.examens).forEach(function (k) {
+      var g = (REG.examens[k].groupe || REG.examens[k].court).toLowerCase();
+      if (txt.indexOf(g) === 0) cles.push(k);
+    });
+    var ref = titre, seul = null;
+    cles.forEach(function (k) { if (REG.examens[k].remplace_ancien) seul = k; });
+    if (seul) box.classList.add("fx-seul");
+    cles.forEach(function (k) {
+      var ex = REG.examens[k], b = el("button", "fx-reel"); b.type = "button";
+      b.innerHTML = "🎯 Format réel " + esc(ex.bouton ? ex.groupe + " " + ex.bouton : ex.court) + "<small>Comme à l'examen</small>";
+      b.onclick = function () { ouvrir(k); };
+      ref.parentNode.insertBefore(b, ref.nextSibling); ref = b;
+    });
+    if (seul && cles.length === 1 && !box.dataset.auto) { box.dataset.auto = "1"; setTimeout(function () { ouvrir(seul); }, 250); }
+  }
+  var plan = false;
+  try {
+    new MutationObserver(function () { if (plan) return; plan = true; requestAnimationFrame(function () { plan = false; brancher(); }); })
+      .observe(document.body, { childList: true, subtree: true });
+  } catch (e) {}
+  charger().then(brancher);
+
+  window.DiisooExams2 = { version: 5, ouvrir: ouvrir, registre: function () { return REG; } };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-exams2.js",e);}
+
+try{
+/* ---- diisoo-premium.js ---- */
+/* diisoo-premium.js v3 : ecran Premium simplifie (Gratuit / Diisoo Plus / services ABC-GLOBAL). Prix : voir PRIX. */
+(function () {
+  "use strict";
+
+  var PRIX = {
+    plus30: "2 500 FCFA",
+    plus90: "6 000 FCFA",
+    plus365: "20 000 FCFA"
+  };
+  var ETRANGER = "🔒 Paiement sécurisé PayTech, depuis n'importe quel pays : Wave, Orange Money, Visa, Mastercard.";
+
+  var NEUF = [
+    { id: "plus30", icone: "⭐", titre: "Diisoo Plus · 30 jours", prix: PRIX.plus30, dispo: true,
+      texte: "Tout est débloqué. Pas de renouvellement automatique." },
+    { id: "plus90", icone: "⭐", titre: "Diisoo Plus · 90 jours", prix: PRIX.plus90, dispo: true,
+      texte: "Le même accès pendant 3 mois." },
+    { id: "plus365", icone: "🏆", titre: "Diisoo Plus · 1 an", prix: PRIX.plus365, dispo: true,
+      texte: "Un an d'accès complet." }
+  ];
+
+  function ajuster() {
+    try {
+      var o = PREMIUM_CONFIG.offres;
+      if (o.some(function (x) { return x.id === "plus30"; })) return;
+      var garde = {};
+      o.forEach(function (x) { garde[x.id] = x; });
+      var suite = [];
+      ["commercants", "visa", "coaching", "pro"].forEach(function (id) { if (garde[id]) suite.push(garde[id]); });
+      o.length = 0;
+      NEUF.concat(suite).forEach(function (x) { o.push(x); });
+    } catch (e) {}
+  }
+
+  var WA = "221772882109";
+  var choix = "plus90";
+  var DUREES = [
+    { id: "plus30", court: "30 jours", prix: PRIX.plus30, note: "" },
+    { id: "plus90", court: "90 jours", prix: PRIX.plus90, note: "-20 %" },
+    { id: "plus365", court: "1 an", prix: PRIX.plus365, note: "-33 %" }
+  ];
+  function el(html, css) {
+    var d = document.createElement("div");
+    d.className = "dp-t bg-[#0B0F1C]/60 border border-[#1E2740] rounded-2xl p-3";
+    d.style.cssText = "margin-top:10px;" + (css || "");
+    d.innerHTML = html;
+    return d;
+  }
+  function offre(id) { try { return PREMIUM_CONFIG.offres.filter(function (x) { return x.id === id; })[0]; } catch (e) { return null; } }
+  function payer(id) {
+    try { if (typeof payerOffre === "function") return payerOffre(id); } catch (e) {}
+    window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent("Bonjour, je veux l'offre " + id + "."), "_blank", "noopener");
+  }
+  var BTN = "display:block;width:100%;min-height:46px;border:0;border-radius:12px;font-size:14px;font-weight:800;color:#1a1206;background:linear-gradient(90deg,#F3A94E,#E2703E)";
+  var SOUS = "font-size:11px;color:#A69C86;line-height:1.5;margin-top:6px;text-align:center";
+  var enCours = false;
+  function habiller() {
+    var box = document.getElementById("premium-offers");
+    if (!box || enCours) return;
+    if (box.querySelector(".dp-t")) return;
+    if (!box.children.length) return;
+    enCours = true;
+    try {
+      box.innerHTML = "";
+            var g = el('<div style="font-size:14px;font-weight:800;color:#F6F1E7">🆓 Gratuit pour toujours</div>' +
+        '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin-top:4px">Leçons d\'anglais et de wolof, tourisme, coach vocal, 3 tests d\'examen, entraînement oral, objectifs, parrainage.</div>', "border-color:#25D366;margin-top:0");
+      box.appendChild(g);
+
+      var plus = el('<div style="font-size:15px;font-weight:800;color:#F6F1E7">⭐ Diisoo Plus</div>' +
+        '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin:4px 0 8px">Tout est débloqué : simulateur IELTS complet, tests de format réel (TOEFL, TOEIC, Cambridge, Duolingo, PTE), niveaux Intermédiaire et Avancé. Pas de renouvellement automatique.</div>' +
+        '<div class="dp-seg" style="display:flex;gap:6px"></div>' +
+        '<button type="button" class="dp-pay" style="margin-top:10px;' + BTN + '"></button>' +
+        '<div style="' + SOUS + '">Wave, Orange Money, Visa ou Mastercard, d\'où que tu sois. Activation immédiate sur ton numéro.</div>');
+      var seg = plus.querySelector(".dp-seg"), pay = plus.querySelector(".dp-pay");
+      function maj() {
+        var d = DUREES.filter(function (x) { return x.id === choix; })[0];
+        Array.prototype.forEach.call(seg.children, function (b) {
+          var on = b.getAttribute("data-id") === choix;
+          b.style.borderColor = on ? "#F3A94E" : "#1E2740";
+          b.style.background = on ? "#2A2113" : "#0B0F1C";
+        });
+        pay.textContent = "💳 Payer " + d.prix;
+      }
+      DUREES.forEach(function (d) {
+        var b = document.createElement("button");
+        b.type = "button"; b.setAttribute("data-id", d.id);
+        b.style.cssText = "flex:1;min-height:58px;border:1.5px solid #1E2740;border-radius:12px;color:#F6F1E7;padding:6px 2px;font-size:12px;line-height:1.3";
+        b.innerHTML = "<b>" + d.court + "</b><br><span style=\"font-size:11px;color:#F0906B\">" + d.prix.replace(" FCFA", " F") + "</span>" +
+          (d.note ? "<br><span style=\"font-size:10px;color:#5FC98F\">" + d.note + "</span>" : "");
+        b.onclick = function () { choix = d.id; maj(); };
+        seg.appendChild(b);
+      });
+      pay.onclick = function () { payer(choix); };
+      maj();
+      box.appendChild(plus);
+            var c = offre("commercants");
+      var pc = el('<div style="display:flex;justify-content:space-between;gap:8px"><div style="font-size:14px;font-weight:800;color:#F6F1E7">🧰 Pack Commerçants</div><div style="font-size:12px;font-weight:700;color:#F0906B;white-space:nowrap">' + (c && c.prix || "5 000 FCFA") + '</div></div>' +
+        '<div style="font-size:11px;color:#A69C86;line-height:1.5;margin:4px 0 8px">Anglais de tous les secteurs : pièces détachées, mode, électronique, import Chine. Achat unique, accès à vie.</div>' +
+        '<button type="button" class="dp-pc" style="' + BTN + '">💳 Payer ' + (c && c.prix || "5 000 FCFA") + '</button>');
+      pc.querySelector(".dp-pc").onclick = function () { payer("commercants"); };
+      box.appendChild(pc);
+
+      var rows = ["visa", "coaching", "pro"].map(function (id) {
+        var o = offre(id); if (!o) return "";
+        var lien = ""; try { lien = premiumLien(o); } catch (e) { lien = "https://wa.me/" + WA; }
+        return '<a href="' + lien + '" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #1E2740;text-decoration:none">' +
+          '<span style="font-size:13px;color:#F6F1E7;font-weight:700">' + o.icone + " " + o.titre + '</span>' +
+          '<span style="font-size:11px;color:#F0906B;white-space:nowrap">' + o.prix + ' ›</span></a>';
+      }).join("");
+      box.appendChild(el('<div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#F3A94E">Services ABC-GLOBAL</div>' +
+        '<div style="font-size:11px;color:#A69C86;margin:2px 0 4px">Besoin d\'un accompagnement humain ? Touche une ligne.</div>' + rows));
+
+      var f = document.createElement("div");
+      f.className = "dp-t";
+      f.style.cssText = "font-size:11px;color:#8C8064;line-height:1.5;margin:10px 2px 0;text-align:center";
+      f.textContent = ETRANGER;
+      box.appendChild(f);
+    } catch (e) {}
+    enCours = false;
+  }
+
+  var orig = window.renderPremium;
+  if (typeof orig === "function") {
+    window.renderPremium = function () {
+      ajuster();
+      var r = orig.apply(this, arguments);
+      setTimeout(habiller, 50);
+      return r;
+    };
+  }
+  try {
+    new MutationObserver(function () { setTimeout(habiller, 30); })
+      .observe(document.body, { childList: true, subtree: true });
+  } catch (e) {}
+  ajuster();
+
+  window.DiisooPremium = { version: 3, prix: PRIX };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-premium.js",e);}
+
+try{
+/* ---- diisoo-guide.js ---- */
+/* diisoo-guide.js v1 : guide vocal
+   Un bouton sur l'accueil. La voix demande « Qu'est-ce que tu veux étudier ? », l'apprenant répond (français ou anglais),
+   et l'app ouvre directement la leçon : plus de recherche, plus de défilement.
+   Le navigateur exige un toucher avant le son et le micro : c'est ce bouton.
+   Le wolof n'est pas reconnu par le micro : la question est dite en wolof, la réponse se donne en français ou en anglais. */
+(function () {
+  "use strict";
+  if (window.DiisooVoixGuide) return;
+
+  var $ = function (id) { return document.getElementById(id); };
+  function norm(s) {
+    return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+  }
+  function has(t, words) {
+    for (var i = 0; i < words.length; i++) {
+      var w = words[i];
+      if ((" " + t + " ").indexOf(" " + w) >= 0) return true;   /* debut de mot : « agricult » trouve « agriculture » */
+    }
+    return false;
+  }
+  function pause(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function click(el) { try { el.click(); return true; } catch (e) { return false; } }
+
+  /* ---------- ce que l'apprenant peut demander ---------- */
+  var EXAMS = [
+    ["ielts", ["ielts", "iels", "ielt", "aielts", "ailts", "eyelts", "visa", "life skills"]],
+    ["toefl", ["toefl", "tofl", "tofel", "toeffle", "toffle"]],
+    ["toeic", ["toeic", "toeik", "toique", "toik", "toeick"]],
+    ["cambridge_a2", ["cambridge a2", "key", "a2"]],
+    ["cambridge_b1", ["cambridge b1", "preliminary", "b1"]],
+    ["duolingo", ["duolingo", "duo lingo"]],
+    ["pte", ["pte", "pete", "pearson"]],
+    ["business", ["simulateur", "entretien", "interview", "professionnel", "professional"]]
+  ];
+  var SECTEURS = {
+    colobane: ["colobane", "piece", "mecanique", "auto", "voiture", "garage", "moto"],
+    sandaga: ["sandaga", "mode", "beaute", "vetement", "coiffure", "cosmetique", "tissu"],
+    electronique: ["electronique", "centenaire", "telephone", "ordinateur", "electro"],
+    bazar: ["bazar", "meuble", "maison", "deco"],
+    chine: ["chine", "logistique", "import", "guangzhou", "container", "conteneur", "fournisseur", "china"],
+    agriculture: ["agricult", "champ", "ferme", "legume", "fruit", "recolte", "farm"]
+  };
+  var THEMES_EN = {
+    intro: ["presenter", "presentation", "introduire", "introduce", "myself", "salut", "bonjour", "hello"],
+    family: ["njaboot", "famille", "family", "parent", "enfant"],
+    work: ["liggeey", "travail", "travailler", "work", "routine", "job", "metier", "boulot"],
+    market: ["xaalis", "njaay", "jaay", "achat", "acheter", "argent", "shopping", "market", "marche", "prix", "money", "price"],
+    travel: ["tukki", "dem", "voyage", "voyager", "transport", "travel", "taxi", "bus", "avion"],
+    health: ["wer", "wéral", "weral", "sante", "health", "docteur", "medecin", "hopital", "malade", "corps"],
+    food: ["lekk", "ñam", "nam", "nourriture", "manger", "food", "restaurant", "cuisine", "repas"],
+    time: ["temps", "heure", "time", "date", "jour", "calendrier"],
+    visa: ["visa", "ambassade", "consulat", "embassy"],
+    housing: ["ker", "dekk", "logement", "housing", "maison", "appartement", "louer", "house"]
+  };
+  var THEMES_WO = {
+    salutations: ["salut", "salutation", "bonjour", "greet", "hello"],
+    famille: ["famille", "family", "parent"],
+    maison: ["maison", "quotidien", "daily", "house"],
+    marche: ["marche", "argent", "acheter", "prix", "market", "money"],
+    voyage: ["deplacement", "voyage", "transport", "travel", "taxi"],
+    corps: ["corps", "sante", "health", "docteur", "body"],
+    nourriture: ["nourriture", "manger", "food", "cuisine"],
+    temps: ["temps", "nombre", "chiffre", "number", "time", "heure", "compter"],
+    logement: ["logement", "housing", "louer", "appartement"]
+  };
+  var NIVEAU = [[3, ["avance", "expert", "difficile", "advanced"]], [2, ["intermediaire", "moyen", "intermediate"]], [1, ["debutant", "commenc", "zero", "base", "facile", "beginner"]]];
+
+  function niveauDit(t) {
+    for (var i = 0; i < NIVEAU.length; i++) if (has(t, NIVEAU[i][1])) return NIVEAU[i][0];
+    return 0;
+  }
+
+  /* ---------- comprendre la réponse ---------- */
+  function comprendre(texte) {
+    var t = norm(texte);
+    if (!t) return null;
+    var out = { niv: niveauDit(t) };
+    var i, k;
+    for (i = 0; i < EXAMS.length; i++) if (has(t, EXAMS[i][1])) { out.type = "exam"; out.cle = EXAMS[i][0]; return out; }
+    if (has(t, ["ekzamen", "examen", "exam", "test", "passer un", "certificat"])) { out.type = "exams"; return out; }
+    if (has(t, ["turis", "tourisme", "touriste", "tourist", "tourism", "hotel", "guide", "excursion", "goree", "plage"])) { out.type = "tourisme"; return out; }
+    var biz = has(t, ["business", "bisnes", "bizness", "njaay", "jaay", "affaire", "commerce", "vendre", "vente", "boutique", "commerçant", "commercant", "negoc"]);
+    for (k in SECTEURS) if (has(t, SECTEURS[k])) { out.type = "business"; out.cle = k; return out; }
+    if (biz) { out.type = "business"; return out; }
+    var wolof = has(t, ["wolof", "wollof", "ouolof", "walaf", "wolo", "walof"]);
+    if (wolof) {
+      out.type = "wolof";
+      for (k in THEMES_WO) if (has(t, THEMES_WO[k])) { out.cle = k; break; }
+      return out;
+    }
+    for (k in THEMES_EN) if (has(t, THEMES_EN[k])) { out.type = "anglais"; out.cle = k; return out; }
+    if (has(t, ["angale", "angalee", "angle", "anglais", "english", "angles", "langlais"])) { out.type = "anglais"; return out; }
+    return null;
+  }
+
+  /* ---------- navigation : on réutilise les vrais boutons de l'app ---------- */
+  function attendre(test, ms) {
+    return new Promise(function (res) {
+      var t0 = Date.now();
+      (function boucle() {
+        var r; try { r = test(); } catch (e) { r = null; }
+        if (r) return res(r);
+        if (Date.now() - t0 > ms) return res(null);
+        setTimeout(boucle, 60);
+      })();
+    });
+  }
+  function ouvert(id) { var e = $(id); return e && !e.classList.contains("hidden"); }
+  function debloque(key) { try { return tierState()[key].unlocked || 1; } catch (e) { return 1; } }
+
+  function choisirNiveau(pickerId, voulu, max) {
+    return attendre(function () { var p = $(pickerId); return p && p.querySelectorAll(".lvl-btn").length === 3 && p; }, 2500).then(function (p) {
+      if (!p) return 0;
+      var L = Math.max(1, Math.min(voulu || max, max, 3));
+      click(p.querySelectorAll(".lvl-btn")[L - 1]);
+      return L;
+    });
+  }
+
+  function motsDe(txt) { return norm(txt).split(" ").filter(function (w) { return w.length > 3; }); }
+  function boutonParTitre(box, titres) {
+    var bs = Array.prototype.slice.call(box.querySelectorAll("button")).filter(function (b) { return b.offsetParent !== null || true; });
+    for (var i = 0; i < titres.length; i++) {
+      var n = norm(titres[i]);
+      for (var j = 0; j < bs.length; j++) if (norm(bs[j].textContent).indexOf(n) >= 0) return bs[j];
+    }
+    return null;
+  }
+
+  function allerAnglais(r) {
+    var G; try { G = GENERAL_THEMES; } catch (e) { G = []; }
+    if (typeof openGeneralModule !== "function") return Promise.resolve(null);
+    var un = debloque("general");
+    openGeneralModule();
+    return choisirNiveau("lvl-general", r.niv, un).then(function (L) {
+      var box = $("general-tabs"); if (!box || !L) return null;
+      var btns = Array.prototype.slice.call(box.children).filter(function (b) { return b.style.display !== "none"; });
+      var cible = null;
+      if (r.type === "tourisme") {
+        cible = btns.filter(function (b) { return /🏝/.test(b.textContent) || /tour|touriste|hotel|goree|plage|excursion/.test(norm(b.textContent)); })[0];
+      } else if (r.cle) {
+        var th = G.filter(function (x) { return x.id === r.cle; })[0];
+        if (th) cible = boutonParTitre(box, [th.title]);
+        if (cible && cible.style.display === "none") cible = null;
+      }
+      var exact = !!cible;
+      if (!cible) cible = btns.filter(function (b) { return !/🏝/.test(b.textContent); })[0] || btns[0];
+      if (!cible) return null;
+      click(cible);
+      return { niveau: L, titre: cible.textContent.replace(/🏝️?/g, "").replace(/N[123]/g, "").trim(), exact: exact || (!r.cle && r.type !== "tourisme") };
+    });
+  }
+
+  function allerWolof(r) {
+    if (typeof openWolofModule !== "function") return Promise.resolve(null);
+    var un = debloque("wolof");
+    openWolofModule();
+    return choisirNiveau("lvl-wolof", r.niv, un).then(function (L) {
+      var box = $("wolof-tabs"); if (!box || !L) return null;
+      var btns = Array.prototype.slice.call(box.children).filter(function (b) { return b.style.display !== "none"; });
+      var cible = null, W; try { W = WOLOF_THEMES; } catch (e) { W = []; }
+      if (r.cle) {
+        var th = W.filter(function (x) { return x.id === r.cle; })[0];
+        if (th) cible = btns.filter(function (b) { return norm(b.textContent) === norm(th.title); })[0];
+      }
+      var exact = !!cible;
+      if (!cible) cible = btns[0];
+      if (!cible) return null;
+      click(cible);
+      return { niveau: L, titre: cible.textContent.trim(), exact: exact || !r.cle };
+    });
+  }
+
+  function allerBusiness(r) {
+    if (typeof openBusinessModule !== "function") return Promise.resolve(null);
+    openBusinessModule();
+    return attendre(function () { var p = $("lvl-business"); return p && p.querySelectorAll(".lvl-btn").length === 3 && p; }, 2500).then(function (p) {
+      if (!p) return null;
+      var ouverts = Array.prototype.slice.call(p.querySelectorAll(".lvl-btn")).filter(function (b) { return !b.classList.contains("lock"); });
+      var L = Math.max(1, Math.min(r.niv || ouverts.length, ouverts.length));
+      click(p.querySelectorAll(".lvl-btn")[L - 1]);
+      if (!r.cle) return { niveau: L, titre: "Business", exact: true };
+      return attendre(function () { var g = $("biz-grid"); return g && g.querySelectorAll("button").length && g; }, 2500).then(function (g) {
+        if (!g) return { niveau: L, titre: "Business", exact: false };
+        var mod; try { mod = CHINA_TRADE_WOLOF[r.cle]; } catch (e) { mod = null; }
+        var cible = null;
+        if (mod && mod.title) {
+          var mots = motsDe(mod.title);
+          cible = Array.prototype.slice.call(g.querySelectorAll("button:not(.bz-m)")).filter(function (b) {
+            var tb = norm(b.textContent); return mots.some(function (m) { return tb.indexOf(m) >= 0; });
+          })[0];
+        }
+        if (!cible) cible = g.querySelector("button:not(.bz-m)");
+        var exact = !!(cible && mod);
+        if (cible) click(cible);
+        return { niveau: L, titre: (mod && mod.title) || "Business", exact: exact };
+      });
+    });
+  }
+
+  function allerExam(r) {
+    var X = window.DiisooExams2;
+    if (!X || !X.ouvrir) return Promise.resolve(null);
+    try { if (typeof startTestSimulation === "function") startTestSimulation(); } catch (e) {}
+    return pause(150).then(function () {
+      if (r.type === "exam") { X.ouvrir(r.cle); var ex; try { ex = X.registre().examens[r.cle]; } catch (e) {} return { titre: ex ? ex.court || ex.nom : "Examen", exact: true }; }
+      return { titre: "Examens", exact: true };
+    });
+  }
+
+  function aller(r) {
+    if (r.type === "anglais" || r.type === "tourisme") return allerAnglais(r);
+    if (r.type === "wolof") return allerWolof(r);
+    if (r.type === "business") return allerBusiness(r);
+    return allerExam(r);
+  }
+
+  /* ---------- interface ---------- */
+  function css() {
+    if ($("diisoo-guide-css")) return;
+    var s = document.createElement("style"); s.id = "diisoo-guide-css";
+    s.textContent =
+      "#dg-open{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:18px;border:1px solid #E1693F;" +
+      "background:linear-gradient(135deg,#2a1a12,#1b1410);color:#F6F1E7;box-shadow:0 0 0 0 rgba(225,105,63,.5);animation:dgp 2.4s infinite}" +
+      "#dg-open .dg-mic{flex:none;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#F3A94E,#E1693F);display:flex;align-items:center;justify-content:center;font-size:22px}" +
+      "#dg-open b{display:block;font-size:14px;line-height:1.2}#dg-open span.dg-s{display:block;font-size:11px;color:#C9BFA8;margin-top:2px}" +
+      "@keyframes dgp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.45)}70%{box-shadow:0 0 0 12px rgba(225,105,63,0)}100%{box-shadow:0 0 0 0 rgba(225,105,63,0)}}" +
+      "#dg-ov{position:fixed;inset:0;z-index:90;background:rgba(11,15,28,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;color:#F6F1E7}" +
+      "#dg-ov.hidden{display:none}" +
+      "#dg-q{font-size:22px;font-weight:800;line-height:1.25;max-width:320px}" +
+      "#dg-sub{font-size:13px;color:#A69C86;margin-top:8px;min-height:18px}" +
+      "#dg-orb{width:96px;height:96px;border-radius:50%;margin:26px 0 14px;background:linear-gradient(135deg,#F3A94E,#E1693F);display:flex;align-items:center;justify-content:center;font-size:42px;transition:transform .2s}" +
+      "#dg-orb.on{animation:dgo 1s infinite}@keyframes dgo{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(225,105,63,.5)}50%{transform:scale(1.08);box-shadow:0 0 0 18px rgba(225,105,63,0)}}" +
+      "#dg-heard{font-size:16px;font-weight:700;color:#F3A94E;min-height:24px;max-width:320px}" +
+      "#dg-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;max-width:340px}" +
+      "#dg-chips button{padding:9px 14px;border-radius:999px;background:#141A2B;border:1px solid #1E2740;color:#F6F1E7;font-size:13px;font-weight:700}" +
+      "#dg-close{margin-top:22px;padding:10px 22px;border-radius:14px;background:transparent;border:1px solid #1E2740;color:#A69C86;font-size:13px}";
+    document.head.appendChild(s);
+  }
+
+  var ov = null, jeton = 0, ecoute = null;
+
+  function fermer() {
+    jeton++;
+    try { if (ecoute && ecoute.stop) ecoute.stop(); } catch (e) {}
+    try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+    if (ov) ov.classList.add("hidden");
+  }
+  function maj(q, sub, heard, on) {
+    if (!ov) return;
+    $("dg-q").textContent = q; $("dg-sub").textContent = sub || "";
+    $("dg-heard").textContent = heard || "";
+    $("dg-orb").classList.toggle("on", !!on);
+  }
+  function dire(texte, lang) {
+    try { if (typeof speak === "function") return Promise.resolve(speak(texte, lang)).catch(function () {}); } catch (e) {}
+    return Promise.resolve();
+  }
+
+  function construire() {
+    if (ov) return;
+    ov = document.createElement("div"); ov.id = "dg-ov"; ov.className = "hidden";
+    ov.innerHTML = '<div id="dg-q"></div><div id="dg-sub"></div><div id="dg-orb" role="button" aria-label="Parler">🎙️</div><div id="dg-heard"></div>' +
+      '<div id="dg-chips"></div><button id="dg-close" type="button">Fermer</button>';
+    document.body.appendChild(ov);
+    $("dg-close").onclick = fermer;
+    $("dg-orb").onclick = function () { demarrer(false); };
+    var C = [["🇬🇧 Angale · Anglais", "anglais"], ["🗣️ Wolof", "wolof"], ["💼 Njaay · Business", "business"], ["🎓 Ekzamen · Examens", "examen"], ["🏝️ Turis · Tourisme", "tourisme"]];
+    C.forEach(function (c) {
+      var b = document.createElement("button"); b.type = "button"; b.textContent = c[0];
+      b.onclick = function () { traiter(c[1], ++jeton); };
+      $("dg-chips").appendChild(b);
+    });
+  }
+
+  function traiter(texte, mon) {
+    var r = comprendre(texte);
+    if (!r) {
+      maj("Je n'ai pas compris", "Dis par exemple : « anglais », « wolof », « business », « IELTS » ou « tourisme »", texte ? "« " + texte + " »" : "", false);
+      return dire("Dégg ma ko ñaar yoon. Waxaat ko, angale, wolof, walla njaay.", "wo").then(function () { return null; });
+    }
+    maj("Waaw, ñu ngi ko ubbi...", "J'ouvre ta leçon", texte ? "« " + texte + " »" : "", false);
+    return aller(r).then(function (res) {
+      if (mon !== jeton) return;
+      if (!res) { maj("Je n'ai pas pu ouvrir", "Choisis un thème ci-dessous", "", false); return; }
+      fermer();
+      try { if (typeof toast === "function") toast("🎙️ " + res.titre + (res.niveau ? " · niveau " + res.niveau : "")); } catch (e) {}
+    });
+  }
+
+  function demarrer(premiere) {
+    var mon = ++jeton;
+    try { if (ecoute && ecoute.stop) ecoute.stop(); } catch (e) {}
+    maj("Lan nga bëgg a jàng ?", "Qu'est-ce que tu veux étudier ? Dis : anglais, wolof, business, examen, tourisme", "", false);
+    var suite = function () {
+      if (mon !== jeton) return;
+      maj("Je t'écoute...", "Parle maintenant", "", true);
+      var langues = ["fr-FR", "en-US"], essai = 0;
+      (function tour() {
+        if (mon !== jeton) return;
+        var p;
+        try {
+          p = startListening(langues[essai], 8000, false, function (t) { if (mon === jeton) $("dg-heard").textContent = "« " + t + " »"; });
+        } catch (e) { p = null; }
+        if (!p) { maj("Micro indisponible", "Touche un choix ci-dessous", "", false); return; }
+        ecoute = { stop: p.stop };
+        (p.promise || p).then(function (r) {
+          if (mon !== jeton) return;
+          var txt = r && r.text || "";
+          if (r && (r.error === "not-allowed" || r.error === "service-not-allowed" || r.unsupported)) { maj("Micro indisponible", "Touche un choix ci-dessous", "", false); return; }
+          if (txt && comprendre(txt)) { traiter(txt, mon); return; }
+          if (essai < langues.length - 1) { essai++; tour(); return; }
+          traiter(txt, mon);
+          maj("Je n'ai pas compris", "Touche le micro pour réessayer, ou un choix ci-dessous", txt ? "« " + txt + " »" : "", false);
+        });
+      })();
+    };
+    if (premiere === false) { suite(); return; }
+    /* Question dite en wolof, puis le micro s'ouvre */
+    dire("Lan nga bëgg a jàng ?", "wo").then(suite);
+  }
+
+  function ouvrir() {
+    css(); construire();
+    ov.classList.remove("hidden");
+    demarrer(true);
+  }
+
+  /* ---------- bouton sur l'accueil ---------- */
+  function poser() {
+    css();
+    var dash = $("screen-dashboard");
+    if (!dash || $("dg-open")) return !!$("dg-open");
+    var tete = dash.children[0];
+    if (!tete) return false;
+    var b = document.createElement("button");
+    b.type = "button"; b.id = "dg-open";
+    b.innerHTML = '<span class="dg-mic">🎙️</span><span><b>Dis-moi ce que tu veux étudier</b><span class="dg-s">Touche, parle, et j\'ouvre la leçon</span></span>';
+    b.onclick = ouvrir;
+    tete.parentNode.insertBefore(b, tete.nextSibling);
+    return true;
+  }
+  /* ---------- premier lancement : accueil chaleureux, une seule fois ---------- */
+  var VU = "diisoo_guide_vu";
+  function vu() { try { return localStorage.getItem(VU) === "1"; } catch (e) { return true; } }
+  function marquerVu() { try { localStorage.setItem(VU, "1"); } catch (e) {} }
+  function prenom() { try { var p = store.get("diisoo_profile"); return (p && p.first_name) || ""; } catch (e) { return ""; } }
+  function bienvenue() {
+    var dash = $("screen-dashboard");
+    if (vu() || !dash || dash.classList.contains("hidden") || $("dg-welcome") || (ov && !ov.classList.contains("hidden"))) return;
+    css();
+    var w = document.createElement("div"); w.id = "dg-welcome"; w.setAttribute("role", "dialog"); w.setAttribute("aria-label", "Bienvenue");
+    w.style.cssText = "position:fixed;left:12px;right:12px;bottom:14px;z-index:88;background:#141A2B;border:1px solid #E1693F;border-radius:20px;padding:16px;color:#F6F1E7;box-shadow:0 10px 40px rgba(0,0,0,.6)";
+    var n = prenom();
+    w.innerHTML = '<div style="font-size:17px;font-weight:800;line-height:1.25">👋 ' + (n ? "Bienvenue " + n.replace(/[<>&]/g, "") + " !" : "Bienvenue !") + '</div>' +
+      '<div style="font-size:13px;color:#C9BFA8;margin-top:6px">Dis-moi ce que tu veux apprendre, et j\'ouvre ta leçon. Pas besoin de chercher.</div>' +
+      '<button type="button" id="dg-w-go" style="width:100%;min-height:52px;margin-top:12px;border-radius:16px;border:0;background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;font-weight:800;font-size:15px">🎙️ Commencer avec la voix</button>' +
+      '<button type="button" id="dg-w-no" style="width:100%;min-height:44px;margin-top:6px;border-radius:14px;border:0;background:transparent;color:#A69C86;font-size:13px">Je choisis moi-même</button>';
+    document.body.appendChild(w);
+    var ferme = function () { marquerVu(); w.remove(); };
+    $("dg-w-go").onclick = function () { ferme(); ouvrir(); };
+    $("dg-w-no").onclick = ferme;
+  }
+  setInterval(function () { try { bienvenue(); } catch (e) {} }, 1500);
+
+  /* Si l'accueil est reconstruit par un autre script, le bouton revient */
+  setInterval(function () { try { poser(); } catch (e) {} }, 1000);
+  poser();
+
+  window.DiisooVoixGuide = { version: 1, ouvrir: ouvrir, comprendre: comprendre, aller: aller };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-guide.js",e);}
+
+try{
+/* ---- diisoo-seance.js ---- */
+/* diisoo-seance.js v1 : séance guidée (Anglais et Wolof ↔ Anglais)
+   Un bouton « Séance guidée » dans chaque thème. La voix dit le mot, l'apprenant répète, l'app corrige avec bienveillance
+   et passe seule au mot suivant. Mini-quiz, bilan, puis le thème suivant. Rien à chercher, rien à faire défiler. */
+(function () {
+  "use strict";
+  if (window.DiisooSeance) return;
+  var $ = function (id) { return document.getElementById(id); };
+  function pause(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function norm(s) { return String(s || "").toLowerCase().replace(/[^a-z\s']/g, " ").replace(/\s+/g, " ").trim(); }
+  function melanger(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  /* ---------- données du thème en cours ---------- */
+  function themeCourant(key) {
+    try {
+      if (key === "general") {
+        var t = GENERAL_THEMES.filter(function (x) { return x.id === generalThemeId; })[0];
+        if (!t) return null;
+        return { titre: t.title.replace(/🏝️?\s*/g, ""), mots: (t.vocab || []).map(function (v) { return { en: v.en, fr: v.fr, wo: v.wo }; }), key: key, id: t.id };
+      }
+      var W = WOLOF_THEMES.filter(function (x) { return x.id === wolofCat; })[0];
+      if (!W) return null;
+      return { titre: W.title, mots: LEXICON.filter(function (w) { return w.cat === wolofCat; }), key: key, id: W.id };
+    } catch (e) { return null; }
+  }
+
+  /* ---------- interface ---------- */
+  function css() {
+    if ($("dsn-css")) return;
+    var s = document.createElement("style"); s.id = "dsn-css";
+    s.textContent =
+      ".dsn-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin:8px 0;border-radius:16px;border:0;" +
+      "background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;font-weight:800;font-size:15px}" +
+      "#dsn{position:fixed;inset:0;z-index:95;background:#0B0F1C;color:#F6F1E7;display:flex;flex-direction:column;padding:68px 18px 18px;overflow-y:auto}" +
+      "#dsn.hidden{display:none}" +
+      "#dsn .dsn-top{display:flex;align-items:center;justify-content:space-between;gap:8px}" +
+      "#dsn .dsn-x{min-height:44px;min-width:44px;border-radius:14px;background:#141A2B;border:1px solid #1E2740;color:#C9BFA8;font-size:13px;padding:0 14px}" +
+      "#dsn .dsn-bar{flex:1;height:8px;border-radius:99px;background:#1E2740;overflow:hidden}#dsn .dsn-bar i{display:block;height:100%;background:linear-gradient(90deg,#F3A94E,#E1693F);width:0;transition:width .4s}" +
+      "#dsn .dsn-c{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:10px 0}" +
+      "#dsn .dsn-lab{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8C8064}" +
+      "#dsn .dsn-big{font-size:34px;font-weight:900;line-height:1.15;max-width:320px}" +
+      "#dsn .dsn-wo{font-size:26px;font-weight:800;color:#5FC98F}" +
+      "#dsn .dsn-fr{font-size:16px;color:#A69C86}" +
+      "#dsn .dsn-orb{width:104px;height:104px;border-radius:50%;margin:14px 0 4px;display:flex;align-items:center;justify-content:center;font-size:44px;background:#141A2B;border:2px solid #1E2740}" +
+      "#dsn .dsn-orb.on{background:linear-gradient(135deg,#F3A94E,#E1693F);border-color:transparent;animation:dsnp 1s infinite}" +
+      "#dsn .dsn-orb.ok{background:#2C8F5C;border-color:transparent}" +
+      "@keyframes dsnp{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(225,105,63,.5)}50%{transform:scale(1.07);box-shadow:0 0 0 18px rgba(225,105,63,0)}}" +
+      "#dsn .dsn-msg{min-height:44px;font-size:15px;font-weight:700;max-width:320px}" +
+      "#dsn .dsn-row{display:flex;gap:10px;width:100%}" +
+      "#dsn .dsn-b{flex:1;min-height:56px;border-radius:16px;font-weight:800;font-size:15px;background:#141A2B;border:1px solid #1E2740;color:#F6F1E7}" +
+      "#dsn .dsn-b.p{background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;border:0}" +
+      "#dsn .dsn-opt{display:block;width:100%;min-height:56px;margin-top:10px;border-radius:16px;background:#141A2B;border:2px solid #1E2740;color:#F6F1E7;font-weight:700;font-size:16px;padding:10px 14px}" +
+      "#dsn .dsn-opt.bon{border-color:#3FAE74;background:#12301f}#dsn .dsn-opt.mal{border-color:#C2542D;background:#33170e}" +
+      "#dsn .dsn-stars{font-size:44px;letter-spacing:6px}";
+    document.head.appendChild(s);
+  }
+
+  var ov = null, S = null;
+
+  function monter() {
+    css();
+    if (ov) return;
+    ov = document.createElement("div"); ov.id = "dsn"; ov.className = "hidden"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", "Séance guidée");
+    document.body.appendChild(ov);
+  }
+  function entete() {
+    return '<div class="dsn-top"><button class="dsn-x" type="button" id="dsn-quit" aria-label="Arrêter la séance">✕ Arrêter</button>' +
+      '<div class="dsn-bar"><i id="dsn-prog" style="width:' + S.pct + '%"></i></div></div>';
+  }
+  function fin() {
+    if (!S) return;
+    S.jeton++;
+    try { if (S.h && S.h.stop) S.h.stop(); } catch (e) {}
+    try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
+    if (ov) ov.classList.add("hidden");
+    S = null;
+  }
+  function liens() { var q = $("dsn-quit"); if (q) q.onclick = fin; }
+  function maj(pct) { S.pct = pct; var b = $("dsn-prog"); if (b) b.style.width = pct + "%"; }
+  function dire(t, l) {
+    try { return Promise.resolve(speak(t, l, l === "en-US" ? 0.85 : undefined)).catch(function () {}); } catch (e) { return Promise.resolve(); }
+  }
+
+  /* ---------- la répétition d'un mot ---------- */
+  function ecouterMot(cible, mon) {
+    return new Promise(function (res) {
+      var h;
+      try {
+        h = startListening("en-US", 7000, false, function (t) {
+          if (mon !== S.jeton) return;
+          var el = $("dsn-heard"); if (el) el.textContent = "« " + t + " »";
+          try { if (voixJuste(norm(t), norm(cible))) h.stop(); } catch (e) {}
+        });
+      } catch (e) { res({ text: "", indispo: true }); return; }
+      S.h = h;
+      h.promise.then(function (r) {
+        r = r || {};
+        if (r.unsupported || r.error === "not-allowed" || r.error === "service-not-allowed") r.indispo = true;
+        res(r);
+      });
+    });
+  }
+  function note(w, bon) {
+    try {
+      if (S.key === "general") bumpStat("diisoo_word_stats", "gen:" + S.id + ":" + w.en, bon ? "correct" : "wrong");
+      else bumpWordStat(w.en, bon ? "correct" : "wrong");
+      if (bon) { addXP(3); bumpDailyGoal(1); }
+    } catch (e) {}
+  }
+
+  function carte(w, i, essai, mon) {
+    var n = S.mots.length;
+    maj(Math.round(i / (n + S.quiz.length) * 100));
+    ov.innerHTML = entete() +
+      '<div class="dsn-c"><div class="dsn-lab">Mot ' + (i + 1) + ' sur ' + n + '</div>' +
+      (S.key === "wolof" ? '<div class="dsn-wo">🇸🇳 ' + esc(w.wo) + '</div>' : "") +
+      '<div class="dsn-big">' + esc(w.en) + '</div><div class="dsn-fr">' + esc(w.fr || "") + '</div>' +
+      (S.key === "general" && w.wo ? '<div class="dsn-fr" style="color:#5FC98F">🗣️ ' + esc(w.wo) + '</div>' : "") +
+      '<div class="dsn-orb" id="dsn-orb" role="img" aria-label="Micro">🔊</div><div class="dsn-msg" id="dsn-msg">Écoute...</div><div id="dsn-heard" class="dsn-fr"></div></div>' +
+      '<div class="dsn-row"><button class="dsn-b" type="button" id="dsn-skip">Passer</button><button class="dsn-b" type="button" id="dsn-again">🔁 Réécouter</button></div>';
+    liens();
+    var passer = false, reecouter = false;
+    $("dsn-skip").onclick = function () { passer = true; try { S.h && S.h.stop(); } catch (e) {} };
+    $("dsn-again").onclick = function () { reecouter = true; try { S.h && S.h.stop(); stopAllAudio(); } catch (e) {} };
+    var dit = (S.key === "wolof" && essai === 0) ? dire(w.wo, "wo").then(function () { return mon === S.jeton && pause(250); }) : Promise.resolve();
+    return dit.then(function () { return mon === S.jeton && dire(w.en, "en-US"); }).then(function () {
+      if (mon !== S.jeton) return "stop";
+      var orb = $("dsn-orb"), msg = $("dsn-msg");
+      if (orb) { orb.textContent = "🎙️"; orb.className = "dsn-orb on"; }
+      if (msg) msg.textContent = "À toi : répète en anglais";
+      return ecouterMot(w.en, mon);
+    }).then(function (r) {
+      if (r === "stop" || mon !== S.jeton) return "stop";
+      var orb = $("dsn-orb"), msg = $("dsn-msg");
+      if (reecouter) return carte(w, i, 1, mon);
+      if (passer) return "suite";
+      if (r.indispo) { S.micOff = true; if (msg) msg.textContent = "Micro indisponible : on écoute seulement"; return pause(900).then(function () { return "suite"; }); }
+      var heard = norm(r.text), bon = heard && voixJuste(heard, norm(w.en));
+      if (bon) {
+        S.bons++; note(w, true);
+        if (orb) { orb.textContent = "✅"; orb.className = "dsn-orb ok"; }
+        var ok = ""; try { ok = encourageMsg(); } catch (e) { ok = "Bravo !"; }
+        if (msg) msg.textContent = ok;
+        return pause(1100).then(function () { return "suite"; });
+      }
+      if (essai === 0) {
+        if (orb) { orb.textContent = "💪"; orb.className = "dsn-orb"; }
+        if (msg) msg.textContent = heard ? "J'ai entendu « " + heard + " ». Écoute encore et réessaie." : "Je n'ai rien entendu. On réessaie.";
+        return pause(900).then(function () { return carte(w, i, 1, mon); });
+      }
+      note(w, false); S.revoir.push(w);
+      if (msg) msg.textContent = "Pas grave, on le reverra. Réponse : " + w.en;
+      return pause(1300).then(function () { return "suite"; });
+    });
+  }
+
+  /* ---------- le quiz ---------- */
+  function questions() {
+    var M = S.mots, out = [];
+    var base = melanger(M).slice(0, Math.min(5, M.length));
+    base.forEach(function (w) {
+      var champ = S.key === "wolof" ? "en" : "fr";
+      var autres = melanger(M.filter(function (x) { return x !== w && x[champ] && x[champ] !== w[champ]; })).slice(0, 2);
+      if (autres.length < 1) return;
+      var opts = melanger([w[champ]].concat(autres.map(function (x) { return x[champ]; })));
+      out.push({ q: S.key === "wolof" ? "Comment dit-on « " + w.wo + " » en anglais ?" : "Que veut dire « " + w.en + " » ?", bonne: w[champ], opts: opts, mot: w });
+    });
+    return out;
+  }
+  function question(k, mon) {
+    var Q = S.quiz[k], n = S.mots.length;
+    maj(Math.round((n + k) / (n + S.quiz.length) * 100));
+    ov.innerHTML = entete() + '<div class="dsn-c" style="justify-content:flex-start;padding-top:28px"><div class="dsn-lab">Mini-quiz ' + (k + 1) + ' sur ' + S.quiz.length + '</div>' +
+      '<div class="dsn-big" style="font-size:24px">' + esc(Q.q) + '</div><div style="width:100%" id="dsn-opts"></div><div class="dsn-msg" id="dsn-msg"></div></div>';
+    liens();
+    return new Promise(function (res) {
+      Q.opts.forEach(function (o) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "dsn-opt"; b.textContent = o;
+        b.onclick = function () {
+          var tous = $("dsn-opts").querySelectorAll("button"); for (var i = 0; i < tous.length; i++) tous[i].disabled = true;
+          var bon = o === Q.bonne;
+          b.className = "dsn-opt " + (bon ? "bon" : "mal");
+          if (!bon) Array.prototype.forEach.call(tous, function (x) { if (x.textContent === Q.bonne) x.className = "dsn-opt bon"; });
+          if (bon) { S.qbons++; try { addXP(2); } catch (e) {} }
+          $("dsn-msg").textContent = bon ? "✅ Exact !" : "Pas tout à fait. C'était : " + Q.bonne;
+          var l = S.key === "wolof" ? "en-US" : "en-US";
+          dire(Q.mot.en, l).then(function () { return pause(700); }).then(res);
+        };
+        $("dsn-opts").appendChild(b);
+      });
+    }).then(function () { return mon === S.jeton ? "suite" : "stop"; });
+  }
+
+  /* ---------- le bilan et le thème suivant ---------- */
+  function suivantExiste(key) { return !!boutonSuivant(key); }
+  function boutonSuivant(key) {
+    var box = $(key === "general" ? "general-tabs" : "wolof-tabs"); if (!box) return null;
+    var btns = Array.prototype.slice.call(box.children).filter(function (b) { return b.style.display !== "none"; });
+    var th = themeCourant(key); if (!th) return null;
+    var titre = String(th.titre).replace(/\s+/g, " ").trim().toLowerCase();
+    for (var i = 0; i < btns.length; i++) {
+      var tb = btns[i].textContent.replace(/🏝️?/g, "").replace(/N[123]\s*·?/, "").replace(/\s+/g, " ").trim().toLowerCase();
+      if (tb.indexOf(titre) >= 0 || titre.indexOf(tb) >= 0) return btns[i + 1] || null;
+    }
+    return null;
+  }
+  function bilan() {
+    var n = S.mots.length, total = n + S.quiz.length, bons = S.bons + S.qbons;
+    var pct = total ? Math.round(bons / total * 100) : 0;
+    var etoiles = pct >= 85 ? "⭐⭐⭐" : pct >= 60 ? "⭐⭐" : "⭐";
+    var phrase = pct >= 85 ? "Excellent ! Tu maîtrises ce thème." : pct >= 60 ? "Très bien ! Encore un peu et c'est parfait." : "Bon début ! Refais la séance pour progresser.";
+    var key = S.key;
+    maj(100);
+    ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-stars">' + etoiles + '</div><div class="dsn-big">' + pct + ' %</div>' +
+      '<div class="dsn-msg">' + phrase + '</div><div class="dsn-fr">' + S.bons + ' mots répétés sur ' + n + ' · ' + S.qbons + ' bonnes réponses au quiz</div>' +
+      (S.revoir.length ? '<div class="dsn-fr">À revoir : ' + esc(S.revoir.map(function (w) { return w.en; }).join(", ")) + '</div>' : "") + '</div>' +
+      '<div class="dsn-row" style="flex-direction:column">' +
+      (suivantExiste(key) ? '<button class="dsn-b p" type="button" id="dsn-next">➡️ Thème suivant</button>' : "") +
+      '<button class="dsn-b" type="button" id="dsn-redo">🔁 Refaire la séance</button><button class="dsn-b" type="button" id="dsn-end">Terminer</button></div>';
+    liens();
+    $("dsn-end").onclick = fin;
+    $("dsn-redo").onclick = function () { fin(); demarrer(key); };
+    var nx = $("dsn-next");
+    if (nx) nx.onclick = function () {
+      var b = boutonSuivant(key); fin();
+      if (b) { b.click(); setTimeout(function () { demarrer(key); }, 900); }
+    };
+    try { if (typeof speak === "function") speak("Bravo, " + pct + " pour cent", "en-US"); } catch (e) {}
+  }
+
+  /* ---------- déroulé ---------- */
+  function demarrer(key) {
+    monter();
+    var th = themeCourant(key);
+    if (!th || !th.mots.length) { try { toast("Ouvre d'abord un thème"); } catch (e) {} return; }
+    if (S) fin();
+    S = { key: key, id: th.id, mots: th.mots, jeton: 1, bons: 0, qbons: 0, revoir: [], quiz: [], pct: 0, h: null };
+    S.quiz = questions();
+    var mon = S.jeton;
+    ov.classList.remove("hidden");
+    ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-lab">Séance guidée</div><div class="dsn-big">' + esc(th.titre) + '</div>' +
+      '<div class="dsn-fr">' + th.mots.length + ' mots · ' + S.quiz.length + ' questions · environ ' + Math.max(2, Math.round(th.mots.length * 0.35)) + ' min</div>' +
+      '<div class="dsn-fr">Écoute, répète à voix haute, je corrige. Je passe seul au mot suivant.</div></div>' +
+      '<div class="dsn-row"><button class="dsn-b p" type="button" id="dsn-go">▶️ Commencer</button></div>';
+    liens();
+    /* Le toucher « Commencer » autorise le son et le micro du navigateur */
+    $("dsn-go").onclick = function () {
+      (function boucle(i) {
+        if (!S || mon !== S.jeton) return;
+        if (i >= S.mots.length) { suiteQuiz(0); return; }
+        carte(S.mots[i], i, 0, mon).then(function (r) { if (r === "stop" || !S || mon !== S.jeton) return; boucle(i + 1); });
+      })(0);
+    };
+    function suiteQuiz(k) {
+      if (!S || mon !== S.jeton) return;
+      if (k >= S.quiz.length) { bilan(); return; }
+      question(k, mon).then(function (r) { if (r === "stop") return; suiteQuiz(k + 1); });
+    }
+  }
+
+  /* ---------- le bouton dans chaque thème ---------- */
+  function poser() {
+    ["general", "wolof"].forEach(function (key) {
+      var bar = $("thbar-" + key), id = "dsn-btn-" + key;
+      var ecran = $(key === "general" ? "screen-general" : "screen-wolof");
+      var visible = ecran && !ecran.classList.contains("hidden");
+      var b = $(id);
+      if (!bar || !visible) { if (b) b.remove(); return; }
+      if (b) return;
+      b = document.createElement("button"); b.type = "button"; b.id = id; b.className = "dsn-go";
+      b.innerHTML = "▶️ Séance guidée : je te guide, tu répètes";
+      b.onclick = function () { demarrer(key); };
+      bar.parentNode.insertBefore(b, bar.nextSibling);
+    });
+  }
+  css();
+  setInterval(function () { try { poser(); } catch (e) {} }, 600);
+
+  window.DiisooSeance = { version: 1, demarrer: demarrer };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-seance.js",e);}
+
+try{
+/* ---- diisoo-access.js ---- */
+/* diisoo-access.js v1 : accessibilité et confort de lecture
+   - texte jamais plus petit que 12 px (les mentions de 9 et 10 px étaient trop petites sur téléphone)
+   - réglage « Taille du texte » dans le menu : Normal / Grand / Très grand, mémorisé
+   - noms lisibles (aria-label) pour les boutons faits d'un seul pictogramme
+   - contour visible au clavier, zones tactiles d'au moins 44 px dans les leçons
+   Aucun fichier existant n'est modifié. */
+(function () {
+  "use strict";
+  if (window.DiisooAccess) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var CLE = "diisoo_taille_texte";
+  var TAILLES = [["1", "Normal"], ["1.12", "Grand"], ["1.2", "Très grand"]];
+
+  function lire() { try { return localStorage.getItem(CLE) || "1"; } catch (e) { return "1"; } }
+  function ecrire(v) { try { localStorage.setItem(CLE, v); } catch (e) {} }
+
+  function css() {
+    if ($("dacc-css")) return;
+    var s = document.createElement("style"); s.id = "dacc-css";
+    s.textContent =
+      ".text-\\[9px\\],.text-\\[10px\\]{font-size:12px!important;line-height:1.35!important}" +
+      ".text-\\[11px\\]{font-size:12.5px!important}" +
+      "button:focus-visible,a:focus-visible,[role=button]:focus-visible,input:focus-visible{outline:3px solid #F3A94E!important;outline-offset:2px}" +
+      "#general-tabs button,#wolof-tabs button{min-height:44px}" +
+      "button[data-practice]{min-height:48px}" +
+      "html[data-dacc=\"1.12\"] body{zoom:1.12}html[data-dacc=\"1.2\"] body{zoom:1.2}" +
+      "#dacc-row{display:flex;gap:6px;padding:8px 16px 12px}" +
+      "#dacc-row button{flex:1;min-height:44px;border-radius:12px;background:#0B0F1C;border:1px solid #1E2740;color:#C9BFA8;font-weight:700}" +
+      "#dacc-row button[aria-pressed=true]{border-color:#E1693F;color:#F6F1E7;background:#2a1a12}";
+    document.head.appendChild(s);
+  }
+
+  function appliquer(v) {
+    document.documentElement.setAttribute("data-dacc", v);
+    var b = $("dacc-row"); if (!b) return;
+    Array.prototype.forEach.call(b.querySelectorAll("button"), function (x) { x.setAttribute("aria-pressed", x.dataset.v === v ? "true" : "false"); });
+  }
+
+  function menu() {
+    var m = $("burger-menu"), fin = $("menu-session");
+    if (!m || !fin || $("dacc-row")) return;
+    var t = document.createElement("p");
+    t.className = "px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-[#8C8064]"; t.id = "dacc-titre"; t.textContent = "Taille du texte";
+    var row = document.createElement("div"); row.id = "dacc-row"; row.setAttribute("role", "group"); row.setAttribute("aria-label", "Taille du texte");
+    TAILLES.forEach(function (x) {
+      var b = document.createElement("button"); b.type = "button"; b.dataset.v = x[0]; b.textContent = x[1];
+      b.onclick = function (e) { e.stopPropagation(); ecrire(x[0]); appliquer(x[0]); };
+      row.appendChild(b);
+    });
+    m.insertBefore(t, fin); m.insertBefore(row, fin);
+    appliquer(lire());
+  }
+
+  /* Un bouton qui ne contient qu'un pictogramme reçoit un nom lisible par les lecteurs d'écran */
+  var NOMS = { "🔊": "Écouter", "🎤": "Parler", "🎙️": "Parler", "⬅️": "Retour", "⬅": "Retour", "☰": "Menu", "✕": "Fermer", "✖": "Fermer", "×": "Fermer", "💾": "Sauvegarder", "🔁": "Rejouer", "▶️": "Lancer", "⏸": "Pause" };
+  function nommer(racine) {
+    var bs = (racine || document).querySelectorAll("button:not([aria-label]),a[role=button]:not([aria-label])");
+    for (var i = 0; i < bs.length; i++) {
+      var b = bs[i], t = (b.textContent || "").trim();
+      if (b.title) { b.setAttribute("aria-label", b.title); continue; }
+      if (t && NOMS[t]) b.setAttribute("aria-label", NOMS[t]);
+    }
+    var inps = (racine || document).querySelectorAll("input:not([aria-label]):not([type=hidden])");
+    for (var j = 0; j < inps.length; j++) { var p = inps[j].placeholder; if (p) inps[j].setAttribute("aria-label", p); }
+  }
+  var plan = false;
+  function planifier() { if (plan) return; plan = true; setTimeout(function () { plan = false; try { nommer(); menu(); } catch (e) {} }, 300); }
+
+  css();
+  appliquer(lire());
+  try { new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+  planifier();
+  window.DiisooAccess = { version: 1, taille: function (v) { ecrire(String(v)); appliquer(String(v)); } };
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-access.js",e);}
+
+window.__diisooBundle=true;
