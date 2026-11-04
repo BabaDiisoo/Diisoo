@@ -26,7 +26,7 @@
     "diisoo-orga.js",
     "diisoo-wamic.js",
     "diisoo-aide-wolof.js",
-    "diisoo-biz.js",
+    "diisoo-biz.js", "diisoo-biz-plus.js",
     "diisoo-passage.js",
     "diisoo-stable.js",
     "diisoo-tourisme.js",
