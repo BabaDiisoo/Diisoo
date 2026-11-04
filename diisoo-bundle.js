@@ -5576,6 +5576,13 @@ try{
         if (!t) return null;
         return { titre: t.title.replace(/🏝️?\s*/g, ""), mots: (t.vocab || []).map(function (v) { return { en: v.en, fr: v.fr, wo: v.wo }; }), key: key, id: t.id };
       }
+      if (key === "business") {
+        var sk = window.DiisooBiz && DiisooBiz.secteur(), nv = window.DiisooBiz && DiisooBiz.niveau();
+        var mod = sk && CHINA_TRADE_WOLOF[sk]; if (!mod || !nv) return null;
+        var code = ["debutant", "intermediaire", "avance"][nv - 1];
+        var mots = mod.vocab.filter(function (v) { return v.niveau === code; }).map(function (v) { return { en: v.en, fr: v.fr, wo: v.wo }; });
+        return { titre: mod.title, mots: mots, key: key, id: sk };
+      }
       var W = WOLOF_THEMES.filter(function (x) { return x.id === wolofCat; })[0];
       if (!W) return null;
       return { titre: W.title, mots: LEXICON.filter(function (w) { return w.cat === wolofCat; }), key: key, id: W.id };
@@ -5661,6 +5668,7 @@ try{
   function note(w, bon) {
     try {
       if (S.key === "general") bumpStat("diisoo_word_stats", "gen:" + S.id + ":" + w.en, bon ? "correct" : "wrong");
+      else if (S.key === "business") bumpStat("diisoo_word_stats", "biz:" + S.id + ":" + w.en, bon ? "correct" : "wrong");
       else bumpWordStat(w.en, bon ? "correct" : "wrong");
       if (bon) { addXP(3); bumpDailyGoal(1); }
     } catch (e) {}
@@ -5671,7 +5679,7 @@ try{
     maj(Math.round(i / (n + S.quiz.length) * 100));
     ov.innerHTML = entete() +
       '<div class="dsn-c"><div class="dsn-lab">Mot ' + (i + 1) + ' sur ' + n + '</div>' +
-      (S.key === "wolof" ? '<div class="dsn-wo">🇸🇳 ' + esc(w.wo) + '</div>' : "") +
+      (S.key !== "general" && w.wo ? '<div class="dsn-wo">🇸🇳 ' + esc(w.wo) + '</div>' : "") +
       '<div class="dsn-big">' + esc(w.en) + '</div><div class="dsn-fr">' + esc(w.fr || "") + '</div>' +
       (S.key === "general" && w.wo ? '<div class="dsn-fr" style="color:#5FC98F">🗣️ ' + esc(w.wo) + '</div>' : "") +
       '<div class="dsn-orb" id="dsn-orb" role="img" aria-label="Micro">🔊</div><div class="dsn-msg" id="dsn-msg">Écoute...</div><div id="dsn-heard" class="dsn-fr"></div></div>' +
@@ -5680,7 +5688,7 @@ try{
     var passer = false, reecouter = false;
     $("dsn-skip").onclick = function () { passer = true; try { S.h && S.h.stop(); } catch (e) {} };
     $("dsn-again").onclick = function () { reecouter = true; try { S.h && S.h.stop(); stopAllAudio(); } catch (e) {} };
-    var dit = (S.key === "wolof" && essai === 0) ? dire(w.wo, "wo").then(function () { return mon === S.jeton && pause(250); }) : Promise.resolve();
+    var dit = (S.key !== "general" && w.wo && essai === 0) ? dire(w.wo, "wo").then(function () { return mon === S.jeton && pause(250); }) : Promise.resolve();
     return dit.then(function () { return mon === S.jeton && dire(w.en, "en-US"); }).then(function () {
       if (mon !== S.jeton) return "stop";
       var orb = $("dsn-orb"), msg = $("dsn-msg");
@@ -5717,11 +5725,11 @@ try{
     var M = S.mots, out = [];
     var base = melanger(M).slice(0, Math.min(5, M.length));
     base.forEach(function (w) {
-      var champ = S.key === "wolof" ? "en" : "fr";
+      var champ = S.key === "general" ? "fr" : "en";
       var autres = melanger(M.filter(function (x) { return x !== w && x[champ] && x[champ] !== w[champ]; })).slice(0, 2);
       if (autres.length < 1) return;
       var opts = melanger([w[champ]].concat(autres.map(function (x) { return x[champ]; })));
-      out.push({ q: S.key === "wolof" ? "Comment dit-on « " + w.wo + " » en anglais ?" : "Que veut dire « " + w.en + " » ?", bonne: w[champ], opts: opts, mot: w });
+      out.push({ q: S.key === "wolof" ? "Comment dit-on « " + w.wo + " » en anglais ?" : S.key === "business" ? "Comment dit-on « " + w.fr + " » en anglais ?" : "Que veut dire « " + w.en + " » ?", bonne: w[champ], opts: opts, mot: w });
     });
     return out;
   }
@@ -5752,6 +5760,7 @@ try{
   /* ---------- le bilan et le thème suivant ---------- */
   function suivantExiste(key) { return !!boutonSuivant(key); }
   function boutonSuivant(key) {
+    if (key === "business") return null;
     var box = $(key === "general" ? "general-tabs" : "wolof-tabs"); if (!box) return null;
     var btns = Array.prototype.slice.call(box.children).filter(function (b) { return b.style.display !== "none"; });
     var th = themeCourant(key); if (!th) return null;
@@ -5818,9 +5827,9 @@ try{
 
   /* ---------- le bouton dans chaque thème ---------- */
   function poser() {
-    ["general", "wolof"].forEach(function (key) {
-      var bar = $("thbar-" + key), id = "dsn-btn-" + key;
-      var ecran = $(key === "general" ? "screen-general" : "screen-wolof");
+    ["general", "wolof", "business"].forEach(function (key) {
+      var bar = $(key === "business" ? "bizback-sec" : "thbar-" + key), id = "dsn-btn-" + key;
+      var ecran = $(key === "general" ? "screen-general" : key === "wolof" ? "screen-wolof" : "screen-business");
       var visible = ecran && !ecran.classList.contains("hidden");
       var b = $(id);
       if (!bar || !visible) { if (b) b.remove(); return; }
