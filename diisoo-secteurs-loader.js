@@ -41,7 +41,7 @@
     "diisoo-premium.js",
     "diisoo-guide.js",
     "diisoo-seance.js", "diisoo-conversation.js",
-    "diisoo-access.js"
+    "diisoo-access.js", "diisoo-suivi.js"
   ];
 
   function sequentiel(i) {
