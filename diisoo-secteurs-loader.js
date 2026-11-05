@@ -40,7 +40,7 @@
     "diisoo-exams2.js",
     "diisoo-premium.js",
     "diisoo-guide.js",
-    "diisoo-seance.js",
+    "diisoo-seance.js", "diisoo-conversation.js",
     "diisoo-access.js"
   ];
 
