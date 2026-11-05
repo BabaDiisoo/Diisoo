@@ -38,6 +38,13 @@
     electronique: ["electronique", "centenaire", "telephone", "ordinateur", "electro"],
     bazar: ["bazar", "meuble", "maison", "deco"],
     chine: ["chine", "logistique", "import", "guangzhou", "container", "conteneur", "fournisseur", "china"],
+    tour_hotel: ["hotel", "hebergement", "reception", "chambre", "accueil"],
+    tour_resto: ["restaurant", "serveur", "serveuse", "bar ", "cafe"],
+    tour_guide: ["guide", "excursion", "visite", "circuit", "goree"],
+    tour_transport: ["taxi", "location de voiture", "chauffeur"],
+    tour_artisanat: ["artisan", "souvenir", "masque", "bijou"],
+    tour_agence: ["agence", "billet", "reservation", "avion"],
+    tour_plage: ["plage", "pirogue", "surf", "saly", "peche"],
     agriculture: ["agricult", "champ", "ferme", "legume", "fruit", "recolte", "farm"]
   };
   var THEMES_EN = {
@@ -78,7 +85,7 @@
     var i, k;
     for (i = 0; i < EXAMS.length; i++) if (has(t, EXAMS[i][1])) { out.type = "exam"; out.cle = EXAMS[i][0]; return out; }
     if (has(t, ["ekzamen", "examen", "exam", "test", "passer un", "certificat"])) { out.type = "exams"; return out; }
-    if (has(t, ["turis", "tourisme", "touriste", "tourist", "tourism", "hotel", "guide", "excursion", "goree", "plage"])) { out.type = "tourisme"; return out; }
+    if (has(t, ["turis", "tourisme", "touriste", "tourist", "tourism"])) { out.type = "business"; out.groupe = "tourisme"; out.cle = ""; for (k in SECTEURS) if (/^tour_/.test(k) && has(t, SECTEURS[k])) { out.cle = k; break; } return out; }
     var biz = has(t, ["business", "bisnes", "bizness", "njaay", "jaay", "affaire", "commerce", "vendre", "vente", "boutique", "commerçant", "commercant", "negoc"]);
     for (k in SECTEURS) if (has(t, SECTEURS[k])) { out.type = "business"; out.cle = k; return out; }
     if (biz) { out.type = "business"; return out; }
@@ -179,9 +186,17 @@
       var ouverts = Array.prototype.slice.call(p.querySelectorAll(".lvl-btn")).filter(function (b) { return !b.classList.contains("lock"); });
       var L = Math.max(1, Math.min(r.niv || ouverts.length, ouverts.length));
       click(p.querySelectorAll(".lvl-btn")[L - 1]);
-      if (!r.cle) return { niveau: L, titre: "Business", exact: true };
-      return attendre(function () { var g = $("biz-grid"); return g && g.querySelectorAll("button").length && g; }, 2500).then(function (g) {
+      if (!r.cle && !r.groupe) return { niveau: L, titre: "Business", exact: true };
+      return attendre(function () { var g = $("biz-grid"); return g && g.querySelectorAll("button").length && g; }, 2500).then(function (g0) {
+        if (!g0) return { niveau: L, titre: "Business", exact: false };
+        var tour = r.groupe === "tourisme" || /^tour_/.test(r.cle || "");
+        if (!tour) return g0;
+        var tb = g0.querySelector("button.bz-t"); if (tb) click(tb);
+        if (!r.cle) return { niveau: L, titre: "Tourisme", exact: true, stop: true };
+        return attendre(function () { var g = $("biz-grid"); return g && g !== g0 && g.querySelectorAll("button").length && g; }, 2500);
+      }).then(function (g) {
         if (!g) return { niveau: L, titre: "Business", exact: false };
+        if (g.stop) return g;
         var mod; try { mod = CHINA_TRADE_WOLOF[r.cle]; } catch (e) { mod = null; }
         var cible = null;
         if (mod && mod.title) {
@@ -265,7 +280,7 @@
     document.body.appendChild(ov);
     $("dg-close").onclick = fermer;
     $("dg-orb").onclick = function () { demarrer(false); };
-    var C = [["🇬🇧 Angale · Anglais", "anglais"], ["🗣️ Wolof", "wolof"], ["💼 Njaay · Business", "business"], ["🎓 Ekzamen · Examens", "examen"], ["🏝️ Turis · Tourisme", "tourisme"]];
+    var C = [["🇬🇧 Anglais", "anglais"], ["🇸🇳 Wolof", "wolof"], ["💼 Business", "business"], ["✈️ Examens", "examen"]];
     C.forEach(function (c) {
       var b = document.createElement("button"); b.type = "button"; b.textContent = c[0];
       b.onclick = function () { traiter(c[1], ++jeton); };
@@ -276,7 +291,7 @@
   function traiter(texte, mon) {
     var r = comprendre(texte);
     if (!r) {
-      maj("Je n'ai pas compris", "Dis par exemple : « anglais », « wolof », « business », « IELTS » ou « tourisme »", texte ? "« " + texte + " »" : "", false);
+      maj("Je n'ai pas compris", "Dis : « anglais », « wolof », « business » ou « examens »", texte ? "« " + texte + " »" : "", false);
       return dire("Dégg ma ko ñaar yoon. Waxaat ko, angale, wolof, walla njaay.", "wo").then(function () { return null; });
     }
     maj("Waaw, ñu ngi ko ubbi...", "J'ouvre ta leçon", texte ? "« " + texte + " »" : "", false);
@@ -291,7 +306,7 @@
   function demarrer(premiere) {
     var mon = ++jeton;
     try { if (ecoute && ecoute.stop) ecoute.stop(); } catch (e) {}
-    maj("Lan nga bëgg a jàng ?", "Qu'est-ce que tu veux étudier ? Dis : anglais, wolof, business, examen, tourisme", "", false);
+    maj("Lan nga bëgg a jàng ?", "Qu'est-ce que tu veux étudier ? Dis : anglais, wolof, business ou examens", "", false);
     var suite = function () {
       if (mon !== jeton) return;
       maj("Je t'écoute...", "Parle maintenant", "", true);

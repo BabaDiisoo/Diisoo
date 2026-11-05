@@ -33,7 +33,53 @@
       /* demande de numero : cachee tant que l'apprenant n'a pas pratique quelques jours */
       "body:not([data-wa-ok]) #wa-capture{display:none!important}" +
       /* libelles plus clairs sans toucher aux scripts qui ecrivent ces boutons */
-      "button[aria-label^=\"Sauvegarder mon\"]::after{content:\" Sauvegarder\";font-size:11px;font-weight:700;margin-left:4px}";
+      "button[aria-label^=\"Sauvegarder mon\"]::after{content:\" Sauvegarder\";font-size:11px;font-weight:700;margin-left:4px}" +
+      /* la barre « Revenir » ajoute 56 px en haut : on les retire de la hauteur minimale, sinon CHAQUE page dépasse l'écran de 56 px */
+      "body.dnav-on [role=main]{min-height:calc(100vh - 56px)!important;min-height:calc(100dvh - 56px)!important}" +
+      "body.dnav-on [role=main]{padding-top:6px!important;padding-bottom:6px!important}" +
+      "#screen-test-simulation{zoom:.92}" +
+      "body.dnav-on .fx-lab{display:none!important}.fx-nav{padding:0!important}.fx-nav .fx-dot{margin:2px 1px!important;width:6px!important;height:6px!important}.fx-nav .fx-dot.fx-on{width:12px!important}body:has(#thbar-wolof) #wolof-tabs,body:has(#thbar-general) #general-tabs{display:none!important}" +
+      "body:has(#thbar-general) #screen-general>div.text-center,body:has(#thbar-general) #lvlback-general{display:none!important}" +
+      "body:has(#thbar-general) #screen-general:not(.hidden){display:flex!important;flex-direction:row;flex-wrap:wrap;gap:6px;align-content:flex-start;margin:0!important}" +
+      "body:has(#thbar-general) #screen-general>*{flex:0 0 100%;margin:0!important;max-height:none!important}" +
+      "body:has(#thbar-general) #dsn-btn-general,body:has(#thbar-general) #dcv-btn-general{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:5px 8px!important;font-size:12px!important;line-height:1.15!important;min-height:40px;width:auto!important}" +
+      "body:has(#thbar-general) #general-content [data-practice]{min-height:0!important;height:auto!important;padding:6px 8px!important;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px}" +
+      "body:has(#thbar-general) #general-content [data-practice] .dii-i{font-size:18px!important;line-height:1!important;margin:0!important;width:auto!important;height:auto!important}" +
+      "body:has(#thbar-general) #general-content [data-practice] .dii-c{font-size:12px!important;margin:0!important}" +
+      "body:has(#thbar-general) #general-content .as-btn{min-height:0!important;padding:8px!important}" +
+      "body:has(#thbar-wolof) #screen-wolof>div.text-center,body:has(#thbar-wolof) #lvlback-wolof{display:none!important}" +
+      "body:has(#thbar-wolof) #screen-wolof:not(.hidden){display:flex!important;flex-direction:row;flex-wrap:wrap;gap:6px;align-content:flex-start;margin:0!important}" +
+      "body:has(#thbar-wolof) #screen-wolof>*{flex:0 0 100%;margin:0!important;max-height:none!important}" +
+      "body:has(#thbar-wolof) #dsn-btn-wolof,body:has(#thbar-wolof) #dcv-btn-wolof{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:5px 8px!important;font-size:12px!important;line-height:1.15!important;min-height:40px;width:auto!important}" +
+      "body:has(#thbar-wolof) #lexicon-container [data-practice]{min-height:0!important;height:auto!important;padding:6px 8px!important;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px}" +
+      "body:has(#thbar-wolof) #lexicon-container [data-practice] .dii-i{font-size:18px!important;line-height:1!important;margin:0!important;width:auto!important;height:auto!important}" +
+      "body:has(#thbar-wolof) #lexicon-container [data-practice] .dii-c{font-size:12px!important;margin:0!important}" +
+      "body:has(#thbar-wolof) #lexicon-container .as-btn{min-height:0!important;padding:8px!important}" +
+      "body.dnav-on .fx-secs{display:flex!important;flex-wrap:nowrap!important;gap:4px!important;margin:0 0 2px!important}body.dnav-on .fx-sec{flex:1 1 0!important;min-width:0;padding:6px 2px!important;font-size:11px!important;min-height:0!important;line-height:1.1!important}" +
+      "body.dnav-on .aide-barre{min-height:0!important;padding:2px 8px!important;font-size:11px!important}" +
+      /* ACCUEIL v2 : les 4 grands menus d'abord, tout tient sur l'écran, rien à lire, rien à remplir */
+      "body:has(#screen-dashboard:not(.hidden)) [role=main]{height:100dvh;min-height:0!important;padding:10px 14px 10px!important;justify-content:flex-start!important}" +
+      "#screen-dashboard:not(.hidden){height:100%;display:flex;flex-direction:column;gap:8px;margin:0!important;padding:0!important}" +
+      "#screen-dashboard>*{margin:0!important;flex:none}" +
+      "#screen-dashboard>div:first-child{padding:0 54px 0 0!important}" +
+      "#screen-dashboard #daily-goal,#screen-dashboard #wa-capture,#screen-dashboard #badges-row,#dmic-chip,#dg-welcome,#screen-dashboard #ref-compteur,#screen-dashboard>div:last-child>p:last-child{display:none!important}" +
+      "#screen-dashboard:not(.hidden)>div.space-y-3{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px}" +
+      "#screen-dashboard h1 span span{display:none!important}#welcome-tag{white-space:nowrap}#streak-counter,#xp-label{min-height:0!important;padding:5px 12px!important}#screen-dashboard>div.flex.items-center.justify-between{align-items:center}" +
+      "#screen-dashboard>div.space-y-3>*{margin:0!important}" +
+      "#screen-dashboard>div.space-y-3>.grid{order:1;flex:1 1 auto;min-height:0;grid-template-rows:1fr 1fr;gap:10px!important}" +
+      "#screen-dashboard>div.space-y-3>#revision-card{order:2;padding:.55rem .8rem!important}" +
+      "#screen-dashboard>div.space-y-3>#revision-card #revision-sub{display:none}" +
+      "#screen-dashboard>div.space-y-3>#revision-card .mb-2{margin:0!important}" +
+      "#screen-dashboard>div.space-y-3>button[onclick*=openPremium]{order:3;padding:.5rem .9rem!important}" +
+      "#screen-dashboard>div.space-y-3>button[onclick*=partagerDiisoo]{display:none}" +
+      "#screen-dashboard .grid.grid-cols-2>button{min-height:0!important;display:flex!important;flex-direction:column;justify-content:center;align-items:flex-start;padding:.8rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button>span{font-size:2.6rem!important;margin-bottom:.35rem!important;line-height:1}" +
+      "#screen-dashboard .grid.grid-cols-2>button>h3{font-size:1.1rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.72rem!important}" +
+      "#dg-open{padding:8px 12px!important}" +
+      "#screen-dashboard>div:last-child{padding:0}" +
+      /* niveaux d'Anglais : le titre porte le niveau */
+      "";
     document.head.appendChild(s);
   }
   function deplacer() {
@@ -71,7 +117,19 @@
     if (h && /dashboard/i.test(h.textContent)) { h.textContent = "Accueil"; return true; }
     return !!h;
   }
+  /* difficulté croissante : un thème trop simple pour son niveau est remonté d'un cran, un thème trop dur est descendu */
+  function reniveler() {
+    try {
+      var M = { "Demander son chemin": 1, "Réserver un hôtel": 2 };
+      GENERAL_THEMES.forEach(function (t) {
+        Object.keys(M).forEach(function (nom) {
+          if (String(t.title).indexOf(nom) >= 0 && t.niveau !== M[nom]) { t.niveau = M[nom]; t.title = t.title.replace(/^N\d/, "N" + M[nom]); }
+        });
+      });
+    } catch (e) {}
+  }
   function demarrer() {
+    reniveler();
     css();
     renommer();
     majWhatsApp();

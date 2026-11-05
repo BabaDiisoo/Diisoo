@@ -35,7 +35,24 @@
     "#biz-grid .bz-ic{font-size:24px;line-height:1}" +
     "#biz-grid .bz-nm{font-size:13px;font-weight:700;line-height:1.2}" +
     "#biz-grid .bz-n{display:block;font-size:11px;font-weight:400;color:#A69C86;margin-top:2px}" +
-    "#biz-grid button.bz-m{grid-column:1/-1;border-color:#3FAE74}";
+    "#biz-grid button.bz-m{grid-column:1/-1;border-color:#3FAE74}" +
+    "#biz-grid button.bz-t{grid-column:1/-1;border-color:#F3A94E;background:#1B1A22}" +
+    "body:has(#screen-business:not(.hidden)) [role=main]{min-height:0!important;padding:60px 14px 10px!important;justify-content:flex-start!important}" +
+    "body:has(#bizback-sec) #screen-business>div.text-center{display:none!important}" +
+    "body:has(#bizstep) #screen-business>div.text-center,body:has(#bizstep) #fx-biz-btn,body:has(#bizback-sec) #fx-biz-btn,body:has(#bizback-sec) #bizback-lvl,body:has(#bizback-sec) #secteurs-zone{display:none!important}" +
+    "body:has(#bizback-sec) #screen-business:not(.hidden){display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;align-content:flex-start;margin:0!important}" +
+    "body:has(#bizback-sec) #screen-business>*{flex:0 0 100%;margin:0!important}" +
+    "body:has(#bizback-sec) #dsn-btn-business,body:has(#bizback-sec) #dcv-btn-business{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:8px 10px!important;font-size:12px!important;line-height:1.2!important;min-height:48px;width:auto!important}" +
+    "body:has(#bizstep) #screen-business,body:has(#bizback-lvl) #screen-business{margin:0!important}" +
+    "body:has(#screen-business:not(.hidden)):has(#bizback-sec) [role=main]{padding-top:4px!important}" +
+    "body:has(#bizback-sec) #business-content .fx-lab{display:none}" +
+    "body:has(#bizback-sec) #business-content .fx-nav{padding:0}" +
+    "body:has(#bizback-sec) #business-content [data-practice]{min-height:0!important;height:auto!important;padding:6px 8px!important;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px}" +
+    "body:has(#bizback-sec) #business-content [data-practice] .dii-i{font-size:18px!important;line-height:1!important;margin:0!important;width:auto!important;height:auto!important}" +
+    "body:has(#bizback-sec) #business-content [data-practice] .dii-c{font-size:12px!important;margin:0!important}" +
+    "body:has(#bizback-sec) #business-content .as-btn{min-height:0!important;padding:8px!important}" +
+    "body:has(#bizback-sec) #business-content>div.bg-\\[\\#141A2B\\]{padding:10px!important}" +
+    "#business-content{max-height:none!important;overflow:visible!important}";
   document.head.appendChild(st);
 
   function ancre() { return $("business-picker"); }
@@ -75,7 +92,14 @@
     haut();
   }
 
-  /* ---------- Etape 2 : secteur ---------- */
+  /* ---------- Etape 2 : secteur (le tourisme est UN secteur, ses métiers sont dedans) ---------- */
+  function estTour(k) { return /^tour_/.test(k); }
+  function tuile(ic, nom, sous, fn, cls) {
+    var b = document.createElement("button");
+    b.type = "button"; if (cls) b.className = cls;
+    b.innerHTML = '<span class="bz-ic">' + ic + '</span><span class="bz-nm">' + esc(nom) + '<span class="bz-n">' + esc(sous) + "</span></span>";
+    b.onclick = fn; return b;
+  }
   function liste(n) {
     L = n; sect = null; marches = false;
     nettoyer();
@@ -84,23 +108,30 @@
     var s = document.createElement("p"); s.id = "bizstep"; s.className = "lvl-step"; s.textContent = "Étape 2 : choisis ton secteur";
     insererAvant(s);
     var g = document.createElement("div"); g.id = "biz-grid";
+    var nbT = 0;
     secteurs().forEach(function (k) {
       var nb = items(k, n).length;
       if (!nb) return;
-      var b = document.createElement("button");
-      b.type = "button";
-      b.innerHTML = '<span class="bz-ic">' + BUSINESS_SECTORS[k].icon + '</span><span class="bz-nm">' + esc(BUSINESS_SECTORS[k].titre) +
-        '<span class="bz-n">' + nb + " phrases</span></span>";
-      b.onclick = function () { lecon(k); };
-      g.appendChild(b);
+      if (estTour(k)) { nbT += nb; return; }
+      g.appendChild(tuile(BUSINESS_SECTORS[k].icon, BUSINESS_SECTORS[k].titre, nb + " phrases", function () { lecon(k); }));
     });
-    if (marchesDispo()) {
-      var m = document.createElement("button");
-      m.type = "button"; m.className = "bz-m";
-      m.innerHTML = '<span class="bz-ic">🛒</span><span class="bz-nm">Anglais des marchés<span class="bz-n">Colobane, Sandaga, Centenaire, Guangzhou</span></span>';
-      m.onclick = ouvrirMarches;
-      g.appendChild(m);
-    }
+    if (nbT) g.appendChild(tuile("🏝️", "Tourisme", "Hôtel, restaurant, guide, taxi, plage... · " + nbT + " phrases", function () { tourisme(n); }, "bz-t"));
+    if (marchesDispo()) g.appendChild(tuile("🛒", "Anglais des marchés", "Colobane, Sandaga, Centenaire, Guangzhou", ouvrirMarches, "bz-m"));
+    insererAvant(g);
+    haut();
+  }
+  function tourisme(n) {
+    L = n; sect = null; marches = false;
+    nettoyer();
+    barre("bizback-lvl", "🏝️ Tourisme : changer de secteur", "", function () { liste(n); });
+    var s = document.createElement("p"); s.id = "bizstep"; s.className = "lvl-step"; s.textContent = "Tourisme : choisis ton métier";
+    insererAvant(s);
+    var g = document.createElement("div"); g.id = "biz-grid";
+    secteurs().forEach(function (k) {
+      if (!estTour(k)) return;
+      var nb = items(k, n).length; if (!nb) return;
+      g.appendChild(tuile(BUSINESS_SECTORS[k].icon, BUSINESS_SECTORS[k].titre, nb + " phrases", function () { lecon(k); }));
+    });
     insererAvant(g);
     haut();
   }
@@ -109,7 +140,7 @@
   function lecon(k) {
     sect = k; marches = false;
     retirer("biz-grid"); retirer("bizstep"); retirer("bizback-sec");
-    barre("bizback-sec", BUSINESS_SECTORS[k].icon + " " + BUSINESS_SECTORS[k].titre + " : changer de secteur", "th", function () { liste(L); });
+    barre("bizback-sec", BUSINESS_SECTORS[k].icon + " " + BUSINESS_SECTORS[k].titre + " : changer de secteur", "th", function () { if (estTour(k)) tourisme(L); else liste(L); });
     try { businessModule = k; } catch (e) {}
     var mod = CHINA_TRADE_WOLOF[k], liste1 = items(k, L);
     try {
