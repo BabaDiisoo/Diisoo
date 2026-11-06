@@ -56,6 +56,17 @@
       "body:has(#thbar-wolof) #lexicon-container .as-btn{min-height:0!important;padding:8px!important}" +
       "body.dnav-on .fx-secs{display:flex!important;flex-wrap:nowrap!important;gap:4px!important;margin:0 0 2px!important}body.dnav-on .fx-sec{flex:1 1 0!important;min-width:0;padding:6px 2px!important;font-size:12.5px!important;min-height:0!important;line-height:1.1!important}" +
       "body.dnav-on .aide-barre{min-height:0!important;padding:2px 8px!important;font-size:12.5px!important}" +
+      /* ACCUEIL v3 : tuiles compactes, révision en haut, bouton Continuer */
+      "#screen-dashboard:not(.hidden)>div.space-y-3{display:contents!important}" +
+      "#screen-dashboard:not(.hidden)>div:first-child{order:0!important}#screen-dashboard #dg-open{order:1!important}#screen-dashboard #dcont{order:2!important}" +
+      "#screen-dashboard:not(.hidden)>div.space-y-3>#revision-card{order:3!important;padding:.7rem .9rem!important;border-width:2px!important}" +
+      "#screen-dashboard #revision-card h3,#screen-dashboard #revision-card .font-bold{font-size:1rem!important}" +
+      "#screen-dashboard:not(.hidden)>div:has(#streak-counter){order:4!important}#screen-dashboard:not(.hidden)>div:has(#xp-bar){order:5!important}" +
+      "#screen-dashboard:not(.hidden)>div.space-y-3>.grid{order:6!important;flex:none!important;grid-template-rows:repeat(2,160px)!important;gap:10px!important}" +
+      "#screen-dashboard:not(.hidden)>div.space-y-3>button[onclick*=openPremium]{order:7!important}" +
+      "#screen-dashboard:not(.hidden)>div:last-child{order:9!important;margin-top:auto!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button>span{font-size:2.1rem!important;margin-bottom:.25rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button{padding:.7rem .9rem!important}#screen-dashboard .grid.grid-cols-2>button>h3{font-size:1.05rem!important;line-height:1.15!important}#screen-dashboard .grid.grid-cols-2>button>p{font-size:.78rem!important;line-height:1.25!important}#screen-dashboard>div.space-y-3>button[onclick*=openPremium]{font-size:13px!important;min-height:0!important;padding:.55rem .9rem!important}#screen-dashboard>div.space-y-3>button[onclick*=openPremium] *{font-size:13px!important;line-height:1.2!important}" +
       /* lisibilité : aucun texte en dessous de 12 px, les petits textes secondaires à 12,5 px */
       "[class*=\"text-[10px]\"],[class*=\"text-[11px]\"],.bz-n{font-size:12.5px!important}" +
       "#screen-dashboard>div:last-child p{font-size:12px!important}" +
