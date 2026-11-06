@@ -15,7 +15,11 @@
   function haut() { try { window.scrollTo(0, 0); } catch (e) {} }
   function unlocked() { try { return tierState().business.unlocked || 1; } catch (e) { return 1; } }
   function secteurs() {
-    try { return Object.keys(BUSINESS_SECTORS).filter(function (k) { return CHINA_TRADE_WOLOF[k] && CHINA_TRADE_WOLOF[k].vocab.length; }); } catch (e) { return []; }
+    try {
+      var o = window.DIISOO_ORDRE_TOURISME || [], r = function (k) { var i = o.indexOf(k); return i < 0 ? 99 : i; };
+      return Object.keys(BUSINESS_SECTORS).filter(function (k) { return CHINA_TRADE_WOLOF[k] && CHINA_TRADE_WOLOF[k].vocab.length; })
+        .sort(function (a, b) { return r(a) - r(b); });
+    } catch (e) { return []; }
   }
   function items(k, niv) {
     var out = [];
@@ -42,14 +46,14 @@
     "body:has(#bizstep) #screen-business>div.text-center,body:has(#bizstep) #fx-biz-btn,body:has(#bizback-sec) #fx-biz-btn,body:has(#bizback-sec) #bizback-lvl,body:has(#bizback-sec) #secteurs-zone{display:none!important}" +
     "body:has(#bizback-sec) #screen-business:not(.hidden){display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;align-content:flex-start;margin:0!important}" +
     "body:has(#bizback-sec) #screen-business>*{flex:0 0 100%;margin:0!important}" +
-    "body:has(#bizback-sec) #dsn-btn-business,body:has(#bizback-sec) #dcv-btn-business{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:8px 10px!important;font-size:12px!important;line-height:1.2!important;min-height:48px;width:auto!important}" +
+    "body:has(#bizback-sec) #dsn-btn-business,body:has(#bizback-sec) #dcv-btn-business{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:6px 8px!important;font-size:13px!important;line-height:1.15!important;min-height:44px;width:auto!important}" +
     "body:has(#bizstep) #screen-business,body:has(#bizback-lvl) #screen-business{margin:0!important}" +
     "body:has(#screen-business:not(.hidden)):has(#bizback-sec) [role=main]{padding-top:4px!important}" +
     "body:has(#bizback-sec) #business-content .fx-lab{display:none}" +
     "body:has(#bizback-sec) #business-content .fx-nav{padding:0}" +
     "body:has(#bizback-sec) #business-content [data-practice]{min-height:0!important;height:auto!important;padding:6px 8px!important;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px}" +
     "body:has(#bizback-sec) #business-content [data-practice] .dii-i{font-size:18px!important;line-height:1!important;margin:0!important;width:auto!important;height:auto!important}" +
-    "body:has(#bizback-sec) #business-content [data-practice] .dii-c{font-size:12px!important;margin:0!important}" +
+    "body:has(#bizback-sec) #business-content [data-practice] .dii-c{font-size:13.5px!important;margin:0!important}" +
     "body:has(#bizback-sec) #business-content .as-btn{min-height:0!important;padding:8px!important}" +
     "body:has(#bizback-sec) #business-content>div.bg-\\[\\#141A2B\\]{padding:10px!important}" +
     "#business-content{max-height:none!important;overflow:visible!important}";

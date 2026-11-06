@@ -621,40 +621,44 @@ try{
       "#screen-dashboard .grid.grid-cols-2>button>h3{font-size:.95rem!important}" +
       "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.68rem!important;margin-top:.15rem!important;line-height:1.2!important}" +
       "#revision-card{padding:.7rem .9rem!important}" +
-      "#screen-dashboard>div:last-child>p:last-child{font-size:9px!important;line-height:1.3!important}" +
       /* demande de numero : cachee tant que l'apprenant n'a pas pratique quelques jours */
       "body:not([data-wa-ok]) #wa-capture{display:none!important}" +
       /* libelles plus clairs sans toucher aux scripts qui ecrivent ces boutons */
       "button[aria-label^=\"Sauvegarder mon\"]::after{content:\" Sauvegarder\";font-size:11px;font-weight:700;margin-left:4px}" +
       /* la barre « Revenir » ajoute 56 px en haut : on les retire de la hauteur minimale, sinon CHAQUE page dépasse l'écran de 56 px */
       "body.dnav-on [role=main]{min-height:calc(100vh - 56px)!important;min-height:calc(100dvh - 56px)!important}" +
-      "body.dnav-on [role=main]{padding-top:6px!important;padding-bottom:6px!important}" +
-      "#screen-test-simulation{zoom:.92}" +
+      "body.dnav-on [role=main]{padding-top:3px!important;padding-bottom:3px!important}" +
+      "#screen-test-simulation>div.flex-1{padding-top:4px!important;padding-bottom:4px!important}#test-picker .pt-2{padding-top:4px!important}" +
       "body.dnav-on .fx-lab{display:none!important}.fx-nav{padding:0!important}.fx-nav .fx-dot{margin:2px 1px!important;width:6px!important;height:6px!important}.fx-nav .fx-dot.fx-on{width:12px!important}body:has(#thbar-wolof) #wolof-tabs,body:has(#thbar-general) #general-tabs{display:none!important}" +
       "body:has(#thbar-general) #screen-general>div.text-center,body:has(#thbar-general) #lvlback-general{display:none!important}" +
       "body:has(#thbar-general) #screen-general:not(.hidden){display:flex!important;flex-direction:row;flex-wrap:wrap;gap:6px;align-content:flex-start;margin:0!important}" +
       "body:has(#thbar-general) #screen-general>*{flex:0 0 100%;margin:0!important;max-height:none!important}" +
-      "body:has(#thbar-general) #dsn-btn-general,body:has(#thbar-general) #dcv-btn-general{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:5px 8px!important;font-size:12px!important;line-height:1.15!important;min-height:40px;width:auto!important}" +
+      "body:has(#thbar-general) #dsn-btn-general,body:has(#thbar-general) #dcv-btn-general{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:5px 8px!important;font-size:13px!important;line-height:1.15!important;min-height:44px;width:auto!important}" +
       "body:has(#thbar-general) #general-content [data-practice]{min-height:0!important;height:auto!important;padding:6px 8px!important;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px}" +
       "body:has(#thbar-general) #general-content [data-practice] .dii-i{font-size:18px!important;line-height:1!important;margin:0!important;width:auto!important;height:auto!important}" +
-      "body:has(#thbar-general) #general-content [data-practice] .dii-c{font-size:12px!important;margin:0!important}" +
+      "body:has(#thbar-general) #general-content [data-practice] .dii-c{font-size:13.5px!important;margin:0!important}" +
       "body:has(#thbar-general) #general-content .as-btn{min-height:0!important;padding:8px!important}" +
       "body:has(#thbar-wolof) #screen-wolof>div.text-center,body:has(#thbar-wolof) #lvlback-wolof{display:none!important}" +
       "body:has(#thbar-wolof) #screen-wolof:not(.hidden){display:flex!important;flex-direction:row;flex-wrap:wrap;gap:6px;align-content:flex-start;margin:0!important}" +
       "body:has(#thbar-wolof) #screen-wolof>*{flex:0 0 100%;margin:0!important;max-height:none!important}" +
-      "body:has(#thbar-wolof) #dsn-btn-wolof,body:has(#thbar-wolof) #dcv-btn-wolof{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:5px 8px!important;font-size:12px!important;line-height:1.15!important;min-height:40px;width:auto!important}" +
+      "body:has(#thbar-wolof) #dsn-btn-wolof,body:has(#thbar-wolof) #dcv-btn-wolof{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:5px 8px!important;font-size:13px!important;line-height:1.15!important;min-height:44px;width:auto!important}" +
       "body:has(#thbar-wolof) #lexicon-container [data-practice]{min-height:0!important;height:auto!important;padding:6px 8px!important;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px}" +
       "body:has(#thbar-wolof) #lexicon-container [data-practice] .dii-i{font-size:18px!important;line-height:1!important;margin:0!important;width:auto!important;height:auto!important}" +
-      "body:has(#thbar-wolof) #lexicon-container [data-practice] .dii-c{font-size:12px!important;margin:0!important}" +
+      "body:has(#thbar-wolof) #lexicon-container [data-practice] .dii-c{font-size:13.5px!important;margin:0!important}" +
       "body:has(#thbar-wolof) #lexicon-container .as-btn{min-height:0!important;padding:8px!important}" +
-      "body.dnav-on .fx-secs{display:flex!important;flex-wrap:nowrap!important;gap:4px!important;margin:0 0 2px!important}body.dnav-on .fx-sec{flex:1 1 0!important;min-width:0;padding:6px 2px!important;font-size:11px!important;min-height:0!important;line-height:1.1!important}" +
-      "body.dnav-on .aide-barre{min-height:0!important;padding:2px 8px!important;font-size:11px!important}" +
+      "body.dnav-on .fx-secs{display:flex!important;flex-wrap:nowrap!important;gap:4px!important;margin:0 0 2px!important}body.dnav-on .fx-sec{flex:1 1 0!important;min-width:0;padding:6px 2px!important;font-size:12.5px!important;min-height:0!important;line-height:1.1!important}" +
+      "body.dnav-on .aide-barre{min-height:0!important;padding:2px 8px!important;font-size:12.5px!important}" +
+      /* lisibilité : aucun texte en dessous de 12 px, les petits textes secondaires à 12,5 px */
+      "[class*=\"text-[10px]\"],[class*=\"text-[11px]\"],.bz-n{font-size:12.5px!important}" +
+      "#screen-dashboard>div:last-child p{font-size:12px!important}" +
+      "[style*=\"font-size:11px\"],[style*=\"font-size:10px\"],[style*=\"font-size:9px\"],[style*=\"font-size: 11px\"],[style*=\"font-size: 10px\"]{font-size:12px!important}" +
+      ".as-t small,.as-h,.fm-src,.fm-sug small,.fm-mtl,#dii-fmt details,.et-leg,#dii-aide-bulle small,.co-tt,.fx-reel small,.fm-tt,#biz-grid .bz-n,.aide-chip{font-size:12px!important}" +
       /* ACCUEIL v2 : les 4 grands menus d'abord, tout tient sur l'écran, rien à lire, rien à remplir */
       "body:has(#screen-dashboard:not(.hidden)) [role=main]{height:100dvh;min-height:0!important;padding:10px 14px 10px!important;justify-content:flex-start!important}" +
       "#screen-dashboard:not(.hidden){height:100%;display:flex;flex-direction:column;gap:8px;margin:0!important;padding:0!important}" +
       "#screen-dashboard>*{margin:0!important;flex:none}" +
       "#screen-dashboard>div:first-child{padding:0 54px 0 0!important}" +
-      "#screen-dashboard #daily-goal,#screen-dashboard #wa-capture,#screen-dashboard #badges-row,#dmic-chip,#dg-welcome,#screen-dashboard #ref-compteur{display:none!important}#screen-dashboard>div:last-child>p{display:block!important;font-size:10px!important;line-height:1.3!important;margin:0!important;text-align:center}" +
+      "#screen-dashboard #daily-goal,#screen-dashboard #wa-capture,#screen-dashboard #badges-row,#dmic-chip,#dg-welcome,#screen-dashboard #ref-compteur{display:none!important}#screen-dashboard>div:last-child>p{display:block!important;font-size:11.5px!important;line-height:1.3!important;margin:0!important;text-align:center}" +
       "#screen-dashboard:not(.hidden)>div.space-y-3{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px}" +
       "#screen-dashboard h1 span span{display:none!important}#welcome-tag{white-space:nowrap}#streak-counter,#xp-label{min-height:0!important;padding:5px 12px!important}#screen-dashboard>div.flex.items-center.justify-between{align-items:center}" +
       "#screen-dashboard>div.space-y-3>*{margin:0!important}" +
@@ -667,7 +671,8 @@ try{
       "#screen-dashboard .grid.grid-cols-2>button{min-height:0!important;display:flex!important;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding:1.1rem .9rem!important}" +
       "#screen-dashboard .grid.grid-cols-2>button>span{font-size:2.6rem!important;margin-bottom:.35rem!important;line-height:1}" +
       "#screen-dashboard .grid.grid-cols-2>button>h3{font-size:1.1rem!important}" +
-      "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.72rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.82rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button[onclick*=openGeneralModule]{order:1}#screen-dashboard .grid.grid-cols-2>button[onclick*=openWolofModule]{order:2}#screen-dashboard .grid.grid-cols-2>button[onclick*=openBusinessModule]{order:3}#screen-dashboard .grid.grid-cols-2>button:not([onclick*=openGeneralModule]):not([onclick*=openWolofModule]):not([onclick*=openBusinessModule]){order:4}" +
       "#dg-open{padding:8px 12px!important}" +
       "#screen-dashboard>div:last-child{padding:0}" +
       /* niveaux d'Anglais : le titre porte le niveau */
@@ -2402,7 +2407,11 @@ try{
   function haut() { try { window.scrollTo(0, 0); } catch (e) {} }
   function unlocked() { try { return tierState().business.unlocked || 1; } catch (e) { return 1; } }
   function secteurs() {
-    try { return Object.keys(BUSINESS_SECTORS).filter(function (k) { return CHINA_TRADE_WOLOF[k] && CHINA_TRADE_WOLOF[k].vocab.length; }); } catch (e) { return []; }
+    try {
+      var o = window.DIISOO_ORDRE_TOURISME || [], r = function (k) { var i = o.indexOf(k); return i < 0 ? 99 : i; };
+      return Object.keys(BUSINESS_SECTORS).filter(function (k) { return CHINA_TRADE_WOLOF[k] && CHINA_TRADE_WOLOF[k].vocab.length; })
+        .sort(function (a, b) { return r(a) - r(b); });
+    } catch (e) { return []; }
   }
   function items(k, niv) {
     var out = [];
@@ -2429,14 +2438,14 @@ try{
     "body:has(#bizstep) #screen-business>div.text-center,body:has(#bizstep) #fx-biz-btn,body:has(#bizback-sec) #fx-biz-btn,body:has(#bizback-sec) #bizback-lvl,body:has(#bizback-sec) #secteurs-zone{display:none!important}" +
     "body:has(#bizback-sec) #screen-business:not(.hidden){display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;align-content:flex-start;margin:0!important}" +
     "body:has(#bizback-sec) #screen-business>*{flex:0 0 100%;margin:0!important}" +
-    "body:has(#bizback-sec) #dsn-btn-business,body:has(#bizback-sec) #dcv-btn-business{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:8px 10px!important;font-size:12px!important;line-height:1.2!important;min-height:48px;width:auto!important}" +
+    "body:has(#bizback-sec) #dsn-btn-business,body:has(#bizback-sec) #dcv-btn-business{flex:1 1 calc(50% - 4px)!important;min-width:0;padding:6px 8px!important;font-size:13px!important;line-height:1.15!important;min-height:44px;width:auto!important}" +
     "body:has(#bizstep) #screen-business,body:has(#bizback-lvl) #screen-business{margin:0!important}" +
     "body:has(#screen-business:not(.hidden)):has(#bizback-sec) [role=main]{padding-top:4px!important}" +
     "body:has(#bizback-sec) #business-content .fx-lab{display:none}" +
     "body:has(#bizback-sec) #business-content .fx-nav{padding:0}" +
     "body:has(#bizback-sec) #business-content [data-practice]{min-height:0!important;height:auto!important;padding:6px 8px!important;display:flex!important;flex-direction:row!important;align-items:center;justify-content:center;gap:8px}" +
     "body:has(#bizback-sec) #business-content [data-practice] .dii-i{font-size:18px!important;line-height:1!important;margin:0!important;width:auto!important;height:auto!important}" +
-    "body:has(#bizback-sec) #business-content [data-practice] .dii-c{font-size:12px!important;margin:0!important}" +
+    "body:has(#bizback-sec) #business-content [data-practice] .dii-c{font-size:13.5px!important;margin:0!important}" +
     "body:has(#bizback-sec) #business-content .as-btn{min-height:0!important;padding:8px!important}" +
     "body:has(#bizback-sec) #business-content>div.bg-\\[\\#141A2B\\]{padding:10px!important}" +
     "#business-content{max-height:none!important;overflow:visible!important}";
@@ -5547,7 +5556,7 @@ try{
       "#dg-open{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:18px;border:1px solid #E1693F;" +
       "background:linear-gradient(135deg,#2a1a12,#1b1410);color:#F6F1E7;box-shadow:0 0 0 0 rgba(225,105,63,.5);animation:dgp 2.4s infinite}" +
       "#dg-open .dg-mic{flex:none;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#F3A94E,#E1693F);display:flex;align-items:center;justify-content:center;font-size:22px}" +
-      "#dg-open b{display:block;font-size:14px;line-height:1.2}#dg-open span.dg-s{display:block;font-size:11px;color:#C9BFA8;margin-top:2px}" +
+      "#dg-open b{display:block;font-size:15px;line-height:1.2}#dg-open span.dg-s{display:block;font-size:12.5px;color:#C9BFA8;margin-top:2px}" +
       "@keyframes dgp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.45)}70%{box-shadow:0 0 0 12px rgba(225,105,63,0)}100%{box-shadow:0 0 0 0 rgba(225,105,63,0)}}" +
       "#dg-ov{position:fixed;inset:0;z-index:90;background:rgba(11,15,28,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;color:#F6F1E7}" +
       "#dg-ov.hidden{display:none}" +
@@ -6406,6 +6415,47 @@ try{
 })();
 
 }catch(e){console.error("Diisoo : erreur dans diisoo-indulgence.js",e);}
+
+try{
+/* ---- diisoo-priorites.js ---- */
+/* diisoo-priorites.js v1 : les thèmes et les secteurs sont rangés par priorité d'usage, dans toute l'application.
+   Anglais : Se présenter d'abord, puis nombres, famille, nourriture... ; les thèmes touristiques viennent après les thèmes de base.
+   Wolof : Salutations d'abord. Tourisme (Business) : Hôtel, Restaurant, Taxi, Guide, Plage, Artisanat, Agence.
+   Niveaux : « Demander son chemin » passe en niveau 1, « Réserver un hôtel » en niveau 2 (difficulté croissante). */
+(function () {
+  "use strict";
+  if (window.__diisooPriorites) return;
+  window.__diisooPriorites = true;
+  var NIVEAU = { directions: 1, hotel: 2 };
+  var ORDRE_EN = ["intro", "time", "family", "food", "directions",
+    "tour-accueil", "tour-resto", "tour-taxi",
+    "work", "market", "travel", "health", "housing", "hotel",
+    "tour-goree", "tour-monuments", "tour-excursion", "tour-plage", "tour-artisanat",
+    "interview", "pitch", "orders", "visa", "agri",
+    "tour-circuit", "tour-agence", "tour-culture", "tour-urgence"];
+  var ORDRE_WO = ["salutations", "famille", "temps", "marche", "nourriture", "voyage", "maison", "corps", "logement"];
+  window.DIISOO_ORDRE_TOURISME = ["tour_hotel", "tour_resto", "tour_transport", "tour_guide", "tour_plage", "tour_artisanat", "tour_agence"];
+
+  function rang(liste, id) { var i = liste.indexOf(id); return i < 0 ? 999 : i; }
+  function trier() {
+    try {
+      GENERAL_THEMES.forEach(function (t) {
+        var n = NIVEAU[t.id];
+        if (n && t.niveau !== n) { t.niveau = n; t.title = String(t.title).replace(/^N\d/, "N" + n); }
+      });
+      GENERAL_THEMES.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3) || rang(ORDRE_EN, a.id) - rang(ORDRE_EN, b.id); });
+      var d = GENERAL_THEMES.find(function (t) { return t.id === "intro"; });
+      if (d && typeof generalThemeId !== "undefined" && /^tour-/.test(generalThemeId)) generalThemeId = d.id;
+    } catch (e) {}
+    try {
+      if (Array.isArray(WOLOF_THEMES)) WOLOF_THEMES.sort(function (a, b) { return rang(ORDRE_WO, a.id) - rang(ORDRE_WO, b.id); });
+    } catch (e) {}
+  }
+  trier();
+  setTimeout(trier, 1500);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-priorites.js",e);}
 
 try{
 /* ---- diisoo-access.js ---- */
