@@ -40,7 +40,7 @@
     "diisoo-exams2.js",
     "diisoo-premium.js",
     "diisoo-guide.js",
-    "diisoo-seance.js", "diisoo-conversation.js", "diisoo-indulgence.js", "diisoo-priorites.js", "diisoo-continuer.js","diisoo-examens-hub.js",
+    "diisoo-seance.js", "diisoo-conversation.js", "diisoo-indulgence.js", "diisoo-priorites.js", "diisoo-continuer.js","diisoo-examens-hub.js","diisoo-lecons.js",
     "diisoo-access.js", "diisoo-suivi.js"
   ];
 
