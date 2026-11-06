@@ -62,7 +62,7 @@
       "#screen-dashboard:not(.hidden){height:100%;display:flex;flex-direction:column;gap:8px;margin:0!important;padding:0!important}" +
       "#screen-dashboard>*{margin:0!important;flex:none}" +
       "#screen-dashboard>div:first-child{padding:0 54px 0 0!important}" +
-      "#screen-dashboard #daily-goal,#screen-dashboard #wa-capture,#screen-dashboard #badges-row,#dmic-chip,#dg-welcome,#screen-dashboard #ref-compteur,#screen-dashboard>div:last-child>p:last-child{display:none!important}" +
+      "#screen-dashboard #daily-goal,#screen-dashboard #wa-capture,#screen-dashboard #badges-row,#dmic-chip,#dg-welcome,#screen-dashboard #ref-compteur{display:none!important}#screen-dashboard>div:last-child>p{display:block!important;font-size:10px!important;line-height:1.3!important;margin:0!important;text-align:center}" +
       "#screen-dashboard:not(.hidden)>div.space-y-3{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px}" +
       "#screen-dashboard h1 span span{display:none!important}#welcome-tag{white-space:nowrap}#streak-counter,#xp-label{min-height:0!important;padding:5px 12px!important}#screen-dashboard>div.flex.items-center.justify-between{align-items:center}" +
       "#screen-dashboard>div.space-y-3>*{margin:0!important}" +
@@ -72,7 +72,7 @@
       "#screen-dashboard>div.space-y-3>#revision-card .mb-2{margin:0!important}" +
       "#screen-dashboard>div.space-y-3>button[onclick*=openPremium]{order:3;padding:.5rem .9rem!important}" +
       "#screen-dashboard>div.space-y-3>button[onclick*=partagerDiisoo]{display:none}" +
-      "#screen-dashboard .grid.grid-cols-2>button{min-height:0!important;display:flex!important;flex-direction:column;justify-content:center;align-items:flex-start;padding:.8rem!important}" +
+      "#screen-dashboard .grid.grid-cols-2>button{min-height:0!important;display:flex!important;flex-direction:column;justify-content:flex-start;align-items:flex-start;padding:1.1rem .9rem!important}" +
       "#screen-dashboard .grid.grid-cols-2>button>span{font-size:2.6rem!important;margin-bottom:.35rem!important;line-height:1}" +
       "#screen-dashboard .grid.grid-cols-2>button>h3{font-size:1.1rem!important}" +
       "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.72rem!important}" +
