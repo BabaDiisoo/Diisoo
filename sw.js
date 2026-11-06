@@ -1,10 +1,11 @@
-const VERSION = "diisoo-cache-v58";
+const VERSION = "diisoo-cache-v59";
 const SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
+  "./icon-maskable-512.png",
   "./diisoo-update.js",
   "./diisoo-pro.js",
   "./synchro.js",

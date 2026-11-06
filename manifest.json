@@ -1,7 +1,7 @@
 {
   "name": "Diisoo",
   "short_name": "Diisoo",
-  "description": "Apprendre l'anglais et le wolof au Sénégal : voix wolof, dialogues de marché (Sandaga, Colobane), anglais business et simulateur IELTS Life Skills. Édité par ABC-GLOBAL.",
+  "description": "Apprendre l'anglais et le wolof au Sénégal : examens et visa, anglais business, voix wolof. Édité par ABC-GLOBAL.",
   "id": "./",
   "start_url": "./?source=pwa",
   "scope": "./",
@@ -30,7 +30,7 @@
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -55,9 +55,9 @@
       ]
     },
     {
-      "name": "Simulateur IELTS",
-      "short_name": "IELTS",
-      "url": "./?source=raccourci-ielts",
+      "name": "Examens et visa",
+      "short_name": "Examens",
+      "url": "./?source=raccourci-examens",
       "icons": [
         {
           "src": "icon-192.png",
@@ -65,43 +65,6 @@
           "type": "image/png"
         }
       ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "1-accueil.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Accueil"
-    },
-    {
-      "src": "2-guide-vocal.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Guide vocal"
-    },
-    {
-      "src": "3-seance-guidee.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Séance guidée"
-    },
-    {
-      "src": "4-examens.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Examens"
-    },
-    {
-      "src": "5-business.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
-      "form_factor": "narrow",
-      "label": "Business"
     }
   ]
 }
