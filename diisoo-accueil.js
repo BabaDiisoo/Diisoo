@@ -91,7 +91,7 @@
       "#screen-dashboard .grid.grid-cols-2>button>span{font-size:2.6rem!important;margin-bottom:.35rem!important;line-height:1}" +
       "#screen-dashboard .grid.grid-cols-2>button>h3{font-size:1.1rem!important}" +
       "#screen-dashboard .grid.grid-cols-2>button>p{font-size:.82rem!important}" +
-      "#screen-dashboard .grid.grid-cols-2>button[onclick*=openGeneralModule]{order:1}#screen-dashboard .grid.grid-cols-2>button[onclick*=openWolofModule]{order:2}#screen-dashboard .grid.grid-cols-2>button[onclick*=openBusinessModule]{order:3}#screen-dashboard .grid.grid-cols-2>button:not([onclick*=openGeneralModule]):not([onclick*=openWolofModule]):not([onclick*=openBusinessModule]){order:4}" +
+      "#screen-dashboard .grid.grid-cols-2>button[onclick*=openGeneralModule]{order:3}#screen-dashboard .grid.grid-cols-2>button[onclick*=openWolofModule]{order:4}#screen-dashboard .grid.grid-cols-2>button[onclick*=openBusinessModule]{order:2}#screen-dashboard .grid.grid-cols-2>button:not([onclick*=openGeneralModule]):not([onclick*=openWolofModule]):not([onclick*=openBusinessModule]){order:1}" +
       "#dg-open{padding:8px 12px!important}" +
       "#screen-dashboard>div:last-child{padding:0}" +
       /* niveaux d'Anglais : le titre porte le niveau */
