@@ -16,7 +16,7 @@
     "diisoo-ui.js",
     "diisoo-coach.js",
     "diisoo-themes-extra.js",
-    "diisoo-lecons.js","diisoo-universel.js",
+    "diisoo-lecons.js","diisoo-universel.js","diisoo-arrivee.js",
     "diisoo-reseau.js",
     "diisoo-coach-liens.js",
     "diisoo-examens-coach.js",
@@ -40,7 +40,7 @@
     "diisoo-exams2.js",
     "diisoo-premium.js",
     "diisoo-guide.js",
-    "diisoo-seance.js", "diisoo-conversation.js", "diisoo-indulgence.js", "diisoo-priorites.js", "diisoo-continuer.js","diisoo-examens-hub.js","diisoo-lecons.js","diisoo-universel.js",
+    "diisoo-seance.js", "diisoo-conversation.js", "diisoo-indulgence.js", "diisoo-priorites.js", "diisoo-continuer.js","diisoo-examens-hub.js","diisoo-lecons.js","diisoo-universel.js","diisoo-arrivee.js",
     "diisoo-access.js", "diisoo-suivi.js"
   ];
 
