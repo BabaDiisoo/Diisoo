@@ -1276,170 +1276,71 @@ try{
 
 try{
 /* ---- diisoo-lecons.js ---- */
-/* diisoo-lecons.js v1 : lecons epurees (carte mot empilee, actions secondaires sous "Plus", themes sans prefixe) */
+/* diisoo-lecons.js
+ * Leçons d'anglais générales : affiche la prononciation simplifiée sous chaque phrase
+ * et ajoute un bouton « Coach » (écouter, répéter, se réécouter) sous chaque carte.
+ * Dépend de diisoo-coach.js (à charger avant). Ne modifie aucun autre fichier.
+ * La prononciation simplifiée est une AIDE (écriture pour francophones). Prélecture à valider.
+ */
 (function () {
   "use strict";
-  var st = document.createElement("style");
-  st.textContent =
-    ".fx-em>.flex.justify-between.items-start{flex-direction:column!important;align-items:flex-start!important;gap:3px!important}" +
-    ".fx-em>.flex.justify-between.items-start>p:first-child{font-size:24px!important;font-weight:800!important;line-height:1.15!important;color:#F6F1E7!important}" +
-    ".fx-em>.flex.justify-between.items-start .text-right{text-align:left!important}" +
-    ".fx-em>.flex.justify-between.items-start .text-right>p:first-child{font-size:16px!important;color:#C9BFA8!important}" +
-    ".fx-em .dl-sec{display:none!important}" +
-    ".fx-em.dl-on .dl-sec{display:block!important}" +
-    ".fx-em .dl-plus{width:100%;min-height:40px;border-radius:12px;border:1px solid #1E2740;background:transparent;color:#A69C86;font-size:13px;font-weight:700}";
-  document.head.appendChild(st);
+  if (window.__diisooLecons) return;
+  window.__diisooLecons = true;
 
-  function carte(c) {
-    var ex = c.querySelector(".dl-plus");
-    var sec = [];
-    Array.prototype.forEach.call(c.children, function (e) {
-      var t = (e.textContent || "").trim();
-      if (e.tagName === "BUTTON" && (/^🎓\s*Coach vocal/.test(t) || e.classList.contains("as-btn"))) sec.push(e);
+  var PRON_EN = {"Left":"Lèft","Right":"Raït","Straight ahead":"Stréït ahèd","Street":"Strît","Near":"Nir","Far":"Far","Excuse me, where is the market?":"Èkskiouz mi, wèr iz zi markit ?","Turn left":"Teurn lèft","Room":"Roum","Key":"Kî","Night":"Naït","Breakfast":"Brèkfast","I have a reservation":"Aï hav a rézeurvéïchen","Do you have a free room?":"Dou you hav a frî roum ?","How much is it per night?":"Haou meutch iz it peur naït ?","Is breakfast included?":"Iz brèkfast inklioudid ?","Experience":"Ekspirièns","Skills":"Skilz","Salary":"Saleuri","Tell me about yourself":"Tèl mi abaout yorsèlf","I have five years of experience":"Aï hav faïv yeurz ov ekspirièns","Why do you want this job?":"Waï dou you wont ziss djob ?","I can start next month":"Aï kan start nèkst meunth","I am reliable":"Aï am rilaïabel","Company":"Keumpani","Customer":"Keustomeur","Product":"Prodakt","Catalogue":"Katalog","I run a small business in Thiès":"Aï reun a smol biznis in Tiès","We sell and export local products":"Wi sèl and èksport lôkal prodakts","We are looking for a reliable partner":"Wi ar loukinng for a rilaïabel partneur","Can I send you our catalogue?":"Kan aï sènd you aour katalog ?","Order":"Ordeur","Quantity":"Kouantiti","Delivery":"Dilivri","Invoice":"Inn-voïss","I want to place an order":"Aï wont tou pléïss an ordeur","How many pieces do you need?":"Haou mèni pîssiz dou you nîd ?","When will the goods arrive?":"Wèn wil zi goudz araïv ?","Can you send me the invoice?":"Kan you sènd mi zi inn-voïss ?","My name is...": "Maï néïm iz...","I am from Senegal": "Aï am frome Sénégal","Nice to meet you": "Naïce tou mîte you","I am a student": "Aï am a stioudent","How old are you?": "Haou ôld ar you ?","I am thirty years old": "Aï am theurti yeurz ôld","Where do you live?": "Wèr dou you liv ?","I live in Thiès": "Aï liv in Tiès","What do you do for a living?": "Wot dou you dou for a livinng ?","I speak English and French": "Aï spîk Inngliche and Frènntch","Can you spell your name?": "Kan you spèl yor néïm ?","F-A-T-O-U": "Èf-Eï-Ti-Ô-You","Family": "Fameli","Father": "Fa-zeur","Mother": "Meu-zeur","Brother": "Breu-zeur","Sister": "Sisteur","I have three children": "Aï hav thri tchildren","My mother lives with us": "Maï meu-zeur livz wiz eus","We eat together every evening": "Wi ît tou-guè-zeur èvri îvninng","My father is a driver": "Maï fa-zeur iz a draïveur","I love my family very much": "Aï leuv maï fameli vèri meutch","Who is the oldest in your family?": "Hou iz zi ôldist in yor fameli ?","My grandmother is the oldest": "Maï grandmeu-zeur iz zi ôldist","Work": "Weurk","Job": "Djob","Every day": "Èvri déï","Busy": "Bizi","Colleague": "Kolîg","I start work at eight o'clock": "Aï start weurk at éït o-klok","I finish work at five o'clock": "Aï finiche weurk at faïv o-klok","I work in an office": "Aï weurk in an offiss","My job is difficult but interesting": "Maï djob iz difikeult beut intrestinng","I am looking for a new job": "Aï am loukinng for a niou djob","I like helping customers": "Aï laïk hèlpinng keustomeurz","I take a short break at noon": "Aï téïk a chort bréïk at noun","Market": "Markit","Price": "Praïce","Money": "Meuni","Buy": "Baï","Cheap": "Tchîp","How much does it cost?": "Haou meutch deuz it kost ?","That is too expensive": "Zat iz tou ekspènnsiv","Can you make it cheaper?": "Kan you méïk it tchîpeur ?","I would like to buy some rice": "Aï woud laïk tou baï seum raïce","Do you accept mobile money?": "Dou you aksèpt môbaïl meuni ?","How much are the tomatoes?": "Haou meutch ar zi tomêtôz ?","Could you give me a discount?": "Koud you guiv mi a diskaount ?","Airport": "Èrport","Ticket": "Tikit","Passport": "Passport","Flight": "Flaït","Bus": "Beuss","I would like to book a ticket": "Aï woud laïk tou bouk a tikit","What time does the bus leave?": "Wot taïm deuz zi beuss lîv ?","Where is the nearest bus stop?": "Wèr iz zi nirist beuss stop ?","I am traveling to visit my family": "Aï am travelinng tou vizit maï fameli","Do I need a visa for this country?": "Dou aï nîd a vîza for ziss keuntri ?","How do you get to work?": "Haou dou you guét tou weurk ?","I take the bus every morning": "Aï téïk zi beuss èvri morninng","Doctor": "Doktor","Hospital": "Hospitel","Sick": "Sik","Medicine": "Médsin","Help": "Hèlp","I have a headache": "Aï hav a hèdéïk","I need to see a doctor": "Aï nîd tou sî a doktor","Where is the nearest hospital?": "Wèr iz zi nirist hospitel ?","I feel better today": "Aï fîl bèteur toudéï","Please call an ambulance": "Plîz kol an ambioulenss","Take one tablet twice a day": "Téïk wan tablèt twaïce a déï","Since when do you feel sick?": "Sinss wèn dou you fîl sik ?","Restaurant": "Rèstorant","Menu": "Mènniou","Water": "Wotteur","Delicious": "Dilichess","Bill": "Bil","I am hungry": "Aï am heunngri","What do you recommend?": "Wot dou you rékomènd ?","I would like some rice and fish": "Aï woud laïk seum raïce and fiche","This meal is very tasty": "Ziss mîl iz vèri téïsti","Can I have the bill, please?": "Kan aï hav zi bil, plîz ?","What is your favourite dish?": "Wot iz yor féïvorit diche ?","I like thieboudienne": "Aï laïk tiébou-diène","Today": "Toudéï","Tomorrow": "Toumorô","Yesterday": "Yèsteurdéï","Number": "Neumbeur","Time": "Taïm","What time is it now?": "Wot taïm iz it naou ?","I will see you tomorrow morning": "Aï wil sî you toumorô morninng","The meeting starts at ten o'clock": "Zi mîtinng starts at tèn o-klok","I was busy yesterday": "Aï woz bizi yèsteurdéï","How many people are coming?": "Haou mèni pîpel ar keuminng ?","What time do you wake up?": "Wot taïm dou you wéïk eup ?","I wake up at six every morning": "Aï wéïk eup at siks èvri morninng","Visa application": "Vîza aplikéïchen","Purpose of visit": "Peurpeuss ov vizit","I am visiting my family": "Aï am vizitinng maï fameli","Return ticket": "Ritèrn tikit","How long will you stay?": "Haou lonng wil you stéï ?","I will stay for two weeks": "Aï wil stéï for tou wîks","Who is paying for your trip?": "Hou iz péïinng for yor trip ?","I am paying for myself": "Aï am péïinng for maïsèlf","Do you have accommodation booked?": "Dou you hav akomodéïchen boukt ?","I am looking for an apartment": "Aï am loukinng for an apartment","How much is the rent?": "Haou meutch iz zi rènt ?","Is the deposit included?": "Iz zi dipozit inklioudid ?","Landlord": "Lanndlord","Tenant": "Ténnant","The electricity is not working": "Zi ilèktrissiti iz not weurkinng","Can I visit the house?": "Kan aï vizit zi haouss ?","How many rooms are there?": "Haou mèni roumz ar zèr ?","I need to sign the lease": "Aï nîd tou saïn zi lîss","The neighbourhood is quiet": "Zi néïbeur-houd iz kouaïet","Seeds": "Sîdz","Fertilizer": "Feurtilaïzeur","Field": "Fîld","Harvest": "Harvist","Farmer": "Farmeur","I need seeds for my field": "Aï nîd sîdz for maï fîld","How much is a bag of fertilizer?": "Haou meutch iz a bag ov feurtilaïzeur ?","Do these seeds grow well in the rainy season?": "Dou zîz sîdz grô wèl in zi réïni sîzen ?","I water my crops every morning": "Aï wotteur maï krops èvri morninng","The harvest was good this year": "Zi harvist woz goud ziss yir","I sell my vegetables at the Thiès market": "Aï sèl maï vèdjtabelz at zi Tiès markit","Can you deliver to my farm?": "Kan you délivèr tou maï farm ?"};
+
+  window.DiisooPronEN = Object.assign(window.DiisooPronEN || {}, PRON_EN);
+
+  function theme() { try { return typeof currentGeneralTheme === "function" ? currentGeneralTheme() : null; } catch (e) { return null; } }
+
+  function ouvrirCoach(t, i) {
+    var w = t.vocab[i];
+    if (!w || !window.DiisooCoach) return;
+    var suiv = t.vocab[i + 1] ? function () { ouvrirCoach(t, i + 1); } : null;
+    window.DiisooCoach.ouvrir({ en: w.en, pron: PRON_EN[w.en] || "", wo: w.wo || "", fr: w.fr || "", suivant: suiv });
+  }
+
+  function enrichir() {
+    if (!window.DiisooCoach) return;
+    var t = theme();
+    if (!t || !t.vocab) return;
+    var btns = document.querySelectorAll('button[data-practice^="gen-l:"]');
+    btns.forEach(function (b) {
+      var parts = String(b.getAttribute("data-practice")).split(":");
+      var i = parseInt(parts[2], 10);
+      if (isNaN(i) || parts[1] !== t.id || !t.vocab[i]) return;
+      var grille = b.parentElement, carte = grille && grille.parentElement;
+      if (!carte || carte.getAttribute("data-dii-lecon") === "1") return;
+      carte.setAttribute("data-dii-lecon", "1");
+      var w = t.vocab[i];
+      var p = PRON_EN[w.en];
+      var titre = carte.querySelector("p");
+      if (p && titre) {
+        var l = document.createElement("p");
+        l.className = "diisoo-pron-en";
+        l.style.cssText = "font-size:12px;color:#F3A94E;margin-top:2px;";
+        l.textContent = "Prononce : " + p;
+        titre.parentNode.insertBefore(l, titre.nextSibling);
+      }
+      var c = document.createElement("button");
+      c.type = "button";
+      c.textContent = "🎓 Coach vocal";
+      c.style.cssText = "width:100%;min-height:44px;border-radius:12px;border:1px solid #F3A94E;background:transparent;color:#F3A94E;font-weight:700;font-size:13px;";
+      c.onclick = function () { ouvrirCoach(t, i); };
+      grille.parentNode.insertBefore(c, grille.nextSibling);
     });
-    sec = sec.filter(function (e) { return !e.classList.contains("dl-sec"); });
-    if (!sec.length) return;
-    sec.forEach(function (e) { e.classList.add("dl-sec"); });
-    if (ex) return;
-    var p = document.createElement("button");
-    p.type = "button"; p.className = "dl-plus"; p.textContent = "⋯ Plus";
-    p.onclick = function () { var on = c.classList.toggle("dl-on"); p.textContent = on ? "▴ Moins" : "⋯ Plus"; };
-    c.insertBefore(p, sec[0]);
   }
-  function themes() {
-    Array.prototype.forEach.call(document.querySelectorAll("#screen-general button,#screen-wolof button"), function (b) {
-      var n = b.firstChild;
-      var m = n && n.nodeType === 3 && /^(N\d\s·\s)/.exec(n.nodeValue);
-      if (m) { var sp = document.createElement("span"); sp.style.display = "none"; sp.textContent = m[1]; n.nodeValue = n.nodeValue.slice(m[1].length); b.insertBefore(sp, n); }
-    });
-  }
-  function passe() {
-    Array.prototype.forEach.call(document.querySelectorAll(".fx-em"), carte);
-    themes();
-  }
+
   var plan = false;
-  try {
-    new MutationObserver(function () { if (plan) return; plan = true; setTimeout(function () { plan = false; try { passe(); } catch (e) {} }, 60); })
-      .observe(document.body, { childList: true, subtree: true });
-  } catch (e) {}
-  passe();
+  function planifier() {
+    if (plan) return; plan = true;
+    setTimeout(function () { plan = false; try { enrichir(); } catch (e) {} }, 250);
+  }
+  new MutationObserver(planifier).observe(document.body, { childList: true, subtree: true });
+  planifier();
 })();
 
 }catch(e){console.error("Diisoo : erreur dans diisoo-lecons.js",e);}
-
-try{
-/* ---- diisoo-universel.js ---- */
-/* diisoo-universel.js v1 : compatibilite petits ecrans (<=700px de haut), polices minimales */
-(function () {
-  "use strict";
-  var st = document.createElement("style");
-  st.textContent =
-    ".lvl-sub{font-size:12px!important}" +
-    "@media (max-height:700px){" +
-    "#xh-hub{gap:5px!important}#xh-hub .xh-s,#xh-hub h2{display:none!important}" +
-    "#xh-hub button{min-height:46px!important;padding:5px 9px!important}#xh-hub .xh-big{min-height:52px!important}" +
-    "#xh-hub .xh-i{font-size:20px!important}#xh-hub .xh-d{font-size:11.5px!important;margin-top:0!important}" +
-    ".fx-em{padding:10px!important}.fx-em>.flex.justify-between.items-start>p:first-child{font-size:20px!important}" +
-    ".fx-em .dl-plus{min-height:36px!important}.fx-em>div[data-em],.fx-em:before{font-size:30px!important}" +
-    ".lvl-btn{min-height:54px!important;padding:6px 12px!important}.lvl-picker{gap:6px!important}" +
-    "body.dnav-on [role=main]{padding-top:0!important;padding-bottom:0!important}" +
-    "}" +
-    "@media (max-height:600px){body.dnav-on{padding-top:48px!important}.fx-em{padding:8px!important}.lvl-btn{min-height:48px!important}}";
-  document.head.appendChild(st);
-})();
-
-}catch(e){console.error("Diisoo : erreur dans diisoo-universel.js",e);}
-
-try{
-/* ---- diisoo-arrivee.js ---- */
-/* diisoo-arrivee.js v1 : arrivee par lien (?source=tiktok) = mini-lecon d'1 minute, puis entretien visa ou examens */
-(function () {
-  "use strict";
-  function lire(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-  function ecrire(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-  var q = {};
-  try { new URLSearchParams(location.search).forEach(function (v, k) { q[k] = v; }); } catch (e) {}
-  var src = String(q.source || q.utm_source || "").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 24);
-  if (!src) return;
-  ecrire("diisoo_source", src);
-  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
-  setTimeout(function () { noter("arrivee", src); }, 3000);
-  if (lire("diisoo_arrivee_vu") === "1" && q.mini !== "1") return;
-
-  var QUESTION = "Why do you want to study in Canada?";
-  var MODELE = "I want to study in Canada because I want to improve my skills.";
-  var st = document.createElement("style");
-  st.textContent =
-    "#dar{position:fixed;inset:0;z-index:99990;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px 20px 24px;font-family:inherit;text-align:center}" +
-    "#dar .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
-    "#dar h1{font-size:24px;font-weight:800;line-height:1.2;margin:0}" +
-    "#dar .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
-    "#dar .r{min-height:62px;font-size:17px;font-weight:700;line-height:1.3;max-width:320px}" +
-    "#dar button{border:0;border-radius:18px;font-weight:800;min-height:52px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
-    "#dar .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}" +
-    "#dar .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}" +
-    "#dar .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
-    "#dar .m{width:92px;height:92px;border-radius:50%;max-width:92px;padding:0;font-size:36px;background:#E1693F;color:#fff;box-shadow:0 0 0 0 rgba(225,105,63,.6)}" +
-    "#dar .m.on{animation:darp 1s infinite}@keyframes darp{70%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
-    "#dar .d{font-size:12px;color:#8C8064;max-width:320px;line-height:1.35}" +
-    "#dar .ok{color:#25D366}#dar .or{color:#FFAA3C}";
-  document.head.appendChild(st);
-
-  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
-  function fermer() { var e = document.getElementById("dar"); if (e) e.remove(); ecrire("diisoo_arrivee_vu", "1"); }
-  function ouvrir() {
-    if (document.getElementById("dar")) return;
-    var o = document.createElement("div"); o.id = "dar";
-    o.innerHTML =
-      '<div class="k">Entretien visa · 1 minute</div>' +
-      '<h1>Écoute la question, réponds à voix haute</h1>' +
-      '<div class="q" id="dar-q">' + QUESTION + '</div>' +
-      '<button class="b2" id="dar-ec" type="button">🔊 Écouter la question</button>' +
-      '<button class="m" id="dar-mic" type="button" aria-label="Parler">🎙️</button>' +
-      '<div class="r" id="dar-r">Touche le micro et réponds en anglais.</div>' +
-      '<div id="dar-fin" style="display:none;width:100%;max-width:320px;flex-direction:column;gap:8px;align-items:center">' +
-      '<button class="b2" id="dar-mod" type="button">🔊 Écouter une réponse modèle</button>' +
-      '<button class="b1" id="dar-visa" type="button">Continuer l\'entretien visa</button>' +
-      '<button class="b2" id="dar-ex" type="button">Voir tous les examens</button></div>' +
-      '<button class="b3" id="dar-pass" type="button">Passer</button>' +
-      '<div class="d">Préparation indépendante. Diisoo n\'est pas affilié aux organismes d\'examen.</div>';
-    document.body.appendChild(o);
-    var r = document.getElementById("dar-r"), mic = document.getElementById("dar-mic"), fin = document.getElementById("dar-fin");
-    document.getElementById("dar-ec").onclick = function () { parler(QUESTION); };
-    document.getElementById("dar-mod").onclick = function () { parler(MODELE); };
-    document.getElementById("dar-pass").onclick = function () { noter("mini_passer", src); fermer(); };
-    document.getElementById("dar-visa").onclick = function () { noter("mini_visa", src); fermer(); try { generalThemeId = "visa"; openGeneralModule(); } catch (e) {} };
-    document.getElementById("dar-ex").onclick = function () { noter("mini_examens", src); fermer(); try { startTestSimulation(); } catch (e) {} };
-    var enCours = false;
-    mic.onclick = function () {
-      if (enCours) return;
-      if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici. Continue avec les examens."; fin.style.display = "flex"; return; }
-      enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
-      var h = null;
-      try { h = startListening("en-US", 7000, false); } catch (e) { h = null; }
-      Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
-        enCours = false; mic.classList.remove("on");
-        var t = res && res.text ? String(res.text).trim() : "";
-        if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; fin.style.display = "flex"; return; }
-        if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
-        var n = t.split(/\s+/).length;
-        r.innerHTML = '<span class="' + (n >= 4 ? "ok" : "or") + '">' + (n >= 4 ? "Bien joué !" : "Essaie une phrase plus longue.") + '</span><br>« ' + t.replace(/</g, "&lt;") + ' »';
-        noter("mini_reponse", src);
-        if (n >= 4) fin.style.display = "flex";
-      }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; fin.style.display = "flex"; });
-    };
-    noter("mini_vue", src);
-    setTimeout(function () { parler(QUESTION); }, 800);
-  }
-  var essais = 0;
-  (function attendre() {
-    var d = document.getElementById("screen-dashboard");
-    if (d && !d.classList.contains("hidden") && d.offsetParent) return ouvrir();
-    if (++essais < 20) setTimeout(attendre, 700);
-  })();
-})();
-
-}catch(e){console.error("Diisoo : erreur dans diisoo-arrivee.js",e);}
 
 try{
 /* ---- diisoo-reseau.js ---- */
@@ -6710,8 +6611,8 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-examens-hub.js",e);}
 
 try{
-/* ---- diisoo-lecons.js ---- */
-/* diisoo-lecons.js v1 : lecons epurees (carte mot empilee, actions secondaires sous "Plus", themes sans prefixe) */
+/* ---- diisoo-lecons-plus.js ---- */
+/* diisoo-lecons-plus.js v1 : lecons epurees (carte mot empilee, actions secondaires sous "Plus", themes sans prefixe) */
 (function () {
   "use strict";
   var st = document.createElement("style");
@@ -6760,7 +6661,7 @@ try{
   passe();
 })();
 
-}catch(e){console.error("Diisoo : erreur dans diisoo-lecons.js",e);}
+}catch(e){console.error("Diisoo : erreur dans diisoo-lecons-plus.js",e);}
 
 try{
 /* ---- diisoo-universel.js ---- */
