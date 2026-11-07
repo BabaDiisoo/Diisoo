@@ -6744,8 +6744,8 @@ try{
     document.getElementById("dar-ec").onclick = function () { parler(QUESTION); };
     document.getElementById("dar-mod").onclick = function () { parler(MODELE); };
     document.getElementById("dar-pass").onclick = function () { noter("mini_passer", src); fermer(); };
-    document.getElementById("dar-visa").onclick = function () { noter("mini_visa", src); fermer(); try { generalThemeId = "visa"; openGeneralModule(); } catch (e) {} };
-    document.getElementById("dar-ex").onclick = function () { noter("mini_examens", src); fermer(); try { startTestSimulation(); } catch (e) {} };
+    document.getElementById("dar-visa").onclick = function () { noter("mini_visa", src); choisir("visa"); };
+    document.getElementById("dar-ex").onclick = function () { noter("mini_examens", src); choisir("examens"); };
     var enCours = false;
     mic.onclick = function () {
       if (enCours) return;
@@ -6767,12 +6767,24 @@ try{
     noter("mini_vue", src);
     setTimeout(function () { parler(QUESTION); }, 800);
   }
-  var essais = 0;
-  (function attendre() {
-    var d = document.getElementById("screen-dashboard");
-    if (d && !d.classList.contains("hidden") && d.offsetParent) return ouvrir();
-    if (++essais < 20) setTimeout(attendre, 700);
-  })();
+  function visible(id) { var d = document.getElementById(id); return !!(d && !d.classList.contains("hidden") && d.offsetParent); }
+  function agir(intent) {
+    if (intent === "visa") { try { generalThemeId = "visa"; openGeneralModule(); } catch (e) {} }
+    else if (intent === "examens") { try { startTestSimulation(); } catch (e) {} }
+  }
+  // Apres l'inscription : si le visiteur avait choisi une suite, on l'y emmene une seule fois.
+  var tentatives = 0;
+  var suite = setInterval(function () {
+    var it = lire("diisoo_arrivee_suite");
+    if (!it || ++tentatives > 900) { clearInterval(suite); return; }
+    if (visible("screen-dashboard") && !document.getElementById("dar")) { ecrire("diisoo_arrivee_suite", ""); clearInterval(suite); agir(it); }
+  }, 1000);
+  function choisir(intent) {
+    fermer();
+    if (visible("screen-dashboard")) agir(intent); else ecrire("diisoo_arrivee_suite", intent);
+  }
+  function demarrer() { setTimeout(ouvrir, 500); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();
 })();
 
 }catch(e){console.error("Diisoo : erreur dans diisoo-arrivee.js",e);}
