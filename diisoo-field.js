@@ -274,7 +274,8 @@
     var away = !!e.cur && !NO_BACK[e.cur];
     var show = away && !e.overlay;
     btn.classList.toggle("on", show);
-    if (document.body) document.body.classList.toggle("dnav-on", show);
+    /* L'espace du haut reste reserve meme sous une fenetre (bilan, progres) : la page derriere ne saute plus de 56 px */
+    if (document.body) document.body.classList.toggle("dnav-on", away);
     if (away && !pushed) {
       try { history.pushState({ dnav: 1 }, ""); pushed = true; } catch (x) {}
     } else if (!away && pushed) {
