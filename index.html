@@ -2847,7 +2847,19 @@ const GENERAL_EXTRA = {
             { en: "I have a job in Senegal", fr: "J'ai un travail au Sénégal", wo: "Am naa liggéey fi ci Senegaal" },
             { en: "I will come back", fr: "Je reviendrai", wo: "Dinaa délsi" },
             { en: "Bank statement", fr: "Relevé bancaire", wo: "Relevé bu bànk" },
-            { en: "Thank you, have a nice day", fr: "Merci, bonne journée", wo: "Jërëjëf, yé ndol ak diam" }
+            { en: "Thank you, have a nice day", fr: "Merci, bonne journée", wo: "Jërëjëf, yé ndol ak diam" },
+            { en: "Have you travelled abroad before?", fr: "Avez-vous déjà voyagé à l'étranger ?", wo: "Ndax mas nga tukki ci bitim rew ?" },
+            { en: "This is my first trip abroad", fr: "C'est mon premier voyage à l'étranger", wo: "Bii mooy sama tukki bu njëkk ci bitim rew" },
+            { en: "I have been in business for five years", fr: "Je suis dans le commerce depuis cinq ans", wo: "Am naa juróom at ci njaay" },
+            { en: "My business partner is waiting for me", fr: "Mon partenaire d'affaires m'attend", wo: "Sama pàrtneer ci njaay mi ngi may xaar" },
+            { en: "I will stay at a hotel in Paris", fr: "Je logerai dans un hôtel à Paris", wo: "Dinaa dal ci otel ci Pari" },
+            { en: "I have enough money for the trip", fr: "J'ai assez d'argent pour le voyage", wo: "Am naa xaalis bu doy ngir tukki bi" },
+            { en: "Here are my bank statements", fr: "Voici mes relevés bancaires", wo: "Relevé yu bànk yi mo ngi nii" },
+            { en: "I have a wife and two children", fr: "J'ai une épouse et deux enfants", wo: "Am naa jabar ak ñaari doom" },
+            { en: "My family is waiting for me in Senegal", fr: "Ma famille m'attend au Sénégal", wo: "Sama njaboot ñu ngi may xaar Senegaal" },
+            { en: "I would like to apply for a tourist visa", fr: "Je voudrais demander un visa touriste", wo: "Bëgg naa laaj visa tourist" },
+            { en: "How much do you earn per month?", fr: "Combien gagnez-vous par mois ?", wo: "Ñaata xaalis nga am ci weer wi ?" },
+            { en: "I will leave on Monday and return on Sunday", fr: "Je partirai lundi et reviendrai dimanche", wo: "Dinaa dem altine te délsi dibéer" }
         ],
         dialogue: [
             { who: "A", en: "Why do you want to travel?", fr: "Pourquoi voulez-vous voyager ?", wo: "Lu tax nga bëgg a tukki ?" },
@@ -2859,14 +2871,27 @@ const GENERAL_EXTRA = {
             { who: "A", en: "What is your occupation?", fr: "Quelle est votre profession ?", wo: "Ban liggéey nga def ?" },
             { who: "B", en: "I am a trader. I have a shop in Thiès.", fr: "Je suis commerçant. J'ai une boutique à Thiès.", wo: "Njaay laa. Am naa butik ci Cees." },
             { who: "A", en: "Will you come back to Senegal?", fr: "Reviendrez-vous au Sénégal ?", wo: "Ndax dinga délsi Senegaal ?" },
-            { who: "B", en: "Yes, I will come back. Thank you.", fr: "Oui, je reviendrai. Merci.", wo: "Waaw, dinaa délsi. Jërëjëf." }
+            { who: "B", en: "Yes, I will come back. Thank you.", fr: "Oui, je reviendrai. Merci.", wo: "Waaw, dinaa délsi. Jërëjëf." },
+            { who: "A", en: "Have you travelled abroad before?", fr: "Avez-vous déjà voyagé à l'étranger ?", wo: "Ndax mas nga tukki ci bitim rew ?" },
+            { who: "B", en: "No, this is my first trip abroad.", fr: "Non, c'est mon premier voyage à l'étranger.", wo: "Déedéet, bii mooy sama tukki bu njëkk ci bitim rew." },
+            { who: "A", en: "Why do you want to visit France?", fr: "Pourquoi voulez-vous aller en France ?", wo: "Lu tax nga bëgg a dem Faraans ?" },
+            { who: "B", en: "I want to meet a business partner and buy goods.", fr: "Je veux rencontrer un partenaire d'affaires et acheter des marchandises.", wo: "Dama bëgg gis sama pàrtneer te jënd marsandiis." },
+            { who: "A", en: "Where will you stay?", fr: "Où logerez-vous ?", wo: "Fan nga dal ?" },
+            { who: "B", en: "I will stay at a hotel in Paris.", fr: "Je logerai dans un hôtel à Paris.", wo: "Dinaa dal ci otel ci Pari." },
+            { who: "A", en: "Do you have enough money for the trip?", fr: "Avez-vous assez d'argent pour le voyage ?", wo: "Ndax am nga xaalis bu doy ngir tukki bi ?" },
+            { who: "B", en: "Yes, here are my bank statements.", fr: "Oui, voici mes relevés bancaires.", wo: "Waaw, relevé yu bànk yi mo ngi nii." }
         ],
         quiz: [{ q: "I ___ come back after two weeks.", o: ["will", "am", "does"], a: 0, why: "Intention future : « will + verbe de base »." },
             { q: "Can you ___, please?", o: ["repair", "repeat", "repaid"], a: 1, why: "« Can you repeat, please? » = Pouvez-vous répéter ?" },
             { q: "I ___ understand.", o: ["don't", "doesn't", "not"], a: 0, why: "I + don't + verbe de base : je ne comprends pas." },
             { q: "Here is my ___.", o: ["passage", "passenger", "passport"], a: 2, why: "« Passport » = passeport." },
             { q: "What is your ___?", o: ["occupation", "occasion", "operation"], a: 0, why: "« Occupation » = profession." },
-            { q: "I will ___ back to Senegal.", o: ["came", "come", "coming"], a: 1, why: "will + verbe de base : « I will come »." }
+            { q: "I will ___ back to Senegal.", o: ["came", "come", "coming"], a: 1, why: "will + verbe de base : « I will come »." },
+            { q: "Have you ___ abroad before?", o: ["travel", "travelled", "travelling"], a: 1, why: "Have you + participe passé : « travelled »." },
+            { q: "I will ___ at a hotel in Paris.", o: ["stayed", "staying", "stay"], a: 2, why: "will + verbe de base : « I will stay »." },
+            { q: "I have ___ money for the trip.", o: ["many", "enough", "few"], a: 1, why: "« Enough money » = assez d'argent." },
+            { q: "I have been in business ___ five years.", o: ["since", "during", "for"], a: 2, why: "« For » + durée (for five years)." },
+            { q: "This is my ___ trip abroad.", o: ["first", "one", "once"], a: 0, why: "« First » = premier." }
         ]
     },
     housing: {
