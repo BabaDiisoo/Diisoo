@@ -70,7 +70,7 @@
   function peutAfficher() {
     var d = $("screen-dashboard");
     if (!d || d.classList.contains("hidden")) return false;
-    return !document.querySelector("#dii-obj,#dii-arrivee,#dii-retour,[id^=screen-].fixed:not(.hidden)");
+    return !document.querySelector("#dii-obj,#dar,#dsr,[id^=screen-].fixed:not(.hidden)");
   }
   function verifier(force) {
     var cle = semaine(new Date());

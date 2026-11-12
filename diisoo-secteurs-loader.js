@@ -34,6 +34,7 @@
     "diisoo-objectif.js",
     "diisoo-rappel.js",
     "diisoo-recap.js",
+    "diisoo-defi.js",
     "diisoo-installer.js",
     "diisoo-assistant.js",
     "diisoo-coach2.js",
