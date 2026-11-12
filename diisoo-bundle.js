@@ -3701,7 +3701,7 @@ try{
 
   function fiche(modif) {
     if ($("dii-obj")) return;
-    var o = lire() || { but: "visa", rythme: 5, duree: 30, heure: "18:00" };
+    var o = lire() || { but: "visa", rythme: 5, duree: 30, heure: "20:30" };
     var ov = document.createElement("div"); ov.id = "dii-obj";
     var b = '<div class="ob-box"><h3>🎯 Fixe ton objectif</h3><p class="ob-sub">Un but clair, un rythme, une date. Tu avances chaque jour.</p>';
     b += '<p class="ob-q">1. Pourquoi tu apprends ?</p><div class="ob-g c2" data-k="but">';
@@ -3710,7 +3710,9 @@ try{
     RYTHMES.forEach(function (x) { b += '<button type="button" class="ob-c' + (o.rythme === x[0] ? " on" : "") + '" data-v="' + x[0] + '">' + x[1] + "<small>" + x[2] + "</small></button>"; });
     b += '</div><p class="ob-q">3. En combien de jours ?</p><div class="ob-g c3" data-k="duree">';
     DUREES.forEach(function (x) { b += '<button type="button" class="ob-c' + (o.duree === x ? " on" : "") + '" data-v="' + x + '">' + x + "<small>jours</small></button>"; });
-    b += '</div><p class="ob-q">4. Rappel chaque jour (sonne même si l\'app est fermée)</p><input type="time" id="ob-heure" value="' + (o.heure || "18:00") + '">';
+    b += '</div><p class="ob-q">4. Quand es-tu disponible ? (rappel chaque jour, même si l\'app est fermée)</p><div class="ob-g c3" id="ob-creneaux">';
+    [["06:30", "🌅", "Matin"], ["12:30", "☀️", "Midi"], ["20:30", "🌙", "Soir"]].forEach(function (x) { b += '<button type="button" class="ob-c' + (o.heure === x[0] ? " on" : "") + '" data-h="' + x[0] + '">' + x[1] + "<small>" + x[2] + " " + x[0].replace(":", "h") + "</small></button>"; });
+    b += '</div><p class="ob-q" style="margin-top:8px">ou une autre heure :</p><input type="time" id="ob-heure" value="' + (o.heure || "20:30") + '">';
     b += '<button type="button" class="ob-ok" id="ob-valider">✅ Valider mon objectif</button>';
     b += '<button type="button" class="ob-no" id="ob-plus">' + (modif ? "Fermer" : "Plus tard") + "</button></div>";
     ov.innerHTML = b;
@@ -3725,12 +3727,21 @@ try{
         };
       });
     });
+    Array.prototype.forEach.call(ov.querySelectorAll("#ob-creneaux .ob-c"), function (c) {
+      c.onclick = function () {
+        Array.prototype.forEach.call(ov.querySelectorAll("#ob-creneaux .ob-c"), function (x) { x.classList.remove("on"); });
+        c.classList.add("on"); $("ob-heure").value = c.getAttribute("data-h");
+      };
+    });
+    $("ob-heure").onchange = function () {
+      Array.prototype.forEach.call(ov.querySelectorAll("#ob-creneaux .ob-c"), function (x) { x.classList.toggle("on", x.getAttribute("data-h") === $("ob-heure").value); });
+    };
     $("ob-plus").onclick = function () {
       ov.remove();
       if (!modif) { try { localStorage.setItem("diisoo_obj_plus", aujourd()); } catch (e) {} }
     };
     $("ob-valider").onclick = function () {
-      o.heure = $("ob-heure").value || "18:00";
+      o.heure = $("ob-heure").value || "20:30";
       o.debut = (lire() && lire().debut) || aujourd();
       ecrire(o);
       ov.remove();
@@ -3750,7 +3761,7 @@ try{
   /* ---------- rappel : fichier calendrier quotidien ---------- */
   function telechargerRappel(o) {
     try {
-      var h = (o.heure || "18:00").split(":"), d = new Date();
+      var h = (o.heure || "20:30").split(":"), d = new Date();
       var pad = function (n) { return (n < 10 ? "0" : "") + n; };
       var jour = d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
       var ics = [
@@ -3832,7 +3843,9 @@ try{
   function langue() { try { var o = JSON.parse(localStorage.getItem("diisoo_obj") || "null"); return (o && o.but) || "general"; } catch (e) { return "general"; } }
   function minutesUtc(hhmm) {
     var h = (hhmm || "18:00").split(":"), d = new Date();
-    d.setHours(+h[0] || 0, +h[1] || 0, 0, 0);
+    var loc = (+h[0] || 0) * 60 + (+h[1] || 0);
+    loc = Math.max(360, Math.min(1319, loc)); /* jamais la nuit : entre 6h00 et 21h59 */
+    d.setHours(Math.floor(loc / 60), loc % 60, 0, 0);
     return d.getUTCHours() * 60 + d.getUTCMinutes();
   }
   function abonnement() {
@@ -3871,14 +3884,64 @@ try{
     } catch (e) {}
   }
 
-  window.DiisooRappel = { ok: ok, activer: activer, sync: sync };
+  /* ---- heure reelle de pratique : proposition apres 3 jours ---- */
+  function noterHeure() {
+    try {
+      var h = new Date(), j = aujourd(), L = lire("diisoo_heures", []);
+      if (!Array.isArray(L)) L = [];
+      if (L.some(function (x) { return x.j === j; })) return;
+      L.push({ j: j, m: h.getHours() * 60 + h.getMinutes() });
+      while (L.length > 30) L.shift();
+      localStorage.setItem("diisoo_heures", JSON.stringify(L));
+    } catch (e) {}
+  }
+  function lire(k, v) { try { return JSON.parse(localStorage.getItem(k) || "null") || v; } catch (e) { return v; } }
+  function mediane() {
+    var L = lire("diisoo_heures", []).map(function (x) { return x.m; }).sort(function (a, b) { return a - b; });
+    return L.length >= 3 ? L[Math.floor(L.length / 2)] : null;
+  }
+  function hhmm(m) { var h = Math.floor(m / 60), n = m % 60; return (h < 10 ? "0" : "") + h + ":" + (n < 10 ? "0" : "") + n; }
+  function proposer() {
+    try {
+      if (localStorage.getItem("diisoo_rappel_on") !== "1") return;
+      var o = lire("diisoo_obj", null); if (!o || !o.heure) return;
+      var med = mediane(); if (med === null) return;
+      med = Math.round(med / 30) * 30;
+      var cur = (+o.heure.split(":")[0]) * 60 + (+o.heure.split(":")[1] || 0);
+      if (Math.abs(med - cur) < 90 || med < 360 || med > 1319) return;
+      var dernier = localStorage.getItem("diisoo_rappel_propose");
+      if (dernier && (Date.now() - new Date(dernier).getTime()) < 14 * 86400000) return;
+      var d = document.getElementById("screen-dashboard");
+      if (!d || d.classList.contains("hidden") || document.querySelector("#dii-obj,#dii-recap,#dii-defi,#dar,#dsr,[id^=screen-].fixed:not(.hidden)")) return;
+      localStorage.setItem("diisoo_rappel_propose", aujourd());
+      var nom = hhmm(med).replace(":", "h").replace(/h00$/, "h");
+      var b = document.createElement("div");
+      b.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:9991;max-width:456px;margin:0 auto;background:#141A2B;border:1px solid #25D366;border-radius:16px;padding:12px 14px;color:#F6F1E7;font-size:13px";
+      b.innerHTML = "Tu pratiques souvent vers <b>" + nom + "</b>. Te rappeler à " + nom + " ?<br>" +
+        '<button type="button" id="rp-oui" style="margin:8px 8px 0 0;min-height:44px;padding:0 16px;border-radius:999px;border:0;background:#25D366;color:#fff;font-weight:800;font-size:14px">Oui</button>' +
+        '<button type="button" id="rp-non" style="margin-top:8px;min-height:44px;padding:0 12px;border:0;background:none;color:#A69C86;font-size:13px">Non merci</button>';
+      document.body.appendChild(b);
+      document.getElementById("rp-non").onclick = function () { b.remove(); };
+      document.getElementById("rp-oui").onclick = function () {
+        o.heure = hhmm(med);
+        try { localStorage.setItem("diisoo_obj", JSON.stringify(o)); } catch (e) {}
+        b.remove();
+        activer(o).then(function (bon) { if (bon) { try { toast("🔔 Rappel déplacé à " + nom); } catch (e) {} } });
+      };
+      setTimeout(function () { if (b.parentNode) b.remove(); }, 15000);
+    } catch (e) {}
+  }
+
+  window.DiisooRappel = { ok: ok, activer: activer, sync: sync, proposer: proposer };
+  noterHeure();
+  setTimeout(proposer, 7000);
   setTimeout(sync, 4000);
   document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") sync(); });
   var essais = 0, t = setInterval(function () {
     essais++;
     if (typeof window.bumpDailyGoal === "function" && !window.bumpDailyGoal.__r) {
       var f = window.bumpDailyGoal;
-      window.bumpDailyGoal = function () { var r = f.apply(this, arguments); setTimeout(sync, 800); return r; };
+      window.bumpDailyGoal = function () { var r = f.apply(this, arguments); noterHeure(); setTimeout(sync, 800); return r; };
       window.bumpDailyGoal.__r = 1; clearInterval(t);
     } else if (essais > 20) clearInterval(t);
   }, 500);
