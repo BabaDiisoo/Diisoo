@@ -2835,15 +2835,39 @@ const GENERAL_EXTRA = {
         vocab: [
             { en: "I own a small business in Senegal", fr: "Je possède une petite entreprise au Sénégal", wo: "Am naa sama njaay bu ndaw ci Senegaal" },
             { en: "I will return home after my trip", fr: "Je rentrerai chez moi après mon voyage", wo: "Dinaa délsi sama kër gannaaw tukki bi" },
-            { en: "I buy goods to sell in my shop", fr: "J'achète des marchandises à vendre dans ma boutique", wo: "Damay jënd marsandiis ngir jaay ko ci sama butik" }
+            { en: "I buy goods to sell in my shop", fr: "J'achète des marchandises à vendre dans ma boutique", wo: "Damay jënd marsandiis ngir jaay ko ci sama butik" },
+            { en: "I have an appointment", fr: "J'ai rendez-vous", wo: "Am naa rendez-vous" },
+            { en: "Here is my passport", fr: "Voici mon passeport", wo: "Sama paspoor mo ngi ni" },
+            { en: "Can you repeat, please?", fr: "Pouvez-vous répéter ?", wo: "Mën nga ko waxaat ?" },
+            { en: "I don't understand", fr: "Je ne comprends pas", wo: "Dégguma" },
+            { en: "Speak slowly, please", fr: "Parlez lentement, s'il vous plaît", wo: "Waxal ndank, si bu lay neex" },
+            { en: "Date of birth", fr: "Date de naissance", wo: "Bés bu ma juddoo" },
+            { en: "Place of birth", fr: "Lieu de naissance", wo: "Fu ma juddoo" },
+            { en: "I work as a trader", fr: "Je travaille comme commerçant", wo: "Maa ngi liggéey ci njaay" },
+            { en: "I have a job in Senegal", fr: "J'ai un travail au Sénégal", wo: "Am naa liggéey fi ci Senegaal" },
+            { en: "I will come back", fr: "Je reviendrai", wo: "Dinaa délsi" },
+            { en: "Bank statement", fr: "Relevé bancaire", wo: "Relevé bu bànk" },
+            { en: "Thank you, have a nice day", fr: "Merci, bonne journée", wo: "Jërëjëf, yé ndol ak diam" }
         ],
         dialogue: [
             { who: "A", en: "Why do you want to travel?", fr: "Pourquoi voulez-vous voyager ?", wo: "Lu tax nga bëgg a tukki ?" },
             { who: "B", en: "I want to buy goods for my business.", fr: "Je veux acheter des marchandises pour mon commerce.", wo: "Dama bëgg jënd marsandiis ngir sama njaay." },
             { who: "A", en: "Will you come back to Senegal?", fr: "Reviendrez-vous au Sénégal ?", wo: "Ndax dinga délsi Senegaal ?" },
-            { who: "B", en: "Yes, my family and my shop are there.", fr: "Oui, ma famille et ma boutique y sont.", wo: "Waaw, sama njaboot ak sama butik ñu ngi fa." }
+            { who: "B", en: "Yes, my family and my shop are there.", fr: "Oui, ma famille et ma boutique y sont.", wo: "Waaw, sama njaboot ak sama butik ñu ngi fa." },
+            { who: "A", en: "Good morning. Passport, please.", fr: "Bonjour. Passeport, s'il vous plaît.", wo: "Salaam. Sa paspoor, su la neex." },
+            { who: "B", en: "Good morning. Here is my passport.", fr: "Bonjour. Voici mon passeport.", wo: "Sama paspoor mo ngi ni." },
+            { who: "A", en: "What is your occupation?", fr: "Quelle est votre profession ?", wo: "Ban liggéey nga def ?" },
+            { who: "B", en: "I am a trader. I have a shop in Thiès.", fr: "Je suis commerçant. J'ai une boutique à Thiès.", wo: "Njaay laa. Am naa butik ci Cees." },
+            { who: "A", en: "Will you come back to Senegal?", fr: "Reviendrez-vous au Sénégal ?", wo: "Ndax dinga délsi Senegaal ?" },
+            { who: "B", en: "Yes, I will come back. Thank you.", fr: "Oui, je reviendrai. Merci.", wo: "Waaw, dinaa délsi. Jërëjëf." }
         ],
-        quiz: [{ q: "I ___ come back after two weeks.", o: ["will", "am", "does"], a: 0, why: "Intention future : « will + verbe de base »." }]
+        quiz: [{ q: "I ___ come back after two weeks.", o: ["will", "am", "does"], a: 0, why: "Intention future : « will + verbe de base »." },
+            { q: "Can you ___, please?", o: ["repair", "repeat", "repaid"], a: 1, why: "« Can you repeat, please? » = Pouvez-vous répéter ?" },
+            { q: "I ___ understand.", o: ["don't", "doesn't", "not"], a: 0, why: "I + don't + verbe de base : je ne comprends pas." },
+            { q: "Here is my ___.", o: ["passage", "passenger", "passport"], a: 2, why: "« Passport » = passeport." },
+            { q: "What is your ___?", o: ["occupation", "occasion", "operation"], a: 0, why: "« Occupation » = profession." },
+            { q: "I will ___ back to Senegal.", o: ["came", "come", "coming"], a: 1, why: "will + verbe de base : « I will come »." }
+        ]
     },
     housing: {
         vocab: [
