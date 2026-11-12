@@ -2859,7 +2859,19 @@ const GENERAL_EXTRA = {
             { en: "My family is waiting for me in Senegal", fr: "Ma famille m'attend au Sénégal", wo: "Sama njaboot ñu ngi may xaar Senegaal" },
             { en: "I would like to apply for a tourist visa", fr: "Je voudrais demander un visa touriste", wo: "Bëgg naa laaj visa tourist" },
             { en: "How much do you earn per month?", fr: "Combien gagnez-vous par mois ?", wo: "Ñaata xaalis nga am ci weer wi ?" },
-            { en: "I will leave on Monday and return on Sunday", fr: "Je partirai lundi et reviendrai dimanche", wo: "Dinaa dem altine te délsi dibéer" }
+            { en: "I will leave on Monday and return on Sunday", fr: "Je partirai lundi et reviendrai dimanche", wo: "Dinaa dem altine te délsi dibéer" },
+            { en: "I am travelling for business, not to stay in France", fr: "Je voyage pour affaires, pas pour rester en France", wo: "Damay tukki ngir ndeund ak njaay, du ngir des Faraans" },
+            { en: "My family and my business are in Senegal", fr: "Ma famille et mon commerce sont au Sénégal", wo: "Sama njaboot ak sama njaay ñu ngi ci Senegaal" },
+            { en: "I employ three people in my shop", fr: "J'emploie trois personnes dans ma boutique", wo: "Am naa ñett ñuy liggéey ci sama butik" },
+            { en: "I cannot leave my business for long", fr: "Je ne peux pas laisser mon commerce longtemps", wo: "Mënuma bàyyi sama njaay lu yàgg" },
+            { en: "I have a letter of invitation", fr: "J'ai une lettre d'invitation", wo: "Am naa bataaxal ngir ma dème" },
+            { en: "My trip is for ten days", fr: "Mon voyage dure dix jours", wo: "Sama tukki dafay am fukki fan" },
+            { en: "I can prove that I will come back", fr: "Je peux prouver que je reviendrai", wo: "Mën naa won né ni dina délsi" },
+            { en: "I pay taxes in Senegal", fr: "Je paie mes impôts au Sénégal", wo: "Dama fay impo ci Senegaal" },
+            { en: "My bank account is ten years old", fr: "Mon compte bancaire a dix ans", wo: "Sama kont bànk am na fukki at" },
+            { en: "I have booked my return ticket", fr: "J'ai réservé mon billet retour", wo: "Reservé naa sama bilee bu délsi" },
+            { en: "I will respect the visa rules", fr: "Je respecterai les règles du visa", wo: "Dinaa topp yoon yu visa bi" },
+            { en: "Thank you for your time", fr: "Merci pour votre temps", wo: "Jërëjëf ngir sa waxtu" }
         ],
         dialogue: [
             { who: "A", en: "Why do you want to travel?", fr: "Pourquoi voulez-vous voyager ?", wo: "Lu tax nga bëgg a tukki ?" },
@@ -2879,7 +2891,15 @@ const GENERAL_EXTRA = {
             { who: "A", en: "Where will you stay?", fr: "Où logerez-vous ?", wo: "Fan nga dal ?" },
             { who: "B", en: "I will stay at a hotel in Paris.", fr: "Je logerai dans un hôtel à Paris.", wo: "Dinaa dal ci otel ci Pari." },
             { who: "A", en: "Do you have enough money for the trip?", fr: "Avez-vous assez d'argent pour le voyage ?", wo: "Ndax am nga xaalis bu doy ngir tukki bi ?" },
-            { who: "B", en: "Yes, here are my bank statements.", fr: "Oui, voici mes relevés bancaires.", wo: "Waaw, relevé yu bànk yi mo ngi nii." }
+            { who: "B", en: "Yes, here are my bank statements.", fr: "Oui, voici mes relevés bancaires.", wo: "Waaw, relevé yu bànk yi mo ngi nii." },
+            { who: "A", en: "What is the purpose of your trip?", fr: "Quel est le motif de votre voyage ?", wo: "Lan moo tax nga di tukki ?" },
+            { who: "B", en: "I am travelling for business. I want to buy goods for my shop.", fr: "Je voyage pour affaires. Je veux acheter des marchandises pour ma boutique.", wo: "Damay tukki ngir njaay. Dama bëgg jënd marsandiis ngir sama butik." },
+            { who: "A", en: "How can I be sure that you will come back?", fr: "Comment être sûr que vous reviendrez ?", wo: "Naka laa ma xam ne dinga délsi ?" },
+            { who: "B", en: "My family and my business are in Senegal. I have booked my return ticket.", fr: "Ma famille et mon commerce sont au Sénégal. J'ai réservé mon billet retour.", wo: "Sama njaboot ak sama njaay ñu ngi ci Senegaal. Reservé naa sama bilee bu délsi." },
+            { who: "A", en: "How many people work for you?", fr: "Combien de personnes travaillent pour vous ?", wo: "Ñaata nit ñuy liggéey ci yaw ?" },
+            { who: "B", en: "I employ three people in my shop.", fr: "J'emploie trois personnes dans ma boutique.", wo: "Am naa ñett ñuy liggéey ci sama butik." },
+            { who: "A", en: "Thank you. Your visa is approved. Have a nice trip.", fr: "Merci. Votre visa est accordé. Bon voyage.", wo: "Jërëjëf. Sa visa nangu nañu ko. Tukki bu baax." },
+            { who: "B", en: "Thank you for your time.", fr: "Merci pour votre temps.", wo: "Jërëjëf ngir sa waxtu." }
         ],
         quiz: [{ q: "I ___ come back after two weeks.", o: ["will", "am", "does"], a: 0, why: "Intention future : « will + verbe de base »." },
             { q: "Can you ___, please?", o: ["repair", "repeat", "repaid"], a: 1, why: "« Can you repeat, please? » = Pouvez-vous répéter ?" },
@@ -2891,7 +2911,12 @@ const GENERAL_EXTRA = {
             { q: "I will ___ at a hotel in Paris.", o: ["stayed", "staying", "stay"], a: 2, why: "will + verbe de base : « I will stay »." },
             { q: "I have ___ money for the trip.", o: ["many", "enough", "few"], a: 1, why: "« Enough money » = assez d'argent." },
             { q: "I have been in business ___ five years.", o: ["since", "during", "for"], a: 2, why: "« For » + durée (for five years)." },
-            { q: "This is my ___ trip abroad.", o: ["first", "one", "once"], a: 0, why: "« First » = premier." }
+            { q: "This is my ___ trip abroad.", o: ["first", "one", "once"], a: 0, why: "« First » = premier." },
+            { q: "I am travelling ___ business.", o: ["to", "for", "at"], a: 1, why: "« Travel for business » = voyager pour affaires." },
+            { q: "My family ___ in Senegal.", o: ["am", "are", "is"], a: 2, why: "« Family » est singulier : my family is." },
+            { q: "How ___ people work for you?", o: ["much", "many", "long"], a: 1, why: "« How many » + nom comptable (people)." },
+            { q: "I ___ three people in my shop.", o: ["employer", "employ", "employment"], a: 1, why: "« Employ » = employer (verbe)." },
+            { q: "I can ___ that I will come back.", o: ["proof", "proven", "prove"], a: 2, why: "can + verbe de base : « I can prove »." }
         ]
     },
     housing: {
