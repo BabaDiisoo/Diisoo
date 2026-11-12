@@ -35,6 +35,7 @@
     "diisoo-rappel.js",
     "diisoo-recap.js",
     "diisoo-defi.js",
+    "diisoo-mission-visa.js",
     "diisoo-installer.js",
     "diisoo-assistant.js",
     "diisoo-coach2.js",
