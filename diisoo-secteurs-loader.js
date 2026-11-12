@@ -33,6 +33,7 @@
     "diisoo-son.js",
     "diisoo-objectif.js",
     "diisoo-rappel.js",
+    "diisoo-recap.js",
     "diisoo-installer.js",
     "diisoo-assistant.js",
     "diisoo-coach2.js",
