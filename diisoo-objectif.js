@@ -106,8 +106,15 @@
       ecrire(o);
       ov.remove();
       rendre();
-      telechargerRappel(o);
-      try { toast("🎯 Objectif enregistré. Ouvre le fichier pour activer ton rappel."); } catch (e) {}
+      var repli = function () {
+        telechargerRappel(o);
+        try { toast("🎯 Objectif enregistré. Ouvre le fichier pour activer ton rappel."); } catch (e) {}
+      };
+      if (window.DiisooRappel && window.DiisooRappel.ok()) {
+        window.DiisooRappel.activer(o).then(function (bon) {
+          if (bon) { try { toast("🔔 Rappel activé chaque jour à " + o.heure); } catch (e) {} } else repli();
+        });
+      } else repli();
     };
   }
 

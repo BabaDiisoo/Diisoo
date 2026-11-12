@@ -32,6 +32,7 @@
     "diisoo-tourisme.js",
     "diisoo-son.js",
     "diisoo-objectif.js",
+    "diisoo-rappel.js",
     "diisoo-installer.js",
     "diisoo-assistant.js",
     "diisoo-coach2.js",

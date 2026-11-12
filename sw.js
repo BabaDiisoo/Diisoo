@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v69";
+const VERSION = "diisoo-cache-v70";
 const SHELL = [
   "./",
   "./index.html",
@@ -44,7 +44,7 @@ const SHELL = [
   "./diisoo-stable.js",
   "./diisoo-tourisme.js",
   "./diisoo-son.js",
-  "./diisoo-objectif.js",
+  "./diisoo-objectif.js","./diisoo-rappel.js",
   "./diisoo-installer.js",
   "./supabase-js-2.118.0.js",
   "./diisoo-tests-extra.js",
@@ -109,4 +109,24 @@ self.addEventListener("fetch", (e) => {
       });
     })
   );
+});
+
+self.addEventListener("push", (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (x) {}
+  e.waitUntil(self.registration.showNotification(d.titre || "Diisoo", {
+    body: d.corps || "Ton objectif du jour t'attend.",
+    icon: "./icon-192.png", badge: "./icon-192.png",
+    tag: "diisoo-rappel", renotify: false,
+    data: { url: d.url || "/?source=rappel" }
+  }));
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || "/?source=rappel";
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((cs) => {
+    for (const c of cs) { if ("focus" in c) return c.focus(); }
+    return self.clients.openWindow(url);
+  }));
 });
