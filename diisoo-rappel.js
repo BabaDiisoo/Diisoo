@@ -117,6 +117,25 @@
     } catch (e) {}
   }
 
+  /* ---- point d'entree visible : toucher la serie (🔥) ouvre le reglage du rappel ; une cloche invite a l'activer ---- */
+  (function () {
+    var css = document.createElement("style");
+    css.textContent = "body.rp-off #streak-counter::after{content:' 🔔'}#streak-counter{cursor:pointer}";
+    document.head.appendChild(css);
+    function etat() { try { document.body.classList.toggle("rp-off", localStorage.getItem("diisoo_rappel_on") !== "1" && ok()); } catch (e) {} }
+    function brancher() {
+      var s = document.getElementById("streak-counter");
+      if (!s) return false;
+      if (!s.__rp) {
+        s.__rp = 1; s.setAttribute("role", "button"); s.setAttribute("aria-label", "Régler mon rappel quotidien");
+        s.addEventListener("click", function () { if (window.DiisooObjectif && DiisooObjectif.fiche) DiisooObjectif.fiche(true); });
+      }
+      return true;
+    }
+    etat(); setInterval(etat, 3000);
+    var n = 0, t = setInterval(function () { n++; if (brancher() || n > 30) clearInterval(t); }, 500);
+  })();
+
   window.DiisooRappel = { ok: ok, activer: activer, sync: sync, proposer: proposer };
   noterHeure();
   setTimeout(proposer, 7000);

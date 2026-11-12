@@ -37,6 +37,8 @@
       h += '<div class="flex justify-between text-[10px] text-[#8C8064] mt-1"><span>' + nomBut(o) + "</span><span>Jour " + j + " sur " + o.duree + "</span></div>";
       h += '<div class="w-full bg-[#141A2B] h-1 rounded-full overflow-hidden mt-1"><div class="bg-[#E1693F] h-full" style="width:' + Math.round(j / o.duree * 100) + '%"></div></div>';
       h += '<button type="button" id="obj-modif" class="mt-1 text-[10px] text-[#A69C86] underline">Changer mon objectif ou mon rappel</button>';
+    } else {
+      h += '<button type="button" id="obj-modif" class="mt-1 text-[11px] text-[#25D366] underline">🔔 Activer mon rappel quotidien</button>';
     }
     el.innerHTML = h;
     var m = $("obj-modif"); if (m) m.onclick = function () { fiche(true); };
@@ -176,6 +178,7 @@
     }
   }, 6000);
 
+  if (/[?&]objectif=1/.test(location.search)) setTimeout(function () { fiche(true); }, 2500);
   rendre();
   window.DiisooObjectif = { version: 1, fiche: fiche, cible: cible };
 })();

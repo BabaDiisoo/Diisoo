@@ -3666,6 +3666,8 @@ try{
       h += '<div class="flex justify-between text-[10px] text-[#8C8064] mt-1"><span>' + nomBut(o) + "</span><span>Jour " + j + " sur " + o.duree + "</span></div>";
       h += '<div class="w-full bg-[#141A2B] h-1 rounded-full overflow-hidden mt-1"><div class="bg-[#E1693F] h-full" style="width:' + Math.round(j / o.duree * 100) + '%"></div></div>';
       h += '<button type="button" id="obj-modif" class="mt-1 text-[10px] text-[#A69C86] underline">Changer mon objectif ou mon rappel</button>';
+    } else {
+      h += '<button type="button" id="obj-modif" class="mt-1 text-[11px] text-[#25D366] underline">🔔 Activer mon rappel quotidien</button>';
     }
     el.innerHTML = h;
     var m = $("obj-modif"); if (m) m.onclick = function () { fiche(true); };
@@ -3805,6 +3807,7 @@ try{
     }
   }, 6000);
 
+  if (/[?&]objectif=1/.test(location.search)) setTimeout(function () { fiche(true); }, 2500);
   rendre();
   window.DiisooObjectif = { version: 1, fiche: fiche, cible: cible };
 })();
@@ -3931,6 +3934,25 @@ try{
       setTimeout(function () { if (b.parentNode) b.remove(); }, 15000);
     } catch (e) {}
   }
+
+  /* ---- point d'entree visible : toucher la serie (🔥) ouvre le reglage du rappel ; une cloche invite a l'activer ---- */
+  (function () {
+    var css = document.createElement("style");
+    css.textContent = "body.rp-off #streak-counter::after{content:' 🔔'}#streak-counter{cursor:pointer}";
+    document.head.appendChild(css);
+    function etat() { try { document.body.classList.toggle("rp-off", localStorage.getItem("diisoo_rappel_on") !== "1" && ok()); } catch (e) {} }
+    function brancher() {
+      var s = document.getElementById("streak-counter");
+      if (!s) return false;
+      if (!s.__rp) {
+        s.__rp = 1; s.setAttribute("role", "button"); s.setAttribute("aria-label", "Régler mon rappel quotidien");
+        s.addEventListener("click", function () { if (window.DiisooObjectif && DiisooObjectif.fiche) DiisooObjectif.fiche(true); });
+      }
+      return true;
+    }
+    etat(); setInterval(etat, 3000);
+    var n = 0, t = setInterval(function () { n++; if (brancher() || n > 30) clearInterval(t); }, 500);
+  })();
 
   window.DiisooRappel = { ok: ok, activer: activer, sync: sync, proposer: proposer };
   noterHeure();
