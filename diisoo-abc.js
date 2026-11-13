@@ -7,6 +7,8 @@
       m: "Bonjour ABC-GLOBAL, j'ai réussi la mission visa sur Diisoo. Je voudrais de l'aide pour mon dossier de visa." },
     { fin: "mvy-x2", ok: /Bon voyage/, cle: "voyage", t: "Tu voyages bientôt ? On réserve ton billet.", b: "Demander un billet",
       m: "Bonjour ABC-GLOBAL, j'ai fini la mission voyage sur Diisoo. Je voudrais un billet d'avion." },
+    { fin: "mp-x2", ok: /Belle rencontre/, cle: "presentation", t: "Tu veux parler anglais en confiance ? Cours accompagné ABC-GLOBAL.", b: "En savoir plus",
+      m: "Bonjour ABC-GLOBAL, j'ai réussi la mission présentation sur Diisoo. Je voudrais en savoir plus sur le cours d'anglais accompagné." },
     { fin: "mm-x2", ok: /Vente conclue/, cle: "marche", t: "Tu veux parler anglais avec tes clients ? Cours accompagné ABC-GLOBAL.", b: "En savoir plus",
       m: "Bonjour ABC-GLOBAL, j'ai réussi la mission marché sur Diisoo. Je voudrais en savoir plus sur le cours d'anglais accompagné pour commerçants." }
   ];
