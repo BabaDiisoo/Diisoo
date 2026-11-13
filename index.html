@@ -2777,7 +2777,19 @@ const GENERAL_EXTRA = {
             { en: "I will pay with Wave", fr: "Je paie avec Wave", wo: "Dinaa fay ak Wave" },
             { en: "Can I pay later?", fr: "Puis-je payer plus tard ?", wo: "Mën naa fay gannaaw ?" },
             { en: "It is a fair price", fr: "C'est un prix correct", wo: "Njëg bu diarr yone la" },
-            { en: "Thank you, see you tomorrow", fr: "Merci, à demain", wo: "Jërëjëf, ba suba" }
+            { en: "Thank you, see you tomorrow", fr: "Merci, à demain", wo: "Jërëjëf, ba suba" },
+            { en: "Can you give me a better price?", fr: "Pouvez-vous me faire un meilleur prix ?", wo: "Mën nga ma defal njëg bu gën a baax ?" },
+            { en: "I will buy five if you lower the price", fr: "J'en achète cinq si vous baissez le prix", wo: "Dinaa jënd juróom soma waññilé njëg li" },
+            { en: "I can pay cash", fr: "Je peux payer en espèces", wo: "Mën naa fay xaalis bu ci loxo" },
+            { en: "Do you accept Orange Money?", fr: "Acceptez-vous Orange Money ?", wo: "Ndax nangu ngeen Orange Money ?" },
+            { en: "I need a receipt", fr: "J'ai besoin d'un reçu", wo: "Dama soxla reçu" },
+            { en: "Is delivery included?", fr: "La livraison est-elle comprise ?", wo: "Ndax yóbbu bi dafa ci bokk" },
+            { en: "How many do you have?", fr: "Combien en avez-vous ?", wo: "Ñaata nga ci am" },
+            { en: "I want twenty pieces", fr: "Je veux vingt pièces", wo: "Ñaar fukk la ci bëgg" },
+            { en: "Is there a guarantee?", fr: "Y a-t-il une garantie ?", wo: "Ndax am na garanti ?" },
+            { en: "The price is not fixed", fr: "Le prix n'est pas fixe", wo: "Njëg li fixoul" },
+            { en: "That is my final offer", fr: "C'est ma dernière offre", wo: "Moom mooy sama njëg bu mujj" },
+            { en: "Deal!", fr: "Marché conclu !", wo: "Baax na" }
         ],
         dialogue: [
             { who: "A", en: "Good morning. How much are the tomatoes?", fr: "Bonjour. Combien coûtent les tomates ?", wo: "Salaam aleekum. Ñaata la tamaate yi ?" },
@@ -2790,13 +2802,22 @@ const GENERAL_EXTRA = {
             { who: "A", en: "This one is good quality.", fr: "Celui-ci est de bonne qualité.", wo: "Bii kaalite bi baax na." },
             { who: "B", en: "What is your last price?", fr: "Quel est votre dernier prix ?", wo: "Lane moy sa njëg bu mujj ?" },
             { who: "A", en: "Four thousand francs. It is a fair price.", fr: "Quatre mille francs. C'est un prix correct.", wo: "Ñeent junni franc. Njëg bu diarr yone la." },
-            { who: "B", en: "I will take it. I will pay with Wave.", fr: "Je le prends. Je paie avec Wave.", wo: "Dinaa ko jël. Dinaa fay ak Wave." }
+            { who: "B", en: "I will take it. I will pay with Wave.", fr: "Je le prends. Je paie avec Wave.", wo: "Dinaa ko jël. Dinaa fay ak Wave." },
+            { who: "A", en: "I want twenty pieces. How much?", fr: "Je veux vingt pièces. Combien ?", wo: "Ñaar fukk la ci bëgg. Ñaata la ?" },
+            { who: "B", en: "Five hundred each.", fr: "Cinq cents chacune.", wo: "Juróom téeméer franc la ku nekk." },
+            { who: "A", en: "Can you give me a better price?", fr: "Pouvez-vous me faire un meilleur prix ?", wo: "Mën nga ma defal njëg bu gën a baax ?" },
+            { who: "B", en: "Four hundred and fifty if you pay cash.", fr: "Quatre cent cinquante si vous payez en espèces.", wo: "Ñeent téeméer ak juróom fukk su nga fayee xaalis bu ci loxo." },
+            { who: "A", en: "I can pay cash. Is delivery included?", fr: "Je peux payer en espèces. La livraison est comprise ?", wo: "Mën naa fay xaalis bu ci loxo. Ndax yóbbu bi dafa ci bokk ?" },
+            { who: "B", en: "Yes, delivery is included. Deal!", fr: "Oui, la livraison est comprise. Marché conclu !", wo: "Waaw, yóbbu bi dafa ci bokk. Baax na !" }
         ],
         quiz: [
             { q: "How ___ are the onions?", o: ["much", "many", "long"], a: 0, why: "Pour demander un prix : « How much »." },
             { q: "Can I ___ you?", o: ["help", "helps", "helping"], a: 0, why: "Can + verbe de base : Can I help you ?" },
             { q: "I ___ take it.", o: ["will", "am", "does"], a: 0, why: "« I will take it » : je le prends, décision prise sur le moment." },
-            { q: "Do you have ___ ?", o: ["change", "changing", "changes"], a: 0, why: "« Change » = la monnaie (pièces et petits billets)." }
+            { q: "Do you have ___ ?", o: ["change", "changing", "changes"], a: 0, why: "« Change » = la monnaie (pièces et petits billets)." },
+            { q: "Can you give me a better ___ ?", o: ["price", "prize", "pay"], a: 0, why: "Price = le prix. Prize veut dire « récompense »." },
+            { q: "I will buy five ___ you lower the price.", o: ["if", "but", "or"], a: 0, why: "« If » exprime la condition : j'achète si vous baissez." },
+            { q: "Is delivery ___ ?", o: ["included", "include", "including"], a: 0, why: "Is + participe passé : Is delivery included ?" }
         ]
     },
     travel: {
