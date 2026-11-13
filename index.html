@@ -2836,7 +2836,19 @@ const GENERAL_EXTRA = {
             { en: "I am lost", fr: "Je suis perdu", wo: "Réer naa" },
             { en: "Turn left, turn right", fr: "Tournez à gauche, à droite", wo: "Jàll ci càmmoñ, jàll ci ndey-joor" },
             { en: "Go straight", fr: "Allez tout droit", wo: "Bul watt yon wi" },
-            { en: "I am late", fr: "Je suis en retard", wo: "Dama na djé" }
+            { en: "I am late", fr: "Je suis en retard", wo: "Dama na djé" },
+            { en: "I would like to book a flight to Paris", fr: "Je voudrais réserver un vol pour Paris", wo: "Dama bëgg reserve benn billee avion ngir pari" },
+            { en: "A return ticket, please", fr: "Un aller-retour, s'il vous plaît", wo: "Benn bilee dem-ak-dellusi, su la neex" },
+            { en: "What time is check-in?", fr: "À quelle heure est l'enregistrement ?", wo: "Ci ban waxtu la enregistrement bi ?" },
+            { en: "Here is my boarding pass", fr: "Voici ma carte d'embarquement", wo: "Sama kaart bu dugg avion mo ngi nii" },
+            { en: "Where is gate number five?", fr: "Où est la porte numéro cinq ?", wo: "Fan la port bu juróom bi nekk" },
+            { en: "My flight is delayed", fr: "Mon vol est en retard", wo: "Sama avion bi dafa yàgg" },
+            { en: "I have one suitcase", fr: "J'ai une valise", wo: "Am naa benn valiis" },
+            { en: "Is the luggage included?", fr: "Les bagages sont-ils inclus ?", wo: "Ndax bagaas yi ci la bokk" },
+            { en: "I would like to book a room", fr: "Je voudrais réserver une chambre", wo: "Dama bëgg reserve benn néeg" },
+            { en: "How much is the room per night?", fr: "Combien coûte la chambre par nuit ?", wo: "Ñaata la néeg bi ci guddi ?" },
+            { en: "Is breakfast included?", fr: "Le petit-déjeuner est-il compris ?", wo: "Ndax ndekki bi ci la bokk" },
+            { en: "I would like to cancel my booking", fr: "Je voudrais annuler ma réservation", wo: "Dama bëgg bayi sama reservation bi" }
         ],
         dialogue: [
             { who: "A", en: "Does this truck go to the Thiès market?", fr: "Est-ce que ce camion va au marché de Thiès ?", wo: "Ndax kamiyon bii dafay dem marse bu Thiès ?" },
@@ -2848,12 +2860,20 @@ const GENERAL_EXTRA = {
             { who: "A", en: "How much is the fare?", fr: "Combien coûte le trajet ?", wo: "Ñaata la njëg bi ?" },
             { who: "B", en: "Two thousand francs.", fr: "Deux mille francs.", wo: "Ñaar junni franc la." },
             { who: "A", en: "How long does it take?", fr: "Combien de temps ça prend ?", wo: "Ñaata waxtu lay jël ?" },
-            { who: "B", en: "About three hours.", fr: "Environ trois heures.", wo: "Jege ñett waxtu la." }
+            { who: "B", en: "About three hours.", fr: "Environ trois heures.", wo: "Jege ñett waxtu la." },
+            { who: "A", en: "I would like to book a flight to Paris.", fr: "Je voudrais réserver un vol pour Paris.", wo: "Dama bëgg reserve benn billee avion ngir pari." },
+            { who: "B", en: "When do you want to travel?", fr: "Quand voulez-vous voyager ?", wo: "Kañ nga bëgg a dem ?" },
+            { who: "A", en: "Next Monday. A return ticket, please.", fr: "Lundi prochain. Un aller-retour, s'il vous plaît.", wo: "Altine bu ñëw. Benn bilee dem-ak-dellusi, su la neex." },
+            { who: "A", en: "Is the luggage included?", fr: "Les bagages sont-ils inclus ?", wo: "Ndax bagaas yi ci la bokk ?" },
+            { who: "B", en: "Yes, one suitcase.", fr: "Oui, une valise.", wo: "Waaw, benn valiis." }
         ],
         quiz: [{ q: "The truck ___ at seven o'clock.", o: ["leave", "leaves", "leaving"], a: 1, why: "The truck = it : verbe + s (leaves)." },
             { q: "What time ___ the bus leave?", o: ["does", "do", "is"], a: 0, why: "Question au présent avec the bus (it) : « does »." },
             { q: "I am ___ . Can you help me?", o: ["lost", "lose", "losing"], a: 0, why: "« I am lost » = je suis perdu." },
-            { q: "Turn ___ at the market.", o: ["left", "leave", "lefts"], a: 0, why: "Left = gauche, right = droite." }
+            { q: "Turn ___ at the market.", o: ["left", "leave", "lefts"], a: 0, why: "Left = gauche, right = droite." },
+            { q: "I would like to ___ a room.", o: ["book", "books", "booking"], a: 0, why: "Would like to + verbe de base : book." },
+            { q: "Is breakfast ___ ?", o: ["included", "include", "including"], a: 0, why: "Is + participe passé : Is breakfast included ?" },
+            { q: "My flight is ___ .", o: ["delayed", "delay", "delaying"], a: 0, why: "« Delayed » = en retard (pour un vol ou un train)." }
         ]
     },
     health: {
