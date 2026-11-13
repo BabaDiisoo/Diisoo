@@ -2765,16 +2765,39 @@ const GENERAL_EXTRA = {
             { en: "How much is this?", fr: "Combien coûte ceci ?", wo: "Ñaata la ?" },
             { en: "It is too expensive", fr: "C'est trop cher", wo: "Dafa seer" },
             { en: "Can you lower the price a little?", fr: "Pouvez-vous baisser un peu le prix ?", wo: "Wàññil ma tuuti" },
-            { en: "I want to buy ten kilos of onions", fr: "Je veux acheter dix kilos d'oignons", wo: "Dama bëgg jënd fukki kilo sooble" }
+            { en: "I want to buy ten kilos of onions", fr: "Je veux acheter dix kilos d'oignons", wo: "Dama bëgg jënd fukki kilo sooble" },
+            { en: "Can I help you?", fr: "Je peux vous aider ?", wo: "Mën naa la dimbali ?" },
+            { en: "What are you looking for?", fr: "Que cherchez-vous ?", wo: "Lane nga bëgg ?" },
+            { en: "I am just looking", fr: "Je regarde seulement", wo: "Damay xool rekk" },
+            { en: "What is your last price?", fr: "Quel est votre dernier prix ?", wo: "Lane moy sa njëg bu mujj ?" },
+            { en: "The quality is good", fr: "La qualité est bonne", wo: "Kaalite bi baax na" },
+            { en: "I will take it", fr: "Je le prends", wo: "Dinaa ko jël" },
+            { en: "Do you have change?", fr: "Avez-vous de la monnaie ?", wo: "Am nga weccit ?" },
+            { en: "Here is your change", fr: "Voici votre monnaie", wo: "Weccit bi mo ngi nii" },
+            { en: "I will pay with Wave", fr: "Je paie avec Wave", wo: "Dinaa fay ak Wave" },
+            { en: "Can I pay later?", fr: "Puis-je payer plus tard ?", wo: "Mën naa fay gannaaw ?" },
+            { en: "It is a fair price", fr: "C'est un prix correct", wo: "Njëg bu diarr yone la" },
+            { en: "Thank you, see you tomorrow", fr: "Merci, à demain", wo: "Jërëjëf, ba suba" }
         ],
         dialogue: [
             { who: "A", en: "Good morning. How much are the tomatoes?", fr: "Bonjour. Combien coûtent les tomates ?", wo: "Salaam aleekum. Ñaata la tamaate yi ?" },
             { who: "B", en: "Five hundred francs a kilo.", fr: "Cinq cents francs le kilo.", wo: "Juróom téeméer franc la ci kilo bi." },
             { who: "A", en: "It is too expensive. Can you lower the price?", fr: "C'est trop cher. Pouvez-vous baisser le prix ?", wo: "Dafa seer. Mën nga wàññi njëg li ?" },
             { who: "B", en: "For you, four hundred. They come from the farm this morning.", fr: "Pour vous, quatre cents. Elles viennent de la ferme ce matin.", wo: "Ngir yaw, ñeent téeméer. Ñu ngi jóge ci tool bi tey ci suba." },
-            { who: "A", en: "Okay, I want three kilos.", fr: "D'accord, je veux trois kilos.", wo: "Baax na, bëgg naa ñett kilo." }
+            { who: "A", en: "Okay, I want three kilos.", fr: "D'accord, je veux trois kilos.", wo: "Baax na, bëgg naa ñett kilo." },
+            { who: "A", en: "Good morning. Can I help you?", fr: "Bonjour. Je peux vous aider ?", wo: "Salaam aleekum. Mën naa la dimbali ?" },
+            { who: "B", en: "I am looking for a bag.", fr: "Je cherche un sac.", wo: "Maa ngi seet benn sac." },
+            { who: "A", en: "This one is good quality.", fr: "Celui-ci est de bonne qualité.", wo: "Bii kaalite bi baax na." },
+            { who: "B", en: "What is your last price?", fr: "Quel est votre dernier prix ?", wo: "Lane moy sa njëg bu mujj ?" },
+            { who: "A", en: "Four thousand francs. It is a fair price.", fr: "Quatre mille francs. C'est un prix correct.", wo: "Ñeent junni franc. Njëg bu diarr yone la." },
+            { who: "B", en: "I will take it. I will pay with Wave.", fr: "Je le prends. Je paie avec Wave.", wo: "Dinaa ko jël. Dinaa fay ak Wave." }
         ],
-        quiz: [{ q: "How ___ are the onions?", o: ["much", "many", "long"], a: 0, why: "Pour demander un prix : « How much »." }]
+        quiz: [
+            { q: "How ___ are the onions?", o: ["much", "many", "long"], a: 0, why: "Pour demander un prix : « How much »." },
+            { q: "Can I ___ you?", o: ["help", "helps", "helping"], a: 0, why: "Can + verbe de base : Can I help you ?" },
+            { q: "I ___ take it.", o: ["will", "am", "does"], a: 0, why: "« I will take it » : je le prends, décision prise sur le moment." },
+            { q: "Do you have ___ ?", o: ["change", "changing", "changes"], a: 0, why: "« Change » = la monnaie (pièces et petits billets)." }
+        ]
     },
     travel: {
         vocab: [
