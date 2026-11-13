@@ -2824,15 +2824,37 @@ const GENERAL_EXTRA = {
         vocab: [
             { en: "I transport goods to Dakar", fr: "Je transporte des marchandises à Dakar", wo: "Damay yóbbu marsandiis ci Ndakaaru" },
             { en: "The truck leaves at seven", fr: "Le camion part à sept heures", wo: "Kamiyon bi dafay dem ci juróom ñaar" },
-            { en: "How much is the ticket to the market?", fr: "Combien coûte le billet pour le marché ?", wo: "Ñaata la bilee bi ngir dem marse bi ?" }
+            { en: "How much is the ticket to the market?", fr: "Combien coûte le billet pour le marché ?", wo: "Ñaata la bilee bi ngir dem marse bi ?" },
+            { en: "Where is the bus station?", fr: "Où est la gare routière ?", wo: "Fan la gaaraas bi nekk ?" },
+            { en: "Which bus goes to Dakar?", fr: "Quel bus va à Dakar ?", wo: "Ban bus moy dem Ndakaaru ?" },
+            { en: "A ticket to Dakar, please", fr: "Un billet pour Dakar, s'il vous plaît", wo: "Benn bilee ngir Ndakaaru, su la neex" },
+            { en: "How much is the fare?", fr: "Combien coûte le trajet ?", wo: "Ñaata la njëg bi ?" },
+            { en: "When does the bus leave?", fr: "Quand part le bus ?", wo: "Kañ la bus bi di dem ?" },
+            { en: "How long does it take?", fr: "Combien de temps ça prend ?", wo: "Ñaata waxtu lay jël ?" },
+            { en: "Is this seat free?", fr: "Cette place est-elle libre ?", wo: "Ndax toogukaay bii amul boroom ?" },
+            { en: "Please stop here", fr: "Arrêtez-vous ici, s'il vous plaît", wo: "Taxawal fii, su la neex" },
+            { en: "I am lost", fr: "Je suis perdu", wo: "Réer naa" },
+            { en: "Turn left, turn right", fr: "Tournez à gauche, à droite", wo: "Jàll ci càmmoñ, jàll ci ndey-joor" },
+            { en: "Go straight", fr: "Allez tout droit", wo: "Bul watt yon wi" },
+            { en: "I am late", fr: "Je suis en retard", wo: "Dama na djé" }
         ],
         dialogue: [
             { who: "A", en: "Does this truck go to the Thiès market?", fr: "Est-ce que ce camion va au marché de Thiès ?", wo: "Ndax kamiyon bii dafay dem marse bu Thiès ?" },
             { who: "B", en: "Yes, it leaves at seven with fresh vegetables.", fr: "Oui, il part à sept heures avec des légumes frais.", wo: "Waaw, dafay dem ci juróom ñaar ak légumes yu bees." },
             { who: "A", en: "How much for my bags?", fr: "Combien pour mes bagages ?", wo: "Ñaata la sama bagaas yi ?" },
-            { who: "B", en: "Two thousand francs.", fr: "Deux mille francs.", wo: "Ñaar junni franc la." }
+            { who: "B", en: "Two thousand francs.", fr: "Deux mille francs.", wo: "Ñaar junni franc la." },
+            { who: "A", en: "Good morning. A ticket to Dakar, please.", fr: "Bonjour. Un billet pour Dakar, s'il vous plaît.", wo: "Salaam aleekum. Benn bilee ngir Ndakaaru, su la neex." },
+            { who: "B", en: "The bus leaves at seven.", fr: "Le bus part à sept heures.", wo: "Bus bi dafay dem ci juróom ñaar." },
+            { who: "A", en: "How much is the fare?", fr: "Combien coûte le trajet ?", wo: "Ñaata la njëg bi ?" },
+            { who: "B", en: "Two thousand francs.", fr: "Deux mille francs.", wo: "Ñaar junni franc la." },
+            { who: "A", en: "How long does it take?", fr: "Combien de temps ça prend ?", wo: "Ñaata waxtu lay jël ?" },
+            { who: "B", en: "About three hours.", fr: "Environ trois heures.", wo: "Jege ñett waxtu la." }
         ],
-        quiz: [{ q: "The truck ___ at seven o'clock.", o: ["leave", "leaves", "leaving"], a: 1, why: "The truck = it : verbe + s (leaves)." }]
+        quiz: [{ q: "The truck ___ at seven o'clock.", o: ["leave", "leaves", "leaving"], a: 1, why: "The truck = it : verbe + s (leaves)." },
+            { q: "What time ___ the bus leave?", o: ["does", "do", "is"], a: 0, why: "Question au présent avec the bus (it) : « does »." },
+            { q: "I am ___ . Can you help me?", o: ["lost", "lose", "losing"], a: 0, why: "« I am lost » = je suis perdu." },
+            { q: "Turn ___ at the market.", o: ["left", "leave", "lefts"], a: 0, why: "Left = gauche, right = droite." }
+        ]
     },
     health: {
         vocab: [
