@@ -2723,15 +2723,36 @@ const GENERAL_EXTRA = {
         vocab: [
             { en: "I am a street vendor", fr: "Je suis vendeur ambulant", wo: "Baana-baana laa" },
             { en: "I work in agriculture", fr: "Je travaille dans l'agriculture", wo: "Mbay laa def" },
-            { en: "I run my own small business", fr: "Je dirige ma propre petite entreprise", wo: "Damay yor sama njaay bu ndaw" }
+            { en: "I run my own small business", fr: "Je dirige ma propre petite entreprise", wo: "Damay yor sama njaay bu ndaw" },
+            { en: "Good morning, how are you?", fr: "Bonjour, comment allez-vous ?", wo: "Salaam aleekum, nanga def ?" },
+            { en: "I am fine, thank you", fr: "Je vais bien, merci", wo: "Maa ngi fi, jërëjëf" },
+            { en: "Where are you from?", fr: "D'où venez-vous ?", wo: "Fane nga jóge ?" },
+            { en: "Welcome to Senegal", fr: "Bienvenue au Sénégal", wo: "Dalal ak jàmm ci Senegaal" },
+            { en: "This is my first time here", fr: "C'est ma première fois ici", wo: "Bii mooy sama ndje kelou yoon fi" },
+            { en: "I am here for business", fr: "Je suis ici pour affaires", wo: "Maa ngi fi ngir njaay" },
+            { en: "I am married", fr: "Je suis marié(e)", wo: "Am naa jabar / Am naa jëkkër" },
+            { en: "I have two children", fr: "J'ai deux enfants", wo: "Am naa ñaari dôme" },
+            { en: "Let me introduce my friend", fr: "Je vous présente mon ami", wo: "Maa ngi lay xamal sama xarit" },
+            { en: "What is your phone number?", fr: "Quel est votre numéro de téléphone ?", wo: "Lan mooy sa nimero telefon ?" },
+            { en: "Can I have your WhatsApp number?", fr: "Puis-je avoir votre numéro WhatsApp ?", wo: "Mën naa am sa nimero WhatsApp ?" },
+            { en: "See you soon", fr: "À bientôt", wo: "Ba beneen yoon" }
         ],
         dialogue: [
             { who: "A", en: "What do you do for a living?", fr: "Que faites-vous dans la vie ?", wo: "Ban liggéey nga def ?" },
             { who: "B", en: "I am a farmer, and I also sell my vegetables at the market.", fr: "Je suis agricultrice, et je vends aussi mes légumes au marché.", wo: "Beykat laa, te maa ngi jaay sama légumes ci marse bi." },
             { who: "A", en: "Do you sell them yourself?", fr: "Vous les vendez vous-même ?", wo: "Yaa ko jaay ci sa bopp ?" },
-            { who: "B", en: "Yes, I am my own boss.", fr: "Oui, je suis ma propre patronne.", wo: "Waaw, man laa boroom sama liggéey." }
+            { who: "B", en: "Yes, I am my own boss.", fr: "Oui, je suis ma propre patronne.", wo: "Waaw, man laa boroom sama liggéey." },
+            { who: "A", en: "Good morning, how are you?", fr: "Bonjour, comment allez-vous ?", wo: "Salaam aleekum, nanga def ?" },
+            { who: "B", en: "I am fine, thank you. Welcome to Senegal!", fr: "Je vais bien, merci. Bienvenue au Sénégal !", wo: "Maa ngi fi, jërëjëf. Dalal ak jàmm ci Senegaal !" },
+            { who: "A", en: "Thank you. This is my first time here.", fr: "Merci. C'est ma première fois ici.", wo: "Jërëjëf. Bii mooy sama ndje kelou yoon fi." },
+            { who: "B", en: "Are you here for business?", fr: "Êtes-vous ici pour affaires ?", wo: "Ngir njaay nga ñëw ?" },
+            { who: "A", en: "Yes, I am here for business. Can I have your WhatsApp number?", fr: "Oui, pour affaires. Puis-je avoir votre numéro WhatsApp ?", wo: "Waaw, maa ngi fi ngir njaay. Mën naa am sa nimero WhatsApp ?" }
         ],
-        quiz: [{ q: "I ___ a farmer and a trader.", o: ["is", "am", "are"], a: 1, why: "Avec I, toujours « am » : I am a farmer." }]
+        quiz: [{ q: "I ___ a farmer and a trader.", o: ["is", "am", "are"], a: 1, why: "Avec I, toujours « am » : I am a farmer." },
+            { q: "I ___ fine, thank you.", o: ["am", "is", "are"], a: 0, why: "Avec I, toujours « am » : I am fine." },
+            { q: "Welcome ___ Senegal.", o: ["to", "at", "of"], a: 0, why: "Welcome to + lieu : Welcome to Senegal." },
+            { q: "I have two ___ .", o: ["children", "childs", "child"], a: 0, why: "Pluriel irrégulier : child devient children." }
+        ]
     },
     family: {
         vocab: [
