@@ -2675,8 +2675,8 @@
    "format": "Entretien consulaire en anglais",
    "verifie_le": "2026-11-14",
    "confiance": "Scénarios créés par Diisoo à partir des questions fréquentes des entretiens de visa (tourisme, études, affaires, famille). Ce n'est pas un test officiel : il t'entraîne à répondre calmement, avec des phrases courtes et claires.",
-   "resume": "Écoute et répète, identité, but du voyage, preuves de retour, puis explique pourquoi tu reviendras.",
-   "gratuits": 4,
+   "resume": "Écoute et répète, identité, but du voyage, preuves de retour, puis explique pourquoi tu reviendras. 8 scénarios : tourisme, études, affaires, famille, soins, formation, nouvelle demande, conférence.",
+   "gratuits": 8,
    "sources": [],
    "taches": [
     {
@@ -3164,6 +3164,448 @@
         "Senegal|home"
        ],
        "modele": "I want to visit my sister for three weeks. I have a job as a nurse and my mother lives in Senegal. I will come back after my visit because my life and my work are here."
+      }
+     ]
+    },
+    {
+     "id": "v-soins",
+     "titre": "🏥 Soins médicaux",
+     "repeat": [
+      "Why do you need medical treatment abroad?",
+      "Do you have a letter from your doctor?",
+      "Which hospital will treat you?",
+      "Who will pay for the treatment?",
+      "How long will the treatment last?"
+     ],
+     "identite": [
+      {
+       "q": "Please tell me your name and your job.",
+       "cles": [
+        "name|am",
+        "work|job|retired|student|farmer|teacher|trader"
+       ],
+       "modele": "My name is Ibrahima Ndiaye. I am a teacher in Thiès."
+      },
+      {
+       "q": "Who is the patient, you or someone else?",
+       "cles": [
+        "patient|I|my|me",
+        "mother|father|son|daughter|wife|husband|myself"
+       ],
+       "modele": "The patient is my father. I will travel with him as his companion."
+      },
+      {
+       "q": "How old is the patient?",
+       "cles": [
+        "years|old|age",
+        "sixty|seventy|fifty|forty|\\d"
+       ],
+       "modele": "My father is sixty-eight years old."
+      }
+     ],
+     "but": [
+      {
+       "q": "What is the medical problem?",
+       "cles": [
+        "heart|eye|kidney|cancer|bone|surgery|illness|disease|treatment|problem",
+        "doctor|hospital|specialist"
+       ],
+       "modele": "My father has a heart problem. The doctors in Senegal say he needs a specialist operation."
+      },
+      {
+       "q": "Why can he not be treated in Senegal?",
+       "cles": [
+        "equipment|specialist|machine|expert|no|not",
+        "Senegal|here|country"
+       ],
+       "modele": "The specialist and the equipment he needs are not available in Senegal."
+      },
+      {
+       "q": "Which hospital accepted him?",
+       "cles": [
+        "hospital|clinic",
+        "Paris|Lyon|Marseille|France|appointment|accepted"
+       ],
+       "modele": "A hospital in Paris accepted him. I have the appointment letter and the doctor's report."
+      },
+      {
+       "q": "How long will you stay?",
+       "cles": [
+        "weeks|days|month|months",
+        "treatment|operation|recovery|return"
+       ],
+       "modele": "We will stay for about six weeks, until the end of the treatment."
+      }
+     ],
+     "retour": [
+      {
+       "q": "Who will pay for the treatment?",
+       "cles": [
+        "pay|paid|insurance|family|savings|sister|brother",
+        "hospital|treatment|bill|cost"
+       ],
+       "modele": "My family will pay the hospital bill. We have saved the money and I can show the bank statements."
+      },
+      {
+       "q": "Where will you stay during the treatment?",
+       "cles": [
+        "hotel|hospital|cousin|sister|apartment|house",
+        "near|close|Paris"
+       ],
+       "modele": "We will stay at my cousin's apartment, close to the hospital."
+      },
+      {
+       "q": "Will you come back after the treatment?",
+       "cles": [
+        "yes|will",
+        "return|come back|back",
+        "Senegal|family|work"
+       ],
+       "modele": "Yes, we will come back to Senegal after the treatment. My family and my work are here."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Explain to the officer why you need this trip and that you will return after the treatment.",
+       "cles": [
+        "father|mother|patient",
+        "hospital|doctor|treatment",
+        "pay|money|bank",
+        "return|come back|back",
+        "Senegal|family|work"
+       ],
+       "modele": "My father is very sick and needs an operation that we cannot have in Senegal. A hospital in Paris accepted him and my family will pay. After the treatment we will return to Senegal because our family and our work are here."
+      }
+     ]
+    },
+    {
+     "id": "v-formation",
+     "titre": "🛠️ Formation professionnelle",
+     "repeat": [
+      "What kind of training will you follow?",
+      "How long is the training?",
+      "Is the training paid or free?",
+      "Who invited you?",
+      "What will you do with this training?"
+     ],
+     "identite": [
+      {
+       "q": "Tell me about yourself and your work.",
+       "cles": [
+        "name|am",
+        "work|job|mechanic|tailor|farmer|teacher|nurse|trader"
+       ],
+       "modele": "My name is Cheikh Mbaye. I am a mechanic and I have my own garage in Thiès."
+      },
+      {
+       "q": "How many years of experience do you have?",
+       "cles": [
+        "years|year",
+        "experience|work|worked"
+       ],
+       "modele": "I have ten years of experience in car repair."
+      },
+      {
+       "q": "Do you have a diploma or a certificate?",
+       "cles": [
+        "yes|no",
+        "diploma|certificate|degree|training"
+       ],
+       "modele": "Yes, I have a professional certificate in mechanics."
+      }
+     ],
+     "but": [
+      {
+       "q": "Why do you want to follow this training?",
+       "cles": [
+        "training|course|learn|skills",
+        "modern|new|better|electric|machines|technology"
+       ],
+       "modele": "I want to learn modern techniques for electric cars. It will improve my skills and my garage."
+      },
+      {
+       "q": "Who organises the training?",
+       "cles": [
+        "company|school|centre|institute|organisation",
+        "Germany|France|Belgium|Italy|Spain|invited"
+       ],
+       "modele": "A technical institute in Germany organises it. I have an invitation and a registration letter."
+      },
+      {
+       "q": "How long will you stay?",
+       "cles": [
+        "months|weeks|days",
+        "training|course"
+       ],
+       "modele": "The training lasts two months. I will stay only for the training."
+      },
+      {
+       "q": "How will you pay for the training and your stay?",
+       "cles": [
+        "pay|paid|scholarship|company|savings|my|sponsor",
+        "training|stay|food|hotel"
+       ],
+       "modele": "The institute covers the training costs. I will pay for my housing with my savings."
+      }
+     ],
+     "retour": [
+      {
+       "q": "What will you do after the training?",
+       "cles": [
+        "return|come back|back",
+        "garage|work|business|shop|Senegal"
+       ],
+       "modele": "I will return to Senegal and use my new skills in my garage."
+      },
+      {
+       "q": "Who will take care of your garage while you are away?",
+       "cles": [
+        "employee|employees|brother|partner|apprentice|colleague",
+        "garage|shop|work"
+       ],
+       "modele": "My brother and two apprentices will run the garage while I am away."
+      },
+      {
+       "q": "Have you travelled before and returned on time?",
+       "cles": [
+        "yes|no",
+        "Gambia|Mali|Morocco|Mauritania|abroad|before|never"
+       ],
+       "modele": "Yes, I travelled to Mali and Mauritania for work and I always returned on time."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Explain to the officer why this training is useful for your work in Senegal.",
+       "cles": [
+        "training|course",
+        "skills|learn",
+        "garage|work|business",
+        "return|come back|back",
+        "Senegal|country|customers"
+       ],
+       "modele": "This training will give me new skills for modern cars. When I return to Senegal, I will use them in my garage and I will teach my apprentices. I must come back because my business and my customers are here."
+      }
+     ]
+    },
+    {
+     "id": "v-renouvellement",
+     "titre": "🔁 Nouvelle demande de visa",
+     "repeat": [
+      "Have you applied for a visa before?",
+      "Why was your visa refused?",
+      "What has changed since your last application?",
+      "Do you have new documents?",
+      "Is this your first trip to Europe?"
+     ],
+     "identite": [
+      {
+       "q": "Please tell me your name and your situation.",
+       "cles": [
+        "name|am",
+        "work|job|married|single|student|business"
+       ],
+       "modele": "My name is Mariama Ba. I am married and I run a small shop in Thiès."
+      },
+      {
+       "q": "Have you applied for a visa before?",
+       "cles": [
+        "yes|no",
+        "once|twice|before|last year|refused|accepted"
+       ],
+       "modele": "Yes, I applied last year, but my visa was refused."
+      },
+      {
+       "q": "Why do you think your visa was refused?",
+       "cles": [
+        "documents|proof|money|bank|invitation|reason",
+        "not|missing|enough|incomplete|unclear"
+       ],
+       "modele": "I think my documents were incomplete. I did not have enough proof of my income."
+      }
+     ],
+     "but": [
+      {
+       "q": "What has changed since your last application?",
+       "cles": [
+        "new|more|now|changed|better",
+        "bank|statement|income|business|job|documents"
+       ],
+       "modele": "Now I have six months of bank statements and my business is stable. My documents are complete."
+      },
+      {
+       "q": "What is the purpose of this trip?",
+       "cles": [
+        "visit|tourism|holiday|family|friend|trade fair|conference",
+        "days|weeks|stay"
+       ],
+       "modele": "I want to visit my cousin in Madrid for two weeks."
+      },
+      {
+       "q": "Do you have an invitation?",
+       "cles": [
+        "yes|no",
+        "cousin|friend|brother|sister|letter|invitation"
+       ],
+       "modele": "Yes, I have an invitation letter from my cousin and a copy of her residence permit."
+      },
+      {
+       "q": "Where will you stay?",
+       "cles": [
+        "cousin|friend|hotel|apartment|house",
+        "Madrid|Spain|city"
+       ],
+       "modele": "I will stay at my cousin's apartment in Madrid."
+      }
+     ],
+     "retour": [
+      {
+       "q": "Why will you come back to Senegal this time?",
+       "cles": [
+        "family|children|husband|shop|business|work",
+        "return|come back|back"
+       ],
+       "modele": "My children, my husband and my shop are in Senegal. I will come back after two weeks."
+      },
+      {
+       "q": "Can you prove your income?",
+       "cles": [
+        "yes|bank|statement|tax|income",
+        "shop|business|account|salary"
+       ],
+       "modele": "Yes, I have my bank statements and my business registration for my shop."
+      },
+      {
+       "q": "What if the visa is refused again?",
+       "cles": [
+        "accept|understand|respect|decision|try|again",
+        "documents|prepare|improve"
+       ],
+       "modele": "I will respect the decision and prepare my documents better for the next time."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Explain calmly why this application is stronger than the last one.",
+       "cles": [
+        "documents|proof|statements",
+        "income|business|shop|job",
+        "family|children",
+        "return|come back|back",
+        "invitation|cousin|trip"
+       ],
+       "modele": "This application is stronger because my documents are complete. I have six months of bank statements and an invitation from my cousin. My family and my shop are in Senegal, so I will come back after two weeks."
+      }
+     ]
+    },
+    {
+     "id": "v-conference",
+     "titre": "🎤 Conférence ou événement",
+     "repeat": [
+      "What event will you attend?",
+      "Who invited you to the conference?",
+      "What is your role at the event?",
+      "Is the event paid by the organisers?",
+      "How many days is the event?"
+     ],
+     "identite": [
+      {
+       "q": "Please introduce yourself and your organisation.",
+       "cles": [
+        "name|am",
+        "organisation|association|company|university|project|work"
+       ],
+       "modele": "My name is Khady Sarr. I work for a small association that supports women in Thiès."
+      },
+      {
+       "q": "What is your position there?",
+       "cles": [
+        "I|my|am|coordinator|manager|director|teacher|member",
+        "association|organisation|project|company"
+       ],
+       "modele": "I am the project coordinator of my association."
+      },
+      {
+       "q": "How long have you worked there?",
+       "cles": [
+        "years|year|since|months",
+        "work|worked|association|organisation"
+       ],
+       "modele": "I have worked there for four years."
+      }
+     ],
+     "but": [
+      {
+       "q": "What is the name of the event?",
+       "cles": [
+        "conference|forum|summit|workshop|fair|congress",
+        "name|called|is"
+       ],
+       "modele": "It is the African Women Entrepreneurs Forum in Brussels."
+      },
+      {
+       "q": "Why were you invited?",
+       "cles": [
+        "invited|speaker|participant|selected|project",
+        "women|business|entrepreneurs|experience"
+       ],
+       "modele": "I was selected as a speaker to present our project for women entrepreneurs."
+      },
+      {
+       "q": "How many days will the event last?",
+       "cles": [
+        "days|day|three|four|five",
+        "event|conference|forum"
+       ],
+       "modele": "The forum lasts three days, and I will stay five days in total."
+      },
+      {
+       "q": "Do you have a letter from the organisers?",
+       "cles": [
+        "yes|no",
+        "letter|invitation|programme|registration|email"
+       ],
+       "modele": "Yes, I have the invitation letter, the programme and my registration confirmation."
+      }
+     ],
+     "retour": [
+      {
+       "q": "Who pays for your flight and your hotel?",
+       "cles": [
+        "organisers|organisation|association|forum|I",
+        "flight|ticket|hotel|accommodation|stay"
+       ],
+       "modele": "The organisers pay for my hotel, and my association pays for my flight ticket."
+      },
+      {
+       "q": "Do you have projects waiting for you in Senegal?",
+       "cles": [
+        "yes|project|projects|training|women|activities",
+        "Senegal|Thiès|association|return|waiting"
+       ],
+       "modele": "Yes, we have training sessions with fifty women starting next month in Thiès."
+      },
+      {
+       "q": "Will you return directly after the event?",
+       "cles": [
+        "yes|will",
+        "return|come back|back",
+        "Senegal|Dakar|flight|ticket"
+       ],
+       "modele": "Yes, I have a return ticket for the day after the forum ends."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Explain to the officer why this event is important and why you will return to Senegal.",
+       "cles": [
+        "event|forum|conference",
+        "speaker|present|project",
+        "organisers|invitation|letter",
+        "return|come back|back",
+        "Senegal|association|women"
+       ],
+       "modele": "I am invited as a speaker to present our project for women entrepreneurs. The organisers sent me an invitation and they pay for my hotel. I will return to Senegal after the event, because my association and our training sessions are waiting for me."
       }
      ]
     }
