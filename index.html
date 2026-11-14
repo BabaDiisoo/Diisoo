@@ -3028,7 +3028,19 @@ const GENERAL_EXTRA = {
             { en: "Call an ambulance, please!", fr: "Appelez une ambulance, s'il vous plaît !", wo: "Wooleel ma ambilaas, bu la neexee!" },
             { en: "He fainted", fr: "Il s'est évanoui", wo: "Dafa xëm" },
             { en: "Do I need an injection?", fr: "Ai-je besoin d'une piqûre ?", wo: "Ndax soxla naa pic?" },
-            { en: "Where is the nearest hospital?", fr: "Où est l'hôpital le plus proche ?", wo: "Ban opitaal moo gën a jege?" }
+            { en: "Where is the nearest hospital?", fr: "Où est l'hôpital le plus proche ?", wo: "Ban opitaal moo gën a jege?" },
+            { en: "I have had a headache since yesterday", fr: "J'ai mal à la tête depuis hier", wo: "Sama bopp dafay metti dale démb" },
+            { en: "I am allergic to penicillin", fr: "Je suis allergique à la pénicilline", wo: "Garabu penisilin dafay ma yakk" },
+            { en: "I am pregnant", fr: "Je suis enceinte", wo: "Ëmb naa" },
+            { en: "My blood pressure is high", fr: "Ma tension est élevée", wo: "Sama tansiyoŋ dafa yéeg" },
+            { en: "I have diabetes", fr: "J'ai du diabète", wo: "Am naa jànbatu suukar" },
+            { en: "Can you give me a certificate?", fr: "Pouvez-vous me donner un certificat ?", wo: "Ndax mën nga ma jox sertifika ?" },
+            { en: "I need an X-ray", fr: "J'ai besoin d'une radio", wo: "Dama soxla def rajo" },
+            { en: "Where can I get a test?", fr: "Où puis-je faire un test ?", wo: "Fan laa mën a def saytu ?" },
+            { en: "It is an emergency!", fr: "C'est une urgence !", wo: "Dafa jamp !" },
+            { en: "Someone has been hurt", fr: "Quelqu'un est blessé", wo: "Am na ku gañu" },
+            { en: "Stay calm, help is coming", fr: "Restez calme, les secours arrivent", wo: "Dalal sa xel, ndimbal mii ngi ñëw" },
+            { en: "Do you have insurance?", fr: "Avez-vous une assurance ?", wo: "Ndax am nga asiraas ?" }
         ],
         dialogue: [
             { who: "A", en: "You look tired.", fr: "Vous avez l'air fatigué.", wo: "Dafa mel ni yaa ngi sonn." },
@@ -3043,11 +3055,16 @@ const GENERAL_EXTRA = {
             { who: "A", en: "Good morning. I need medicine for a cough.", fr: "Bonjour. J'ai besoin d'un médicament pour la toux.", wo: "Salaam aleekum. Dama soxla garabu sëqqat." },
             { who: "B", en: "Take this syrup twice a day.", fr: "Prenez ce sirop deux fois par jour.", wo: "Naanal siro bii ñaari yoon ci bés." },
             { who: "A", en: "Before or after eating?", fr: "Avant ou après avoir mangé ?", wo: "Balaa may lekk walla bu ma lekkee ba noppi ?" },
-            { who: "B", en: "After eating. Come back if you are not better in three days.", fr: "Après avoir mangé. Revenez si ça ne va pas mieux dans trois jours.", wo: "Boo lekkee ba noppi. Dellusil boo gënul a neex ci ñetti fan." }
+            { who: "B", en: "After eating. Come back if you are not better in three days.", fr: "Après avoir mangé. Revenez si ça ne va pas mieux dans trois jours.", wo: "Boo lekkee ba noppi. Dellusil boo gënul a neex ci ñetti fan." },
+            { who: "A", en: "Help! My brother has fainted.", fr: "Au secours ! Mon frère s'est évanoui.", wo: "Wóoy ndimbal ! Sama rakk dafa xëm." },
+            { who: "B", en: "Is he breathing?", fr: "Respire-t-il ?", wo: "Ndax mii ngi noyyi ?" },
+            { who: "A", en: "Yes, but he is very weak.", fr: "Oui, mais il est très faible.", wo: "Waaw, waaye dafa ñàkk doole lool." },
+            { who: "B", en: "Stay calm. The ambulance is coming.", fr: "Restez calme. L'ambulance arrive.", wo: "Dalal sa xel. Ambilaas bi mii ngi ñëw." }
         ],
         quiz: [{ q: "You ___ drink water when it is hot.", o: ["must", "are", "does"], a: 0, why: "« must » exprime une obligation ou un conseil fort." },
             { q: "I have a ___ .", o: ["fever", "hurt", "cough up"], a: 0, why: "« I have a fever » : on utilise « have » avec une maladie ou un symptôme." }, { q: "Where does it ___ ?", o: ["hurt", "fever", "sick"], a: 0, why: "« Where does it hurt? » est la question du médecin." }, { q: "My child is ___ .", o: ["sick", "fever", "hurt"], a: 0, why: "« is sick » : après « is », on met un adjectif." },
-            { q: "Take it ___ a day.", o: ["twice", "two", "second"], a: 0, why: "« twice » signifie deux fois." }, { q: "I have a pain ___ my chest.", o: ["in", "on", "at"], a: 0, why: "On dit « a pain in my chest »." }, { q: "Call an ___ !", o: ["ambulance", "ambulant", "hospital"], a: 0, why: "« ambulance » s'écrit pareil en anglais, avec « an » devant la voyelle." }]
+            { q: "Take it ___ a day.", o: ["twice", "two", "second"], a: 0, why: "« twice » signifie deux fois." }, { q: "I have a pain ___ my chest.", o: ["in", "on", "at"], a: 0, why: "On dit « a pain in my chest »." }, { q: "Call an ___ !", o: ["ambulance", "ambulant", "hospital"], a: 0, why: "« ambulance » s'écrit pareil en anglais, avec « an » devant la voyelle." },
+            { q: "I have ___ headache since yesterday.", o: ["had a", "have", "has"], a: 0, why: "« I have had » : présent perfect, on utilise « since » avec un point de départ dans le passé." }, { q: "It is an ___ !", o: ["emergency", "urgent", "emergence"], a: 0, why: "« emergency » signifie urgence." }, { q: "Do you have ___ ?", o: ["insurance", "assure", "insured"], a: 0, why: "« insurance » est le nom pour assurance." }]
     },
     food: {
         vocab: [
