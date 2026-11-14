@@ -6681,7 +6681,7 @@ try{
         if (e.mon !== jeton) return;
         if (ty === "question") e.visible = texteDe(e);
         if (ty === "retell") e.visible = "";
-        var pp = e.tache.prep_s || (ty === "question" ? 8 : 0);
+        var pp = e.tache.prep_s || (ty === "question" ? 5 : 0);
         if (pp) preparer(e, pp, "Prends ton temps : réfléchis, puis parle", function () { parler(e); }, true);
         else parler(e);
       }, function () { if (e.mon === jeton) { e.visible = texteDe(e); parler(e); } });
