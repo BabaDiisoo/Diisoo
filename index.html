@@ -2777,15 +2777,37 @@ const GENERAL_EXTRA = {
     family: {
         vocab: [
             { en: "My family works in the fields", fr: "Ma famille travaille aux champs", wo: "Sama njaboot dafay liggéey ci tool yi" },
-            { en: "My brother sells fruit at the market", fr: "Mon frère vend des fruits au marché", wo: "Sama rakk bu góor dafay jaay meññeef ci marse bi" }
+            { en: "My brother sells fruit at the market", fr: "Mon frère vend des fruits au marché", wo: "Sama rakk bu góor dafay jaay meññeef ci marse bi" },
+            { en: "This is my wife", fr: "Voici ma femme", wo: "Kii mooy sama jabar" },
+            { en: "This is my husband", fr: "Voici mon mari", wo: "Kii mooy sama jëkkër" },
+            { en: "I have two daughters and one son", fr: "J'ai deux filles et un fils", wo: "Am naa ñaar doom yi jiguéen ak benn doom bu góor" },
+            { en: "My parents live in Thiès", fr: "Mes parents vivent à Thiès", wo: "Sama waajur yi Cees lañu dëkk" },
+            { en: "My uncle lives abroad", fr: "Mon oncle vit à l'étranger", wo: "Sama nijaay mi ngi dëkk bitim-réew" },
+            { en: "My aunt is a nurse", fr: "Ma tante est infirmière", wo: "Sama oumpañe infirmiyeer la" },
+            { en: "My cousin is getting married", fr: "Mon cousin se marie", wo: "Sama mbokk dafay seey" },
+            { en: "How many people are in your family?", fr: "Combien de personnes dans votre famille ?", wo: "Ñaata nit ñooy sa njaboot ?" },
+            { en: "I am the oldest child", fr: "Je suis l'aîné", wo: "Maa mag ci xale yi" },
+            { en: "I am the youngest", fr: "Je suis le cadet", wo: "Maa di rakk ji" },
+            { en: "We are a big family", fr: "Nous sommes une grande famille", wo: "Sunu njaboot dafa yaatu" },
+            { en: "My family supports me", fr: "Ma famille me soutient", wo: "Sama njaboot dafa may jàppale" }
         ],
         dialogue: [
             { who: "A", en: "Does your family have a farm?", fr: "Votre famille a-t-elle une ferme ?", wo: "Ndax sa njaboot am na tool ?" },
             { who: "B", en: "Yes, my parents grow millet and groundnuts.", fr: "Oui, mes parents cultivent du mil et des arachides.", wo: "Waaw, sama waajur yi dañuy ji dugub ak gerte." },
             { who: "A", en: "And your brother?", fr: "Et votre frère ?", wo: "Sa rakk bu góor nag ?" },
-            { who: "B", en: "He is a street trader in Thiès.", fr: "Il est commerçant ambulant à Thiès.", wo: "Baana-baana la ci Thiès." }
+            { who: "B", en: "He is a street trader in Thiès.", fr: "Il est commerçant ambulant à Thiès.", wo: "Baana-baana la ci Thiès." },
+            { who: "A", en: "Is this your family?", fr: "C'est votre famille ?", wo: "Sa njaboot la ?" },
+            { who: "B", en: "Yes, this is my wife and these are my children.", fr: "Oui, voici ma femme et voici mes enfants.", wo: "Waaw, kii mooy sama jabar te ñii sama doom yi la." },
+            { who: "A", en: "How many children do you have?", fr: "Combien d'enfants avez-vous ?", wo: "Ñaata doom nga am ?" },
+            { who: "B", en: "I have two daughters and one son.", fr: "J'ai deux filles et un fils.", wo: "Am naa ñaar doom yi jiguéen ak benn doom bu góor." },
+            { who: "A", en: "Do your parents live here?", fr: "Vos parents vivent-ils ici ?", wo: "Sa waajur yi fi lañu dëkk ?" },
+            { who: "B", en: "Yes, my parents live in Thiès.", fr: "Oui, mes parents vivent à Thiès.", wo: "Waaw, sama waajur yi Cees lañu dëkk." }
         ],
-        quiz: [{ q: "My brother ___ vegetables at the market.", o: ["sell", "sells", "selling"], a: 1, why: "3e personne du singulier : verbe + s (he sells)." }]
+        quiz: [{ q: "My brother ___ vegetables at the market.", o: ["sell", "sells", "selling"], a: 1, why: "3e personne du singulier : verbe + s (he sells)." },
+            { q: "This ___ my wife.", o: ["is", "are", "am"], a: 0, why: "This + is : This is my wife." },
+            { q: "I have two ___ and one son.", o: ["daughters", "daughter", "daughter's"], a: 0, why: "Deux (two) demande le pluriel : daughters." },
+            { q: "I am the ___ child.", o: ["oldest", "old", "older than"], a: 0, why: "Oldest = le plus âgé de tous (superlatif)." }
+        ]
     },
     work: {
         vocab: [
