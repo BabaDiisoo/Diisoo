@@ -3094,7 +3094,19 @@ const GENERAL_EXTRA = {
             { en: "I like fish more than chicken", fr: "J'aime le poisson plus que le poulet", wo: "Dama gën a bëgg jën ci ginaar" },
             { en: "Let us eat together", fr: "Mangeons ensemble", wo: "Nanu lekkandoo" },
             { en: "Pass me the water, please", fr: "Passez-moi l'eau, s'il vous plaît", wo: "Joxal ma ndox mi, bu la neexee" },
-            { en: "Thank you for the meal", fr: "Merci pour le repas", wo: "Jërëjëf ci lekk bi" }
+            { en: "Thank you for the meal", fr: "Merci pour le repas", wo: "Jërëjëf ci lekk bi" },
+            { en: "I would like to book a table for four", fr: "Je voudrais réserver une table pour quatre", wo: "Dama bëgg reserwe taabal ngir ñeenti nit" },
+            { en: "Do you have a vegetarian dish?", fr: "Avez-vous un plat végétarien ?", wo: "Ndax am ngeen lekk bu amul yàpp ak jën ?" },
+            { en: "I am allergic to peanuts", fr: "Je suis allergique aux arachides", wo: "Gerte dafay ma yakk" },
+            { en: "Is it fresh?", fr: "Est-ce frais ?", wo: "Ndax dafa bees ?" },
+            { en: "What do you recommend?", fr: "Que me conseillez-vous ?", wo: "Lan ngeen may digal ?" },
+            { en: "I will have the same", fr: "Je prendrai la même chose", wo: "Loolu laay jël man itam" },
+            { en: "The meat is not cooked enough", fr: "La viande n'est pas assez cuite", wo: "Yàpp wi ñorul bu baax" },
+            { en: "Can I pay by Wave?", fr: "Puis-je payer avec Wave ?", wo: "Ndax mën naa faye Wave ?" },
+            { en: "Keep the change", fr: "Gardez la monnaie", wo: "Jëlal xaalis bi ci des" },
+            { en: "You are invited for dinner", fr: "Vous êtes invités à dîner", wo: "Woo nañu la ci reer bi" },
+            { en: "It was a wonderful meal", fr: "C'était un repas merveilleux", wo: "Lekk bu neex la woon" },
+            { en: "My compliments to the cook", fr: "Mes compliments au cuisinier", wo: "Nuyu naa ki togg !" }
         ],
         dialogue: [
             { who: "A", en: "What would you like?", fr: "Que désirez-vous ?", wo: "Lan nga bëgg ?" },
@@ -3108,11 +3120,16 @@ const GENERAL_EXTRA = {
             { who: "A", en: "What are you cooking?", fr: "Qu'est-ce que tu prépares ?", wo: "Lan ngay togg ?" },
             { who: "B", en: "I am cooking rice with fish.", fr: "Je prépare du riz au poisson.", wo: "Damay togg ceebu jën." },
             { who: "A", en: "It smells good!", fr: "Ça sent bon !", wo: "Dafa xeeñ bu baax !" },
-            { who: "B", en: "Come and eat with us.", fr: "Viens manger avec nous.", wo: "Ñëwal lekk ak nun." }
+            { who: "B", en: "Come and eat with us.", fr: "Viens manger avec nous.", wo: "Ñëwal lekk ak nun." },
+            { who: "A", en: "Hello, I would like to book a table for four.", fr: "Bonjour, je voudrais réserver une table pour quatre.", wo: "Salaam aleekum, dama bëgg reserwe taabal ngir ñeenti nit." },
+            { who: "B", en: "For what time?", fr: "Pour quelle heure ?", wo: "Ci ban waxtu ?" },
+            { who: "A", en: "Eight o'clock tonight.", fr: "Huit heures ce soir.", wo: "Ci juróom-ñetti waxtu ci guddi." },
+            { who: "B", en: "Perfect, a table for four at eight.", fr: "Parfait, une table pour quatre à huit heures.", wo: "Baax na, taabal ngir ñeenti nit ci juróom-ñetti waxtu." }
         ],
         quiz: [{ q: "I ___ like rice, please.", o: ["would", "am", "is"], a: 0, why: "« I would like » est la façon polie de commander." },
             { q: "I am ___ .", o: ["hungry", "hunger", "eat"], a: 0, why: "« I am hungry » : après « am », on met un adjectif." }, { q: "I would ___ some water.", o: ["like", "want", "am"], a: 0, why: "« I would like » est la façon polie de demander." }, { q: "It is too ___ .", o: ["spicy", "spice", "spices"], a: 0, why: "« spicy » est l'adjectif pour épicé." },
-            { q: "I am ___ rice.", o: ["cooking", "cook", "cooks"], a: 0, why: "« am » + verbe en -ing : action en cours." }, { q: "I like fish ___ chicken.", o: ["more than", "more that", "most"], a: 0, why: "« more than » sert à comparer." }, { q: "Thank you ___ the meal.", o: ["for", "to", "of"], a: 0, why: "On dit « thank you for » suivi de la chose." }]
+            { q: "I am ___ rice.", o: ["cooking", "cook", "cooks"], a: 0, why: "« am » + verbe en -ing : action en cours." }, { q: "I like fish ___ chicken.", o: ["more than", "more that", "most"], a: 0, why: "« more than » sert à comparer." }, { q: "Thank you ___ the meal.", o: ["for", "to", "of"], a: 0, why: "On dit « thank you for » suivi de la chose." },
+            { q: "I would like to ___ a table.", o: ["book", "booking", "books"], a: 0, why: "Après « would like to », on met le verbe à l'infinitif." }, { q: "Is it ___ ?", o: ["fresh", "freshly", "freshness"], a: 0, why: "« fresh » est l'adjectif pour frais." }, { q: "Can I pay ___ card?", o: ["by", "with by", "on"], a: 0, why: "On dit « pay by card » pour payer par carte." }]
     },
     time: {
         vocab: [
