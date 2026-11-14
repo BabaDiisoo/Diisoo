@@ -3311,7 +3311,19 @@ const GENERAL_EXTRA = {
             { en: "It is quiet here", fr: "C'est calme ici", wo: "Fii dafa dal" },
             { en: "The house is far from the market", fr: "La maison est loin du marché", wo: "Kër gi dafa sori marse bi" },
             { en: "I need to fix the door", fr: "Je dois réparer la porte", wo: "Dama war a defar bunt bi" },
-            { en: "When can I move in?", fr: "Quand puis-je emménager ?", wo: "Kañ laa mën a toxu ci kër gi ?" }
+            { en: "When can I move in?", fr: "Quand puis-je emménager ?", wo: "Kañ laa mën a toxu ci kër gi ?" },
+            { en: "I would like to rent a two-bedroom flat", fr: "Je voudrais louer un appartement de deux chambres", wo: "Dama bëgg a luwaas apartmaa bu am ñaari néegu nelaw" },
+            { en: "Is the deposit refundable?", fr: "La caution est-elle remboursable ?", wo: "Ndax koosoŋ bi dañu koy delloo ?" },
+            { en: "How many months must I pay in advance?", fr: "Combien de mois dois-je payer d'avance ?", wo: "Ñaata weer laa war a fay ci kanam ?" },
+            { en: "Can you reduce the rent a little?", fr: "Pouvez-vous baisser un peu le loyer ?", wo: "Ndax mën nga wàññi luwaas bi tuuti ?" },
+            { en: "The tap is broken", fr: "Le robinet est cassé", wo: "Robine bi dafa yàqu" },
+            { en: "There is no water since this morning", fr: "Il n'y a pas d'eau depuis ce matin", wo: "Amul ndox dale suba ba léegi" },
+            { en: "Please repair it as soon as possible", fr: "Réparez-le dès que possible, s'il vous plaît", wo: "Defaral ko ci lu gaaw, bu la neexee" },
+            { en: "The neighbours make too much noise", fr: "Les voisins font trop de bruit", wo: "Dëkkandoo yi dañuy coow lool" },
+            { en: "I am moving next month", fr: "Je déménage le mois prochain", wo: "Dinaa toxu ci weer wi di ñëw" },
+            { en: "I need a truck to carry my things", fr: "J'ai besoin d'un camion pour transporter mes affaires", wo: "Dama soxla kamiyoŋ ngir yóbbu sama bagaas" },
+            { en: "Here are the keys", fr: "Voici les clés", wo: "Yii mooy caabi yi" },
+            { en: "Welcome to your new home!", fr: "Bienvenue dans votre nouvelle maison !", wo: "Dalal ak jàmm ci sa kër gu bees gi !" }
         ],
         dialogue: [
             { who: "A", en: "Do you have a garden?", fr: "Avez-vous un jardin ?", wo: "Ndax am nga tool ?" },
@@ -3325,11 +3337,16 @@ const GENERAL_EXTRA = {
             { who: "A", en: "Is the house furnished?", fr: "La maison est-elle meublée ?", wo: "Ndax kër gi am na bagaas ?" },
             { who: "B", en: "No, but there is a kitchen and a bathroom.", fr: "Non, mais il y a une cuisine et une salle de bain.", wo: "Déedéet, waaye am na waañ ak néegu sangu." },
             { who: "A", en: "When can I move in?", fr: "Quand puis-je emménager ?", wo: "Kañ laa mën a toxu ?" },
-            { who: "B", en: "Next week, after I fix the door.", fr: "La semaine prochaine, après avoir réparé la porte.", wo: "Ayu-bés bi di ñëw, bu ma defaree bunt bi ba noppi." }
+            { who: "B", en: "Next week, after I fix the door.", fr: "La semaine prochaine, après avoir réparé la porte.", wo: "Ayu-bés bi di ñëw, bu ma defaree bunt bi ba noppi." },
+            { who: "A", en: "The rent is sixty thousand francs.", fr: "Le loyer est de soixante mille francs.", wo: "Luwaas bi juróom-benn-fukki junni farã la." },
+            { who: "B", en: "It is a bit expensive. Can you reduce it?", fr: "C'est un peu cher. Pouvez-vous le baisser ?", wo: "Dafa seer tuuti. Ndax mën nga ko wàññi ?" },
+            { who: "A", en: "I can do fifty-five thousand.", fr: "Je peux faire cinquante-cinq mille.", wo: "Mën naa def juróom-fukki junni ak juróomi junni." },
+            { who: "B", en: "Okay, I accept.", fr: "D'accord, j'accepte.", wo: "Baax na, nangu naa." }
         ],
         quiz: [{ q: "I ___ tomatoes behind the house.", o: ["grow", "grows", "growing"], a: 0, why: "I + verbe de base (I grow)." },
             { q: "I ___ in Thiès.", o: ["live", "lives", "living"], a: 0, why: "« I live » : avec « I », le verbe reste à la forme de base." }, { q: "It has two ___ .", o: ["bedrooms", "bedroom", "bedroomes"], a: 0, why: "Après « two », on met le pluriel : « bedrooms »." }, { q: "Is there ___ electricity?", o: ["any", "a", "an"], a: 0, why: "Dans une question, on dit « any » devant un nom non comptable." },
-            { q: "There ___ a bed and a table.", o: ["is", "are", "be"], a: 0, why: "« There is » avec un seul élément (a bed), même suivi d'un deuxième." }, { q: "Who ___ the landlord?", o: ["is", "are", "am"], a: 0, why: "« Who is » pour une seule personne." }, { q: "The house is ___ from the market.", o: ["far", "long", "distant"], a: 0, why: "On dit « far from » pour loin de." }]
+            { q: "There ___ a bed and a table.", o: ["is", "are", "be"], a: 0, why: "« There is » avec un seul élément (a bed), même suivi d'un deuxième." }, { q: "Who ___ the landlord?", o: ["is", "are", "am"], a: 0, why: "« Who is » pour une seule personne." }, { q: "The house is ___ from the market.", o: ["far", "long", "distant"], a: 0, why: "On dit « far from » pour loin de." },
+            { q: "I would like to ___ a flat.", o: ["rent", "renting", "rented"], a: 0, why: "Après « would like to », on met le verbe à l'infinitif." }, { q: "The tap is ___ .", o: ["broken", "break", "breaking"], a: 0, why: "« is broken » : participe passé pour dire que c'est cassé." }, { q: "I am ___ next month.", o: ["moving", "move", "moved"], a: 0, why: "« I am moving » exprime un projet proche." }]
     }
 };
 GENERAL_THEMES.forEach(t => {
