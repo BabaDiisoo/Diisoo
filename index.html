@@ -3299,7 +3299,19 @@ const GENERAL_EXTRA = {
             { en: "Is there water and electricity?", fr: "Y a-t-il de l'eau et de l'électricité ?", wo: "Ndax am na ndox ak kuraŋ ?" },
             { en: "The door is open", fr: "La porte est ouverte", wo: "Bunt bi dafa ubbiku" },
             { en: "Can I see the house?", fr: "Puis-je voir la maison ?", wo: "Ndax mën naa gis kër gi ?" },
-            { en: "I like this place", fr: "J'aime cet endroit", wo: "Bërëb bii neex na ma" }
+            { en: "I like this place", fr: "J'aime cet endroit", wo: "Bërëb bii neex na ma" },
+            { en: "Is the house furnished?", fr: "La maison est-elle meublée ?", wo: "Ndax kër gi am na bagaas ?" },
+            { en: "There is a bed and a table", fr: "Il y a un lit et une table", wo: "Am na lal ak taabal" },
+            { en: "The roof is leaking", fr: "Le toit fuit", wo: "Kaw kër gi dafay senn" },
+            { en: "The light does not work", fr: "La lumière ne marche pas", wo: "Làmp bi dafa yàqu" },
+            { en: "Who is the landlord?", fr: "Qui est le propriétaire ?", wo: "Kan mooy boroom kër gi ?" },
+            { en: "I pay the rent on the first of the month", fr: "Je paie le loyer le premier du mois", wo: "Damay fay luwaas bi ci bés bu njëkk ci weer wi" },
+            { en: "Do I need to sign a contract?", fr: "Dois-je signer un contrat ?", wo: "Ndax war naa siñe kontraa bi ?" },
+            { en: "My neighbours are nice", fr: "Mes voisins sont gentils", wo: "Sama dëkkandoo yi baax nañu" },
+            { en: "It is quiet here", fr: "C'est calme ici", wo: "Fii dafa dal" },
+            { en: "The house is far from the market", fr: "La maison est loin du marché", wo: "Kër gi dafa sori marse bi" },
+            { en: "I need to fix the door", fr: "Je dois réparer la porte", wo: "Dama war a defar bunt bi" },
+            { en: "When can I move in?", fr: "Quand puis-je emménager ?", wo: "Kañ laa mën a toxu ci kër gi ?" }
         ],
         dialogue: [
             { who: "A", en: "Do you have a garden?", fr: "Avez-vous un jardin ?", wo: "Ndax am nga tool ?" },
@@ -3309,10 +3321,15 @@ const GENERAL_EXTRA = {
             { who: "A", en: "Good morning. I am looking for a house.", fr: "Bonjour. Je cherche une maison.", wo: "Salaam aleekum. Maa ngi seet kër." },
             { who: "B", en: "This one has three rooms.", fr: "Celle-ci a trois pièces.", wo: "Bii am na ñetti néeg." },
             { who: "A", en: "How much is the rent?", fr: "Combien coûte le loyer ?", wo: "Ñaata la luwaas bi ?" },
-            { who: "B", en: "Fifty thousand francs a month.", fr: "Cinquante mille francs par mois.", wo: "Juróom-fukki junni farã ci weer wi." }
+            { who: "B", en: "Fifty thousand francs a month.", fr: "Cinquante mille francs par mois.", wo: "Juróom-fukki junni farã ci weer wi." },
+            { who: "A", en: "Is the house furnished?", fr: "La maison est-elle meublée ?", wo: "Ndax kër gi am na bagaas ?" },
+            { who: "B", en: "No, but there is a kitchen and a bathroom.", fr: "Non, mais il y a une cuisine et une salle de bain.", wo: "Déedéet, waaye am na waañ ak néegu sangu." },
+            { who: "A", en: "When can I move in?", fr: "Quand puis-je emménager ?", wo: "Kañ laa mën a toxu ?" },
+            { who: "B", en: "Next week, after I fix the door.", fr: "La semaine prochaine, après avoir réparé la porte.", wo: "Ayu-bés bi di ñëw, bu ma defaree bunt bi ba noppi." }
         ],
         quiz: [{ q: "I ___ tomatoes behind the house.", o: ["grow", "grows", "growing"], a: 0, why: "I + verbe de base (I grow)." },
-            { q: "I ___ in Thiès.", o: ["live", "lives", "living"], a: 0, why: "« I live » : avec « I », le verbe reste à la forme de base." }, { q: "It has two ___ .", o: ["bedrooms", "bedroom", "bedroomes"], a: 0, why: "Après « two », on met le pluriel : « bedrooms »." }, { q: "Is there ___ electricity?", o: ["any", "a", "an"], a: 0, why: "Dans une question, on dit « any » devant un nom non comptable." }]
+            { q: "I ___ in Thiès.", o: ["live", "lives", "living"], a: 0, why: "« I live » : avec « I », le verbe reste à la forme de base." }, { q: "It has two ___ .", o: ["bedrooms", "bedroom", "bedroomes"], a: 0, why: "Après « two », on met le pluriel : « bedrooms »." }, { q: "Is there ___ electricity?", o: ["any", "a", "an"], a: 0, why: "Dans une question, on dit « any » devant un nom non comptable." },
+            { q: "There ___ a bed and a table.", o: ["is", "are", "be"], a: 0, why: "« There is » avec un seul élément (a bed), même suivi d'un deuxième." }, { q: "Who ___ the landlord?", o: ["is", "are", "am"], a: 0, why: "« Who is » pour une seule personne." }, { q: "The house is ___ from the market.", o: ["far", "long", "distant"], a: 0, why: "On dit « far from » pour loin de." }]
     }
 };
 GENERAL_THEMES.forEach(t => {
