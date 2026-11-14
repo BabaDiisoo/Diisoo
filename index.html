@@ -3004,15 +3004,33 @@ const GENERAL_EXTRA = {
     health: {
         vocab: [
             { en: "I need to rest, I worked in the sun all day", fr: "J'ai besoin de me reposer, j'ai travaillé au soleil toute la journée", wo: "Dama war a noppalu, liggéey naa ci jant bi bés bi bépp" },
-            { en: "Drink a lot of water when it is hot", fr: "Buvez beaucoup d'eau quand il fait chaud", wo: "Naanal ndox bu bari bu tàngee" }
+            { en: "Drink a lot of water when it is hot", fr: "Buvez beaucoup d'eau quand il fait chaud", wo: "Naanal ndox bu bari bu tàngee" },
+            { en: "I have a stomach ache", fr: "J'ai mal au ventre", wo: "Sama biir dafa metti" },
+            { en: "My head hurts", fr: "J'ai mal à la tête", wo: "Sama bopp dafa metti" },
+            { en: "I have a fever", fr: "J'ai de la fièvre", wo: "Am naa tàngoor" },
+            { en: "I cannot sleep", fr: "Je n'arrive pas à dormir", wo: "Mënuma nelaw" },
+            { en: "I feel dizzy", fr: "J'ai des vertiges", wo: "Sama bopp dafay wëndeelu" },
+            { en: "I have a cough", fr: "Je tousse", wo: "Damay sëqqat" },
+            { en: "My child is sick", fr: "Mon enfant est malade", wo: "Sama doom dafa feebar" },
+            { en: "Where does it hurt?", fr: "Où avez-vous mal ?", wo: "Fan la metti ?" },
+            { en: "It hurts here", fr: "J'ai mal ici", wo: "Fii la metti" },
+            { en: "Is it serious?", fr: "Est-ce grave ?", wo: "Ndax dafa tar ?" },
+            { en: "I am allergic to this medicine", fr: "Je suis allergique à ce médicament", wo: "Garab bii dafay ma yakk" },
+            { en: "I need medicine", fr: "J'ai besoin de médicaments", wo: "Dama soxla garab" }
         ],
         dialogue: [
             { who: "A", en: "You look tired.", fr: "Vous avez l'air fatigué.", wo: "Dafa mel ni yaa ngi sonn." },
             { who: "B", en: "I worked in the field all day, and I did not drink water.", fr: "J'ai travaillé dans le champ toute la journée, et je n'ai pas bu d'eau.", wo: "Liggéey naa ci tool bi bés bi bépp te naanul ndox." },
             { who: "A", en: "You must drink water and rest.", fr: "Vous devez boire de l'eau et vous reposer.", wo: "War nga naan ndox te noppalu." },
-            { who: "B", en: "You are right, thank you.", fr: "Vous avez raison, merci.", wo: "Dëgg nga, jërëjëf." }
+            { who: "B", en: "You are right, thank you.", fr: "Vous avez raison, merci.", wo: "Dëgg nga, jërëjëf." },
+            { who: "A", en: "Good morning, doctor. I have a stomach ache.", fr: "Bonjour docteur, j'ai mal au ventre.", wo: "Salaam aleekum doktoor, sama biir dafa metti." },
+            { who: "B", en: "Where does it hurt?", fr: "Où avez-vous mal ?", wo: "Fan la metti ?" },
+            { who: "A", en: "It hurts here. I also have a fever.", fr: "J'ai mal ici. J'ai aussi de la fièvre.", wo: "Fii la metti. Am naa tàngoor itam." },
+            { who: "A", en: "Is it serious?", fr: "Est-ce grave ?", wo: "Ndax dafa tar ?" },
+            { who: "B", en: "No, but you need to rest. Take this medicine.", fr: "Non, mais vous devez vous reposer. Prenez ce médicament.", wo: "Déedéet, waaye war nga noppalu. Naanal garab bii." }
         ],
-        quiz: [{ q: "You ___ drink water when it is hot.", o: ["must", "are", "does"], a: 0, why: "« must » exprime une obligation ou un conseil fort." }]
+        quiz: [{ q: "You ___ drink water when it is hot.", o: ["must", "are", "does"], a: 0, why: "« must » exprime une obligation ou un conseil fort." },
+            { q: "I have a ___ .", o: ["fever", "hurt", "cough up"], a: 0, why: "« I have a fever » : on utilise « have » avec une maladie ou un symptôme." }, { q: "Where does it ___ ?", o: ["hurt", "fever", "sick"], a: 0, why: "« Where does it hurt? » est la question du médecin." }, { q: "My child is ___ .", o: ["sick", "fever", "hurt"], a: 0, why: "« is sick » : après « is », on met un adjectif." }]
     },
     food: {
         vocab: [
