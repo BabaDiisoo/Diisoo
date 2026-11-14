@@ -3287,15 +3287,32 @@ const GENERAL_EXTRA = {
     housing: {
         vocab: [
             { en: "I have a small garden behind the house", fr: "J'ai un petit jardin derrière la maison", wo: "Am naa tool bu ndaw ci gannaaw kër gi" },
-            { en: "The rent is thirty thousand francs a month", fr: "Le loyer est de trente mille francs par mois", wo: "Loyer bi fanweer junni franc la ci weer wi" }
+            { en: "The rent is thirty thousand francs a month", fr: "Le loyer est de trente mille francs par mois", wo: "Loyer bi fanweer junni franc la ci weer wi" },
+            { en: "I live in Thiès", fr: "J'habite à Thiès", wo: "Dëkk naa Cees" },
+            { en: "I am looking for a house", fr: "Je cherche une maison", wo: "Maa ngi seet kër" },
+            { en: "How many rooms are there?", fr: "Combien y a-t-il de pièces ?", wo: "Ñaata néeg a ci nekk ?" },
+            { en: "It has two bedrooms", fr: "Il y a deux chambres", wo: "Am na ñaari néegu nelaw" },
+            { en: "Where is the kitchen?", fr: "Où est la cuisine ?", wo: "Fan la waañ wi nekk ?" },
+            { en: "The bathroom is here", fr: "La salle de bain est ici", wo: "Néegu sangu bi mii ngi fii" },
+            { en: "How much is the rent?", fr: "Combien coûte le loyer ?", wo: "Ñaata la luwaas bi ?" },
+            { en: "It is too expensive", fr: "C'est trop cher", wo: "Dafa seer lool" },
+            { en: "Is there water and electricity?", fr: "Y a-t-il de l'eau et de l'électricité ?", wo: "Ndax am na ndox ak kuraŋ ?" },
+            { en: "The door is open", fr: "La porte est ouverte", wo: "Bunt bi dafa ubbiku" },
+            { en: "Can I see the house?", fr: "Puis-je voir la maison ?", wo: "Ndax mën naa gis kër gi ?" },
+            { en: "I like this place", fr: "J'aime cet endroit", wo: "Bërëb bii neex na ma" }
         ],
         dialogue: [
             { who: "A", en: "Do you have a garden?", fr: "Avez-vous un jardin ?", wo: "Ndax am nga tool ?" },
             { who: "B", en: "Yes, I grow tomatoes and onions behind the house.", fr: "Oui, je cultive des tomates et des oignons derrière la maison.", wo: "Waaw, damay ji tamaate ak sooble ci gannaaw kër gi." },
             { who: "A", en: "Is the rent expensive?", fr: "Le loyer est-il cher ?", wo: "Ndax loyer bi dafa seer ?" },
-            { who: "B", en: "No, it is cheap.", fr: "Non, il est bon marché.", wo: "Déedéet, dafa yomb." }
+            { who: "B", en: "No, it is cheap.", fr: "Non, il est bon marché.", wo: "Déedéet, dafa yomb." },
+            { who: "A", en: "Good morning. I am looking for a house.", fr: "Bonjour. Je cherche une maison.", wo: "Salaam aleekum. Maa ngi seet kër." },
+            { who: "B", en: "This one has three rooms.", fr: "Celle-ci a trois pièces.", wo: "Bii am na ñetti néeg." },
+            { who: "A", en: "How much is the rent?", fr: "Combien coûte le loyer ?", wo: "Ñaata la luwaas bi ?" },
+            { who: "B", en: "Fifty thousand francs a month.", fr: "Cinquante mille francs par mois.", wo: "Juróom-fukki junni farã ci weer wi." }
         ],
-        quiz: [{ q: "I ___ tomatoes behind the house.", o: ["grow", "grows", "growing"], a: 0, why: "I + verbe de base (I grow)." }]
+        quiz: [{ q: "I ___ tomatoes behind the house.", o: ["grow", "grows", "growing"], a: 0, why: "I + verbe de base (I grow)." },
+            { q: "I ___ in Thiès.", o: ["live", "lives", "living"], a: 0, why: "« I live » : avec « I », le verbe reste à la forme de base." }, { q: "It has two ___ .", o: ["bedrooms", "bedroom", "bedroomes"], a: 0, why: "Après « two », on met le pluriel : « bedrooms »." }, { q: "Is there ___ electricity?", o: ["any", "a", "an"], a: 0, why: "Dans une question, on dit « any » devant un nom non comptable." }]
     }
 };
 GENERAL_THEMES.forEach(t => {
