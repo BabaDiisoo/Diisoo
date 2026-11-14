@@ -35,7 +35,7 @@
     "diisoo-rappel.js",
     "diisoo-recap.js",
     "diisoo-defi.js",
-    "diisoo-mission-visa.js", "diisoo-mission-marche.js", "diisoo-mission-voyage.js", "diisoo-mission-presentation.js", "diisoo-mission-famille.js", "diisoo-mission-emploi.js", "diisoo-mission-sante.js", "diisoo-mission-nourriture.js",
+    "diisoo-mission-visa.js", "diisoo-mission-marche.js", "diisoo-mission-voyage.js", "diisoo-mission-presentation.js", "diisoo-mission-famille.js", "diisoo-mission-emploi.js", "diisoo-mission-sante.js", "diisoo-mission-nourriture.js", "diisoo-mission-temps.js",
     "diisoo-installer.js",
     "diisoo-assistant.js",
     "diisoo-coach2.js",
