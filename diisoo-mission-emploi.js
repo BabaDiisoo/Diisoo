@@ -92,7 +92,7 @@
         var t = "J'ai réussi mon entretien en anglais sur Diisoo 💼 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
         noter("mission_partage");
         try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
-        window.open("https://wa.me/?text=" + encodeURIComeonent(t), "_blank");
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
       };
     }
     noter("mission_vue");
