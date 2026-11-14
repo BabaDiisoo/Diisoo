@@ -137,7 +137,7 @@
 
   /* ---------- lecteur ---------- */
   var ov = null, jeton = 0, minuteur = null, ecoute = null, vadT = null, autoT = null;
-  function AUTO() { try { return localStorage.getItem("diisoo_fmt_auto") !== "0"; } catch (e) { return true; } }
+  function AUTO() { try { return localStorage.getItem("diisoo_fmt_auto") === "1"; } catch (e) { return false; } }
 
   function nettoyer() {
     jeton++;
@@ -354,10 +354,10 @@
 
     function silenceMs(t) {
       if (t.silence_ms) return t.silence_ms;
-      if (t.type === "short") return 1100;
-      if (t.type === "repeat") return 1400;
-      if (t.type === "question") return t.rep_s <= 20 ? 1800 : (t.rep_s <= 30 ? 2100 : 2600);
-      return 2800;
+      if (t.type === "short") return 2400;
+      if (t.type === "repeat") return 2400;
+      if (t.type === "question") return t.rep_s <= 20 ? 3600 : (t.rep_s <= 30 ? 4000 : 4500);
+      return 4500;
     }
 
     /* lecture karaoké : chaque mot s'allume quand tu le dis (cacher = mots masqués, comme à l'examen) */
@@ -466,7 +466,8 @@
         if (e.mon !== jeton) return;
         if (ty === "question") e.visible = texteDe(e);
         if (ty === "retell") e.visible = "";
-        if (e.tache.prep_s) preparer(e, e.tache.prep_s, "Temps de préparation", function () { parler(e); }, true);
+        var pp = e.tache.prep_s || (ty === "question" ? 8 : 0);
+        if (pp) preparer(e, pp, "Prends ton temps : réfléchis, puis parle", function () { parler(e); }, true);
         else parler(e);
       }, function () { if (e.mon === jeton) { e.visible = texteDe(e); parler(e); } });
     }
