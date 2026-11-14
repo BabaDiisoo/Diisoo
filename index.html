@@ -2834,15 +2834,36 @@ const GENERAL_EXTRA = {
         vocab: [
             { en: "I start work at six in the morning", fr: "Je commence à travailler à six heures du matin", wo: "Damay tàmbali liggéey ci juróom benn ci suba" },
             { en: "I water the plants every day", fr: "J'arrose les plantes chaque jour", wo: "Damay sotti ndox ci gàncax yi bés bu nekk" },
-            { en: "I sell my goods in the street", fr: "Je vends mes marchandises dans la rue", wo: "Damay jaay sama yëf ci mbedd mi" }
+            { en: "I sell my goods in the street", fr: "Je vends mes marchandises dans la rue", wo: "Damay jaay sama yëf ci mbedd mi" },
+            { en: "I am looking for a job", fr: "Je cherche du travail", wo: "Maa ngi seet liggéey" },
+            { en: "Do you have any vacancies?", fr: "Avez-vous des postes disponibles ?", wo: "Ndax am ngeen liggéey bu jàppandi ?" },
+            { en: "I have five years of experience", fr: "J'ai cinq ans d'expérience", wo: "Am naa juróomi ati xam-xam ci liggéey bi" },
+            { en: "Here is my CV", fr: "Voici mon CV", wo: "Sama CV mii ngi nii" },
+            { en: "I can start tomorrow", fr: "Je peux commencer demain", wo: "Mën naa tàmbali suba" },
+            { en: "What is the salary?", fr: "Quel est le salaire ?", wo: "Ñaata la peyug liggéey bi ?" },
+            { en: "How many days a week?", fr: "Combien de jours par semaine ?", wo: "Ñaata fan ci ayu-bés bi ?" },
+            { en: "I am a hard worker", fr: "Je suis quelqu'un qui travaille dur", wo: "Ku farlu ci liggéey laa" },
+            { en: "I work well in a team", fr: "Je travaille bien en équipe", wo: "Damay liggéey bu baax ak ñeneen" },
+            { en: "When can you start?", fr: "Quand pouvez-vous commencer ?", wo: "Kañ nga mën a tàmbali ?" },
+            { en: "I will do my best", fr: "Je ferai de mon mieux", wo: "Dinaa def sama kem-kàttan" },
+            { en: "Thank you for the opportunity", fr: "Merci pour l'opportunité", wo: "Jërëjëf ci saans bi" }
         ],
         dialogue: [
             { who: "A", en: "What time do you start work?", fr: "À quelle heure commencez-vous le travail ?", wo: "Ci ban waxtu nga tàmbali liggéey ?" },
             { who: "B", en: "At six. I water my vegetables first, then I go to the market.", fr: "À six heures. J'arrose d'abord mes légumes, puis je vais au marché.", wo: "Ci juróom benn. Damay sotti ndox ci sama légumes yi njëkk, ba noppi dem ci marse bi." },
             { who: "A", en: "How many hours do you work?", fr: "Combien d'heures travaillez-vous ?", wo: "Ñaata waxtu nga liggéey ?" },
-            { who: "B", en: "About ten hours a day.", fr: "Environ dix heures par jour.", wo: "Ni fukki waxtu ci bés bu nekk." }
+            { who: "B", en: "About ten hours a day.", fr: "Environ dix heures par jour.", wo: "Ni fukki waxtu ci bés bu nekk." },
+            { who: "A", en: "Good morning. I am looking for a job.", fr: "Bonjour. Je cherche du travail.", wo: "Salaam aleekum. Maa ngi seet liggéey." },
+            { who: "B", en: "Do you have experience?", fr: "Avez-vous de l'expérience ?", wo: "Am nga xam-xam ci liggéey bi ?" },
+            { who: "A", en: "Yes, I have five years of experience. Here is my CV.", fr: "Oui, j'ai cinq ans d'expérience. Voici mon CV.", wo: "Waaw, am naa juróomi ati xam-xam ci liggéey bi. Sama CV mii ngi nii." },
+            { who: "B", en: "When can you start?", fr: "Quand pouvez-vous commencer ?", wo: "Kañ nga mën a tàmbali ?" },
+            { who: "A", en: "I can start tomorrow. What is the salary?", fr: "Je peux commencer demain. Quel est le salaire ?", wo: "Mën naa tàmbali suba. Ñaata la peyug liggéey bi ?" }
         ],
-        quiz: [{ q: "I ___ my vegetables every morning.", o: ["water", "waters", "watering"], a: 0, why: "Avec I, le verbe reste à la forme de base." }]
+        quiz: [{ q: "I ___ my vegetables every morning.", o: ["water", "waters", "watering"], a: 0, why: "Avec I, le verbe reste à la forme de base." },
+            { q: "I am ___ a job.", o: ["looking for", "looking", "look at"], a: 0, why: "Look for = chercher. I am looking for a job." },
+            { q: "I have five years of ___ .", o: ["experience", "experiences", "expert"], a: 0, why: "Experience (travail) est indénombrable : pas de s." },
+            { q: "I can start ___ .", o: ["tomorrow", "yesterday", "ago"], a: 0, why: "Tomorrow = demain, pour un futur proche." }
+        ]
     },
     market: {
         vocab: [
