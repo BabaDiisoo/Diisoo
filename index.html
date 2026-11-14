@@ -3373,7 +3373,19 @@ const GENERAL_EXTRA = {
             { en: "I take the animals to the pasture", fr: "J'emmène les animaux au pâturage", wo: "Damay yóbbu jur gi ci àll bi" },
             { en: "The chickens lay eggs", fr: "Les poules pondent des œufs", wo: "Ginaar yi dañuy nen" },
             { en: "I sell the vegetables on Saturday", fr: "Je vends les légumes le samedi", wo: "Damay jaay legim yi ci aseer bi" },
-            { en: "The harvest will be big this year", fr: "La récolte sera grande cette année", wo: "Ngóob mi dina bari ren" }
+            { en: "The harvest will be big this year", fr: "La récolte sera grande cette année", wo: "Ngóob mi dina bari ren" },
+            { en: "I want to buy a sack of seeds", fr: "Je veux acheter un sac de graines", wo: "Dama bëgg jënd saaku jiwu" },
+            { en: "Do you sell pesticide?", fr: "Vendez-vous du pesticide ?", wo: "Ndax dangay jaay garabu gunóor ?" },
+            { en: "The pump is broken", fr: "La pompe est en panne", wo: "Pomp bi dafa yàqu" },
+            { en: "I need to irrigate the field", fr: "Je dois irriguer le champ", wo: "Dama war a suuxat tool bi" },
+            { en: "The harvest is ready", fr: "La récolte est prête", wo: "Ngóob mi pare na" },
+            { en: "I sell by the sack", fr: "Je vends au sac", wo: "Damay jaay ci saaku" },
+            { en: "Can you buy my crops?", fr: "Pouvez-vous acheter ma récolte ?", wo: "Ndax mën nga jënd sama ngóob mi ?" },
+            { en: "What is the price per kilo?", fr: "Quel est le prix au kilo ?", wo: "Ñaata la kilo bi ?" },
+            { en: "I store the grain in the barn", fr: "Je stocke le grain dans le grenier", wo: "Damay denc pepp mi ci sàq bi" },
+            { en: "The drought is hard this year", fr: "La sécheresse est dure cette année", wo: "Bekkooru ren dafa tar" },
+            { en: "I want to grow more next year", fr: "Je veux cultiver plus l'an prochain", wo: "Dama bëgg bey lu gën a bari déwén" },
+            { en: "I am looking for a loan to buy equipment", fr: "Je cherche un prêt pour acheter du matériel", wo: "Damay seet kredi ngir jënd jumtukaay" }
         ],
         dialogue: [
             { who: "A", en: "What are you growing this year?", fr: "Que cultivez-vous cette année ?", wo: "Lan ngay bey ren ?" },
@@ -3383,10 +3395,15 @@ const GENERAL_EXTRA = {
             { who: "A", en: "Are your tomatoes fresh?", fr: "Vos tomates sont-elles fraîches ?", wo: "Ndax sa tamaate yi bees nañu ?" },
             { who: "B", en: "Yes, I picked them this morning.", fr: "Oui, je les ai cueillies ce matin.", wo: "Waaw, tay suba laa leen witt." },
             { who: "A", en: "How much for one kilo?", fr: "Combien pour un kilo ?", wo: "Ñaata la benn kilo ?" },
-            { who: "B", en: "Five hundred francs.", fr: "Cinq cents francs.", wo: "Juróomi téeméeri farã." }
+            { who: "B", en: "Five hundred francs.", fr: "Cinq cents francs.", wo: "Juróomi téeméeri farã." },
+            { who: "A", en: "I have two tons of millet.", fr: "J'ai deux tonnes de mil.", wo: "Am naa ñaari tonni dugub." },
+            { who: "B", en: "What is the price per kilo?", fr: "Quel est le prix au kilo ?", wo: "Ñaata la kilo bi ?" },
+            { who: "A", en: "Two hundred francs.", fr: "Deux cents francs.", wo: "Ñaari téeméeri farã." },
+            { who: "B", en: "Okay, I will buy everything.", fr: "D'accord, j'achète tout.", wo: "Baax na, dinaa jënd lépp." }
         ],
         quiz: [{ q: "I ___ millet.", o: ["grow", "grows", "growing"], a: 0, why: "« I grow » : avec « I », le verbe reste à la forme de base." }, { q: "The soil is ___ .", o: ["dry", "dryly", "drought"], a: 0, why: "« dry » est l'adjectif pour sec." }, { q: "My cows ___ in the field.", o: ["are", "is", "am"], a: 0, why: "« cows » est pluriel, donc « are »." },
-            { q: "I ___ the weeds.", o: ["remove", "removes", "removing"], a: 0, why: "« I remove » : avec « I », le verbe reste à la forme de base." }, { q: "The cow ___ milk.", o: ["gives", "give", "giving"], a: 0, why: "Avec « the cow » (il/elle), on ajoute -s : « gives »." }, { q: "I ___ ten goats.", o: ["have", "has", "having"], a: 0, why: "« I have » : avec « I », on dit « have »." }]
+            { q: "I ___ the weeds.", o: ["remove", "removes", "removing"], a: 0, why: "« I remove » : avec « I », le verbe reste à la forme de base." }, { q: "The cow ___ milk.", o: ["gives", "give", "giving"], a: 0, why: "Avec « the cow » (il/elle), on ajoute -s : « gives »." }, { q: "I ___ ten goats.", o: ["have", "has", "having"], a: 0, why: "« I have » : avec « I », on dit « have »." },
+            { q: "I want to ___ a sack of seeds.", o: ["buy", "buying", "bought"], a: 0, why: "Après « want to », on met le verbe à l'infinitif." }, { q: "The harvest ___ ready.", o: ["is", "are", "am"], a: 0, why: "« The harvest » est singulier, donc « is »." }, { q: "What is the price ___ kilo?", o: ["per", "for", "by"], a: 0, why: "« per kilo » signifie au kilo." }]
     }
 };
 GENERAL_THEMES.forEach(t => {
