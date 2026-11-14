@@ -29,7 +29,7 @@
   var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
 
   var EX = [
-    ["ielts", "🇬🇧", "IELTS", "Visa A1"], ["toefl", "🎓", "TOEFL", "Speaking"],
+    ["visa", "🛂", "Visa", "Consulat"], ["ielts", "🇬🇧", "IELTS", "Visa A1"], ["toefl", "🎓", "TOEFL", "Speaking"],
     ["toeic", "💼", "TOEIC", "Speaking"], ["duolingo", "🦉", "Duolingo", "English Test"],
     ["cambridge_a2", "📘", "Cambridge A2", "Key"], ["cambridge_b1", "📗", "Cambridge B1", "Preliminary"],
     ["pte", "🧪", "PTE", "Academic"], ["business", "🎯", "Business", "Simulation pro"]
