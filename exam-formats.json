@@ -344,6 +344,101 @@
       "Explain how social media can help or harm students.",
       "What do you think will happen to books in the future?"
      ]
+    },
+    {
+     "id": "voyage",
+     "titre": "Voyages et transport",
+     "repeat": [
+      "The bus leaves at eight.",
+      "Please show your passport at the gate.",
+      "The flight to Paris has been delayed by an hour.",
+      "Passengers should arrive at the airport two hours before departure.",
+      "If you miss your train, you can exchange your ticket at the desk.",
+      "The traveller asked whether the hotel was close to the station.",
+      "Although the road was busy, we arrived at the airport on time."
+     ],
+     "question": [
+      "What is your favorite way to travel, and why?",
+      "Some people prefer to travel alone, while others prefer to travel with friends. Which do you prefer, and why?",
+      "Explain why it is important to plan a trip before you leave.",
+      "Tell me about a trip that you remember well."
+     ]
+    },
+    {
+     "id": "famille",
+     "titre": "Famille et amis",
+     "repeat": [
+      "My sister lives nearby.",
+      "We usually have dinner together on Sundays.",
+      "My cousin is visiting us next week.",
+      "Family members often help each other in difficult times.",
+      "I called my friend because I wanted to invite her to the party.",
+      "He said that he would visit his grandparents during the holidays.",
+      "Even though we live far apart, we talk to each other every weekend."
+     ],
+     "question": [
+      "Who is the most important person in your life, and why?",
+      "Some people prefer to live near their family, while others prefer to live far away. Which do you prefer, and why?",
+      "Explain why it is important to spend time with your family.",
+      "Tell me about a time when a friend helped you."
+     ]
+    },
+    {
+     "id": "argent",
+     "titre": "Argent et achats",
+     "repeat": [
+      "The price is too high.",
+      "I would like to pay by card.",
+      "The shop offers a discount for students.",
+      "Customers can return an item within seven days with the receipt.",
+      "She compared the prices before she decided to buy the phone.",
+      "The manager explained that the sale would end on Saturday.",
+      "Although the shirt was cheap, it was made of good quality cotton."
+     ],
+     "question": [
+      "Do you prefer to save money or to spend it, and why?",
+      "Some people prefer to buy things online, while others prefer to go to a shop. Which do you prefer, and why?",
+      "Explain why it is important to make a budget.",
+      "Tell me about something that you bought and were happy with."
+     ]
+    },
+    {
+     "id": "environnement",
+     "titre": "Environnement et météo",
+     "repeat": [
+      "It is very hot today.",
+      "We should not throw rubbish on the street.",
+      "The rainy season starts in July in Senegal.",
+      "Many cities are planting trees to reduce the heat.",
+      "The government asked people to save water during the dry season.",
+      "Scientists believe that the climate is changing faster than before.",
+      "If we recycle more plastic, our beaches will be cleaner."
+     ],
+     "question": [
+      "What is your favorite season, and why?",
+      "Some people think that the weather affects their mood. Do you agree or disagree, and why?",
+      "Explain why it is important to protect the environment.",
+      "Tell me about a time when the weather changed your plans."
+     ]
+    },
+    {
+     "id": "culture",
+     "titre": "Culture et loisirs",
+     "repeat": [
+      "I love listening to music.",
+      "The festival takes place every year in December.",
+      "The museum is open from nine to five.",
+      "Young people often use social media to share photos and videos.",
+      "He joined a football team because he wanted to make new friends.",
+      "The teacher suggested that we read a book every month.",
+      "Although the film was long, the audience enjoyed every minute."
+     ],
+     "question": [
+      "What do you like to do in your free time, and why?",
+      "Some people prefer to watch films at home, while others prefer to go to the cinema. Which do you prefer, and why?",
+      "Explain why it is important to learn about other cultures.",
+      "Tell me about a festival or event that you enjoyed."
+     ]
     }
    ],
    "remplace_ancien": true
