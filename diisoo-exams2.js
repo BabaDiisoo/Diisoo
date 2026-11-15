@@ -223,6 +223,31 @@
         });
       });
     } catch (e) { console.warn("[diisoo] import examens", e); }
+    try { deriver(); } catch (e) { console.warn("[diisoo] derive examens", e); }
+  }
+  /* Tests supplementaires : chaque theme du vieux jeu (27 themes) devient un test pour TOEFL, Cambridge A2/B1 et Duolingo */
+  var SCN = { neighbours: "family", family: "family", work: "office", shopping: "shop", travel: "airport", health: "gym", food: "kitchen", shopping_food: "market", transport_travel: "bus", health_emergencies: "gym", family_reunion: "airport", airport: "airport", hotel: "cafe", money: "shop", clothes: "shop", friends: "cafe", phone: "tech", jobs: "office", restaurant: "cafe", weekend: "beach", festivals: "market", farming: "market", bank: "office", school: "classroom", home: "kitchen", holidays: "beach", "free-time": "gym" };
+  function deriver() {
+    if (typeof TEST_BANK === "undefined" || !REG || REG._der) return;
+    REG._der = true;
+    var ie = REG.examens.ielts, rec = (ie && ie.enregistrements) || {};
+    TEST_BANK.forEach(function (t) {
+      var ph = {}; (t.phases || []).forEach(function (p) { ph[p.id] = p.questions || []; });
+      var th = t.topic, tl = th.toLowerCase().replace(/&/g, "and"), sc = SCN[t.id] || "cafe";
+      var q1 = (ph["1b"] || []).slice(0, 5), q2 = ph["2b"] || [], id = "x-" + t.id;
+      var sens = String(rec[t.id] || "").split(/(?<=[.!?])\s+/).filter(function (x) { return x.split(/\s+/).length >= 3; }).slice(0, 7);
+      function add(k, test) { var ex = REG.examens[k]; if (!ex || ex.tests.some(function (x) { return x.id === id; })) return; test.id = id; test.titre = th; ex.tests.push(test); }
+      add("toefl", { repeat: sens.length >= 3 ? sens : q1,
+        question: ["What do you think about " + tl + "? Explain your answer.", q2[0] || "Why is " + tl + " important?", q2[1] || "Tell me about your experience with " + tl + ".", "Tell me about a time related to " + tl + ". What happened?"] });
+      add("cambridge_a2", { p1: q1.concat(q2.slice(0, 1)).slice(0, 6),
+        p2: [{ scene: sc, consigne: "Look at the picture. Do you like " + tl + "? Say why." }, { scene: sc, consigne: "Look at the picture. What can you see? What are the people doing?" }] });
+      add("cambridge_b1", { p1: q1.concat(["Tell me about your experience with " + tl + "."]).slice(0, 6),
+        p2: [{ scene: sc, consigne: "Talk about the photo: where are the people, what are they doing, and why do you think they are there?" }],
+        p3: ["You and a friend are talking about " + tl + ". Talk about two ideas and say which one is best."],
+        p4: q2.slice(0, 2).concat(["How has " + tl + " changed in your country?", "Do you think " + tl + " is important for young people? Why?"]) });
+      add("duolingo", { photo: [{ scene: sc }], lire: ["Describe a time related to " + tl + ". What did you do, and how did you feel?"],
+        inter: q1.concat(q2).slice(0, 6), echant: ["Talk about " + tl + " and explain why it matters in your life."] });
+    });
   }
   function nbReel(ex, t) {
     var test = ex.tests[0], b = test[t.banque || t.type];
