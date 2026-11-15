@@ -6460,6 +6460,12 @@ try{
         p2: [{ scene: sc, consigne: "Talk about the photo: where are the people, what are they doing, and why do you think they are there?" }],
         p3: ["You and a friend are talking about " + tl + ". Talk about two ideas and say which one is best."],
         p4: q2.slice(0, 2).concat(["How has " + tl + " changed in your country?", "Do you think " + tl + " is important for young people? Why?"]) });
+      var h = Math.ceil(sens.length / 2), ra1 = sens.slice(0, h).join(" "), ra2 = sens.slice(h).join(" "), sc2 = { office: "tech", tech: "office", shop: "market", market: "shop", cafe: "kitchen", kitchen: "cafe", family: "kitchen", beach: "family", gym: "classroom", classroom: "gym", bus: "airport", airport: "bus" }[sc] || "cafe";
+      if (sens.length >= 4 && ra1.split(/\s+/).length >= 8 && ra2.split(/\s+/).length >= 8) add("toeic", {
+        readaloud: [ra1, ra2], describe: [{ scene: sc }, { scene: sc2 }],
+        q15: [q1[0] || "Do you like " + tl + "?", q1[1] || "Tell me about " + tl + "."], q30: [q2[0] || "Why is " + tl + " important?"],
+        info: [{ doc: { titre: "Short text · " + th, lignes: sens }, questions: ["Who is speaking in this text?", "What is the main idea of the text?", "Could you give me more details about what is described in the text?"] }],
+        opinion: ["What do you think about " + tl + "? Give reasons and examples to support your opinion."] });
       add("duolingo", { photo: [{ scene: sc }], lire: ["Describe a time related to " + tl + ". What did you do, and how did you feel?"],
         inter: q1.concat(q2).slice(0, 6), echant: ["Talk about " + tl + " and explain why it matters in your life."] });
     });
