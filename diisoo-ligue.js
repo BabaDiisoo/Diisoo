@@ -120,7 +120,7 @@
     envoyer(true).then(classement).then(function (r) { etat = r; majCarte(); dessiner(bx, r); }).catch(function () { dessiner(bx, null); });
   }
 
-  window.DiisooLigue = { ouvrir: ouvrir, xpSemaine: xpSemaine };
+  window.DiisooLigue = { ouvrir: ouvrir, xpSemaine: xpSemaine, etat: function () { return etat; } };
   try { new MutationObserver(function () { if (!$("dii-ligue-c")) monterCarte(); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
   setTimeout(monterCarte, 800);
 })();
