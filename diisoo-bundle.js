@@ -6442,6 +6442,7 @@ try{
   }
   /* Tests supplementaires : chaque theme du vieux jeu (27 themes) devient un test pour TOEFL, Cambridge A2/B1 et Duolingo */
   var SCN = { neighbours: "family", family: "family", work: "office", shopping: "shop", travel: "airport", health: "gym", food: "kitchen", shopping_food: "market", transport_travel: "bus", health_emergencies: "gym", family_reunion: "airport", airport: "airport", hotel: "cafe", money: "shop", clothes: "shop", friends: "cafe", phone: "tech", jobs: "office", restaurant: "cafe", weekend: "beach", festivals: "market", farming: "market", bank: "office", school: "classroom", home: "kitchen", holidays: "beach", "free-time": "gym" };
+  var ASQ = [{ q: "What do you call the person who teaches you at school?", a: ["teacher", "professor"] }, { q: "What season comes after summer?", a: ["autumn", "fall"] }, { q: "What do you use to write on paper?", a: ["pen", "pencil"] }, { q: "Which is bigger, an elephant or a cat?", a: ["elephant"] }, { q: "What do you call the place where you buy medicine?", a: ["pharmacy", "chemist"] }, { q: "What is the opposite of hot?", a: ["cold"] }, { q: "How many days are there in a week?", a: ["seven", "7"] }, { q: "What do you drink when you are thirsty?", a: ["water"] }, { q: "What colour is the sky on a clear day?", a: ["blue"] }, { q: "What do you call a doctor who takes care of children?", a: ["pediatrician", "paediatrician"] }, { q: "What do you wear on your feet?", a: ["shoes", "socks", "sandals"] }, { q: "Which month comes after March?", a: ["april"] }, { q: "What is the place where you borrow books?", a: ["library"] }, { q: "What do you call the money you pay to a landlord each month?", a: ["rent"] }, { q: "Which animal gives us milk?", a: ["cow", "goat", "sheep"] }, { q: "What do you use to call a friend?", a: ["phone", "telephone", "mobile"] }, { q: "How many minutes are there in an hour?", a: ["sixty", "60"] }, { q: "What is the opposite of expensive?", a: ["cheap"] }, { q: "What do farmers grow in a field?", a: ["crops", "vegetables", "rice", "millet", "corn"] }, { q: "Where do you wait for a plane?", a: ["airport"] }, { q: "What do we call the day after today?", a: ["tomorrow"] }, { q: "What do you use to cut paper?", a: ["scissors"] }, { q: "What is the capital city of Senegal?", a: ["dakar"] }, { q: "What do you do with a key?", a: ["open", "lock", "unlock"] }];
   function deriver() {
     if (typeof TEST_BANK === "undefined" || !REG || REG._der) return;
     REG._der = true;
@@ -6466,6 +6467,15 @@ try{
         q15: [q1[0] || "Do you like " + tl + "?", q1[1] || "Tell me about " + tl + "."], q30: [q2[0] || "Why is " + tl + " important?"],
         info: [{ doc: { titre: "Short text · " + th, lignes: sens }, questions: ["Who is speaking in this text?", "What is the main idea of the text?", "Could you give me more details about what is described in the text?"] }],
         opinion: ["What do you think about " + tl + "? Give reasons and examples to support your opinion."] });
+      if (sens.length >= 4 && ra1.split(/\s+/).length >= 8 && ra2.split(/\s+/).length >= 8) {
+        var hv = 0; for (var hi = 0; hi < t.id.length; hi++) hv = (hv * 31 + t.id.charCodeAt(hi)) % 997;
+        var gr = function (titre, labels, k) { return { graphique: { titre: titre + " (example data)", labels: labels, valeurs: labels.map(function (_, i) { return 4 + ((hv * (k + 3) + i * 7 * (k + 1)) % 17); }) } }; };
+        var shorts = ASQ.slice((hv % ASQ.length)).concat(ASQ).slice(0, 8);
+        add("pte", { intro: ["Introduce yourself. Include your name, where you are from, and your interests. Then say what you think about " + tl + "."],
+          readaloud: [ra1, ra2], repeat: sens.slice(0, 6),
+          describe: [gr("People interested in " + tl + " by weekday", ["Mon", "Tue", "Wed", "Thu", "Fri"], 1), gr("Interest in " + tl + " by month", ["Jun", "Jul", "Aug", "Sep", "Oct"], 2), gr("Interest in " + tl + " by age group", ["10-19", "20-29", "30-39", "40-49"], 3)],
+          retell: [{ t: ra1, cles: clesDe(ra1) }, { t: ra2, cles: clesDe(ra2) }], short: shorts });
+      }
       add("duolingo", { photo: [{ scene: sc }], lire: ["Describe a time related to " + tl + ". What did you do, and how did you feel?"],
         inter: q1.concat(q2).slice(0, 6), echant: ["Talk about " + tl + " and explain why it matters in your life."] });
     });
