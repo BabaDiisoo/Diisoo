@@ -39,8 +39,6 @@
     "#biz-grid .bz-ic{font-size:24px;line-height:1}" +
     "#biz-grid .bz-nm{font-size:13px;font-weight:700;line-height:1.2}" +
     "#biz-grid .bz-n{display:block;font-size:11px;font-weight:400;color:#A69C86;margin-top:2px}" +
-    "#biz-grid button.bz-m{grid-column:1/-1;border-color:#3FAE74}" +
-    "#biz-grid button.bz-t{grid-column:1/-1;border-color:#F3A94E;background:#1B1A22}" +
     "body:has(#screen-business:not(.hidden)) [role=main]{min-height:0!important;padding:60px 14px 10px!important;justify-content:flex-start!important}" +
     "body:has(#bizback-sec) #screen-business>div.text-center{display:none!important}" +
     "body:has(#bizstep) #screen-business>div.text-center,body:has(#bizstep) #fx-biz-btn,body:has(#bizback-sec) #fx-biz-btn,body:has(#bizback-sec) #bizback-lvl,body:has(#bizback-sec) #secteurs-zone{display:none!important}" +
@@ -119,8 +117,8 @@
       if (estTour(k)) { nbT += nb; return; }
       g.appendChild(tuile(BUSINESS_SECTORS[k].icon, BUSINESS_SECTORS[k].titre, nb + " phrases", function () { lecon(k); }));
     });
-    if (nbT) g.appendChild(tuile("🏝️", "Tourisme", "Hôtel, restaurant, guide, taxi, plage... · " + nbT + " phrases", function () { tourisme(n); }, "bz-t"));
-    if (marchesDispo()) g.appendChild(tuile("🛒", "Anglais des marchés", "Colobane, Sandaga, Centenaire, Guangzhou", ouvrirMarches, "bz-m"));
+    if (nbT) g.appendChild(tuile("🏝️", "Tourisme", nbT + " phrases", function () { tourisme(n); }, "bz-t"));
+    if (marchesDispo()) g.appendChild(tuile("🛒", "Anglais des marchés", "4 marchés", ouvrirMarches, "bz-m"));
     insererAvant(g);
     haut();
   }

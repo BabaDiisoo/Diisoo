@@ -79,7 +79,7 @@
     var ref = $("dii-auj"); if (!ref || !ref.parentNode) return;
     var c = document.createElement("button"); c.type = "button"; c.id = "dii-ligue-c";
     c.onclick = ouvrir; ref.parentNode.insertBefore(c, ref.nextSibling);
-    c.style.order = "4"; majCarte();
+    c.style.order = "5"; majCarte();
     envoyer(false).then(classement).then(function (r) { etat = r; majCarte(); }).catch(function () {});
   }
 
