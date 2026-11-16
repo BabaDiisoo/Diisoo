@@ -26,7 +26,7 @@
     "diisoo-orga.js",
     "diisoo-wamic.js",
     "diisoo-aide-wolof.js",
-    "diisoo-biz.js", "diisoo-biz-plus.js", "diisoo-colobane-plus.js", "diisoo-mission-colobane.js", "diisoo-sandaga-plus.js", "diisoo-mission-sandaga.js", "diisoo-chine-plus.js", "diisoo-mission-chine.js", "diisoo-agriculture-plus.js", "diisoo-mission-agribiz.js", "diisoo-hotel-plus.js", "diisoo-mission-hotel.js", "diisoo-restaurant-plus.js", "diisoo-mission-restaurant.js", "diisoo-guide-plus.js", "diisoo-mission-guide.js", "diisoo-transport-plus.js", "diisoo-mission-transport.js", "diisoo-bazar-plus.js", "diisoo-mission-bazar.js", "diisoo-electronique-plus.js", "diisoo-mission-electronique.js",
+    "diisoo-biz.js", "diisoo-biz-plus.js", "diisoo-colobane-plus.js", "diisoo-mission-colobane.js", "diisoo-sandaga-plus.js", "diisoo-mission-sandaga.js", "diisoo-chine-plus.js", "diisoo-mission-chine.js", "diisoo-agriculture-plus.js", "diisoo-mission-agribiz.js", "diisoo-hotel-plus.js", "diisoo-mission-hotel.js", "diisoo-restaurant-plus.js", "diisoo-mission-restaurant.js", "diisoo-guide-plus.js", "diisoo-mission-guide.js", "diisoo-transport-plus.js", "diisoo-mission-transport.js", "diisoo-artisanat-plus.js", "diisoo-mission-artisanat.js", "diisoo-bazar-plus.js", "diisoo-mission-bazar.js", "diisoo-electronique-plus.js", "diisoo-mission-electronique.js",
     "diisoo-passage.js",
     "diisoo-stable.js",
     "diisoo-tourisme.js",
