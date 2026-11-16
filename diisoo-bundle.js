@@ -4743,6 +4743,301 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-guide.js",e);}
 
 try{
+/* ---- diisoo-transport-plus.js ---- */
+/* diisoo-tour_transport-plus.js v1 : Business, Transport (mode et beauté) enrichi
+   Wolof des phrases existantes complété, +15 phrases, 1 dialogue. Wolof relu par Babacar.
+   Desactivable : ?tour_transport=0 */
+(function () {
+  "use strict";
+  if (window.__diisooTransportPlus || /[?&]tour_transport=0/.test(location.search)) return;
+  var C, D;
+  try { C = CHINA_TRADE_WOLOF; D = BUSINESS_DIALOGUES; } catch (e) { return; }
+  if (!C || !C.tour_transport) return;
+  window.__diisooTransportPlus = true;
+  var V = [
+{
+"niveau": "debutant",
+"en": "Where is the bus stop?",
+"fr": "Où est l'arrêt de bus ?",
+"wo": "Fan la are bi nekk ?"
+},
+{
+"niveau": "debutant",
+"en": "How much is the ticket?",
+"fr": "Combien coûte le billet ?",
+"wo": "Ñaata la tike bi ?"
+},
+{
+"niveau": "debutant",
+"en": "Is this the bus to Dakar?",
+"fr": "C'est le bus pour Dakar ?",
+"wo": "Ndax kaar bii dafay dem Ndakaaru ?"
+},
+{
+"niveau": "debutant",
+"en": "Please go slowly.",
+"fr": "Roulez doucement, s'il vous plaît.",
+"wo": "Doxal ndànk, bu la neexee."
+},
+{
+"niveau": "debutant",
+"en": "I am here.",
+"fr": "Je suis ici.",
+"wo": "Maa ngi fii."
+},
+{
+"niveau": "intermediaire",
+"en": "What time does the bus leave?",
+"fr": "À quelle heure part le bus ?",
+"wo": "Ban waxtu la kaar bi di dem ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Can you drop me at the market?",
+"fr": "Vous pouvez me déposer au marché ?",
+"wo": "Ndax mën nga ma wàcce ci marse bi ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Is there space for my luggage?",
+"fr": "Il y a de la place pour mes bagages ?",
+"wo": "Ndax am na palaas ngir sama bagaas ?"
+},
+{
+"niveau": "intermediaire",
+"en": "How much is a taxi to the airport?",
+"fr": "Combien coûte un taxi jusqu'à l'aéroport ?",
+"wo": "Ñaata la taksi bi ba ci aeroport bi ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Please open the trunk.",
+"fr": "Ouvrez le coffre, s'il vous plaît.",
+"wo": "Ubbil mal bi, bu la neexee."
+},
+{
+"niveau": "avance",
+"en": "I booked a car for tomorrow morning. Is it ready?",
+"fr": "J'ai réservé une voiture pour demain matin. Elle est prête ?",
+"wo": "Reserwe naa oto ngir suba ci suba. Ndax pare na ?"
+},
+{
+"niveau": "avance",
+"en": "Can you take the highway? I am in a hurry.",
+"fr": "Vous pouvez prendre l'autoroute ? Je suis pressé.",
+"wo": "Ndax mën nga jël otorut bi ? Dama jamp."
+},
+{
+"niveau": "avance",
+"en": "The car broke down. Can you send a mechanic?",
+"fr": "La voiture est tombée en panne. Vous pouvez envoyer un mécanicien ?",
+"wo": "Oto bi dafa yàqu. Ndax mën nga yónnee meekaanisiyeŋ ?"
+},
+{
+"niveau": "avance",
+"en": "I would like a written quote for a full day.",
+"fr": "Je voudrais un devis écrit pour une journée complète.",
+"wo": "Dama bëgg a am devis bu ñu bind ngir benn bés bu mat."
+},
+{
+"niveau": "avance",
+"en": "We lost our bags. Where is the lost-and-found office?",
+"fr": "Nous avons perdu nos bagages. Où est le bureau des objets trouvés ?",
+"wo": "Sunu bagaas yi dañu sànku. Fan la biro bu yëf yi ñu for nekk ?"
+}
+];
+  var L = [
+{
+"role": "client",
+"en": "Hello. I need a taxi for the whole day.",
+"fr": "Bonjour. Il me faut un taxi pour toute la journée.",
+"wo": "Jàmm nga fanaan. Dama soxla taksi ngir bés bi bépp.",
+"scene": "🚖 Louer un taxi pour la journée"
+},
+{
+"role": "chauffeur",
+"en": "Yes, where do you want to go?",
+"fr": "Oui, vous voulez aller où ?",
+"wo": "Waaw, fan nga bëgg a dem ?"
+},
+{
+"role": "client",
+"en": "Dakar, then Gorée, then back to Thiès.",
+"fr": "Dakar, puis Gorée, puis retour à Thiès.",
+"wo": "Ndakaaru, gannaaw gi Gorée, ba noppi dellusi Cees."
+},
+{
+"role": "chauffeur",
+"en": "That is a long day. It is sixty thousand francs.",
+"fr": "C'est une longue journée. C'est soixante mille francs.",
+"wo": "Bés bu gudd la. Juróom-benn-fukki junni farã la."
+},
+{
+"role": "client",
+"en": "It is expensive. Can you do fifty thousand?",
+"fr": "C'est cher. Vous pouvez faire cinquante mille ?",
+"wo": "Dafa seer. Ndax mën nga def juróom-fukki junni ?"
+},
+{
+"role": "chauffeur",
+"en": "Okay, fifty-five thousand, with the fuel included.",
+"fr": "D'accord, cinquante-cinq mille, carburant compris.",
+"wo": "Waaw, juróom-fukki junni ak juróomi junni, boole ci gaswaal bi."
+},
+{
+"role": "client",
+"en": "Good. What time can we leave tomorrow?",
+"fr": "Bien. On peut partir à quelle heure demain ?",
+"wo": "Baax na. Ban waxtu lanu mën a dem suba ?"
+},
+{
+"role": "chauffeur",
+"en": "At seven o'clock, in front of your hotel.",
+"fr": "À sept heures, devant votre hôtel.",
+"wo": "Ci juróom-ñaari waxtu, ci kanamu sa otel."
+}
+];
+  var FIX = {"Turn left": "Jàddal ci càmmoñ.", "Turn right": "Jàddal ci ndey-joor.", "Please use the meter": "Jëfandikool kompteer bi, bu la neexee.", "Can you wait for me for one hour?": "Ndax mën nga ma xaar benn waxtu ?", "How long does it take to get to Saly?": "Ñaata waxtu lay jël ba àgg Saly ?", "The traffic is heavy at this time": "Yoon wi dafa fees ak oto ci waxtu wii.", "Could you put the air conditioning on?": "Ndax mën nga taal klimatisëer bi ?", "The fare to the city centre is five thousand francs": "Njëg li ba ci digg dëkk bi mooy juróomi junni farã.", "I need a receipt, please": "Dama soxla resi, bu la neexee.", "I would like to rent a car with a driver for three days.": "Dama bëgg a luwaas benn oto ak soofër ngir ñetti fan.", "Is fuel included in the daily price?": "Ndax gaswaal bokk na ci njëgu bés bi ?", "What is the deposit and is it refundable?": "Ñaata la koosoŋ bi te ndax dañu koy delloo ?", "We can arrange a shuttle for your group from the hotel to the airport.": "Mën nanu la defal nawett ngir sa gurup, jóge ci otel bi ba ci aeroport bi.", "I have to report a small accident to the insurance company.": "War naa xamal asirans bi ci benn aksidaŋ bu ndaw.", "Please check the tyres and the spare wheel before we leave.": "Seetal pnë yi ak rëw de sekuur bi balaa nuy dem, bu la neexee.", "For a long trip to Ziguinchor, I recommend leaving very early.": "Ngir tukki bu gudd bi ba Siguinsoor, damay digal nga dem suba teel."};
+  C.tour_transport.vocab.forEach(function (v) { if (FIX[v.en]) v.wo = FIX[v.en]; });
+  var ORDRE = { debutant: 0, intermediaire: 1, avance: 2 };
+  var deja = {}; C.tour_transport.vocab.forEach(function (v) { deja[v.en] = 1; });
+  V.forEach(function (v) { if (!deja[v.en]) { C.tour_transport.vocab.push(v); deja[v.en] = 1; } });
+  var tri = C.tour_transport.vocab.map(function (v, i) { return [v, i]; });
+  tri.sort(function (a, b) { var x = ORDRE[a[0].niveau], y = ORDRE[b[0].niveau]; return (x === y ? a[1] - b[1] : x - y); });
+  C.tour_transport.vocab.length = 0; tri.forEach(function (t) { C.tour_transport.vocab.push(t[0]); });
+  D.tour_transport = D.tour_transport || [];
+  var vus = {}; D.tour_transport.forEach(function (l) { vus[l.en] = 1; });
+  L.forEach(function (l) { if (!vus[l.en]) D.tour_transport.push(l); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-transport-plus.js",e);}
+
+try{
+/* ---- diisoo-mission-transport.js ---- */
+/* diisoo-mission-transport.js v1 : Mission « Conduire un client »
+   L'app joue le vendeur (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Transport ».
+   Bouton place en haut du secteur « Transport » (Business). Essai : https://diisoo.sn/?mission=transport */
+(function () {
+  "use strict";
+  if (window.DiisooMissionTransport) return;
+  var Q = [
+    { q: "Hello. Can you take me to Saly, please?", kw: /yes|sure|saly|of course|how many|people|take|ok|okay|where|go/i, m: "Yes, of course. How many people are you?" },
+    { q: "It is just me and one suitcase. How much is it?", kw: /thousand|francs|\d|price|fare|cost|ride|it is/i, m: "It is fifteen thousand francs." },
+    { q: "That is too expensive. Can you lower the price?", kw: /lower|price|last|okay|ok|thousand|francs|\d|discount|best|offer|twelve/i, m: "Okay, twelve thousand. That is my last price." },
+    { q: "Okay. How long does it take to get there?", kw: /hour|hours|minutes|about|one|two|long|traffic|arrive|\d/i, m: "It takes about one hour." },
+    { q: "Please stop here. Can I have a receipt?", kw: /yes|sure|receipt|stop|here|of course|ok|okay|here you are|thank/i, m: "Yes, of course. Here is your receipt." }
+  ];
+
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mtr{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mtr .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mtr .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mtr .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mtr button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mtr .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mtr .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mtr .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mtr .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mtr .m.on{animation:mgq 1s infinite}@keyframes mgq{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mtr .ok{color:#25D366}#mtr .or{color:#FFAA3C}" +
+    "#mtr-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mtr-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mtr")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mtr";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🚖 Transport · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mtr-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mtr-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mtr-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mtr-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mtr-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mtr-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mtr-r"), mic = document.getElementById("mtr-mic"), nx = document.getElementById("mtr-next");
+      document.getElementById("mtr-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mtr-x").onclick = function () { o.remove(); };
+      document.getElementById("mtr-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["transport"]) BADGES["transport"] = { icon: "🚖", label: "Transport", desc: "Course de taxi réussie à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("transport"); } catch (e) {}
+      }
+      noter("mission_transport", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🚖 Mission Transport</div><div class="q">' + (ok ? "Bien joué ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Transport » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du secteur Transport et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mtr-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mtr-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mtr-x2" type="button">Fermer</button>';
+      document.getElementById("mtr-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mtr-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mtr-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi ma course de taxi en anglais sur Diisoo 🚖 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("business-content");
+    if (!box || box.classList.contains("hidden") || document.getElementById("mtr-btn")) return;
+    var id = ""; try { id = businessModule; } catch (e) {}
+    if (id !== "tour_transport") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mtr-btn";
+    b.innerHTML = '<span style="font-size:22px">🚖</span><span>Mission : conduire un client<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    var h = box.querySelector("h4"); if (h && h.nextSibling) box.insertBefore(b, h.nextSibling); else box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("business-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true, attributes: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionTransport = { ouvrir: ouvrir };
+  if (/[?&]mission=transport/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-transport.js",e);}
+
+try{
 /* ---- diisoo-bazar-plus.js ---- */
 /* diisoo-bazar-plus.js v1 : Business, Bazar (mode et beauté) enrichi
    +15 phrases et un dialogue. Wolof relu par Babacar.
