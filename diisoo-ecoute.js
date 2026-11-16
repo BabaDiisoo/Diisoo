@@ -34,7 +34,17 @@
       ["I sell eggs and chickens. My farm is near Thiès, and I deliver to the market every Saturday.", "When does he deliver to the market?", ["Every Friday", "Every Saturday", "Every Sunday"], 1],
       ["Sorry, I cannot lower the price. But if you buy ten kilos, I can give you one kilo free.", "What do you get if you buy ten kilos?", ["A lower price", "One kilo free", "A free bag"], 1],
       ["Please remember to drink water. It is very hot in the field today.", "Why should you drink water?", ["It is hot", "It is late", "It is raining"], 0],
-      ["Attention please. The truck with vegetables leaves for Dakar at six in the morning.", "What time does the truck leave?", ["At five", "At six", "At seven"], 1]
+      ["Attention please. The truck with vegetables leaves for Dakar at six in the morning.", "What time does the truck leave?", ["At five", "At six", "At seven"], 1],
+      ["Good evening. My name is Ibrahima. I am a taxi driver. I work every day except Sunday.", "When does he not work?", ["On Saturday", "On Sunday", "On Monday"], 1],
+      ["Excuse me, is this seat free? Yes, please sit down.", "What does the person ask?", ["If the seat is free", "If the bus is late", "If the door is open"], 0],
+      ["The water is cold, but the soup is hot. Be careful.", "What is hot?", ["The water", "The soup", "The rice"], 1],
+      ["My birthday is in March. I will be thirty years old.", "How old will she be?", ["Twenty", "Thirty", "Forty"], 1],
+      ["I need a ticket to Saint-Louis for tomorrow morning, please.", "When does he want to travel?", ["Tomorrow morning", "Tomorrow evening", "Today"], 0],
+      tf("The school is near my house. I walk there every morning.", "He goes to school by bus.", false),
+      ["Mama is cooking rice with chicken. Dinner will be ready at eight.", "What time is dinner?", ["At seven", "At eight", "At nine"], 1],
+      ["Please turn off your phone. The film is starting.", "What must you do?", ["Turn off the phone", "Open the door", "Sit near the screen"], 0],
+      ["I'm sorry, we don't have any more bread. Would you like biscuits?", "What does the shop offer?", ["Bread", "Biscuits", "Milk"], 1],
+      ["It is a sunny day today, but tomorrow it will rain.", "What will the weather be tomorrow?", ["Sunny", "Rainy", "Windy"], 1]
     ] },
     { nom: "Intermédiaire", ic: "🌿", rate: 0.92, q: [
       ["Hi, this is Mr Sow from the travel agency. Your visa appointment is on Thursday at ten thirty. Please bring your passport and two photos.", "What should you bring?", ["Passport and two photos", "Passport and a letter", "Two photos and money"], 0],
@@ -51,7 +61,22 @@
       ["I'd like to return this shirt. It's too small, and I don't have the receipt. I'm sorry, without a receipt we can only exchange it.", "What can the shop do?", ["Give a refund", "Exchange it", "Nothing at all"], 1],
       ["My farm produces tomatoes and onions. This year the harvest is bigger because we used a new irrigation system.", "Why is the harvest bigger?", ["A new irrigation system", "More land", "Cheaper seeds"], 0],
       ["The doctor says I must rest for three days and drink a lot of water. I can go back to work on Friday.", "When can he go back to work?", ["On Wednesday", "On Friday", "On Monday"], 1],
-      tf("Our company was created in 2015. Since then, we have opened four shops in Senegal and one in Mali.", "The company has five shops.", true)
+      tf("Our company was created in 2015. Since then, we have opened four shops in Senegal and one in Mali.", "The company has five shops.", true),
+      ["Hello, I'd like to book a table for four people at eight o'clock tonight. Under the name Diallo.", "How many people is the table for?", ["Two", "Four", "Eight"], 1],
+      ["We are looking for a shop assistant. The job is full-time, and you must speak English and French.", "Which languages must the person speak?", ["English and French", "French and Arabic", "English and Wolof"], 0],
+      ["I'm sorry I'm late. My bus broke down on the highway, and I had to wait for another one.", "Why was he late?", ["His bus broke down", "He missed the train", "He overslept"], 0],
+      ["The bank is open from eight to four on weekdays, and from eight to noon on Saturday.", "When does the bank close on Saturday?", ["At noon", "At four", "At eight"], 0],
+      ["Please fill in the form with your name, address and phone number, and sign at the bottom.", "What must you do at the bottom?", ["Write your phone number", "Sign the form", "Pay the fee"], 1],
+      tf("This hotel has a swimming pool and free breakfast, but there is no air conditioning.", "The rooms have air conditioning.", false),
+      ["The price includes the flight and two nights in a hotel, but meals are not included.", "What is NOT included?", ["The flight", "The hotel", "The meals"], 2],
+      ["I usually go to the gym three times a week, but this week I only went once because I was busy.", "How many times did he go this week?", ["Once", "Twice", "Three times"], 0],
+      ["Our shop will be closed on Monday for the national holiday and will reopen on Tuesday at nine.", "When will the shop reopen?", ["Monday at nine", "Tuesday at nine", "Wednesday at nine"], 1],
+      ["I'd like to send this parcel to France. How long will it take? About five working days, and it costs fifteen thousand francs.", "How long will it take?", ["Five working days", "Fifteen days", "Five weeks"], 0],
+      ["My brother lives in Italy. He works in a factory and calls us every Sunday evening.", "When does he call?", ["Every Saturday", "Every Sunday evening", "Every morning"], 1],
+      ["If it rains tomorrow, the match will be played on Sunday instead.", "When will the match be played if it rains?", ["Saturday", "Sunday", "Monday"], 1],
+      ["The product you ordered is out of stock. We can send a similar one, or refund you.", "What can the company do?", ["Send a similar one or refund you", "Only refund you", "Only wait"], 0],
+      tf("The course starts in September and lasts six months. Students must pay half the fee at registration.", "Students pay the full fee at registration.", false),
+      ["Could you tell me where I can buy a SIM card? There is a shop just opposite the post office.", "Where is the shop?", ["Opposite the post office", "Next to the bank", "Behind the station"], 0]
     ] },
     { nom: "Avancé", ic: "🌳", rate: 1.0, q: [
       ["Despite the heavy rain, the match went ahead as planned, although attendance was lower than organisers had hoped.", "What happened to the match?", ["It was cancelled", "It went ahead", "It was postponed"], 1],
@@ -68,7 +93,22 @@
       ["The clinic offers free consultations on Mondays, but medication must be paid for separately.", "What must patients pay for?", ["The consultation", "The medication", "The parking"], 1],
       ["To be eligible for the scholarship, candidates need a minimum overall score of six point five, with no band below six.", "What is the minimum overall score?", ["Six", "Six point five", "Seven"], 1],
       ["According to the forecast, temperatures will peak at forty degrees on Thursday before dropping sharply over the weekend.", "When will it be hottest?", ["On Thursday", "On Saturday", "On Sunday"], 0],
-      tf("She wouldn't have accepted the offer if the salary hadn't been raised.", "She accepted because the salary increased.", true)
+      tf("She wouldn't have accepted the offer if the salary hadn't been raised.", "She accepted because the salary increased.", true),
+      ["Although the course is demanding, most students find that the skills they acquire are well worth the effort.", "What do most students think?", ["The skills are worth the effort", "The course is too easy", "The course is too short"], 0],
+      ["Not only did the company cut costs, but it also managed to increase its output by fifteen percent.", "What happened to output?", ["It fell", "It rose by fifteen percent", "It stayed the same"], 1],
+      ["I was supposed to meet the supplier at noon, but he cancelled at the last minute, which put me in a difficult position.", "What did the supplier do?", ["Cancelled at the last minute", "Arrived early", "Changed the price"], 0],
+      ["The government has announced that fuel prices will be frozen until the end of the year.", "What will happen to fuel prices?", ["They will rise", "They will be frozen", "They will fall"], 1],
+      tf("Contrary to what many people believe, regular exercise does not require expensive equipment.", "Exercise needs expensive equipment.", false),
+      ["By the time the ambulance arrived, the patient had already been taken to the clinic by a neighbour.", "Who took the patient to the clinic?", ["The ambulance", "A neighbour", "A nurse"], 1],
+      ["We would be grateful if you could send us the invoice by the end of the week, so that payment can be processed on time.", "What do they ask for?", ["The invoice", "A discount", "A new contract"], 0],
+      ["Unlike his brother, who studied medicine, he chose to start a business right after high school.", "What did he do after high school?", ["Studied medicine", "Started a business", "Travelled abroad"], 1],
+      ["The survey shows that sixty percent of young people prefer online shopping, mainly because it is more convenient.", "Why do they prefer online shopping?", ["It is cheaper", "It is more convenient", "It is safer"], 1],
+      ["Provided that the weather holds, the harvest should be completed within two weeks.", "What is needed to finish within two weeks?", ["Good weather", "More workers", "New machines"], 0],
+      ["She was so exhausted after the long flight that she went straight to bed without eating anything.", "What did she do after the flight?", ["She ate dinner", "She went straight to bed", "She called her family"], 1],
+      tf("The manager insisted that all employees attend the training, even those who had completed it last year.", "Only new employees must attend.", false),
+      ["I'd rather pay a little more for quality than buy something cheap that will break after a month.", "What does the speaker prefer?", ["Cheap products", "Quality products", "Second-hand products"], 1],
+      ["The negotiations broke down because neither side was willing to compromise on the delivery date.", "Why did the negotiations fail?", ["Nobody would compromise", "The price was too high", "The contract was lost"], 0],
+      ["Scholarship holders are expected to maintain a minimum average of fourteen out of twenty throughout the programme.", "What must scholarship holders maintain?", ["A minimum average of fourteen", "Perfect attendance", "A part-time job"], 0]
     ] }
   ];
   var TAILLE = 8, SEUIL = 6, ECOUTES = 2;
