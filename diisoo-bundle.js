@@ -3266,6 +3266,305 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-sandaga.js",e);}
 
 try{
+/* ---- diisoo-chine-plus.js ---- */
+/* diisoo-chine-plus.js v1 : Business, Chine (mode et beauté) enrichi
+   +16 phrases (5 débutant, 5 intermédiaire, 6 avancé) et un dialogue « Visite d'usine à Guangzhou ». Wolof relu par Babacar.
+   Desactivable : ?chine=0 */
+(function () {
+  "use strict";
+  if (window.__diisooChinePlus || /[?&]chine=0/.test(location.search)) return;
+  var C, D;
+  try { C = CHINA_TRADE_WOLOF; D = BUSINESS_DIALOGUES; } catch (e) { return; }
+  if (!C || !C.chine) return;
+  window.__diisooChinePlus = true;
+  var V = [
+{
+"niveau": "debutant",
+"en": "Where is the factory?",
+"fr": "Où est l'usine ?",
+"wo": "Fan la isin bi nekk ?"
+},
+{
+"niveau": "debutant",
+"en": "Can I visit the factory?",
+"fr": "Je peux visiter l'usine ?",
+"wo": "Ndax mën naa dem seeti isin bi ?"
+},
+{
+"niveau": "debutant",
+"en": "Please send me the price list.",
+"fr": "Envoyez-moi la liste des prix, s'il vous plaît.",
+"wo": "Yónnee ma listu njëg yi, bu la neexee."
+},
+{
+"niveau": "debutant",
+"en": "Do you speak English?",
+"fr": "Parlez-vous anglais ?",
+"wo": "Ndax dangay wax àngale ?"
+},
+{
+"niveau": "debutant",
+"en": "I want to pay by bank transfer.",
+"fr": "Je veux payer par virement bancaire.",
+"wo": "Dama bëgg a faye wirmaa ci bànk."
+},
+{
+"niveau": "intermediaire",
+"en": "How long is the production time?",
+"fr": "Combien de temps dure la production ?",
+"wo": "Ñaata fan la liggéey bi di jël ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Can you send a video of the product?",
+"fr": "Vous pouvez envoyer une vidéo du produit ?",
+"wo": "Ndax mën nga yónnee wideo produit bi ?"
+},
+{
+"niveau": "intermediaire",
+"en": "What is the weight of one carton?",
+"fr": "Quel est le poids d'un carton ?",
+"wo": "Ñaata kilo la benn kartoŋ am ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Is the product tested before shipping?",
+"fr": "Le produit est-il testé avant l'expédition ?",
+"wo": "Ndax produit bi dañu koy seet bu baax balaa ñu koy yónnee ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Can I change my order before production starts?",
+"fr": "Je peux modifier ma commande avant le début de la production ?",
+"wo": "Ndax mën naa soppi sama komànd balaa production bi di tàmbali ?"
+},
+{
+"niveau": "avance",
+"en": "We need a quality inspection by a third party.",
+"fr": "Il nous faut une inspection qualité par un tiers.",
+"wo": "Dafa war nu am saytu bu keneen ku bokkul ci jaay bi def."
+},
+{
+"niveau": "avance",
+"en": "What happens if the goods do not match the sample?",
+"fr": "Que se passe-t-il si la marchandise n'est pas conforme à l'échantillon ?",
+"wo": "Lan mooy am su marsandiis bi méngoowul ak eesaantiyoŋ bi ?"
+},
+{
+"niveau": "avance",
+"en": "Can you handle the export documents?",
+"fr": "Pouvez-vous gérer les documents d'exportation ?",
+"wo": "Ndax mën nga toppatoo dokimaŋ yu export yi ?"
+},
+{
+"niveau": "avance",
+"en": "I want a refund if the container arrives damaged.",
+"fr": "Je veux un remboursement si le conteneur arrive endommagé.",
+"wo": "Dama bëgg ñu delloo ma xaalis bi su konteneer bi agsee yàqu."
+},
+{
+"niveau": "avance",
+"en": "Is the exchange rate fixed in the contract?",
+"fr": "Le taux de change est-il fixé dans le contrat ?",
+"wo": "Ndax taux de change bi dañu ko tënk ci kontraa bi ?"
+},
+{
+"niveau": "avance",
+"en": "We will pay the balance after the inspection.",
+"fr": "Nous paierons le solde après l'inspection.",
+"wo": "Dinanu fay li ci des gannaaw inspeksiyoŋ bi."
+}
+];
+  var L = [
+{
+"role": "client",
+"en": "Hello. I am the buyer from Senegal. Thank you for the visit.",
+"fr": "Bonjour. Je suis l'acheteur du Sénégal. Merci pour la visite.",
+"wo": "Jàmm nga fanaan. Maa di jënd bu jóge Senegaal. Jërëjëf ci seetu bi.",
+"scene": "🏭 Visite d'usine à Guangzhou"
+},
+{
+"role": "usine",
+"en": "Welcome. This is our production line.",
+"fr": "Bienvenue. Voici notre ligne de production.",
+"wo": "Dalal ak jàmm. Lii mooy sunu chaîne bu production."
+},
+{
+"role": "client",
+"en": "How many pieces can you make per month?",
+"fr": "Combien de pièces pouvez-vous faire par mois ?",
+"wo": "Ñaata pièce ngeen mën a def ci weer wu nekk ?"
+},
+{
+"role": "usine",
+"en": "Ten thousand pieces. The production time is twenty-five days.",
+"fr": "Dix mille pièces. Le délai de production est de vingt-cinq jours.",
+"wo": "Fukki junni pièce. Production bi di yàgg ñaar-fukk ak juróom fan."
+},
+{
+"role": "client",
+"en": "Can I see the quality test?",
+"fr": "Je peux voir le test de qualité ?",
+"wo": "Ndax mën naa gis test bi ci kalite bi ?"
+},
+{
+"role": "usine",
+"en": "Of course. We test every product before shipping.",
+"fr": "Bien sûr. Nous testons chaque produit avant l'expédition.",
+"wo": "Waaw kay. Dañu seet produit bu nekk bu baax balaa ñu koy yónnee."
+},
+{
+"role": "client",
+"en": "Good. I will order five thousand pieces. Please send the contract.",
+"fr": "Bien. Je commande cinq mille pièces. Envoyez le contrat.",
+"wo": "Baax na. Dinaa komànde juróomi junni pièce. Yónnee ma kontraa bi."
+},
+{
+"role": "usine",
+"en": "Thank you. We will send it today by email.",
+"fr": "Merci. Nous l'envoyons aujourd'hui par e-mail.",
+"wo": "Jërëjëf. Dinanu ko yónnee tey ci imel."
+}
+];
+  var ORDRE = { debutant: 0, intermediaire: 1, avance: 2 };
+  var deja = {}; C.chine.vocab.forEach(function (v) { deja[v.en] = 1; });
+  V.forEach(function (v) { if (!deja[v.en]) { C.chine.vocab.push(v); deja[v.en] = 1; } });
+  var tri = C.chine.vocab.map(function (v, i) { return [v, i]; });
+  tri.sort(function (a, b) { var x = ORDRE[a[0].niveau], y = ORDRE[b[0].niveau]; return (x === y ? a[1] - b[1] : x - y); });
+  C.chine.vocab.length = 0; tri.forEach(function (t) { C.chine.vocab.push(t[0]); });
+  D.chine = D.chine || [];
+  var vus = {}; D.chine.forEach(function (l) { vus[l.en] = 1; });
+  L.forEach(function (l) { if (!vus[l.en]) D.chine.push(l); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-chine-plus.js",e);}
+
+try{
+/* ---- diisoo-mission-chine.js ---- */
+/* diisoo-mission-chine.js v1 : Mission « Négocier à l'usine en Chine »
+   L'app joue le vendeur (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Chine ».
+   Bouton place en haut du secteur « Chine (import/export) » (Business). Essai : https://diisoo.sn/?mission=chine */
+(function () {
+  "use strict";
+  if (window.DiisooMissionChine) return;
+  var Q = [
+    { q: "Hello. Welcome to our factory. What product are you interested in?", kw: /product|phone|shoes|clothes|machine|furniture|interested|want|need|looking|i/i, m: "I am interested in plastic chairs." },
+    { q: "How many pieces do you want to order?", kw: /\d|hundred|thousand|pieces|units|order|want|need|many/i, m: "I want to order five thousand pieces." },
+    { q: "The price is two dollars per piece. Is that okay?", kw: /lower|discount|price|expensive|yes|okay|ok|cheaper|less|better|please|how much/i, m: "It is expensive. Can you give a better price?" },
+    { q: "The production time is twenty-five days. Is that okay for you?", kw: /yes|okay|ok|fine|days|faster|quick|time|production|ship|need|week|long/i, m: "Yes, that is fine. Please send the contract." },
+    { q: "How do you want to pay?", kw: /bank|transfer|pay|payment|cash|deposit|percent|wire|card|%/i, m: "I will pay by bank transfer." }
+  ];
+
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mch{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mch .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mch .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mch .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mch button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mch .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mch .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mch .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mch .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mch .m.on{animation:mgq 1s infinite}@keyframes mgq{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mch .ok{color:#25D366}#mch .or{color:#FFAA3C}" +
+    "#mch-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mch-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mch")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mch";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🏭 Chine · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mch-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mch-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mch-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mch-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mch-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mch-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mch-r"), mic = document.getElementById("mch-mic"), nx = document.getElementById("mch-next");
+      document.getElementById("mch-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mch-x").onclick = function () { o.remove(); };
+      document.getElementById("mch-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["chine"]) BADGES["chine"] = { icon: "🏭", label: "Chine", desc: "Négociation d'usine réussie à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("chine"); } catch (e) {}
+      }
+      noter("mission_chine", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🏭 Mission Chine</div><div class="q">' + (ok ? "Bonne commande ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Chine » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du secteur Chine et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mch-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mch-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mch-x2" type="button">Fermer</button>';
+      document.getElementById("mch-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mch-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mch-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi ma négociation avec une usine chinoise en anglais sur Diisoo 🏭 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("business-content");
+    if (!box || box.classList.contains("hidden") || document.getElementById("mch-btn")) return;
+    var id = ""; try { id = businessModule; } catch (e) {}
+    if (id !== "chine") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mch-btn";
+    b.innerHTML = '<span style="font-size:22px">🏭</span><span>Mission : négocier à l\'usine<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    var h = box.querySelector("h4"); if (h && h.nextSibling) box.insertBefore(b, h.nextSibling); else box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("business-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true, attributes: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionChine = { ouvrir: ouvrir };
+  if (/[?&]mission=chine/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-chine.js",e);}
+
+try{
 /* ---- diisoo-passage.js ---- */
 /* diisoo-passage.js v2 : test de passage, organise en 3 ecrans (Presentation, Questions, Resultat)
    - Toucher Intermediaire : test du niveau Debutant. Reussi (75 %) = Intermediaire ouvert.
