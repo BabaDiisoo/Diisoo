@@ -50,8 +50,7 @@
 
   var st = document.createElement("style");
   st.textContent =
-    "#dii-ligue-c{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;border:1px solid #2A3454;background:#141A2B;border-radius:16px;padding:8px 12px;color:#F6F1E7;font-size:13px;font-weight:800;text-align:left}" +
-    "#dii-ligue-c b{font-size:22px;font-weight:400}#dii-ligue-c small{display:block;font-size:11px;font-weight:700;color:#A69C86}" +
+    "#dii-ligue-c{flex:none;border:1px solid rgba(243,169,78,.35);background:rgba(243,169,78,.08);color:#F3A94E;border-radius:999px;padding:6px 10px!important;min-height:0!important;min-width:0!important;font-size:12px;font-weight:700;line-height:1.2;white-space:nowrap}" +
     "#dii-ligue{position:fixed;inset:0;z-index:10050;background:rgba(7,10,20,.94);display:flex;align-items:flex-end;justify-content:center}" +
     "#dii-ligue .bx{width:100%;max-width:480px;max-height:92vh;overflow:auto;background:#0F1424;border:1px solid #2A3454;border-radius:20px 20px 0 0;padding:16px 14px 20px;color:#F6F1E7}" +
     "#dii-ligue h2{font-size:17px;font-weight:800;margin:0 0 2px}#dii-ligue p{font-size:12.5px;color:#A69C86;margin:0 0 10px}" +
@@ -66,20 +65,16 @@
   var etat = null;
   function majCarte() {
     var c = $("dii-ligue-c"); if (!c) return;
-    var t = "Ouvre le classement";
-    if (etat) {
-      if ((etat.actifs | 0) < MIN) t = "Invite " + (MIN - (etat.actifs | 0)) + " ami(s) pour lancer la ligue";
-      else if (etat.mon_rang) t = "Tu es " + etat.mon_rang + (etat.mon_rang === 1 ? "er" : "e") + " cette semaine";
-      else t = "Gagne de l'XP pour entrer dans le Top 10";
-    }
-    c.innerHTML = "<b>🏆</b><span>Ligue de la semaine<small>" + esc(t) + "</small></span>";
+    var t = "";
+    if (etat && (etat.actifs | 0) >= MIN && etat.mon_rang) t = " " + etat.mon_rang + (etat.mon_rang === 1 ? "er" : "e");
+    c.textContent = "🏆" + t; c.setAttribute("aria-label", "Ligue de la semaine");
   }
   function monterCarte() {
     if ($("dii-ligue-c")) return;
-    var ref = $("dii-auj"); if (!ref || !ref.parentNode) return;
+    var ref = $("xp-label"); if (!ref || !ref.parentNode) return;
     var c = document.createElement("button"); c.type = "button"; c.id = "dii-ligue-c";
-    c.onclick = ouvrir; ref.parentNode.insertBefore(c, ref.nextSibling);
-    c.style.order = "5"; majCarte();
+    c.onclick = ouvrir; ref.parentNode.insertBefore(c, ref);
+    majCarte();
     envoyer(false).then(classement).then(function (r) { etat = r; majCarte(); }).catch(function () {});
   }
 
