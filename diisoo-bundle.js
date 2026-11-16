@@ -3858,6 +3858,301 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-agribiz.js",e);}
 
 try{
+/* ---- diisoo-hotel-plus.js ---- */
+/* diisoo-tour_hotel-plus.js v1 : Business, Hôtel (mode et beauté) enrichi
+   Wolof des phrases existantes complété, +15 phrases, 1 dialogue. Wolof relu par Babacar.
+   Desactivable : ?tour_hotel=0 */
+(function () {
+  "use strict";
+  if (window.__diisooHôtelPlus || /[?&]tour_hotel=0/.test(location.search)) return;
+  var C, D;
+  try { C = CHINA_TRADE_WOLOF; D = BUSINESS_DIALOGUES; } catch (e) { return; }
+  if (!C || !C.tour_hotel) return;
+  window.__diisooHôtelPlus = true;
+  var V = [
+{
+"niveau": "debutant",
+"en": "Do you have a free room tonight?",
+"fr": "Vous avez une chambre libre ce soir ?",
+"wo": "Ndax am nga benn néeg bu libre tey ci guddi ?"
+},
+{
+"niveau": "debutant",
+"en": "How much is one night?",
+"fr": "Combien coûte une nuit ?",
+"wo": "Ñaata la benn guddi ?"
+},
+{
+"niveau": "debutant",
+"en": "Can I see the room?",
+"fr": "Je peux voir la chambre ?",
+"wo": "Ndax mën naa gis néeg bi ?"
+},
+{
+"niveau": "debutant",
+"en": "Is there hot water?",
+"fr": "Il y a de l'eau chaude ?",
+"wo": "Ndax am na ndox mu tàng ?"
+},
+{
+"niveau": "debutant",
+"en": "I need a towel, please.",
+"fr": "Il me faut une serviette, s'il vous plaît.",
+"wo": "Dama soxla sërwiyet, bu la neexee."
+},
+{
+"niveau": "intermediaire",
+"en": "The air conditioning is not working.",
+"fr": "La clim ne marche pas.",
+"wo": "Klimatisëer bi du dox."
+},
+{
+"niveau": "intermediaire",
+"en": "Can I have a late check-out?",
+"fr": "Je peux partir plus tard ?",
+"wo": "Ndax mën naa génn ci ngoon ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Can you wake me up at six?",
+"fr": "Vous pouvez me réveiller à six heures ?",
+"wo": "Ndax mën nga ma yeew ci juróom-benni waxtu ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Where is the swimming pool?",
+"fr": "Où est la piscine ?",
+"wo": "Fan la pisin bi nekk ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Can you call a taxi for me?",
+"fr": "Vous pouvez m'appeler un taxi ?",
+"wo": "Ndax mën nga ma woo taksi ?"
+},
+{
+"niveau": "avance",
+"en": "I booked online, but my name is not on the list.",
+"fr": "J'ai réservé en ligne, mais mon nom n'est pas sur la liste.",
+"wo": "Reserwe naa ci internet, waaye sama tur nekkul ci list bi."
+},
+{
+"niveau": "avance",
+"en": "Can you give me a receipt for my company?",
+"fr": "Vous pouvez me faire un reçu pour mon entreprise ?",
+"wo": "Ndax mën nga ma defal resi ngir sama àntërpiris ?"
+},
+{
+"niveau": "avance",
+"en": "There is too much noise in the next room.",
+"fr": "Il y a trop de bruit dans la chambre d'à côté.",
+"wo": "Am na coow lu bari ci néeg bi ci wetu sama bos."
+},
+{
+"niveau": "avance",
+"en": "I would like to extend my stay by two nights.",
+"fr": "Je voudrais prolonger mon séjour de deux nuits.",
+"wo": "Dama bëgg a yokk sama fanaan ñaari guddi."
+},
+{
+"niveau": "avance",
+"en": "Do you accept payment by card or mobile money?",
+"fr": "Vous acceptez la carte ou le mobile money ?",
+"wo": "Ndax dangeen di nangu faye kart walla mobile money ?"
+}
+];
+  var L = [
+{
+"role": "client",
+"en": "Excuse me. The air conditioning in my room is not working.",
+"fr": "Excusez-moi. La clim de ma chambre ne marche pas.",
+"wo": "Baal ma. Klimatisëer bi nekk ci sama néeg du dox.",
+"scene": "🛎️ Un problème dans la chambre"
+},
+{
+"role": "receptionniste",
+"en": "I am very sorry. Which room are you in?",
+"fr": "Je suis vraiment désolé. Vous êtes dans quelle chambre ?",
+"wo": "Baal ma lool. Ban néeg nga nekk ?"
+},
+{
+"role": "client",
+"en": "Room twelve, on the second floor.",
+"fr": "Chambre douze, au deuxième étage.",
+"wo": "Néeg fukk ak ñaar, ci ñaareelu etaas bi."
+},
+{
+"role": "receptionniste",
+"en": "I will send a technician in ten minutes.",
+"fr": "J'envoie un technicien dans dix minutes.",
+"wo": "Dinaa yónnee teknisiyeŋ ci fukki simili."
+},
+{
+"role": "client",
+"en": "Thank you. Can I also have another towel?",
+"fr": "Merci. Je peux aussi avoir une autre serviette ?",
+"wo": "Jërëjëf. Ndax mën naa am beneen sërwiyet ?"
+},
+{
+"role": "receptionniste",
+"en": "Of course. I will bring it to your room.",
+"fr": "Bien sûr. Je vous l'apporte dans votre chambre.",
+"wo": "Waaw kay. Dinaa la ko indil ci sa néeg."
+},
+{
+"role": "client",
+"en": "If it is not fixed, can I change rooms?",
+"fr": "Si ce n'est pas réparé, je peux changer de chambre ?",
+"wo": "Su defaruwul, ndax mën naa soppi néeg ?"
+},
+{
+"role": "receptionniste",
+"en": "Yes, we have a free room on the third floor.",
+"fr": "Oui, nous avons une chambre libre au troisième étage.",
+"wo": "Waaw, am nanu benn néeg bu libre ci ñetteelu etaas bi."
+}
+];
+  var FIX = {"Your room is on the second floor": "Sa néeg bi ci ñaareelu etaas bi la nekk.", "Breakfast is from seven to ten": "Ndékki li dafay tàmbali ci juróom-ñaari waxtu ba fukki waxtu.", "The Wi-Fi password is on the card": "Koodu Wi-Fi bi ci kart bi la nekk.", "A single room or a double room?": "Néeg bu benn nit walla néeg bu ñaari nit ?", "The price includes breakfast and taxes": "Njëg li dafa boole ndékki li ak taks yi.", "Check-out is at noon": "Génn gi dafay am ci midi.", "I can store your luggage until the evening": "Mën naa denc sa bagaas yi ba ngoon.", "Would you like air conditioning or a fan?": "Ndax bëgg nga klimatisëer walla wantilatëer ?", "We can arrange an airport transfer for you": "Mën nanu la yóbbu walla jëli la ci aeroport bi.", "Please fill in this registration form": "Bindal sa tur ci fiis bii, bu la neexee.", "I am sorry for the inconvenience. We will change your room immediately.": "Baal ma ci jafe-jafe bi. Dinanu soppi sa néeg bi léegi.", "The hot water is not working. Could you send someone?": "Ndox mu tàng mi du dox. Ndax mën nga yónnee ku ñëw ?", "We are fully booked, but I can offer you a room at our sister hotel.": "Sunu otel bi fees na, waaye mën naa la jox benn néeg ci beneen otel bi nu bokkal.", "For a stay of seven nights, I can offer a ten percent discount.": "Ngir juróom-ñaari guddi, mën naa la wàññil fukki pursaŋ ci njëg li.", "Could you recommend a quiet restaurant nearby?": "Ndax mën nga ma digal benn restoraŋ bu dal bu jege fii ?", "The cancellation is free up to forty-eight hours before arrival.": "Anile bi amul fay ba ñeent-fukk ak juróom-ñetti waxtu balaa ngay agsi.", "I would like to leave a review about your excellent service.": "Dama bëgg a bàyyi benn gis-gis ci sa liggéey bu rafet bi."};
+  C.tour_hotel.vocab.forEach(function (v) { if (FIX[v.en]) v.wo = FIX[v.en]; });
+  var ORDRE = { debutant: 0, intermediaire: 1, avance: 2 };
+  var deja = {}; C.tour_hotel.vocab.forEach(function (v) { deja[v.en] = 1; });
+  V.forEach(function (v) { if (!deja[v.en]) { C.tour_hotel.vocab.push(v); deja[v.en] = 1; } });
+  var tri = C.tour_hotel.vocab.map(function (v, i) { return [v, i]; });
+  tri.sort(function (a, b) { var x = ORDRE[a[0].niveau], y = ORDRE[b[0].niveau]; return (x === y ? a[1] - b[1] : x - y); });
+  C.tour_hotel.vocab.length = 0; tri.forEach(function (t) { C.tour_hotel.vocab.push(t[0]); });
+  D.tour_hotel = D.tour_hotel || [];
+  var vus = {}; D.tour_hotel.forEach(function (l) { vus[l.en] = 1; });
+  L.forEach(function (l) { if (!vus[l.en]) D.tour_hotel.push(l); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-hotel-plus.js",e);}
+
+try{
+/* ---- diisoo-mission-hotel.js ---- */
+/* diisoo-mission-hotel.js v1 : Mission « Accueillir un client à l'hôtel »
+   L'app joue le vendeur (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Hôtel ».
+   Bouton place en haut du secteur « Hôtel » (Business). Essai : https://diisoo.sn/?mission=hotel */
+(function () {
+  "use strict";
+  if (window.DiisooMissionHôtel) return;
+  var Q = [
+    { q: "Good evening. I have a reservation under the name Smith.", kw: /welcome|name|smith|passport|reservation|yes|room|check|see|good|evening|hello/i, m: "Welcome. Let me check your reservation." },
+    { q: "How much is the room for one night?", kw: /thousand|francs|\d|euro|dollar|night|price|per|cost|breakfast/i, m: "It is forty thousand francs per night." },
+    { q: "Is breakfast included?", kw: /yes|no|breakfast|included|include|seven|ten|morning|price|from/i, m: "Yes, breakfast is included, from seven to ten." },
+    { q: "What time is check-out?", kw: /noon|twelve|eleven|ten|check|time|morning|late|at|o'clock/i, m: "Check-out is at noon." },
+    { q: "The air conditioning is not working. Can you help me?", kw: /sorry|help|technician|send|change|room|minutes|fix|immediately|repair|moment/i, m: "I am sorry. I will send a technician now." }
+  ];
+
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mht{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mht .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mht .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mht .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mht button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mht .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mht .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mht .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mht .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mht .m.on{animation:mgq 1s infinite}@keyframes mgq{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mht .ok{color:#25D366}#mht .or{color:#FFAA3C}" +
+    "#mht-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mht-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mht")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mht";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🛎️ Hôtel · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mht-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mht-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mht-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mht-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mht-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mht-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mht-r"), mic = document.getElementById("mht-mic"), nx = document.getElementById("mht-next");
+      document.getElementById("mht-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mht-x").onclick = function () { o.remove(); };
+      document.getElementById("mht-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["hotel"]) BADGES["hotel"] = { icon: "🛎️", label: "Hôtel", desc: "Accueil à l'hôtel réussi à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("hotel"); } catch (e) {}
+      }
+      noter("mission_hotel", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🛎️ Mission Hôtel</div><div class="q">' + (ok ? "Bien joué ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Hôtel » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du secteur Hôtel et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mht-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mht-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mht-x2" type="button">Fermer</button>';
+      document.getElementById("mht-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mht-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mht-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon accueil à l'hôtel en anglais sur Diisoo 🛎️ (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("business-content");
+    if (!box || box.classList.contains("hidden") || document.getElementById("mht-btn")) return;
+    var id = ""; try { id = businessModule; } catch (e) {}
+    if (id !== "tour_hotel") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mht-btn";
+    b.innerHTML = '<span style="font-size:22px">🛎️</span><span>Mission : accueillir un client<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    var h = box.querySelector("h4"); if (h && h.nextSibling) box.insertBefore(b, h.nextSibling); else box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("business-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true, attributes: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionHôtel = { ouvrir: ouvrir };
+  if (/[?&]mission=hotel/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-hotel.js",e);}
+
+try{
 /* ---- diisoo-bazar-plus.js ---- */
 /* diisoo-bazar-plus.js v1 : Business, Bazar (mode et beauté) enrichi
    +15 phrases et un dialogue. Wolof relu par Babacar.
