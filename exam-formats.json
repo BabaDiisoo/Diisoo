@@ -3705,6 +3705,468 @@
      ]
     }
    ]
+  },
+  "parle": {
+   "nom": "Parle · Entraînement oral",
+   "court": "Parle",
+   "groupe": "Entraînement",
+   "bouton": "Oral",
+   "format": "Répète, réponds, puis parle librement",
+   "verifie_le": "2026-11-15",
+   "confiance": "Exercices créés par Diisoo pour s'entraîner à parler seul, avec correction. Ce n'est pas un test officiel.",
+   "resume": "Écoute et répète, réponds à 3 questions, puis parle librement. 9 sujets en 3 niveaux : Débutant, Intermédiaire, Avancé.",
+   "gratuits": 9,
+   "sources": [],
+   "taches": [
+    {
+     "id": "repeat",
+     "type": "repeat",
+     "titre": "Écoute et répète",
+     "nb": 3,
+     "prep_s": 0,
+     "rep_s": 12,
+     "banque": "repeat",
+     "consigne": "Tu entends une phrase. Répète-la exactement."
+    },
+    {
+     "id": "q",
+     "type": "question",
+     "titre": "Réponds aux questions",
+     "nb": 3,
+     "prep_s": 0,
+     "rep_s": 25,
+     "banque": "q",
+     "consigne": "Réponds par une ou deux phrases complètes."
+    },
+    {
+     "id": "prompt",
+     "type": "prompt",
+     "titre": "Parle librement",
+     "nb": 1,
+     "prep_s": 10,
+     "rep_s": 45,
+     "banque": "prompt",
+     "consigne": "Parle pendant environ 40 secondes. Utilise les idées proposées."
+    }
+   ],
+   "tests": [
+    {
+     "id": "p-d-famille",
+     "titre": "🌱 Débutant · Ma famille",
+     "repeat": [
+      "I have two brothers and one sister.",
+      "My mother is a teacher.",
+      "We live in a small house in Thiès."
+     ],
+     "q": [
+      {
+       "q": "How many people are in your family?",
+       "cles": [
+        "family|brother|sister|mother|father|parents",
+        "two|three|four|five|six|seven|eight|nine|ten|people"
+       ],
+       "modele": "There are six people in my family: my parents, two brothers and my sister."
+      },
+      {
+       "q": "What does your mother or your father do?",
+       "cles": [
+        "mother|father|mom|dad|parents",
+        "work|teacher|trader|farmer|nurse|driver|job"
+       ],
+       "modele": "My mother is a trader. She sells vegetables at the market."
+      },
+      {
+       "q": "Where does your family live?",
+       "cles": [
+        "live|house|home",
+        "thiès|thies|dakar|senegal|village|city|town"
+       ],
+       "modele": "My family lives in Thiès, in a small house near the market."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Talk about your family. Say who they are, what they do and what you like to do together.",
+       "cles": [
+        "family|mother|father|brother|sister|parents",
+        "work|job|teacher|trader|farmer",
+        "like|love|together|eat|play"
+       ],
+       "modele": "I live with my parents and my two brothers. My father is a driver and my mother is a trader. On Sunday we eat together and we like to play football."
+      }
+     ]
+    },
+    {
+     "id": "p-d-journee",
+     "titre": "🌱 Débutant · Ma journée",
+     "repeat": [
+      "I wake up at six o'clock.",
+      "I eat breakfast and go to work.",
+      "In the evening I watch television."
+     ],
+     "q": [
+      {
+       "q": "What time do you wake up?",
+       "cles": [
+        "wake|get up|up",
+        "six|seven|five|o'clock|morning|am"
+       ],
+       "modele": "I wake up at six o'clock in the morning."
+      },
+      {
+       "q": "What do you eat for breakfast?",
+       "cles": [
+        "eat|have|breakfast",
+        "bread|coffee|tea|milk|egg|rice|porridge"
+       ],
+       "modele": "For breakfast I eat bread and I drink coffee."
+      },
+      {
+       "q": "What do you do in the evening?",
+       "cles": [
+        "evening|night",
+        "home|watch|cook|family|friends|pray|rest|tv|television|study"
+       ],
+       "modele": "In the evening I cook dinner and I watch television with my family."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Describe your typical day from morning to evening.",
+       "cles": [
+        "morning|wake|breakfast",
+        "work|school|market|shop",
+        "evening|night|home|dinner"
+       ],
+       "modele": "I wake up at six and I eat breakfast. Then I go to work at the market. In the evening I go home, I eat dinner and I sleep early."
+      }
+     ]
+    },
+    {
+     "id": "p-d-marche",
+     "titre": "🌱 Débutant · Au marché",
+     "repeat": [
+      "How much is this fish?",
+      "It is too expensive. Can you lower the price?",
+      "I would like two kilos of onions, please."
+     ],
+     "q": [
+      {
+       "q": "What do you like to buy at the market?",
+       "cles": [
+        "buy|like|want",
+        "fish|rice|vegetables|fruit|clothes|tomato|onion|meat|bread"
+       ],
+       "modele": "I like to buy fish and vegetables at the market."
+      },
+      {
+       "q": "How much is one kilo of tomatoes?",
+       "cles": [
+        "francs|cfa|hundred|thousand|kilo|price",
+        "tomato|tomatoes|one|kilo|five|four|three"
+       ],
+       "modele": "One kilo of tomatoes is five hundred francs."
+      },
+      {
+       "q": "What do you say if the price is too high?",
+       "cles": [
+        "too|expensive|high|much",
+        "lower|less|discount|reduce|cheaper|price"
+       ],
+       "modele": "I say: it is too expensive. Can you lower the price, please?"
+      }
+     ],
+     "prompt": [
+      {
+       "t": "You are at the market. Greet the seller, ask the price of two things and bargain politely.",
+       "cles": [
+        "hello|good morning|hi",
+        "how much|price|cost",
+        "too|lower|cheaper|discount",
+        "thank|please|ok"
+       ],
+       "modele": "Good morning. How much are the tomatoes? Five hundred francs a kilo? It is too expensive. Can you lower the price, please? Thank you."
+      }
+     ]
+    },
+    {
+     "id": "p-i-travail",
+     "titre": "🌿 Intermédiaire · Mon travail",
+     "repeat": [
+      "I have been working as a driver for five years.",
+      "My job is tiring, but I enjoy meeting new people.",
+      "I would like to improve my English to get a better job."
+     ],
+     "q": [
+      {
+       "q": "What do you do for a living and how long have you been doing it?",
+       "cles": [
+        "work|job|am a|i'm a|do",
+        "years|year|month|since|for"
+       ],
+       "modele": "I work as a driver. I have been doing this job for five years."
+      },
+      {
+       "q": "What do you like and dislike about your job?",
+       "cles": [
+        "like|enjoy|love|good",
+        "but|however|dislike|hard|tiring|difficult|don't like"
+       ],
+       "modele": "I like meeting people, but the hours are very long and tiring."
+      },
+      {
+       "q": "Where do you see yourself in five years?",
+       "cles": [
+        "five years|future|want|hope|plan",
+        "own|business|shop|manager|better|open|company|job"
+       ],
+       "modele": "In five years I hope to have my own business and employ two people."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Describe your job or your business. Explain what you do every day, one problem you have and one thing you would like to change.",
+       "cles": [
+        "work|job|business|shop",
+        "problem|difficult|hard|challenge",
+        "change|improve|would like|want"
+       ],
+       "modele": "I run a small shop in Thiès. Every day I open at eight and I sell clothes. My main problem is that customers want credit. I would like to improve my shop and sell more online."
+      }
+     ]
+    },
+    {
+     "id": "p-i-voyage",
+     "titre": "🌿 Intermédiaire · Un voyage",
+     "repeat": [
+      "Last year I travelled to Dakar by bus.",
+      "The journey took six hours because of the traffic.",
+      "Next time, I will book my ticket in advance."
+     ],
+     "q": [
+      {
+       "q": "Tell me about a trip you made.",
+       "cles": [
+        "went|travelled|traveled|visited|trip|journey",
+        "last|year|month|week|ago"
+       ],
+       "modele": "Last year I went to Saint-Louis to visit my cousin."
+      },
+      {
+       "q": "How did you travel and how long did it take?",
+       "cles": [
+        "bus|car|plane|train|taxi|bike",
+        "hours|hour|days|day|minutes"
+       ],
+       "modele": "We travelled by bus and it took five hours."
+      },
+      {
+       "q": "What did you like most about the trip?",
+       "cles": [
+        "like|enjoy|love|best|favourite|favorite",
+        "people|food|place|city|beach|family|friends|weather"
+       ],
+       "modele": "I liked the beach and the food the most."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Talk about a place you visited. Say when you went, who you were with, what you did and whether you would go back.",
+       "cles": [
+        "went|visited|travelled|traveled",
+        "with|friend|family|cousin|alone",
+        "did|saw|ate|swim|walk|visit|stay",
+        "back|again|return|next"
+       ],
+       "modele": "Last year I visited Saint-Louis with my cousin. We walked in the old town and we ate fresh fish. I would love to go back next year."
+      }
+     ]
+    },
+    {
+     "id": "p-i-sante",
+     "titre": "🌿 Intermédiaire · La santé",
+     "repeat": [
+      "I have had a headache since yesterday.",
+      "The doctor told me to rest and drink water.",
+      "You should go to the pharmacy if the pain continues."
+     ],
+     "q": [
+      {
+       "q": "What do you do when you feel sick?",
+       "cles": [
+        "go|see|take|rest|drink|call",
+        "doctor|pharmacy|hospital|medicine|water|bed"
+       ],
+       "modele": "When I feel sick, I rest and I go to the pharmacy."
+      },
+      {
+       "q": "How do you stay healthy?",
+       "cles": [
+        "eat|drink|exercise|walk|sleep|run|sport",
+        "fruit|vegetables|water|healthy|every|day"
+       ],
+       "modele": "I eat fruit and vegetables and I walk every day."
+      },
+      {
+       "q": "Explain to a doctor what is wrong with you.",
+       "cles": [
+        "pain|hurt|headache|fever|cough|stomach|sick|ill",
+        "since|days|yesterday|morning|night|week"
+       ],
+       "modele": "I have a fever and a cough since two days."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "You are at the clinic. Tell the doctor what is wrong, since when, and ask what you should do.",
+       "cles": [
+        "pain|hurt|fever|headache|cough|sick",
+        "since|days|yesterday|week",
+        "what should|can you|need|medicine|advice"
+       ],
+       "modele": "Good morning, doctor. I have a bad headache and a fever since yesterday. What should I do? Do I need medicine?"
+      }
+     ]
+    },
+    {
+     "id": "p-a-avis",
+     "titre": "🌳 Avancé · Donner son avis",
+     "repeat": [
+      "In my opinion, mobile phones have changed the way we work.",
+      "On the one hand they save time, but on the other hand they can be distracting.",
+      "Overall, I think the benefits outweigh the risks."
+     ],
+     "q": [
+      {
+       "q": "Do you think technology makes life easier? Why?",
+       "cles": [
+        "think|believe|opinion",
+        "easier|difficult|time|help|connect|work|distract|communication"
+       ],
+       "modele": "I think technology makes life easier because it saves time and helps us communicate."
+      },
+      {
+       "q": "What are the disadvantages of social media?",
+       "cles": [
+        "disadvantage|problem|risk|danger|negative|bad|waste",
+        "time|fake|children|privacy|addict|news|distract|kids"
+       ],
+       "modele": "One problem is that people waste a lot of time and children can see dangerous content."
+      },
+      {
+       "q": "How could we use technology better in Senegal?",
+       "cles": [
+        "could|should|can|would",
+        "school|farmers|business|education|health|internet|mobile|payment|jobs"
+       ],
+       "modele": "We could use mobile payment and the internet to help farmers and small businesses."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Give your opinion: is it better to live in a big city or in a village? Give at least two reasons and one example.",
+       "cles": [
+        "better|prefer|opinion|think",
+        "because|reason|first|second",
+        "example|for instance|such as"
+       ],
+       "modele": "In my opinion, a big city is better for work, because there are more jobs and better schools. However, a village is quieter. For example, in Dakar I can find a job easily."
+      }
+     ]
+    },
+    {
+     "id": "p-a-travail",
+     "titre": "🌳 Avancé · Un problème au travail",
+     "repeat": [
+      "I'm afraid there has been a misunderstanding about the delivery date.",
+      "Could we find a solution that works for both sides?",
+      "I would appreciate it if you could confirm this in writing."
+     ],
+     "q": [
+      {
+       "q": "A client is angry because his order is late. What do you say?",
+       "cles": [
+        "sorry|apologise|apologize|regret",
+        "late|delay|order|delivery|problem|solve|fix|solution"
+       ],
+       "modele": "I'm very sorry for the delay. I will check your order and deliver it tomorrow."
+      },
+      {
+       "q": "How do you disagree politely with your boss?",
+       "cles": [
+        "respect|understand|however|but|agree|perhaps|maybe|point",
+        "idea|suggest|opinion|think|propose|perspective|view"
+       ],
+       "modele": "I understand your point, however I would suggest another solution."
+      },
+      {
+       "q": "What would you do if a supplier raised his prices?",
+       "cles": [
+        "would|will|could",
+        "negotiate|discuss|another|supplier|price|find|compare|talk|change"
+       ],
+       "modele": "I would negotiate first, and if he refuses, I would find another supplier."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "You are a manager. Explain a problem to your team, say what caused it, and propose two solutions.",
+       "cles": [
+        "problem|issue|mistake",
+        "because|caused|due to|reason",
+        "solution|propose|suggest|could|should"
+       ],
+       "modele": "We have a problem with late deliveries. It was caused by the new supplier. I suggest we find a second supplier and we should also order earlier."
+      }
+     ]
+    },
+    {
+     "id": "p-a-projets",
+     "titre": "🌳 Avancé · Mes projets",
+     "repeat": [
+      "If I save enough money, I will open a second shop next year.",
+      "I'm planning to study abroad, provided that I get a scholarship.",
+      "By the end of the decade, I hope to employ ten people."
+     ],
+     "q": [
+      {
+       "q": "What are your goals for the next five years?",
+       "cles": [
+        "goal|plan|hope|want|would like|aim",
+        "years|year|future|next|open|study|build|start"
+       ],
+       "modele": "My goal is to open a second shop and to improve my English in the next five years."
+      },
+      {
+       "q": "What obstacles could you face, and how would you overcome them?",
+       "cles": [
+        "obstacle|problem|difficult|challenge|lack|risk",
+        "overcome|solve|learn|save|work|support|help|loan|partner|training"
+       ],
+       "modele": "The main obstacle is money, so I would save every month and ask for a small loan."
+      },
+      {
+       "q": "Why is learning English important for your future?",
+       "cles": [
+        "english|language",
+        "job|business|study|visa|travel|customers|opportunit|communicat|international"
+       ],
+       "modele": "English is important because I can talk to foreign customers and find more opportunities."
+      }
+     ],
+     "prompt": [
+      {
+       "t": "Describe the life you want in ten years. Say where you will live, what you will do, and what you will do to get there.",
+       "cles": [
+        "ten years|future|will|hope|plan",
+        "live|work|business|family|house",
+        "to get there|save|study|learn|work hard|step"
+       ],
+       "modele": "In ten years I will live in Dakar with my family and I will own a company. To get there, I will save money, learn English and work hard every day."
+      }
+     ]
+    }
+   ]
   }
  }
 }

@@ -8360,7 +8360,7 @@ try{
     h.appendChild(g);
     var l = document.createElement("div"); l.className = "xh-l"; l.textContent = "S'entraîner avant"; h.appendChild(l);
     var g2 = document.createElement("div"); g2.className = "xh-g";
-    g2.appendChild(btn("", "🤝", "Oral", "En binôme", function () { try { openPairsModule(); } catch (e) {} }));
+    g2.appendChild(btn("", "🗣️", "Parle", "Seul, avec correction", function () { ouv("parle"); }));
     g2.appendChild(btn("", "👂", "Écoute", "Comprendre", function () { try { openListeningModule(); } catch (e) {} }));
     h.appendChild(g2);
     var q = btn("", "⬅️", "Retour à l'accueil", "", function () { try { quitTest(); } catch (e) {} });
