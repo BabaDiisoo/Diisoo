@@ -4448,6 +4448,301 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-restaurant.js",e);}
 
 try{
+/* ---- diisoo-guide-plus.js ---- */
+/* diisoo-tour_guide-plus.js v1 : Business, Guide (mode et beauté) enrichi
+   Wolof des phrases existantes complété, +15 phrases, 1 dialogue. Wolof relu par Babacar.
+   Desactivable : ?tour_guide=0 */
+(function () {
+  "use strict";
+  if (window.__diisooGuidePlus || /[?&]tour_guide=0/.test(location.search)) return;
+  var C, D;
+  try { C = CHINA_TRADE_WOLOF; D = BUSINESS_DIALOGUES; } catch (e) { return; }
+  if (!C || !C.tour_guide) return;
+  window.__diisooGuidePlus = true;
+  var V = [
+{
+"niveau": "debutant",
+"en": "Good morning. Are you ready?",
+"fr": "Bonjour. Vous êtes prêts ?",
+"wo": "Jàmm ngeen fanaan. Ndax pare ngeen ?"
+},
+{
+"niveau": "debutant",
+"en": "Where are you from?",
+"fr": "Vous venez d'où ?",
+"wo": "Fan ngeen jóge ?"
+},
+{
+"niveau": "debutant",
+"en": "Stay together, please.",
+"fr": "Restez ensemble, s'il vous plaît.",
+"wo": "Àndleen benn, bu leen neexee."
+},
+{
+"niveau": "debutant",
+"en": "Do you need a toilet?",
+"fr": "Vous avez besoin des toilettes ?",
+"wo": "Ndax soxla ngeen wànaag ?"
+},
+{
+"niveau": "debutant",
+"en": "This way, please.",
+"fr": "Par ici, s'il vous plaît.",
+"wo": "Fii la, bu la neexee."
+},
+{
+"niveau": "intermediaire",
+"en": "The museum opens at nine.",
+"fr": "Le musée ouvre à neuf heures.",
+"wo": "Musée bi dafay ubbi ci juróom-ñeenti waxtu."
+},
+{
+"niveau": "intermediaire",
+"en": "You can buy tickets at the entrance.",
+"fr": "Vous pouvez acheter les billets à l'entrée.",
+"wo": "Mën ngeen jënd tike yi ci bunt bi."
+},
+{
+"niveau": "intermediaire",
+"en": "We will have lunch after the visit.",
+"fr": "Nous déjeunerons après la visite.",
+"wo": "Dinanu añ gannaaw seeti bi."
+},
+{
+"niveau": "intermediaire",
+"en": "This tree is more than five hundred years old.",
+"fr": "Cet arbre a plus de cinq cents ans.",
+"wo": "Garab gii màgg na ba weesu juróom-téeméeri at."
+},
+{
+"niveau": "intermediaire",
+"en": "Please do not touch the objects.",
+"fr": "Merci de ne pas toucher les objets.",
+"wo": "Buleen laal yëf yi, bu leen neexee."
+},
+{
+"niveau": "avance",
+"en": "This village is known for its traditional fishing.",
+"fr": "Ce village est connu pour sa pêche traditionnelle.",
+"wo": "Dëkk bii xam nañu ko ci nàpp gu aada."
+},
+{
+"niveau": "avance",
+"en": "I will tell you the story of the island.",
+"fr": "Je vais vous raconter l'histoire de l'île.",
+"wo": "Dinaa leen nettali taariixu dunu bi."
+},
+{
+"niveau": "avance",
+"en": "If it rains, we will visit the museum instead.",
+"fr": "S'il pleut, nous visiterons le musée à la place.",
+"wo": "Su tawee, dinanu seeti musée bi ci palaas bi."
+},
+{
+"niveau": "avance",
+"en": "Would you like to meet a local family?",
+"fr": "Voulez-vous rencontrer une famille locale ?",
+"wo": "Ndax bëgg ngeen gis benn njaboot gu dëkk fii ?"
+},
+{
+"niveau": "avance",
+"en": "The bus will pick you up at the hotel at eight.",
+"fr": "Le bus passera vous prendre à l'hôtel à huit heures.",
+"wo": "Kaar bi dina ñëw jël leen ci otel bi ci juróom-ñetti waxtu."
+}
+];
+  var L = [
+{
+"role": "guide",
+"en": "Welcome to Gorée Island. Please stay together.",
+"fr": "Bienvenue sur l'île de Gorée. Restez ensemble, s'il vous plaît.",
+"wo": "Dalal ak jàmm ci dunu Gorée. Àndleen benn, bu leen neexee.",
+"scene": "🧭 Visite de Gorée"
+},
+{
+"role": "touriste",
+"en": "Thank you. What is the history of this island?",
+"fr": "Merci. Quelle est l'histoire de cette île ?",
+"wo": "Jërëjëf. Lan mooy taariixu dunu bii ?"
+},
+{
+"role": "guide",
+"en": "For many years, it was a place where people were sent as slaves.",
+"fr": "Pendant de nombreuses années, c'était un lieu d'où l'on envoyait des gens comme esclaves.",
+"wo": "Ci at yu bari, fii lañu daan yóbbu nit ñi ñu def leen jaam."
+},
+{
+"role": "touriste",
+"en": "That is very sad. Can we visit the House of Slaves?",
+"fr": "C'est très triste. Nous pouvons visiter la Maison des Esclaves ?",
+"wo": "Dafa naqari lool. Ndax mën nanu seeti Maison des Esclaves ?"
+},
+{
+"role": "guide",
+"en": "Yes, it is on the left. The entrance is two thousand francs.",
+"fr": "Oui, elle est à gauche. L'entrée coûte deux mille francs.",
+"wo": "Waaw, ci càmmoñ la nekk. Dugg bi ñaari junni farã la."
+},
+{
+"role": "touriste",
+"en": "Can I take photos inside?",
+"fr": "Je peux prendre des photos à l'intérieur ?",
+"wo": "Ndax mën naa jël nataal ci biir ?"
+},
+{
+"role": "guide",
+"en": "Yes, but please be respectful.",
+"fr": "Oui, mais soyez respectueux, s'il vous plaît.",
+"wo": "Waaw, waaye wormaal fi, bu la neexee."
+},
+{
+"role": "touriste",
+"en": "Of course. Thank you for the explanation.",
+"fr": "Bien sûr. Merci pour l'explication.",
+"wo": "Waaw kay. Jërëjëf ci leeral bi."
+}
+];
+  var FIX = {"Be careful, the road is slippery": "Moytul, yoon wi dafa tarax.", "Do you want to take a photo?": "Ndax bëgg nga jël nataal ?", "We will stop here for ten minutes": "Dinanu taxaw fii fukki simili.", "The boat leaves at nine from the Dakar pier": "Gaal gi dafay dem ci juróom-ñeenti waxtu ci waaxu Ndakaaru.", "The visit lasts about three hours": "Seeti bi dafay jël lu tollook ñetti waxtu.", "The House of Slaves is an important memorial": "Kër gi ñuy wax Maison des Esclaves am na solo lool ci taariix bi.", "At Lake Retba the water is pink because of the algae": "Ci Lac Rose, ndox mi dafa xonq ndax alg yi.", "Please wear a hat and sun cream": "Solal mbaxana te diw kerem ngir jant bi, bu la neexee.", "The entrance fee is not included": "Njëg li ñuy fay ngir dugg bokkul ci.", "Do you want to see the baobab trees or the birds?": "Ndax bëgg nga gis guy yi walla picc yi ?", "Our two-day tour includes the Saloum Delta, a night in a lodge and all meals.": "Sunu tukki bu ñaari fan bi dafay boole Saalum, benn guddi ci lotel ak lekk yépp.", "The price is per person, based on a minimum of four travellers.": "Njëg li ci nit ku nekk la, te dafa laaj ñeenti nit ba ci kaw.", "Due to the weather, we have to change the programme. I apologise.": "Ndax jaww ji, war nanu soppi porogaraam bi. Baal ma.", "Please keep your valuables with you and respect local customs.": "Dencal sa yëf yu am solo ci yaw, te wormaal aaday réew mi.", "May I ask your permission before taking photos of people?": "Ndax mën naa la ñaan ndigal balaa may jël nataali nit ñi ?", "We can adapt the tour for families with young children.": "Mën nanu soppi tukki bi ngir njaboot yu am xale yu ndaw.", "Cancellations made less than forty-eight hours before are not refunded.": "Anile bi ñuy def lu yées ñeent-fukk ak juróom-ñetti waxtu balaa agsi bi, amul fay."};
+  C.tour_guide.vocab.forEach(function (v) { if (FIX[v.en]) v.wo = FIX[v.en]; });
+  var ORDRE = { debutant: 0, intermediaire: 1, avance: 2 };
+  var deja = {}; C.tour_guide.vocab.forEach(function (v) { deja[v.en] = 1; });
+  V.forEach(function (v) { if (!deja[v.en]) { C.tour_guide.vocab.push(v); deja[v.en] = 1; } });
+  var tri = C.tour_guide.vocab.map(function (v, i) { return [v, i]; });
+  tri.sort(function (a, b) { var x = ORDRE[a[0].niveau], y = ORDRE[b[0].niveau]; return (x === y ? a[1] - b[1] : x - y); });
+  C.tour_guide.vocab.length = 0; tri.forEach(function (t) { C.tour_guide.vocab.push(t[0]); });
+  D.tour_guide = D.tour_guide || [];
+  var vus = {}; D.tour_guide.forEach(function (l) { vus[l.en] = 1; });
+  L.forEach(function (l) { if (!vus[l.en]) D.tour_guide.push(l); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-guide-plus.js",e);}
+
+try{
+/* ---- diisoo-mission-guide.js ---- */
+/* diisoo-mission-guide.js v1 : Mission « Guider des touristes »
+   L'app joue le vendeur (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Guide ».
+   Bouton place en haut du secteur « Guide touristique » (Business). Essai : https://diisoo.sn/?mission=guide */
+(function () {
+  "use strict";
+  if (window.DiisooMissionGuide) return;
+  var Q = [
+    { q: "Hello. Are you our guide for today?", kw: /yes|guide|welcome|hello|good|morning|i am|ready|today/i, m: "Yes, good morning. I am your guide for today." },
+    { q: "How long is the visit?", kw: /hour|hours|minutes|three|two|about|visit|long|morning|afternoon|\d/i, m: "The visit lasts about three hours." },
+    { q: "Does the price include the boat ticket?", kw: /yes|no|include|included|ticket|boat|separate|extra|price|francs|\d/i, m: "No, the boat ticket is separate." },
+    { q: "Is it safe to take photos here?", kw: /yes|no|photo|photos|picture|allowed|ask|permission|respect|inside|outside|except|please/i, m: "Yes, but please ask permission before photographing people." },
+    { q: "What time do we come back to the hotel?", kw: /back|return|hotel|at|o'clock|pm|four|five|six|three|afternoon|evening|\d/i, m: "We come back to the hotel at four o'clock." }
+  ];
+
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mgd{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mgd .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mgd .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mgd .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mgd button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mgd .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mgd .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mgd .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mgd .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mgd .m.on{animation:mgq 1s infinite}@keyframes mgq{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mgd .ok{color:#25D366}#mgd .or{color:#FFAA3C}" +
+    "#mgd-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mgd-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mgd")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mgd";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🧭 Guide · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mgd-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mgd-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mgd-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mgd-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mgd-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mgd-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mgd-r"), mic = document.getElementById("mgd-mic"), nx = document.getElementById("mgd-next");
+      document.getElementById("mgd-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mgd-x").onclick = function () { o.remove(); };
+      document.getElementById("mgd-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["guide"]) BADGES["guide"] = { icon: "🧭", label: "Guide", desc: "Guidage de touristes réussi à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("guide"); } catch (e) {}
+      }
+      noter("mission_guide", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🧭 Mission Guide</div><div class="q">' + (ok ? "Bien joué ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Guide » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du secteur Guide et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mgd-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mgd-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mgd-x2" type="button">Fermer</button>';
+      document.getElementById("mgd-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mgd-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mgd-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon rôle de guide touristique en anglais sur Diisoo 🧭 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("business-content");
+    if (!box || box.classList.contains("hidden") || document.getElementById("mgd-btn")) return;
+    var id = ""; try { id = businessModule; } catch (e) {}
+    if (id !== "tour_guide") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mgd-btn";
+    b.innerHTML = '<span style="font-size:22px">🧭</span><span>Mission : guider des touristes<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    var h = box.querySelector("h4"); if (h && h.nextSibling) box.insertBefore(b, h.nextSibling); else box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("business-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true, attributes: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionGuide = { ouvrir: ouvrir };
+  if (/[?&]mission=guide/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-guide.js",e);}
+
+try{
 /* ---- diisoo-bazar-plus.js ---- */
 /* diisoo-bazar-plus.js v1 : Business, Bazar (mode et beauté) enrichi
    +15 phrases et un dialogue. Wolof relu par Babacar.
