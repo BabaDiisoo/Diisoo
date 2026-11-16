@@ -3565,6 +3565,299 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-chine.js",e);}
 
 try{
+/* ---- diisoo-agriculture-plus.js ---- */
+/* diisoo-agriculture-plus.js v1 : Business, Agriculture (mode et beauté) enrichi
+   +15 phrases et un dialogue. Wolof relu par Babacar.
+   Desactivable : ?agriculture=0 */
+(function () {
+  "use strict";
+  if (window.__diisooAgriculturePlus || /[?&]agriculture=0/.test(location.search)) return;
+  var C, D;
+  try { C = CHINA_TRADE_WOLOF; D = BUSINESS_DIALOGUES; } catch (e) { return; }
+  if (!C || !C.agriculture) return;
+  window.__diisooAgriculturePlus = true;
+  var V = [
+{
+"niveau": "debutant",
+"en": "Do you have fresh mangoes?",
+"fr": "Vous avez des mangues fraîches ?",
+"wo": "Ndax am nga màngo yu bees ?"
+},
+{
+"niveau": "debutant",
+"en": "How much is a bag of rice?",
+"fr": "Combien coûte un sac de riz ?",
+"wo": "Ñaata la benn saaku ceeb ?"
+},
+{
+"niveau": "debutant",
+"en": "I need seeds for the rainy season.",
+"fr": "Il me faut des semences pour l'hivernage.",
+"wo": "Dama soxla jiwu ngir nawet bi."
+},
+{
+"niveau": "debutant",
+"en": "Where is your field?",
+"fr": "Où est votre champ ?",
+"wo": "Fan la sa tool bi nekk ?"
+},
+{
+"niveau": "debutant",
+"en": "Can I taste it?",
+"fr": "Je peux goûter ?",
+"wo": "Ndax mën naa ko mos ?"
+},
+{
+"niveau": "intermediaire",
+"en": "How many bags can you supply per week?",
+"fr": "Combien de sacs pouvez-vous fournir par semaine ?",
+"wo": "Ñaata saaku ngeen mën a joxe ci ayu-bés bu nekk ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Do you use fertiliser?",
+"fr": "Vous utilisez de l'engrais ?",
+"wo": "Ndax dangeen di jëfandikoo àngere ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Is the harvest ready?",
+"fr": "La récolte est prête ?",
+"wo": "Ndax ngóob mi pare na ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Can you deliver to Thiès market on Monday?",
+"fr": "Vous pouvez livrer au marché de Thiès lundi ?",
+"wo": "Ndax mën nga ko yónnee marse Cees altine ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Can I visit your farm this weekend?",
+"fr": "Je peux visiter votre ferme ce week-end ?",
+"wo": "Ndax mën naa seeti sa ferme bii weekend ?"
+},
+{
+"niveau": "avance",
+"en": "I want to buy your whole harvest at a fixed price.",
+"fr": "Je veux acheter toute votre récolte à prix fixe.",
+"wo": "Dama bëgg a jënd sa ngóob mépp ci benn njëg bu tënku."
+},
+{
+"niveau": "avance",
+"en": "Do you have a certificate for organic products?",
+"fr": "Vous avez un certificat pour les produits bio ?",
+"wo": "Ndax am nga sertifika ngir produit yu bio ?"
+},
+{
+"niveau": "avance",
+"en": "Part of the harvest was damaged by the drought.",
+"fr": "Une partie de la récolte a été abîmée par la sécheresse.",
+"wo": "Benn wàll ci ngóob mi yàqu na ndax bekkoor."
+},
+{
+"niveau": "avance",
+"en": "Can you give me credit until I sell the produce?",
+"fr": "Vous pouvez me faire crédit jusqu'à la vente ?",
+"wo": "Ndax mën nga ma joxe leb ba ma jaayee marsandiis bi ?"
+},
+{
+"niveau": "avance",
+"en": "I want to pay half now and half at delivery.",
+"fr": "Je veux payer la moitié maintenant et la moitié à la livraison.",
+"wo": "Dama bëgg a fay genn-wàll gi léegi, beneen genn-wàll bi bu yónnee bi agsee."
+}
+];
+  var L = [
+{
+"role": "client",
+"en": "Hello. I want to buy vegetables for my restaurant.",
+"fr": "Bonjour. Je veux acheter des légumes pour mon restaurant.",
+"wo": "Jàmm nga fanaan. Dama bëgg a jënd legim ngir sama restoraŋ.",
+"scene": "🌾 Visite chez un producteur"
+},
+{
+"role": "producteur",
+"en": "Welcome to my farm. Everything is fresh.",
+"fr": "Bienvenue dans ma ferme. Tout est frais.",
+"wo": "Dalal ak jàmm ci sama ferme. Lépp dafa bees."
+},
+{
+"role": "client",
+"en": "How many kilos of tomatoes can you give me every week?",
+"fr": "Combien de kilos de tomates pouvez-vous me donner chaque semaine ?",
+"wo": "Ñaata kilo tamaate ngeen ma mën a jox ci ayu-bés bu nekk ?"
+},
+{
+"role": "producteur",
+"en": "One hundred kilos, and I can deliver on Monday.",
+"fr": "Cent kilos, et je peux livrer lundi.",
+"wo": "Téeméeri kilo, te mën naa ko yónnee altine."
+},
+{
+"role": "client",
+"en": "What is your price for one kilo?",
+"fr": "Quel est votre prix pour un kilo ?",
+"wo": "Ñaata la sa njëg ngir benn kilo ?"
+},
+{
+"role": "producteur",
+"en": "Four hundred francs. For a regular client, three hundred and fifty.",
+"fr": "Quatre cents francs. Pour un client régulier, trois cent cinquante.",
+"wo": "Juróom-ñett-fukki dërëm. Ngir kliyaan bu sax, juróom-ñaar-fukki dërëm."
+},
+{
+"role": "client",
+"en": "Good. I will take one hundred kilos every week.",
+"fr": "Bien. Je prends cent kilos chaque semaine.",
+"wo": "Baax na. Dinaa jël téeméeri kilo ci ayu-bés bu nekk."
+},
+{
+"role": "producteur",
+"en": "Perfect. I will write it down and call you on Sunday.",
+"fr": "Parfait. Je le note et je vous appelle dimanche.",
+"wo": "Baax na lool. Dinaa ko bind te woo la dibéer."
+}
+];
+  var ORDRE = { debutant: 0, intermediaire: 1, avance: 2 };
+  var deja = {}; C.agriculture.vocab.forEach(function (v) { deja[v.en] = 1; });
+  V.forEach(function (v) { if (!deja[v.en]) { C.agriculture.vocab.push(v); deja[v.en] = 1; } });
+  var tri = C.agriculture.vocab.map(function (v, i) { return [v, i]; });
+  tri.sort(function (a, b) { var x = ORDRE[a[0].niveau], y = ORDRE[b[0].niveau]; return (x === y ? a[1] - b[1] : x - y); });
+  C.agriculture.vocab.length = 0; tri.forEach(function (t) { C.agriculture.vocab.push(t[0]); });
+  D.agriculture = D.agriculture || [];
+  var vus = {}; D.agriculture.forEach(function (l) { vus[l.en] = 1; });
+  L.forEach(function (l) { if (!vus[l.en]) D.agriculture.push(l); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-agriculture-plus.js",e);}
+
+try{
+/* ---- diisoo-mission-agribiz.js ---- */
+/* diisoo-mission-producteur.js v1 : Mission « Acheter chez un producteur »
+   L'app joue le vendeur (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Producteur ».
+   Bouton place en haut du secteur « Agriculture & produits locaux » (Business). Essai : https://diisoo.sn/?mission=agribiz */
+(function () {
+  "use strict";
+  if (window.DiisooMissionAgribiz) return;
+  var Q = [
+    { q: "Hello. Welcome to my farm. What do you want to buy?", kw: /tomato|onion|vegetable|rice|mango|fruit|buy|want|need|looking|i/i, m: "I want to buy tomatoes and onions." },
+    { q: "How many kilos do you need?", kw: /\d|kilo|kg|bag|hundred|ten|twenty|fifty|many|need|want/i, m: "I need fifty kilos." },
+    { q: "It is four hundred francs a kilo.", kw: /lower|discount|price|expensive|cheaper|less|better|please|how much|regular/i, m: "It is expensive. Can you lower the price?" },
+    { q: "Okay, three hundred and fifty. When do you want it?", kw: /monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|today|week|morning|deliver|day|next/i, m: "I want it on Monday morning." },
+    { q: "How do you want to pay?", kw: /wave|orange|mobile|money|cash|pay|payment|transfer|half|advance|card/i, m: "I will pay half now and half at delivery." }
+  ];
+
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mpd{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mpd .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mpd .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mpd .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mpd button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mpd .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mpd .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mpd .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mpd .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mpd .m.on{animation:mgq 1s infinite}@keyframes mgq{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mpd .ok{color:#25D366}#mpd .or{color:#FFAA3C}" +
+    "#mpd-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mpd-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mpd")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mpd";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🌾 Producteur · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mpd-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mpd-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mpd-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mpd-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mpd-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mpd-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mpd-r"), mic = document.getElementById("mpd-mic"), nx = document.getElementById("mpd-next");
+      document.getElementById("mpd-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mpd-x").onclick = function () { o.remove(); };
+      document.getElementById("mpd-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["producteur"]) BADGES["producteur"] = { icon: "🌾", label: "Producteur", desc: "Achat chez un producteur réussi à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("producteur"); } catch (e) {}
+      }
+      noter("mission_agribiz", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🌾 Mission Producteur</div><div class="q">' + (ok ? "Bonne affaire ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Producteur » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du secteur Producteur et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mpd-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mpd-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mpd-x2" type="button">Fermer</button>';
+      document.getElementById("mpd-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mpd-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mpd-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon achat chez un producteur en anglais sur Diisoo 🌾 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("business-content");
+    if (!box || box.classList.contains("hidden") || document.getElementById("mpd-btn")) return;
+    var id = ""; try { id = businessModule; } catch (e) {}
+    if (id !== "agriculture") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mpd-btn";
+    b.innerHTML = '<span style="font-size:22px">🌾</span><span>Mission : acheter chez un producteur<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    var h = box.querySelector("h4"); if (h && h.nextSibling) box.insertBefore(b, h.nextSibling); else box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("business-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true, attributes: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionAgribiz = { ouvrir: ouvrir };
+  if (/[?&]mission=agribiz/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-agribiz.js",e);}
+
+try{
 /* ---- diisoo-bazar-plus.js ---- */
 /* diisoo-bazar-plus.js v1 : Business, Bazar (mode et beauté) enrichi
    +15 phrases et un dialogue. Wolof relu par Babacar.
