@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v137";
+const VERSION = "diisoo-cache-v138";
 const SHELL = [
   "./",
   "./index.html",
@@ -27,7 +27,7 @@ const SHELL = [
   "./diisoo-themes-extra.js",
   "./diisoo-lecons.js",
   "./diisoo-lecons-plus.js",
-  "./diisoo-arrivee.js","./diisoo-question-jour.js","./diisoo-quete.js","./diisoo-aujourdhui.js","./diisoo-accueil2.js","./diisoo-diag.js","./diisoo-ligue.js","./diisoo-invite-moment.js","./diisoo-ecoute.js","./diisoo-colobane-plus.js","./diisoo-mission-colobane.js","./diisoo-sandaga-plus.js","./diisoo-mission-sandaga.js","./diisoo-chine-plus.js","./diisoo-mission-chine.js","./diisoo-abc.js",
+  "./diisoo-arrivee.js","./diisoo-question-jour.js","./diisoo-quete.js","./diisoo-aujourdhui.js","./diisoo-accueil2.js","./diisoo-diag.js","./diisoo-ligue.js","./diisoo-invite-moment.js","./diisoo-ecoute.js","./diisoo-colobane-plus.js","./diisoo-mission-colobane.js","./diisoo-sandaga-plus.js","./diisoo-mission-sandaga.js","./diisoo-chine-plus.js","./diisoo-mission-chine.js","./diisoo-electronique-plus.js","./diisoo-mission-electronique.js","./diisoo-abc.js",
   "./diisoo-examens-hub.js",
   "./diisoo-universel.js",
   "./diisoo-reseau.js",
