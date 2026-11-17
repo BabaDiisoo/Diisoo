@@ -8140,6 +8140,384 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-telephone.js",e);}
 
 try{
+/* ---- diisoo-administration.js ---- */
+/* diisoo-administration.js v1 : theme « Administration » (30 phrases, 1 dialogue, 3 questions), niveau N2.
+   Wolof relu par Babacar. Desactivable : ?administration=0 */
+(function () {
+  "use strict";
+  if (window.__diisooAdministration || /[?&]administration=0/.test(location.search)) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooAdministration = true;
+  var VOC = [
+[
+"Where is the town hall?",
+"Où est la mairie ?",
+"Fan la meri bi nekk ?"
+],
+[
+"I need an identity card.",
+"Il me faut une carte d'identité.",
+"Dama soxla kart didantite."
+],
+[
+"I want to make a passport.",
+"Je veux faire un passeport.",
+"Dama bëgg a defar paspoor."
+],
+[
+"What time do you open?",
+"À quelle heure ouvrez-vous ?",
+"Ban waxtu ngeen di ubbi ?"
+],
+[
+"What time do you close?",
+"À quelle heure fermez-vous ?",
+"Ban waxtu ngeen di tëj ?"
+],
+[
+"Where do I wait?",
+"Où dois-je attendre ?",
+"Fan laa war a xaar ?"
+],
+[
+"Which window is it?",
+"C'est quel guichet ?",
+"Ban gise la ?"
+],
+[
+"I have an appointment.",
+"J'ai un rendez-vous.",
+"Am naa benn ràndewu."
+],
+[
+"Here are my documents.",
+"Voici mes documents.",
+"Samay kayit ñii ngi nii."
+],
+[
+"Please, I am in a hurry.",
+"S'il vous plaît, je suis pressé.",
+"Bu la neexee, dama yàkkamti."
+],
+[
+"Which documents do I need to bring?",
+"Quels documents dois-je apporter ?",
+"Yan kayit laa war a indi ?"
+],
+[
+"I need a copy of my birth certificate.",
+"Il me faut une copie de mon extrait de naissance.",
+"Dama soxla benn koppi sama ekstere de nesaas."
+],
+[
+"How much does it cost?",
+"Combien ça coûte ?",
+"Ñaata lay jar ?"
+],
+[
+"How long does it take?",
+"Combien de temps ça prend ?",
+"Ñaata dir lay jël ?"
+],
+[
+"When can I come back to collect it?",
+"Quand puis-je revenir le récupérer ?",
+"Kañ laa mën a dellusi ngir jël ko ?"
+],
+[
+"Is my file complete?",
+"Mon dossier est-il complet ?",
+"Ndax sama dosiye bi mat na ?"
+],
+[
+"A document is missing.",
+"Il manque un document.",
+"Am na benn kayit bu ñàkk."
+],
+[
+"I need a photo for the file.",
+"Il faut une photo pour le dossier.",
+"Dafa laaj benn nataal ngir dosiye bi."
+],
+[
+"Please fill in this form.",
+"Remplissez ce formulaire, s'il vous plaît.",
+"Feesalal fiis bii, bu la neexee."
+],
+[
+"Where can I make photocopies?",
+"Où puis-je faire des photocopies ?",
+"Fan laa mën a defaree fotokoppi ?"
+],
+[
+"I lost my identity card. How can I get a new one?",
+"J'ai perdu ma carte d'identité. Comment en obtenir une nouvelle ?",
+"Rëcc naa sama kart didantite. Naka laa mën a amee beneen ?"
+],
+[
+"I need a police report for the declaration of loss.",
+"Il me faut un récépissé de déclaration de perte.",
+"Dama soxla benn resipise ngir seedeel ne rëcc naa ko."
+],
+[
+"My passport expires in three months. Can I renew it?",
+"Mon passeport expire dans trois mois. Je peux le renouveler ?",
+"Sama paspoor dina jeex ci ñetti weer. Ndax mën naa ko yeesal ?"
+],
+[
+"There is a mistake in the spelling of my name.",
+"Il y a une erreur dans l'orthographe de mon nom.",
+"Am na njuumte ci mbindum sama tur."
+],
+[
+"I would like to register my business.",
+"Je voudrais enregistrer mon entreprise.",
+"Dama bëgg a bindloo sama liggéeyukaay."
+],
+[
+"I need a certificate of residence for my visa file.",
+"Il me faut un certificat de résidence pour mon dossier de visa.",
+"Dama soxla sertifikaa de residãas ngir sama dosiye wisa."
+],
+[
+"Can someone else collect the document for me?",
+"Quelqu'un d'autre peut récupérer le document pour moi ?",
+"Ndax keneen mën na ma jëlal kayit bi ?"
+],
+[
+"I would like to make a complaint about the delay.",
+"Je voudrais faire une réclamation à propos du retard.",
+"Dama bëgg a joxe benn laaj-ubbi ci yeex bi."
+],
+[
+"Please give me a stamped receipt as proof.",
+"Donnez-moi un reçu tamponné comme preuve.",
+"Jox ma benn resi bu ñu tàmpoŋe ngir seede."
+],
+[
+"I will come back tomorrow with the missing document.",
+"Je reviens demain avec le document manquant.",
+"Dinaa dellusi suba ak kayit bi ñàkk."
+]
+];
+  var DIA = [
+[
+"B",
+"Good morning. I would like to make an identity card.",
+"Bonjour. Je voudrais faire une carte d'identité.",
+"Jàmm nga fanaan. Dama bëgg a defar kart didantite."
+],
+[
+"A",
+"Do you have your birth certificate?",
+"Vous avez votre extrait de naissance ?",
+"Ndax am nga sa ekstere de nesaas ?"
+],
+[
+"B",
+"Yes, here it is. I also have two photos.",
+"Oui, le voici. J'ai aussi deux photos.",
+"Waaw, mii ngi nii. Am naa itam ñaari nataal."
+],
+[
+"A",
+"Good. Please fill in this form.",
+"Bien. Remplissez ce formulaire, s'il vous plaît.",
+"Baax na. Feesalal fiis bii, bu la neexee."
+],
+[
+"B",
+"Here it is. How much does it cost?",
+"Le voici. Combien ça coûte ?",
+"Mii ngi nii. Ñaata lay jar ?"
+],
+[
+"A",
+"It is ten thousand francs. You will get a receipt.",
+"C'est dix mille francs. Vous aurez un reçu.",
+"Fukki junni farã la. Dinga am benn resi."
+],
+[
+"B",
+"When can I collect the card?",
+"Quand puis-je récupérer la carte ?",
+"Kañ laa mën a jël kart bi ?"
+],
+[
+"A",
+"Come back in three weeks with this receipt.",
+"Revenez dans trois semaines avec ce reçu.",
+"Dellusil ci ñetti ayu-bés ak resi bii."
+]
+];
+  var QZ = [
+[
+"I need an identity ___.",
+[
+"card",
+"cart",
+"car"
+],
+"« identity card » = carte d'identité."
+],
+[
+"Please fill in this ___.",
+[
+"form",
+"from",
+"farm"
+],
+"« form » = formulaire."
+],
+[
+"I have an ___ at ten o'clock.",
+[
+"appointment",
+"appoint",
+"apartment"
+],
+"« appointment » = rendez-vous."
+]
+];
+  if (G.some(function (t) { return t.id === "admin"; })) return;
+  G.push({
+    id: "admin", niveau: 2, title: "N2 · 🪪 Administration",
+    vocab: VOC.map(function (x) { return { en: x[0], fr: x[1], wo: x[2] }; }),
+    dialogue: DIA.map(function (x) { return { who: x[0], en: x[1], fr: x[2], wo: x[3] }; }),
+    quiz: QZ.map(function (x) { return { q: x[0], o: x[1], a: 0, why: x[2] }; })
+  });
+  G.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-administration.js",e);}
+
+try{
+/* ---- diisoo-mission-administration.js ---- */
+/* diisoo-mission-administration.js v1 : Mission « Faire ma carte d'identité »
+   L'app joue l'agent de l'état civil (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Administration ».
+   Bouton place en haut du theme « Administration » (Anglais). Essai : https://diisoo.sn/?mission=administration */
+(function () {
+  "use strict";
+  if (window.DiisooMissionAdministration) return;
+  var Q = [
+    { q: "Good morning. How can I help you?", kw: /identity|card|passport|document|certificate|need|want|make|register|help|id/i, m: "I would like to make an identity card." },
+    { q: "Do you have your birth certificate?", kw: /yes|no|birth|certificate|here|have|copy|photo/i, m: "Yes, here it is. I also have two photos." },
+    { q: "Please fill in this form. Do you have a pen?", kw: /yes|no|pen|form|thank|please|can|borrow|fill|sure/i, m: "Yes, I have a pen. Thank you." },
+    { q: "It costs ten thousand francs. Do you want a receipt?", kw: /yes|please|receipt|no|thank|ok|okay|sure/i, m: "Yes, please. I need a receipt." },
+    { q: "When do you want to come back for the card?", kw: /week|weeks|day|days|month|tomorrow|monday|friday|three|two|\d|when|next/i, m: "I will come back in three weeks." }
+  ];
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mad{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mad .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mad .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mad .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mad button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mad .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mad .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mad .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mad .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mad .m.on{animation:mfp 1s infinite}@keyframes mfp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mad .ok{color:#25D366}#mad .or{color:#FFAA3C}" +
+    "#mad-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mad-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mad")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mad";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🪪 Faire ma carte d’identité · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mf-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mf-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mf-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mf-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mf-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mf-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mf-r"), mic = document.getElementById("mf-mic"), nx = document.getElementById("mf-next");
+      document.getElementById("mf-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mf-x").onclick = function () { o.remove(); };
+      document.getElementById("mf-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["administration"]) BADGES["administration"] = { icon: "🪪", label: "Administration", desc: "Carte d'identité demandée à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("administration"); } catch (e) {}
+      }
+      noter("mission_administration", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🪪 Mission administration</div><div class="q">' + (ok ? "Dossier accepté ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Administration » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du thème Famille et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mf-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mf-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mf-x2" type="button">Fermer</button>';
+      document.getElementById("mf-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mf-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mf-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi ma démarche administrative en anglais sur Diisoo 🪪 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComadnent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("general-content");
+    if (!box || document.getElementById("mad-btn")) return;
+    var id = ""; try { id = generalThemeId; } catch (e) {}
+    if (id !== "admin") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mad-btn";
+    b.innerHTML = '<span style="font-size:22px">🪪</span><span>Mission : faire ma carte d’identité<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("general-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionAdministration = { ouvrir: ouvrir };
+  if (/[?&]mission=administration/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-administration.js",e);}
+
+try{
 /* ---- diisoo-son.js ---- */
 /* diisoo-son.js v1 : sons de retour, comme les assistants vocaux
    - bip montant quand le micro s'ouvre (tu peux parler)
