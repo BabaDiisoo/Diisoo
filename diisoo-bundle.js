@@ -10030,6 +10030,384 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-factures.js",e);}
 
 try{
+/* ---- diisoo-diaspora.js ---- */
+/* diisoo-diaspora.js v1 : theme « Appeler la diaspora » (30 phrases, 1 dialogue, 3 questions), niveau N2.
+   Wolof relu par Babacar. Desactivable : ?diaspora=0 */
+(function () {
+  "use strict";
+  if (window.__diisooDiaspora || /[?&]diaspora=0/.test(location.search)) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooDiaspora = true;
+  var VOC = [
+[
+"Hello, how are you?",
+"Bonjour, comment vas-tu ?",
+"Na nga def, naka nga fanaanee ?"
+],
+[
+"I am fine, thank God.",
+"Je vais bien, grâce à Dieu.",
+"Maa ngi fi, alxamdulilaay."
+],
+[
+"How is the family?",
+"Comment va la famille ?",
+"Naka la njaboot gi def ?"
+],
+[
+"I miss you.",
+"Tu me manques.",
+"Dama la nammoon."
+],
+[
+"Can you hear me?",
+"Tu m'entends ?",
+"Ndax dégg nga ma ?"
+],
+[
+"The network is bad.",
+"Le réseau est mauvais.",
+"Reeso bi baaxul."
+],
+[
+"I will call you tomorrow.",
+"Je t'appelle demain.",
+"Dinaa la woo suba."
+],
+[
+"Send me a photo, please.",
+"Envoie-moi une photo, s'il te plaît.",
+"Yónneel ma benn nataal, bu la neexee."
+],
+[
+"How is the weather there?",
+"Quel temps fait-il là-bas ?",
+"Naka la jawu ji mel foofu ?"
+],
+[
+"Take care of yourself.",
+"Prends soin de toi.",
+"Sàmmal sa bopp."
+],
+[
+"Can we do a video call tonight?",
+"On peut faire un appel vidéo ce soir ?",
+"Ndax mën nanu def woote wideo tey ci guddi ?"
+],
+[
+"What time is it there?",
+"Quelle heure est-il là-bas ?",
+"Ban waxtu la fa nekk ?"
+],
+[
+"There is a time difference of two hours.",
+"Il y a deux heures de décalage horaire.",
+"Am na wuute waxtu bu tollu ci ñaari waxtu."
+],
+[
+"How are mum and dad?",
+"Comment vont maman et papa ?",
+"Naka la yaay ak baay def ?"
+],
+[
+"I am sending you some money for the family.",
+"Je t'envoie de l'argent pour la famille.",
+"Maa ngi lay yónnee xaalis ngir njaboot gi."
+],
+[
+"Did you receive the money?",
+"Tu as reçu l'argent ?",
+"Ndax jot nga xaalis bi ?"
+],
+[
+"When are you coming back home?",
+"Quand rentres-tu à la maison ?",
+"Kañ ngay dellusi kër ?"
+],
+[
+"I am thinking of visiting in December.",
+"Je pense venir en décembre.",
+"Maa ngi xalaat a ñëw ci desàmbar."
+],
+[
+"What do you want me to bring from here?",
+"Qu'est-ce que tu veux que j'apporte d'ici ?",
+"Lan nga bëgg ma indil la ?"
+],
+[
+"The children are growing fast.",
+"Les enfants grandissent vite.",
+"Xale yi dañuy màgg bu baax."
+],
+[
+"It is difficult to be far from the family, but I am working hard.",
+"C'est difficile d'être loin de la famille, mais je travaille dur.",
+"Jafe na ma lool sori njaboot gi, waaye maa ngi liggéey ak doole."
+],
+[
+"I am sending a parcel with a friend who is travelling.",
+"J'envoie un colis avec un ami qui voyage.",
+"Maa ngi yónnee benn koli ci sama xarit biy tukki."
+],
+[
+"The parcel contains clothes and some medicine.",
+"Le colis contient des vêtements et des médicaments.",
+"Koli bi am na ay yéere ak ay garab."
+],
+[
+"Please pay the customs fee when you collect it.",
+"Payez les frais de douane quand vous le récupérez.",
+"Fayal fere duwaan bi bu ngeen ko jëlee."
+],
+[
+"I would like to organise a family reunion this summer.",
+"Je voudrais organiser des retrouvailles familiales cet été.",
+"Dama bëgg a waajal benn ndajem njaboot ci jamonoy tàkk."
+],
+[
+"I am saving money to build a house back home.",
+"J'économise pour construire une maison au pays.",
+"Maa ngi denc xaalis ngir tabax kër ci réew mi."
+],
+[
+"I want to invest in a small business in Senegal.",
+"Je veux investir dans un petit commerce au Sénégal.",
+"Dama bëgg a dugal xaalis ci benn njaay mu ndaw ci Senegaal."
+],
+[
+"Please send me the documents by WhatsApp, I need them for my visa.",
+"Envoie-moi les documents par WhatsApp, j'en ai besoin pour mon visa.",
+"Yónneel ma kayit yi ci WhatsApp, dama leen soxla ngir sama wisa."
+],
+[
+"Please pray for me. I will do the same for you.",
+"Prie pour moi. Je ferai de même pour toi.",
+"Ñaanal ma. Dinaa la ñaanal itam."
+],
+[
+"God willing, we will meet again soon.",
+"Si Dieu le veut, nous nous reverrons bientôt.",
+"Yàlla na nu gisaat ci lu gaaw."
+]
+];
+  var DIA = [
+[
+"B",
+"Hello mum, it is me. How are you?",
+"Allô maman, c'est moi. Comment vas-tu ?",
+"Alo yaay, man la. Naka nga fanaanee ?"
+],
+[
+"A",
+"My son! I am fine, thank God. How is your work?",
+"Mon fils ! Je vais bien, grâce à Dieu. Comment va ton travail ?",
+"Sama doom ! Maa ngi fi, sant Yàlla. Naka sa liggéey ?"
+],
+[
+"B",
+"It is going well. I am working hard. Is everyone well at home?",
+"Ça va bien. Je travaille dur. Tout le monde va bien à la maison ?",
+"Mu ngi dox bu baax. Maa ngi liggéey ak doole. Ndax ñépp ñu ngi ci jàmm ci kër ga ?"
+],
+[
+"A",
+"Yes, everyone is fine. Your sister asks about you.",
+"Oui, tout le monde va bien. Ta sœur demande de tes nouvelles.",
+"Waaw, ñépp ñu ngi ci jàmm. Sa rakk bu jigéen mu ngi laaj sa xibaar."
+],
+[
+"B",
+"I sent you some money this morning. Did you receive it?",
+"Je t'ai envoyé de l'argent ce matin. Tu l'as reçu ?",
+"Yónnee naa la xaalis ci suba. Ndax jot nga ko ?"
+],
+[
+"A",
+"Yes, I received it. Thank you, may God bless you.",
+"Oui, je l'ai reçu. Merci, que Dieu te bénisse.",
+"Waaw, jot naa ko. Jërëjëf, Yàlla na la Yàlla barkeel."
+],
+[
+"B",
+"I am planning to come home in December.",
+"Je prévois de rentrer en décembre.",
+"Maa ngi yëgle ne dinaa dellusi ci desàmbar."
+],
+[
+"A",
+"That is wonderful news. We will wait for you.",
+"Quelle bonne nouvelle. Nous t'attendrons.",
+"Xibaar bu rafet la. Dinanu la xaar."
+]
+];
+  var QZ = [
+[
+"I ___ you.",
+[
+"miss",
+"mess",
+"mist"
+],
+"« I miss you » = tu me manques."
+],
+[
+"Can you ___ me?",
+[
+"hear",
+"here",
+"heart"
+],
+"« hear » = entendre."
+],
+[
+"I am sending ___ money for the family.",
+[
+"some",
+"a",
+"much of"
+],
+"« some money » = de l'argent."
+]
+];
+  if (G.some(function (t) { return t.id === "diaspora"; })) return;
+  G.push({
+    id: "diaspora", niveau: 2, title: "N2 · 📞 Appeler la diaspora",
+    vocab: VOC.map(function (x) { return { en: x[0], fr: x[1], wo: x[2] }; }),
+    dialogue: DIA.map(function (x) { return { who: x[0], en: x[1], fr: x[2], wo: x[3] }; }),
+    quiz: QZ.map(function (x) { return { q: x[0], o: x[1], a: 0, why: x[2] }; })
+  });
+  G.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-diaspora.js",e);}
+
+try{
+/* ---- diisoo-mission-diaspora.js ---- */
+/* diisoo-mission-diaspora.js v1 : Mission « Appeler la famille »
+   L'app joue le membre de la famille à l'étranger (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Diaspora ».
+   Bouton place en haut du theme « Appeler la diaspora » (Anglais). Essai : https://diisoo.sn/?mission=diaspora */
+(function () {
+  "use strict";
+  if (window.DiisooMissionDiaspora) return;
+  var Q = [
+    { q: "Hello, it is me. How are you?", kw: /fine|good|well|thank|god|hello|hi|and you|great|ok/i, m: "I am fine, thank God. And you?" },
+    { q: "I am fine too. How is the family?", kw: /fine|good|well|everyone|family|all|mum|dad|mother|father|sister|brother|thank/i, m: "Everyone is fine. Your sister asks about you." },
+    { q: "I sent you some money this morning. Did you receive it?", kw: /yes|no|received|receive|thank|got|money|not yet|blessed|god/i, m: "Yes, I received it. Thank you, may God bless you." },
+    { q: "I am thinking of coming home in December.", kw: /december|wonderful|great|good|news|wait|happy|when|come|welcome|nice/i, m: "That is wonderful news. We will wait for you." },
+    { q: "Do you want me to bring something from here?", kw: /yes|no|bring|please|clothes|medicine|gift|nothing|need|want|thank/i, m: "Yes, please bring some clothes. Thank you." }
+  ];
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mdp{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mdp .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mdp .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mdp .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mdp button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mdp .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mdp .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mdp .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mdp .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mdp .m.on{animation:mfp 1s infinite}@keyframes mfp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mdp .ok{color:#25D366}#mdp .or{color:#FFAA3C}" +
+    "#mdp-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mdp-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mdp")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mdp";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">📞 Appeler la famille · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mf-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mf-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mf-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mf-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mf-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mf-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mf-r"), mic = document.getElementById("mf-mic"), nx = document.getElementById("mf-next");
+      document.getElementById("mf-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mf-x").onclick = function () { o.remove(); };
+      document.getElementById("mf-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["diaspora"]) BADGES["diaspora"] = { icon: "📞", label: "Diaspora", desc: "Appel avec la famille réussi à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("diaspora"); } catch (e) {}
+      }
+      noter("mission_diaspora", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">📞 Mission diaspora</div><div class="q">' + (ok ? "Appel réussi ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Diaspora » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du thème Famille et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mf-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mf-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mf-x2" type="button">Fermer</button>';
+      document.getElementById("mf-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mf-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mf-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon appel avec la famille en anglais sur Diisoo 📞 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComdpnent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("general-content");
+    if (!box || document.getElementById("mdp-btn")) return;
+    var id = ""; try { id = generalThemeId; } catch (e) {}
+    if (id !== "diaspora") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mdp-btn";
+    b.innerHTML = '<span style="font-size:22px">📞</span><span>Mission : appeler la famille<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("general-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionDiaspora = { ouvrir: ouvrir };
+  if (/[?&]mission=diaspora/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-diaspora.js",e);}
+
+try{
 /* ---- diisoo-son.js ---- */
 /* diisoo-son.js v1 : sons de retour, comme les assistants vocaux
    - bip montant quand le micro s'ouvre (tu peux parler)
