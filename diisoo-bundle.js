@@ -7762,6 +7762,384 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-banque.js",e);}
 
 try{
+/* ---- diisoo-telephone.js ---- */
+/* diisoo-telephone.js v1 : theme « Téléphone & internet » (30 phrases, 1 dialogue, 3 questions), niveau N2.
+   Wolof relu par Babacar. Desactivable : ?telephone=0 */
+(function () {
+  "use strict";
+  if (window.__diisooTelephone || /[?&]telephone=0/.test(location.search)) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooTelephone = true;
+  var VOC = [
+[
+"I need to buy credit.",
+"Je dois acheter du crédit.",
+"Dama soxla jënd kredi."
+],
+[
+"How much is a recharge of one thousand francs?",
+"Combien vaut une recharge de mille francs ?",
+"Ñaata la resaarj bu junni farã ?"
+],
+[
+"My phone is not working.",
+"Mon téléphone ne marche pas.",
+"Sama telefon du dox."
+],
+[
+"The screen is broken.",
+"L'écran est cassé.",
+"Ekraŋ bi toj na."
+],
+[
+"My battery is low.",
+"Ma batterie est faible.",
+"Sama batiri bi dafa jeex."
+],
+[
+"Can I charge my phone here?",
+"Je peux charger mon téléphone ici ?",
+"Ndax mën naa sarse sama telefon fii ?"
+],
+[
+"Is there Wi-Fi here?",
+"Il y a du Wi-Fi ici ?",
+"Ndax am na Wi-Fi fii ?"
+],
+[
+"What is the Wi-Fi password?",
+"Quel est le mot de passe du Wi-Fi ?",
+"Ban la koodu Wi-Fi bi ?"
+],
+[
+"I cannot hear you.",
+"Je ne vous entends pas.",
+"Dégguma la."
+],
+[
+"Call me back, please.",
+"Rappelez-moi, s'il vous plaît.",
+"Woowaat ma, bu la neexee."
+],
+[
+"I want a data bundle for one week.",
+"Je veux un forfait internet pour une semaine.",
+"Dama bëgg benn forfe internet ngir benn ayu-bés."
+],
+[
+"How many gigabytes do I get?",
+"Combien de giga ai-je ?",
+"Ñaata giga laay am ?"
+],
+[
+"My internet is very slow.",
+"Mon internet est très lent.",
+"Sama internet dafa yeex lool."
+],
+[
+"The network is bad in my area.",
+"Le réseau est mauvais dans mon quartier.",
+"Reeso bi baaxul ci sama gox."
+],
+[
+"I lost my phone. Can you block my SIM card?",
+"J'ai perdu mon téléphone. Vous pouvez bloquer ma carte SIM ?",
+"Rëcc naa sama telefon. Ndax mën nga tëj sama kart SIM ?"
+],
+[
+"I want to keep my number on a new SIM.",
+"Je veux garder mon numéro sur une nouvelle SIM.",
+"Dama bëgg a denc sama nimero ci benn SIM bu bees."
+],
+[
+"Can you send me the document on WhatsApp?",
+"Vous pouvez m'envoyer le document sur WhatsApp ?",
+"Ndax mën nga ma yónnee kayit bi ci WhatsApp ?"
+],
+[
+"Please send your location.",
+"Envoyez votre position, s'il vous plaît.",
+"Yónneel sa bereb, bu la neexee."
+],
+[
+"I cannot open the message.",
+"Je n'arrive pas à ouvrir le message.",
+"Mënuma ubbi mesaas bi."
+],
+[
+"My phone is full. I need to delete some photos.",
+"Mon téléphone est plein. Je dois supprimer des photos.",
+"Sama telefon fees na. War naa far yenn nataal yi."
+],
+[
+"I received a message saying I won a prize. Is it real?",
+"J'ai reçu un message disant que j'ai gagné un prix. C'est vrai ?",
+"Jot naa benn mesaas bu wax ne am naa ndam. Ndax dëgg la ?"
+],
+[
+"Never click on a link from an unknown number.",
+"Ne cliquez jamais sur un lien d'un numéro inconnu.",
+"Bul bës mukk ci benn lëkkalekaay bu jóge ci nimero boo xamul."
+],
+[
+"I was charged for a service I did not subscribe to.",
+"On m'a facturé un service auquel je ne me suis pas abonné.",
+"Dañu ma fayloo ci benn liggéey bu ma abonnewul."
+],
+[
+"Can you repair the screen today? How much will it cost?",
+"Vous pouvez réparer l'écran aujourd'hui ? Combien ça coûtera ?",
+"Ndax mën nga defar ekraŋ bi tey ? Ñaata lay jar ?"
+],
+[
+"Is this phone original or a copy? Can I check the IMEI?",
+"Ce téléphone est original ou une copie ? Je peux vérifier l'IMEI ?",
+"Ndax telefon bii dëgg-dëgg la walla royukaay la ? Ndax mën naa xool IMEI bi ?"
+],
+[
+"I want to switch to a fibre internet subscription for my shop.",
+"Je veux passer à un abonnement internet fibre pour ma boutique.",
+"Dama bëgg a dem ci abonnemaŋ internet fibër ngir sama bitig."
+],
+[
+"Please back up my photos before you reset the phone.",
+"Sauvegardez mes photos avant de réinitialiser le téléphone.",
+"Dencal samay nataal balaa ngay tëj-ubbiwaat telefon bi."
+],
+[
+"I forgot my password. How can I recover my account?",
+"J'ai oublié mon mot de passe. Comment récupérer mon compte ?",
+"Fàtte naa sama kood. Naka laa mën a jotee sama kont ?"
+],
+[
+"Someone is using my WhatsApp number. What can I do?",
+"Quelqu'un utilise mon numéro WhatsApp. Que faire ?",
+"Kenn mu ngi jëfandikoo sama nimero WhatsApp. Lan laa war a def ?"
+],
+[
+"Do you offer a warranty on the repair?",
+"Vous donnez une garantie sur la réparation ?",
+"Ndax dangeen di joxe garanti ci defar bi ?"
+]
+];
+  var DIA = [
+[
+"B",
+"Hello. I would like a data bundle, please.",
+"Bonjour. Je voudrais un forfait internet, s'il vous plaît.",
+"Jàmm nga fanaan. Dama bëgg benn forfe internet, bu la neexee."
+],
+[
+"A",
+"Of course. For how long?",
+"Bien sûr. Pour combien de temps ?",
+"Waaw kay. Ngir ñaata dir ?"
+],
+[
+"B",
+"For one month. How many gigabytes do I get?",
+"Pour un mois. Combien de giga ai-je ?",
+"Ngir benn weer. Ñaata giga laay am ?"
+],
+[
+"A",
+"Ten gigabytes for five thousand francs.",
+"Dix giga pour cinq mille francs.",
+"Fukki giga ngir juróomi junni farã."
+],
+[
+"B",
+"Is there a cheaper bundle?",
+"Il y a un forfait moins cher ?",
+"Ndax am na forfe bu gën a yomb ?"
+],
+[
+"A",
+"Yes, five gigabytes for three thousand francs.",
+"Oui, cinq giga pour trois mille francs.",
+"Waaw, juróomi giga ngir ñetti junni farã."
+],
+[
+"B",
+"I will take the ten gigabytes. Can I pay with Orange Money?",
+"Je prends les dix giga. Je peux payer avec Orange Money ?",
+"Dinaa jël fukki giga yi. Ndax mën naa fay ak Orange Money ?"
+],
+[
+"A",
+"Yes. Enter your code, and the bundle will be active in one minute.",
+"Oui. Entrez votre code, et le forfait sera actif dans une minute.",
+"Waaw. Dugalal sa kood, te forfe bi dina dox ci benn simili."
+]
+];
+  var QZ = [
+[
+"My phone is ___. It does not turn on.",
+[
+"broken",
+"breaking",
+"broke up"
+],
+"« is broken » = est cassé."
+],
+[
+"What is the Wi-Fi ___?",
+[
+"password",
+"passport",
+"passage"
+],
+"« password » = mot de passe."
+],
+[
+"I want a data ___ for one week.",
+[
+"bundle",
+"bandage",
+"bound"
+],
+"« data bundle » = forfait internet."
+]
+];
+  if (G.some(function (t) { return t.id === "phone"; })) return;
+  G.push({
+    id: "phone", niveau: 2, title: "N2 · 📱 Téléphone & internet",
+    vocab: VOC.map(function (x) { return { en: x[0], fr: x[1], wo: x[2] }; }),
+    dialogue: DIA.map(function (x) { return { who: x[0], en: x[1], fr: x[2], wo: x[3] }; }),
+    quiz: QZ.map(function (x) { return { q: x[0], o: x[1], a: 0, why: x[2] }; })
+  });
+  G.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-telephone.js",e);}
+
+try{
+/* ---- diisoo-mission-telephone.js ---- */
+/* diisoo-mission-telephone.js v1 : Mission « Acheter un forfait »
+   L'app joue le vendeur de forfaits (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Téléphone ».
+   Bouton place en haut du theme « Téléphone & internet » (Anglais). Essai : https://diisoo.sn/?mission=telephone */
+(function () {
+  "use strict";
+  if (window.DiisooMissionTelephone) return;
+  var Q = [
+    { q: "Hello. How can I help you?", kw: /bundle|data|credit|internet|phone|sim|recharge|want|need|buy|help/i, m: "I would like a data bundle, please." },
+    { q: "For how long do you want it?", kw: /day|days|week|weeks|month|months|one|two|three|\d/i, m: "I want it for one month." },
+    { q: "Ten gigabytes cost five thousand francs. Is that okay?", kw: /yes|ok|okay|fine|cheaper|expensive|take|no|lower|price|sure/i, m: "Yes, I will take it." },
+    { q: "How do you want to pay?", kw: /orange|wave|cash|money|mobile|pay|card/i, m: "I will pay with Orange Money." },
+    { q: "Do you need a new SIM card as well?", kw: /yes|no|sim|card|need|thank|please|already/i, m: "No, thank you. I already have one." }
+  ];
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mtl{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mtl .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mtl .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mtl .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mtl button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mtl .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mtl .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mtl .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mtl .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mtl .m.on{animation:mfp 1s infinite}@keyframes mfp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mtl .ok{color:#25D366}#mtl .or{color:#FFAA3C}" +
+    "#mtl-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mtl-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mtl")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mtl";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">📱 Acheter un forfait · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mf-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mf-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mf-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mf-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mf-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mf-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mf-r"), mic = document.getElementById("mf-mic"), nx = document.getElementById("mf-next");
+      document.getElementById("mf-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mf-x").onclick = function () { o.remove(); };
+      document.getElementById("mf-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["telephone"]) BADGES["telephone"] = { icon: "📱", label: "Téléphone", desc: "Forfait internet acheté à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("telephone"); } catch (e) {}
+      }
+      noter("mission_telephone", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">📱 Mission telephone</div><div class="q">' + (ok ? "Forfait acheté ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Téléphone » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du thème Famille et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mf-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mf-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mf-x2" type="button">Fermer</button>';
+      document.getElementById("mf-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mf-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mf-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon achat de forfait internet en anglais sur Diisoo 📱 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComtlnent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("general-content");
+    if (!box || document.getElementById("mtl-btn")) return;
+    var id = ""; try { id = generalThemeId; } catch (e) {}
+    if (id !== "phone") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mtl-btn";
+    b.innerHTML = '<span style="font-size:22px">📱</span><span>Mission : acheter un forfait<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("general-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionTelephone = { ouvrir: ouvrir };
+  if (/[?&]mission=telephone/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-telephone.js",e);}
+
+try{
 /* ---- diisoo-son.js ---- */
 /* diisoo-son.js v1 : sons de retour, comme les assistants vocaux
    - bip montant quand le micro s'ouvre (tu peux parler)
