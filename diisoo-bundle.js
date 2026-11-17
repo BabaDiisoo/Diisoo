@@ -7384,6 +7384,384 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-tourisme.js",e);}
 
 try{
+/* ---- diisoo-banque.js ---- */
+/* diisoo-banque.js v1 : theme « Banque & mobile money » (30 phrases, 1 dialogue, 3 questions), niveau N2.
+   Wolof relu par Babacar. Desactivable : ?banque=0 */
+(function () {
+  "use strict";
+  if (window.__diisooBanque || /[?&]banque=0/.test(location.search)) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooBanque = true;
+  var VOC = [
+[
+"Where is the bank?",
+"Où est la banque ?",
+"Fan la bànk bi nekk ?"
+],
+[
+"I want to send money.",
+"Je veux envoyer de l'argent.",
+"Dama bëgg a yónnee xaalis."
+],
+[
+"I want to withdraw money.",
+"Je veux retirer de l'argent.",
+"Dama bëgg a génne xaalis."
+],
+[
+"I want to deposit money.",
+"Je veux déposer de l'argent.",
+"Dama bëgg a dugal xaalis."
+],
+[
+"What is your Wave number?",
+"Quel est votre numéro Wave ?",
+"Ban la sa nimero Wave ?"
+],
+[
+"How much is the fee?",
+"Combien sont les frais ?",
+"Ñaata la fere bi ?"
+],
+[
+"I have sent the money.",
+"J'ai envoyé l'argent.",
+"Yónnee naa xaalis bi."
+],
+[
+"I have received the money.",
+"J'ai reçu l'argent.",
+"Jot naa xaalis bi."
+],
+[
+"Please give me a receipt.",
+"Donnez-moi un reçu, s'il vous plaît.",
+"Jox ma resi, bu la neexee."
+],
+[
+"My phone has no network.",
+"Mon téléphone n'a pas de réseau.",
+"Sama telefon amul reeso."
+],
+[
+"What is the maximum amount I can send?",
+"Quel est le montant maximum que je peux envoyer ?",
+"Ñaata la xaalis bi ëpp bu ma mën a yónnee ?"
+],
+[
+"I made a mistake in the number. Can you cancel it?",
+"Je me suis trompé de numéro. Vous pouvez annuler ?",
+"Damaa juum ci nimero bi. Ndax mën nga ko neenal ?"
+],
+[
+"I forgot my secret code.",
+"J'ai oublié mon code secret.",
+"Fàtte naa sama koodu kumpa."
+],
+[
+"How do I check my balance?",
+"Comment vérifier mon solde ?",
+"Naka laa mën a xool sama solde ?"
+],
+[
+"I want to open a bank account.",
+"Je veux ouvrir un compte bancaire.",
+"Dama bëgg a ubbi benn kontu bànk."
+],
+[
+"Which documents do I need?",
+"De quels documents ai-je besoin ?",
+"Yan kayit laa soxla ?"
+],
+[
+"Can I pay my bill with Orange Money?",
+"Je peux payer ma facture avec Orange Money ?",
+"Ndax mën naa fay sama faktir ak Orange Money ?"
+],
+[
+"The agent has no cash.",
+"L'agent n'a pas d'argent liquide.",
+"Ajaan bi amul xaalis bu mu joxe."
+],
+[
+"How long does a transfer to France take?",
+"Combien de temps dure un transfert vers la France ?",
+"Ñaata waxtu la yónnee xaalis ba Faraas di jël ?"
+],
+[
+"Please check your phone, I sent you a code.",
+"Vérifiez votre téléphone, je vous ai envoyé un code.",
+"Xoolal sa telefon, yónnee naa la benn kood."
+],
+[
+"Someone called me and asked for my secret code. It is a scam.",
+"Quelqu'un m'a appelé pour avoir mon code secret. C'est une arnaque.",
+"Kenn woo na ma te laaj ma sama koodu kumpa. Njaayum nax la."
+],
+[
+"My money was deducted but the person did not receive it.",
+"Mon argent a été débité mais la personne ne l'a pas reçu.",
+"Sama xaalis dañu ko wàññi waaye ki ko waroon a jot jotul ko."
+],
+[
+"I would like to apply for a loan to start my business.",
+"Je voudrais demander un prêt pour lancer mon activité.",
+"Dama bëgg a laaj benn leb ngir tàmbali sama liggéey."
+],
+[
+"What is the interest rate and the repayment period?",
+"Quel est le taux d'intérêt et la durée de remboursement ?",
+"Ñaata la njëgu teg ci leb bi te ñaata dir la fay bi di yàgg ?"
+],
+[
+"I receive money from abroad. How do I withdraw it?",
+"Je reçois de l'argent de l'étranger. Comment le retirer ?",
+"Maa ngi jot xaalis bu jóge biti réew. Naka laa ko mën a génnee ?"
+],
+[
+"Can I get a bank statement for my visa application?",
+"Je peux avoir un relevé bancaire pour ma demande de visa ?",
+"Ndax mën naa am relewe bànk ngir sama laaju wisa ?"
+],
+[
+"The exchange rate is not good. Is there a better one?",
+"Le taux de change n'est pas bon. Il y en a un meilleur ?",
+"Njëgu wecciku xaalis bi baaxul. Ndax am na bu gën a baax ?"
+],
+[
+"My card was blocked. How can I unblock it?",
+"Ma carte a été bloquée. Comment la débloquer ?",
+"Sama kart bi dañu ko tëj. Naka laa ko mën a ubbiloo ?"
+],
+[
+"I want to set up a standing order for my rent.",
+"Je veux programmer un virement mensuel pour mon loyer.",
+"Dama bëgg a def benn wirmaa weer wu nekk ngir fay sama luwaas."
+],
+[
+"Please keep your code secret and never share it with anyone.",
+"Gardez votre code secret et ne le partagez avec personne.",
+"Dencal sa koodu kumpa te bul ko wax kenn."
+]
+];
+  var DIA = [
+[
+"B",
+"Hello. I want to send money to my mother in Thiès.",
+"Bonjour. Je veux envoyer de l'argent à ma mère à Thiès.",
+"Jàmm nga fanaan. Dama bëgg a yónnee xaalis sama yaay ci Cees."
+],
+[
+"A",
+"Of course. What is her Wave number?",
+"Bien sûr. Quel est son numéro Wave ?",
+"Waaw kay. Ban la nimero Wave bi ?"
+],
+[
+"B",
+"Seven seven, two eight eight, two one, zero nine.",
+"Le 77 288 21 09.",
+"Juróom-ñaar juróom-ñaar, ñaar juróom-ñett juróom-ñett, ñaar benn, tus juróom-ñeent."
+],
+[
+"A",
+"How much do you want to send?",
+"Combien voulez-vous envoyer ?",
+"Ñaata xaalis nga bëgg a yónnee ?"
+],
+[
+"B",
+"Fifty thousand francs. How much is the fee?",
+"Cinquante mille francs. Combien sont les frais ?",
+"Juróom-fukki junni farã. Ñaata la fere bi ?"
+],
+[
+"A",
+"The fee is five hundred francs. Please confirm.",
+"Les frais sont de cinq cents francs. Confirmez, s'il vous plaît.",
+"Fere bi juróom-téeméeri farã la. Dëggalal ko, bu la neexee."
+],
+[
+"B",
+"Yes, I confirm. Can I have a receipt?",
+"Oui, je confirme. Je peux avoir un reçu ?",
+"Waaw, dëggal naa ko. Ndax mën naa am resi ?"
+],
+[
+"A",
+"Here you are. The money has been sent.",
+"Voilà. L'argent a été envoyé.",
+"Mii ngi nii. Xaalis bi yónnee nañu ko."
+]
+];
+  var QZ = [
+[
+"I want to ___ money to my mother.",
+[
+"send",
+"sended",
+"sent to"
+],
+"« want to » + verbe de base : send."
+],
+[
+"How much is the ___ for the transfer?",
+[
+"fee",
+"fine",
+"feed"
+],
+"« fee » = les frais."
+],
+[
+"I forgot my secret ___.",
+[
+"code",
+"cold",
+"coat"
+],
+"« secret code » = code secret."
+]
+];
+  if (G.some(function (t) { return t.id === "banking"; })) return;
+  G.push({
+    id: "banking", niveau: 2, title: "N2 · 💳 Banque & mobile money",
+    vocab: VOC.map(function (x) { return { en: x[0], fr: x[1], wo: x[2] }; }),
+    dialogue: DIA.map(function (x) { return { who: x[0], en: x[1], fr: x[2], wo: x[3] }; }),
+    quiz: QZ.map(function (x) { return { q: x[0], o: x[1], a: 0, why: x[2] }; })
+  });
+  G.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-banque.js",e);}
+
+try{
+/* ---- diisoo-mission-banque.js ---- */
+/* diisoo-mission-banque.js v1 : Mission « Envoyer de l’argent »
+   L'app joue l'agent Wave (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Banque ».
+   Bouton place en haut du theme « Banque & mobile money » (Anglais). Essai : https://diisoo.sn/?mission=banque */
+(function () {
+  "use strict";
+  if (window.DiisooMissionBanque) return;
+  var Q = [
+    { q: "Hello. How can I help you?", kw: /send|withdraw|deposit|money|transfer|account|want|need|cash|pay|help/i, m: "I want to send money to my mother." },
+    { q: "What is her Wave number?", kw: /\d|number|seven|zero|wave|eight|two|one|nine|six|five|four|three/i, m: "Her number is seven seven, two eight eight, two one, zero nine." },
+    { q: "How much do you want to send?", kw: /thousand|francs|\d|fifty|ten|twenty|hundred|five|send/i, m: "I want to send fifty thousand francs." },
+    { q: "The fee is five hundred francs. Do you confirm?", kw: /yes|confirm|ok|okay|sure|fine|agree|no|expensive|too/i, m: "Yes, I confirm." },
+    { q: "Do you want a receipt?", kw: /yes|please|receipt|no|thank|sure/i, m: "Yes, please. Thank you." }
+  ];
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mbq{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mbq .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mbq .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mbq .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mbq button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mbq .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mbq .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mbq .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mbq .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mbq .m.on{animation:mfp 1s infinite}@keyframes mfp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mbq .ok{color:#25D366}#mbq .or{color:#FFAA3C}" +
+    "#mbq-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mbq-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mbq")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mbq";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">💳 Envoyer de l’argent · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mf-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mf-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mf-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mf-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mf-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mf-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mf-r"), mic = document.getElementById("mf-mic"), nx = document.getElementById("mf-next");
+      document.getElementById("mf-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mf-x").onclick = function () { o.remove(); };
+      document.getElementById("mf-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["banque"]) BADGES["banque"] = { icon: "💳", label: "Banque", desc: "Transfert d’argent réussi à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("banque"); } catch (e) {}
+      }
+      noter("mission_banque", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">💳 Mission banque</div><div class="q">' + (ok ? "Transfert réussi ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Banque » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du thème Famille et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mf-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mf-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mf-x2" type="button">Fermer</button>';
+      document.getElementById("mf-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mf-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mf-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon envoi d’argent en anglais sur Diisoo 💳 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURICombqnent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("general-content");
+    if (!box || document.getElementById("mbq-btn")) return;
+    var id = ""; try { id = generalThemeId; } catch (e) {}
+    if (id !== "banking") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mbq-btn";
+    b.innerHTML = '<span style="font-size:22px">💳</span><span>Mission : envoyer de l’argent<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("general-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionBanque = { ouvrir: ouvrir };
+  if (/[?&]mission=banque/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-banque.js",e);}
+
+try{
 /* ---- diisoo-son.js ---- */
 /* diisoo-son.js v1 : sons de retour, comme les assistants vocaux
    - bip montant quand le micro s'ouvre (tu peux parler)
