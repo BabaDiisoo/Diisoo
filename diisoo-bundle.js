@@ -5628,6 +5628,301 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-agence.js",e);}
 
 try{
+/* ---- diisoo-plage-plus.js ---- */
+/* diisoo-tour_plage-plus.js v1 : Business, Plage (mode et beauté) enrichi
+   Wolof des phrases existantes complété, +15 phrases, 1 dialogue. Wolof relu par Babacar.
+   Desactivable : ?tour_plage=0 */
+(function () {
+  "use strict";
+  if (window.__diisooPlagePlus || /[?&]tour_plage=0/.test(location.search)) return;
+  var C, D;
+  try { C = CHINA_TRADE_WOLOF; D = BUSINESS_DIALOGUES; } catch (e) { return; }
+  if (!C || !C.tour_plage) return;
+  window.__diisooPlagePlus = true;
+  var V = [
+{
+"niveau": "debutant",
+"en": "Where can I change?",
+"fr": "Où puis-je me changer ?",
+"wo": "Fan laa mën a soppee samay yéere ?"
+},
+{
+"niveau": "debutant",
+"en": "A bottle of cold water, please.",
+"fr": "Une bouteille d'eau fraîche, s'il vous plaît.",
+"wo": "Benn butéelu ndox mu sedd, bu la neexee."
+},
+{
+"niveau": "debutant",
+"en": "How much is the sunbed?",
+"fr": "Combien coûte le transat ?",
+"wo": "Ñaata la lal bu jant bi ?"
+},
+{
+"niveau": "debutant",
+"en": "Is there a shower?",
+"fr": "Il y a une douche ?",
+"wo": "Ndax am na duus ?"
+},
+{
+"niveau": "debutant",
+"en": "Do not go too far.",
+"fr": "N'allez pas trop loin.",
+"wo": "Bul dem ba sori lool."
+},
+{
+"niveau": "intermediaire",
+"en": "The tide is coming in. Move your things.",
+"fr": "La marée monte. Déplacez vos affaires.",
+"wo": "Géej gi dafay fees. Toxalal say yëf."
+},
+{
+"niveau": "intermediaire",
+"en": "Can I leave my bag with you while I swim?",
+"fr": "Je peux laisser mon sac avec vous pendant que je nage ?",
+"wo": "Ndax mën naa bàyyi sama saaku ci yaw ba ma di féey ?"
+},
+{
+"niveau": "intermediaire",
+"en": "We offer a fishing trip with local fishermen.",
+"fr": "Nous proposons une sortie de pêche avec des pêcheurs locaux.",
+"wo": "Dañuy joxe benn tukki napp ak nappkat yu dëkk fii."
+},
+{
+"niveau": "intermediaire",
+"en": "The red flag means that swimming is forbidden.",
+"fr": "Le drapeau rouge signifie que la baignade est interdite.",
+"wo": "Drapo bu xonq bi dafay wax ne féey araam na."
+},
+{
+"niveau": "intermediaire",
+"en": "Put on sun cream, the sun is strong.",
+"fr": "Mettez de la crème solaire, le soleil est fort.",
+"wo": "Diwal keremu jant, jant bi dafa tàng lool."
+},
+{
+"niveau": "avance",
+"en": "I would like to organise a birthday party on the beach for twenty people.",
+"fr": "Je voudrais organiser une fête d'anniversaire sur la plage pour vingt personnes.",
+"wo": "Dama bëgg a wàajal benn màggalu bésu juddu ci tefes bi ngir ñaar-fukki nit."
+},
+{
+"niveau": "avance",
+"en": "Is it possible to camp on the beach for one night?",
+"fr": "Il est possible de camper sur la plage pour une nuit ?",
+"wo": "Ndax mën nanu def kamp ci tefes bi ngir benn guddi ?"
+},
+{
+"niveau": "avance",
+"en": "There is a jellyfish. Where is the first aid post?",
+"fr": "Il y a une méduse. Où est le poste de premiers secours ?",
+"wo": "Am na meduuz. Fan la berebu ndimbal bu njëkk bi nekk ?"
+},
+{
+"niveau": "avance",
+"en": "Can you take a group photo of us at sunset?",
+"fr": "Vous pouvez nous prendre en photo de groupe au coucher du soleil ?",
+"wo": "Ndax mën nga nu jël nataalu mbooloo ci jant bi di so ?"
+},
+{
+"niveau": "avance",
+"en": "Do you offer a discount for a group of fifteen people?",
+"fr": "Vous faites une remise pour un groupe de quinze personnes ?",
+"wo": "Ndax dangeen di wàññi njëg ngir mbooloo mu fukk ak juróomi nit ?"
+}
+];
+  var L = [
+{
+"role": "touriste",
+"en": "Hello. Is it safe to take a boat trip today?",
+"fr": "Bonjour. C'est sûr de faire une sortie en bateau aujourd'hui ?",
+"wo": "Jàmm nga fanaan. Ndax am na kaaraange ngir dem ci tukki gaal tey ?",
+"scene": "🏖️ Réserver une sortie en pirogue"
+},
+{
+"role": "pecheur",
+"en": "Yes, the sea is calm. We leave at four o'clock.",
+"fr": "Oui, la mer est calme. Nous partons à seize heures.",
+"wo": "Waaw, géej gi dal na. Danuy dem ci ñeenti waxtu."
+},
+{
+"role": "touriste",
+"en": "How long is the trip and how much is it?",
+"fr": "Combien de temps dure la sortie et combien ça coûte ?",
+"wo": "Ñaata waxtu la tukki bi di yàgg te ñaata la ?"
+},
+{
+"role": "pecheur",
+"en": "Two hours, five thousand francs per person. Life jackets are free.",
+"fr": "Deux heures, cinq mille francs par personne. Les gilets sont gratuits.",
+"wo": "Ñaari waxtu, juróomi junni farã ku nekk. Yérey mucc ci ndox yi amuñu fay."
+},
+{
+"role": "touriste",
+"en": "We are four people. Can we have a discount?",
+"fr": "Nous sommes quatre. On peut avoir une remise ?",
+"wo": "Nun ñeent lanu. Ndax mën nanu am wàññi njëg ?"
+},
+{
+"role": "pecheur",
+"en": "For four people, eighteen thousand in total.",
+"fr": "Pour quatre personnes, dix-huit mille au total.",
+"wo": "Ngir ñeenti nit, fukk ak juróom-ñetti junni lépp."
+},
+{
+"role": "touriste",
+"en": "Perfect. Can we see dolphins?",
+"fr": "Parfait. On peut voir des dauphins ?",
+"wo": "Baax na lool. Ndax mën nanu gis ay dofin ?"
+},
+{
+"role": "pecheur",
+"en": "Maybe, if we are lucky. Please be at the beach at four.",
+"fr": "Peut-être, avec un peu de chance. Soyez à la plage à seize heures.",
+"wo": "Xanaa, su nu amee wërsëg. Ñëwal ci tefes bi ci ñeenti waxtu, bu la neexee."
+}
+];
+  var FIX = {"Is it safe to swim here?": "Ndax am na kaaraange ngir féey fii ?", "Do you want a parasol?": "Ndax bëgg nga parasol ?", "The water is warm": "Ndox mi dafa tàng.", "Do not leave your bag alone": "Bul bàyyi sa saaku moom rekk.", "Do you want to go on a boat trip?": "Ndax bëgg nga dem ci tukki gaal ?", "The sunset is wonderful": "Jant bi di so rafet na lool.", "Surf lessons start at ten in the morning": "Njàggalem surf bi dafay tàmbali ci fukki waxtu ci suba.", "The fishermen come back at five in the afternoon": "Nappkat yi dañuy dellusi ci juróomi waxtu ci ngoon.", "Beware of strong currents, swim between the flags": "Moytul wal mu dëgër mi, féeyal ci diggante drapo yi.", "I want to rent a kayak for two hours": "Dama bëgg a luwaas benn kayak ngir ñaari waxtu.", "The boat trip to the mangroves takes ninety minutes": "Tukki gaal bi ba ci mangrov yi dafay jël juróom-ñeent-fukki simili.", "Life jackets are provided for everyone": "Yérey mucc ci ndox yi am nañu ngir ñépp.", "Fresh grilled fish is served on the beach at noon": "Jën wu bees wu ñu lakk dañu koy joxe ci tefes bi ci digg-bëccëg.", "Our resort offers a full-board package with water sports and an evening show.": "Sunu otel dafay joxe pak bu mat sëkk ak lekk, ay po ci ndox ak benn poñ ci ngoon.", "The sea is rough today, so the boat trip is postponed until tomorrow.": "Géej gi dafa xul tey, kon tukki gaal bi dañu ko randal ba suba.", "Children under twelve must be accompanied by an adult.": "Xale yi amagul fukki at ak ñaar war nañu ànd ak mag.", "We can organise a beach wedding for eighty guests.": "Mën nanu wàajal céet ci tefes bi ngir juróom-ñett-fukki gan.", "Please respect the turtle nests and do not leave plastic on the beach.": "Wormaalal tëggu mbonaat yi te bul bàyyi plastik ci tefes bi.", "The price of the sunset cruise includes drinks and snacks.": "Njëgu tukki gaal bi ci jant bi di so dafay boole naan ak lekk yu ndaw.", "I would like to book a private boat for my family for the whole day.": "Bëgg naa reserwe gaal bu ma moom samab bopp ngir sama njaboot ci bés bi yépp."};
+  C.tour_plage.vocab.forEach(function (v) { if (FIX[v.en]) v.wo = FIX[v.en]; });
+  var ORDRE = { debutant: 0, intermediaire: 1, avance: 2 };
+  var deja = {}; C.tour_plage.vocab.forEach(function (v) { deja[v.en] = 1; });
+  V.forEach(function (v) { if (!deja[v.en]) { C.tour_plage.vocab.push(v); deja[v.en] = 1; } });
+  var tri = C.tour_plage.vocab.map(function (v, i) { return [v, i]; });
+  tri.sort(function (a, b) { var x = ORDRE[a[0].niveau], y = ORDRE[b[0].niveau]; return (x === y ? a[1] - b[1] : x - y); });
+  C.tour_plage.vocab.length = 0; tri.forEach(function (t) { C.tour_plage.vocab.push(t[0]); });
+  D.tour_plage = D.tour_plage || [];
+  var vus = {}; D.tour_plage.forEach(function (l) { vus[l.en] = 1; });
+  L.forEach(function (l) { if (!vus[l.en]) D.tour_plage.push(l); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-plage-plus.js",e);}
+
+try{
+/* ---- diisoo-mission-plage.js ---- */
+/* diisoo-mission-plage.js v1 : Mission « Proposer une sortie en pirogue »
+   L'app joue le vendeur (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Plage ».
+   Bouton place en haut du secteur « Plage » (Business). Essai : https://diisoo.sn/?mission=plage */
+(function () {
+  "use strict";
+  if (window.DiisooMissionPlage) return;
+  var Q = [
+    { q: "Hello. Is it safe to take a boat trip today?", kw: /yes|safe|calm|sea|weather|good|sure|boat|trip|today|fine/i, m: "Yes, the sea is calm today." },
+    { q: "How long is the trip?", kw: /hour|hours|minutes|two|one|about|long|\d|sunset/i, m: "The trip lasts two hours." },
+    { q: "How much is it per person?", kw: /thousand|francs|\d|price|cost|person|per|five|free|included/i, m: "It is five thousand francs per person." },
+    { q: "We are four people. Can we have a discount?", kw: /yes|no|discount|lower|price|thousand|francs|\d|total|group|four|okay|ok/i, m: "For four people, eighteen thousand in total." },
+    { q: "Do you have life jackets? We have a child.", kw: /yes|life|jacket|jackets|child|children|small|free|all|everyone|provide/i, m: "Yes, life jackets are free, and we have a small one for the child." }
+  ];
+
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mpl{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mpl .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mpl .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mpl .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mpl button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mpl .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mpl .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mpl .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mpl .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mpl .m.on{animation:mgq 1s infinite}@keyframes mgq{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mpl .ok{color:#25D366}#mpl .or{color:#FFAA3C}" +
+    "#mpl-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mpl-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mpl")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mpl";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🏖️ Plage · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mpl-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mpl-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mpl-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mpl-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mpl-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mpl-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mpl-r"), mic = document.getElementById("mpl-mic"), nx = document.getElementById("mpl-next");
+      document.getElementById("mpl-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mpl-x").onclick = function () { o.remove(); };
+      document.getElementById("mpl-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["plage"]) BADGES["plage"] = { icon: "🏖️", label: "Plage", desc: "Sortie en pirogue proposée à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("plage"); } catch (e) {}
+      }
+      noter("mission_plage", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🏖️ Mission Plage</div><div class="q">' + (ok ? "Bien joué ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Plage » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du secteur Plage et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mpl-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mpl-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mpl-x2" type="button">Fermer</button>';
+      document.getElementById("mpl-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mpl-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mpl-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi ma sortie en pirogue en anglais sur Diisoo 🏖️ (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("business-content");
+    if (!box || box.classList.contains("hidden") || document.getElementById("mpl-btn")) return;
+    var id = ""; try { id = businessModule; } catch (e) {}
+    if (id !== "tour_plage") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mpl-btn";
+    b.innerHTML = '<span style="font-size:22px">🏖️</span><span>Mission : proposer une sortie en pirogue<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    var h = box.querySelector("h4"); if (h && h.nextSibling) box.insertBefore(b, h.nextSibling); else box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("business-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true, attributes: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionPlage = { ouvrir: ouvrir };
+  if (/[?&]mission=plage/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-plage.js",e);}
+
+try{
 /* ---- diisoo-bazar-plus.js ---- */
 /* diisoo-bazar-plus.js v1 : Business, Bazar (mode et beauté) enrichi
    +15 phrases et un dialogue. Wolof relu par Babacar.
