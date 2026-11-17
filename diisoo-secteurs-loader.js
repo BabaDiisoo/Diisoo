@@ -9,6 +9,7 @@
     "diisoo-secteurs-ui.js",
     "diisoo-secteurs-init.js",
     "diisoo-pron.js",
+    "diisoo-controle-oolel.js",
     "diisoo-voix-court.js",
     "diisoo-essai.js",
     "diisoo-accueil.js",
