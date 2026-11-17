@@ -9274,6 +9274,384 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-freelance.js",e);}
 
 try{
+/* ---- diisoo-fetes.js ---- */
+/* diisoo-fetes.js v1 : theme « Fêtes & événements » (30 phrases, 1 dialogue, 3 questions), niveau N2.
+   Wolof relu par Babacar. Desactivable : ?fetes=0 */
+(function () {
+  "use strict";
+  if (window.__diisooFetes || /[?&]fetes=0/.test(location.search)) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooFetes = true;
+  var VOC = [
+[
+"Happy birthday!",
+"Joyeux anniversaire !",
+"Bésu juddu bu neex !"
+],
+[
+"Happy new year!",
+"Bonne année !",
+"Dewenati !"
+],
+[
+"Happy Tabaski!",
+"Bonne Tabaski !",
+"Dewenati !"
+],
+[
+"Happy Korité!",
+"Bonne Korité !",
+"Korite bu neex !"
+],
+[
+"Congratulations!",
+"Félicitations !",
+"Ndokkeel !"
+],
+[
+"Thank you for the invitation.",
+"Merci pour l'invitation.",
+"Jërëjëf ci woote bi."
+],
+[
+"What time does the party start?",
+"À quelle heure commence la fête ?",
+"Ban waxtu la xew bi di tàmbali ?"
+],
+[
+"Where is the ceremony?",
+"Où est la cérémonie ?",
+"Fan la xew bi nekk ?"
+],
+[
+"This is a gift for you.",
+"Voici un cadeau pour vous.",
+"Kado bii ngir yaw la."
+],
+[
+"The food is delicious.",
+"La nourriture est délicieuse.",
+"Ñam bi neex na lool."
+],
+[
+"We celebrate Tabaski with the whole family.",
+"Nous fêtons la Tabaski avec toute la famille.",
+"Danuy màggal Tabaski ak njaboot gi yépp."
+],
+[
+"I am buying a sheep for Tabaski.",
+"J'achète un mouton pour la Tabaski.",
+"Maa ngi jënd xar ngir Tabaski."
+],
+[
+"The sheep is very expensive this year.",
+"Le mouton est très cher cette année.",
+"Xar mi dafa seer lool at mii."
+],
+[
+"I am going to the Magal in Touba.",
+"Je vais au Magal à Touba.",
+"Maa ngi dem Magal ci Tuubaa."
+],
+[
+"Many people travel for the Magal.",
+"Beaucoup de gens voyagent pour le Magal.",
+"Nit ñu bari dañuy tukki ngir Magal."
+],
+[
+"The wedding is on Saturday.",
+"Le mariage est samedi.",
+"Céet bi mooy gaawu."
+],
+[
+"The baptism of the baby is on Friday.",
+"Le baptême du bébé est vendredi.",
+"Ngénte li mooy àjjuma."
+],
+[
+"Where can I rent chairs and tents?",
+"Où puis-je louer des chaises et des bâches ?",
+"Fan laa mën a luwaasee ay siis ak ay baas ?"
+],
+[
+"What should I wear to the ceremony?",
+"Que dois-je porter pour la cérémonie ?",
+"Lan laa war a sol ci xew bi ?"
+],
+[
+"I will bring a gift for the family.",
+"J'apporterai un cadeau pour la famille.",
+"Dinaa indi kado ngir njaboot gi."
+],
+[
+"We would be honoured if you could attend our wedding.",
+"Nous serions honorés de votre présence à notre mariage.",
+"Dinanu bég lool su ngeen ñëwee ci sunu céet."
+],
+[
+"Please confirm your attendance before Friday.",
+"Merci de confirmer votre présence avant vendredi.",
+"Bu leen neexee, dëggal leen ne dingeen ñëw balaa àjjuma."
+],
+[
+"I would like to hire a caterer for two hundred guests.",
+"Je voudrais engager un traiteur pour deux cents invités.",
+"Dama bëgg a jël benn toggkat ngir ñaar-téeméeri gan."
+],
+[
+"How much do you charge for the decoration and the sound system?",
+"Combien facturez-vous pour la décoration et la sonorisation ?",
+"Ñaata ngeen di jël ngir dekorasiyoŋ bi ak sonorisaasiyoŋ bi ?"
+],
+[
+"We are collecting contributions for the ceremony.",
+"Nous collectons des cotisations pour la cérémonie.",
+"Danuy dajale ndimbal ngir xew bi."
+],
+[
+"I am sorry for your loss. May God give you strength.",
+"Mes condoléances. Que Dieu vous donne de la force.",
+"Njaal ! Yàlla na la Yàlla jox muñ."
+],
+[
+"I could not attend because I was travelling. Please forgive me.",
+"Je n'ai pas pu venir car j'étais en voyage. Pardonnez-moi.",
+"Mënuma woon a ñëw ndax maa ngi woon ci tukki. Baal ma."
+],
+[
+"We will take photos and a video of the event.",
+"Nous prendrons des photos et une vidéo de l'événement.",
+"Dinanu jël ay nataal ak wideo ci xew bi."
+],
+[
+"May God grant us many more years together.",
+"Que Dieu nous accorde encore de nombreuses années ensemble.",
+"Yàlla na nu Yàlla yokk at yu bari ci ànd."
+],
+[
+"Thank you all for coming. It means a lot to us.",
+"Merci à tous d'être venus. Cela compte beaucoup pour nous.",
+"Jërëjëf ci yéen ñépp ci seen ñëw. Am na solo lool ci nun."
+]
+];
+  var DIA = [
+[
+"B",
+"Hello. I am looking for a sheep for Tabaski.",
+"Bonjour. Je cherche un mouton pour la Tabaski.",
+"Jàmm nga fanaan. Maa ngi seet xar ngir Tabaski."
+],
+[
+"A",
+"Welcome. I have very good sheep. What is your budget?",
+"Bienvenue. J'ai de très beaux moutons. Quel est votre budget ?",
+"Dalal ak jàmm. Am naa xar yu baax lool. Ban la sa budse ?"
+],
+[
+"B",
+"About one hundred and fifty thousand francs.",
+"Environ cent cinquante mille francs.",
+"Lu tollu ci téeméeri junni ak juróom-fukki junni farã."
+],
+[
+"A",
+"This one is healthy and strong. It costs one hundred and eighty thousand.",
+"Celui-ci est en bonne santé et fort. Il coûte cent quatre-vingt mille.",
+"Bii dafa wér te am doole. Téeméeri junni ak juróom-ñett-fukki junni la."
+],
+[
+"B",
+"It is too expensive. Can you lower the price?",
+"C'est trop cher. Vous pouvez baisser le prix ?",
+"Dafa seer lool. Ndax mën nga wàññi njëg li ?"
+],
+[
+"A",
+"For you, one hundred and sixty thousand, and I help you load it.",
+"Pour vous, cent soixante mille, et je vous aide à le charger.",
+"Ngir yaw, téeméeri junni ak juróom-benn-fukki junni, te dinaa la dimbali nga yëkkati ko."
+],
+[
+"B",
+"Okay. I will take it. Can I pay with Wave?",
+"D'accord. Je le prends. Je peux payer avec Wave ?",
+"Waaw. Dinaa ko jël. Ndax mën naa fay ak Wave ?"
+],
+[
+"A",
+"Yes. Happy Tabaski to you and your family!",
+"Oui. Bonne Tabaski à vous et à votre famille !",
+"Waaw. Tabaski bu neex ci yaw ak sa njaboot !"
+]
+];
+  var QZ = [
+[
+"___ birthday!",
+[
+"Happy",
+"Hippy",
+"Happily"
+],
+"« Happy birthday » = joyeux anniversaire."
+],
+[
+"Thank you for the ___.",
+[
+"invitation",
+"invention",
+"investigation"
+],
+"« invitation » = invitation."
+],
+[
+"I am buying a ___ for Tabaski.",
+[
+"sheep",
+"ship",
+"sleep"
+],
+"« sheep » = mouton."
+]
+];
+  if (G.some(function (t) { return t.id === "fetes"; })) return;
+  G.push({
+    id: "fetes", niveau: 2, title: "N2 · 🐑 Fêtes & événements",
+    vocab: VOC.map(function (x) { return { en: x[0], fr: x[1], wo: x[2] }; }),
+    dialogue: DIA.map(function (x) { return { who: x[0], en: x[1], fr: x[2], wo: x[3] }; }),
+    quiz: QZ.map(function (x) { return { q: x[0], o: x[1], a: 0, why: x[2] }; })
+  });
+  G.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-fetes.js",e);}
+
+try{
+/* ---- diisoo-mission-fetes.js ---- */
+/* diisoo-mission-fetes.js v1 : Mission « Acheter mon mouton »
+   L'app joue le vendeur de moutons (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Fêtes ».
+   Bouton place en haut du theme « Fêtes & événements » (Anglais). Essai : https://diisoo.sn/?mission=fetes */
+(function () {
+  "use strict";
+  if (window.DiisooMissionFetes) return;
+  var Q = [
+    { q: "Hello. What are you looking for?", kw: /sheep|ram|tabaski|buy|looking|need|want|animal|goat/i, m: "I am looking for a sheep for Tabaski." },
+    { q: "What is your budget?", kw: /thousand|francs|\d|hundred|budget|about|around|fifty|sixty/i, m: "My budget is about one hundred and fifty thousand francs." },
+    { q: "This one is healthy and strong. It costs one hundred and eighty thousand.", kw: /lower|price|expensive|cheaper|less|discount|too|better|reduce/i, m: "It is too expensive. Can you lower the price?" },
+    { q: "Okay, one hundred and sixty thousand. Do you want to take it?", kw: /yes|take|ok|okay|deal|sure|buy|fine|agree/i, m: "Yes, I will take it." },
+    { q: "How do you want to pay?", kw: /wave|orange|cash|money|mobile|pay|card|transfer/i, m: "I will pay with Wave." }
+  ];
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mft{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mft .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mft .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mft .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mft button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mft .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mft .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mft .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mft .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mft .m.on{animation:mfp 1s infinite}@keyframes mfp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mft .ok{color:#25D366}#mft .or{color:#FFAA3C}" +
+    "#mft-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mft-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mft")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mft";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🐑 Acheter mon mouton · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mf-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mf-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mf-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mf-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mf-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mf-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mf-r"), mic = document.getElementById("mf-mic"), nx = document.getElementById("mf-next");
+      document.getElementById("mf-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mf-x").onclick = function () { o.remove(); };
+      document.getElementById("mf-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["fetes"]) BADGES["fetes"] = { icon: "🐑", label: "Fêtes", desc: "Achat du mouton de Tabaski réussi à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("fetes"); } catch (e) {}
+      }
+      noter("mission_fetes", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🐑 Mission fetes</div><div class="q">' + (ok ? "Tabaski préparée ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Fêtes » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du thème Famille et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mf-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mf-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mf-x2" type="button">Fermer</button>';
+      document.getElementById("mf-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mf-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mf-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon achat de mouton en anglais sur Diisoo 🐑 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComftnent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("general-content");
+    if (!box || document.getElementById("mft-btn")) return;
+    var id = ""; try { id = generalThemeId; } catch (e) {}
+    if (id !== "fetes") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mft-btn";
+    b.innerHTML = '<span style="font-size:22px">🐑</span><span>Mission : acheter mon mouton<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("general-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionFetes = { ouvrir: ouvrir };
+  if (/[?&]mission=fetes/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-fetes.js",e);}
+
+try{
 /* ---- diisoo-son.js ---- */
 /* diisoo-son.js v1 : sons de retour, comme les assistants vocaux
    - bip montant quand le micro s'ouvre (tu peux parler)
