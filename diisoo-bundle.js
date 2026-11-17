@@ -8518,6 +8518,384 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-administration.js",e);}
 
 try{
+/* ---- diisoo-etudes.js ---- */
+/* diisoo-etudes.js v1 : theme « Études & école » (30 phrases, 1 dialogue, 3 questions), niveau N2.
+   Wolof relu par Babacar. Desactivable : ?etudes=0 */
+(function () {
+  "use strict";
+  if (window.__diisooEtudes || /[?&]etudes=0/.test(location.search)) return;
+  var G;
+  try { G = typeof GENERAL_THEMES !== "undefined" ? GENERAL_THEMES : null; } catch (e) { G = null; }
+  if (!G || !G.push) return;
+  window.__diisooEtudes = true;
+  var VOC = [
+[
+"I am a student.",
+"Je suis étudiant.",
+"Ndongo laa."
+],
+[
+"What is your school?",
+"Quelle est votre école ?",
+"Ban la sa daara ?"
+],
+[
+"I study at the university.",
+"J'étudie à l'université.",
+"Maa ngi jàng ci iniwersite bi."
+],
+[
+"What time does the class start?",
+"À quelle heure commence le cours ?",
+"Ban waxtu la kuur bi di tàmbali ?"
+],
+[
+"Where is the classroom?",
+"Où est la salle de classe ?",
+"Fan la néegu njàng bi nekk ?"
+],
+[
+"I do not understand.",
+"Je ne comprends pas.",
+"Dégguma ko."
+],
+[
+"Can you repeat, please?",
+"Vous pouvez répéter, s'il vous plaît ?",
+"Ndax mën nga ko waxaat, bu la neexee ?"
+],
+[
+"I need a notebook and a pen.",
+"Il me faut un cahier et un stylo.",
+"Dama soxla kaye ak bik."
+],
+[
+"The teacher is very good.",
+"Le professeur est très bon.",
+"Jàngalekat bi baax na lool."
+],
+[
+"I have homework today.",
+"J'ai des devoirs aujourd'hui.",
+"Am naa liggéeyu kër tey."
+],
+[
+"When is the exam?",
+"Quand est l'examen ?",
+"Kañ la ekzaameŋ bi ?"
+],
+[
+"I am preparing for the exam.",
+"Je prépare l'examen.",
+"Maa ngi waajal ekzaameŋ bi."
+],
+[
+"I passed the exam.",
+"J'ai réussi l'examen.",
+"Jàll naa ekzaameŋ bi."
+],
+[
+"I failed the exam. I will try again.",
+"J'ai échoué à l'examen. Je vais réessayer.",
+"Daanoo naa ci ekzaameŋ bi. Dinaa ko jéemaat."
+],
+[
+"What are my marks?",
+"Quelles sont mes notes ?",
+"Yan not laa am ?"
+],
+[
+"Can I borrow your notes?",
+"Je peux emprunter vos notes ?",
+"Ndax mën naa ab say not ?"
+],
+[
+"We have a group project.",
+"Nous avons un projet de groupe.",
+"Am nanu benn porose bu mbooloo."
+],
+[
+"I want to register for the next year.",
+"Je veux m'inscrire pour l'année prochaine.",
+"Dama bëgg a bindu ngir at mi di ñëw."
+],
+[
+"How much are the school fees?",
+"Combien sont les frais de scolarité ?",
+"Ñaata la fere daara bi ?"
+],
+[
+"Can I pay the fees in two instalments?",
+"Je peux payer les frais en deux fois ?",
+"Ndax mën naa fay fere bi ci ñaari yoon ?"
+],
+[
+"I would like to apply for a scholarship.",
+"Je voudrais demander une bourse d'études.",
+"Dama bëgg a laaj benn bursu njàng."
+],
+[
+"Which documents are required for the application?",
+"Quels documents sont requis pour la candidature ?",
+"Yan kayit lañu laaj ngir laaj bi ?"
+],
+[
+"I need a recommendation letter from my teacher.",
+"Il me faut une lettre de recommandation de mon professeur.",
+"Dama soxla benn bataaxalu seede bu jóge ci sama jàngalekat."
+],
+[
+"The deadline for applications is the thirty-first of December.",
+"La date limite des candidatures est le trente et un décembre.",
+"Bés bu mujj bi ngir laaj yi mooy fanweer ak benn ci desàmbar."
+],
+[
+"I want to study abroad. What is the process?",
+"Je veux étudier à l'étranger. Quelle est la démarche ?",
+"Dama bëgg a jàng ci biti réew. Nan lañu ciy doxee ?"
+],
+[
+"I need a language test result, like IELTS, for my application.",
+"Il me faut un résultat de test de langue, comme l'IELTS, pour ma candidature.",
+"Dama soxla njëlu testu làkk, mel ni IELTS, ngir sama laaj bi."
+],
+[
+"I am writing my thesis on agriculture.",
+"J'écris mon mémoire sur l'agriculture.",
+"Maa ngi bind sama memwaar ci wàllu mbay."
+],
+[
+"Can I follow the course online?",
+"Je peux suivre le cours en ligne ?",
+"Ndax mën naa topp kuur bi ci internet ?"
+],
+[
+"I did not receive my grades. Can you check the system?",
+"Je n'ai pas reçu mes notes. Vous pouvez vérifier le système ?",
+"Jotuma samay not. Ndax mën nga xool sistem bi ?"
+],
+[
+"I would like to change my course because it does not suit me.",
+"Je voudrais changer de filière car elle ne me convient pas.",
+"Dama bëgg a soppi sama filyeer ndax dëppoowul ak man."
+]
+];
+  var DIA = [
+[
+"B",
+"Good morning. I would like to register for the first year.",
+"Bonjour. Je voudrais m'inscrire en première année.",
+"Jàmm nga fanaan. Dama bëgg a bindu ci at mu njëkk mi."
+],
+[
+"A",
+"Of course. Which course do you want to study?",
+"Bien sûr. Quelle filière voulez-vous suivre ?",
+"Waaw kay. Ban filyeer nga bëgg a jàng ?"
+],
+[
+"B",
+"Computer science. What documents do I need?",
+"L'informatique. De quels documents ai-je besoin ?",
+"Informatik. Yan kayit laa soxla ?"
+],
+[
+"A",
+"Your baccalaureate certificate, your birth certificate and two photos.",
+"Votre diplôme du baccalauréat, votre extrait de naissance et deux photos.",
+"Sa diplomu bak, sa ekstere de nesaas ak ñaari nataal."
+],
+[
+"B",
+"How much are the school fees?",
+"Combien sont les frais de scolarité ?",
+"Ñaata la fere daara bi ?"
+],
+[
+"A",
+"Two hundred thousand francs per year. You can pay in two instalments.",
+"Deux cent mille francs par an. Vous pouvez payer en deux fois.",
+"Ñaar-téeméeri junni farã ci at mu nekk. Mën nga fay ci ñaari yoon."
+],
+[
+"B",
+"When do the classes start?",
+"Quand commencent les cours ?",
+"Kañ la kuur yi di tàmbali ?"
+],
+[
+"A",
+"On the first of October. Please come with your documents.",
+"Le premier octobre. Venez avec vos documents, s'il vous plaît.",
+"Ci benn oktoobar. Ñëwal ak say kayit, bu la neexee."
+]
+];
+  var QZ = [
+[
+"I am a ___ at the university.",
+[
+"student",
+"studio",
+"study"
+],
+"« student » = étudiant."
+],
+[
+"When is the ___?",
+[
+"exam",
+"example",
+"exact"
+],
+"« exam » = examen."
+],
+[
+"I want to apply for a ___.",
+[
+"scholarship",
+"school ship",
+"scholar"
+],
+"« scholarship » = bourse d'études."
+]
+];
+  if (G.some(function (t) { return t.id === "school"; })) return;
+  G.push({
+    id: "school", niveau: 2, title: "N2 · 🎓 Études & école",
+    vocab: VOC.map(function (x) { return { en: x[0], fr: x[1], wo: x[2] }; }),
+    dialogue: DIA.map(function (x) { return { who: x[0], en: x[1], fr: x[2], wo: x[3] }; }),
+    quiz: QZ.map(function (x) { return { q: x[0], o: x[1], a: 0, why: x[2] }; })
+  });
+  G.sort(function (a, b) { return (a.niveau || 3) - (b.niveau || 3); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-etudes.js",e);}
+
+try{
+/* ---- diisoo-mission-etudes.js ---- */
+/* diisoo-mission-etudes.js v1 : Mission « M'inscrire à l'université »
+   L'app joue la secrétaire de l'université (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Études ».
+   Bouton place en haut du theme « Études & école » (Anglais). Essai : https://diisoo.sn/?mission=etudes */
+(function () {
+  "use strict";
+  if (window.DiisooMissionEtudes) return;
+  var Q = [
+    { q: "Good morning. How can I help you?", kw: /register|registration|enrol|enroll|study|course|year|university|want|need|help|inscri/i, m: "I would like to register for the first year." },
+    { q: "Which course do you want to study?", kw: /computer|science|law|medicine|agriculture|business|english|economics|course|study|management|engineering/i, m: "I want to study computer science." },
+    { q: "Do you have your baccalaureate certificate and two photos?", kw: /yes|no|here|have|photo|photos|certificate|baccalaureate|bac/i, m: "Yes, I have them here." },
+    { q: "The school fees are two hundred thousand francs per year. Is that okay?", kw: /yes|no|ok|okay|pay|instal|two|expensive|can|fees|thousand/i, m: "Yes, can I pay in two instalments?" },
+    { q: "The classes start on the first of October. Do you have any questions?", kw: /yes|no|when|where|what|thank|question|time|class|classes|schedule/i, m: "No, thank you. See you on the first of October." }
+  ];
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mel2{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mel2 .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mel2 .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mel2 .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mel2 button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mel2 .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mel2 .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mel2 .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mel2 .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mel2 .m.on{animation:mfp 1s infinite}@keyframes mfp{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mel2 .ok{color:#25D366}#mel2 .or{color:#FFAA3C}" +
+    "#mel2-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mel2-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mel2")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mel2";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">🎓 M’inscrire à l’université · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mf-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mf-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mf-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mf-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mf-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mf-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mf-r"), mic = document.getElementById("mf-mic"), nx = document.getElementById("mf-next");
+      document.getElementById("mf-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mf-x").onclick = function () { o.remove(); };
+      document.getElementById("mf-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["etudes"]) BADGES["etudes"] = { icon: "🎓", label: "Études", desc: "Inscription universitaire réussie à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("etudes"); } catch (e) {}
+      }
+      noter("mission_etudes", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">🎓 Mission etudes</div><div class="q">' + (ok ? "Inscription validée ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Études » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du thème Famille et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mf-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mf-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mf-x2" type="button">Fermer</button>';
+      document.getElementById("mf-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mf-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mf-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi mon inscription à l'université en anglais sur Diisoo 🎓 (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComel2nent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("general-content");
+    if (!box || document.getElementById("mel2-btn")) return;
+    var id = ""; try { id = generalThemeId; } catch (e) {}
+    if (id !== "school") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mel2-btn";
+    b.innerHTML = '<span style="font-size:22px">🎓</span><span>Mission : m’inscrire à l’université<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("general-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionEtudes = { ouvrir: ouvrir };
+  if (/[?&]mission=etudes/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-etudes.js",e);}
+
+try{
 /* ---- diisoo-son.js ---- */
 /* diisoo-son.js v1 : sons de retour, comme les assistants vocaux
    - bip montant quand le micro s'ouvre (tu peux parler)
