@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v145";
+const VERSION = "diisoo-cache-v146";
 const SHELL = [
   "./",
   "./index.html",
@@ -27,7 +27,7 @@ const SHELL = [
   "./diisoo-themes-extra.js",
   "./diisoo-lecons.js",
   "./diisoo-lecons-plus.js",
-  "./diisoo-arrivee.js","./diisoo-question-jour.js","./diisoo-quete.js","./diisoo-aujourdhui.js","./diisoo-accueil2.js","./diisoo-diag.js","./diisoo-ligue.js","./diisoo-invite-moment.js","./diisoo-ecoute.js","./diisoo-colobane-plus.js","./diisoo-mission-colobane.js","./diisoo-sandaga-plus.js","./diisoo-mission-sandaga.js","./diisoo-chine-plus.js","./diisoo-mission-chine.js","./diisoo-agriculture-plus.js","./diisoo-mission-agribiz.js","./diisoo-hotel-plus.js","./diisoo-mission-hotel.js","./diisoo-restaurant-plus.js","./diisoo-mission-restaurant.js","./diisoo-guide-plus.js","./diisoo-mission-guide.js","./diisoo-transport-plus.js","./diisoo-mission-transport.js","./diisoo-artisanat-plus.js","./diisoo-mission-artisanat.js","./diisoo-bazar-plus.js","./diisoo-mission-bazar.js","./diisoo-electronique-plus.js","./diisoo-mission-electronique.js","./diisoo-abc.js",
+  "./diisoo-arrivee.js","./diisoo-question-jour.js","./diisoo-quete.js","./diisoo-aujourdhui.js","./diisoo-accueil2.js","./diisoo-diag.js","./diisoo-ligue.js","./diisoo-invite-moment.js","./diisoo-ecoute.js","./diisoo-colobane-plus.js","./diisoo-mission-colobane.js","./diisoo-sandaga-plus.js","./diisoo-mission-sandaga.js","./diisoo-chine-plus.js","./diisoo-mission-chine.js","./diisoo-agriculture-plus.js","./diisoo-mission-agribiz.js","./diisoo-hotel-plus.js","./diisoo-mission-hotel.js","./diisoo-restaurant-plus.js","./diisoo-mission-restaurant.js","./diisoo-guide-plus.js","./diisoo-mission-guide.js","./diisoo-transport-plus.js","./diisoo-mission-transport.js","./diisoo-artisanat-plus.js","./diisoo-mission-artisanat.js","./diisoo-agence-plus.js","./diisoo-mission-agence.js","./diisoo-bazar-plus.js","./diisoo-mission-bazar.js","./diisoo-electronique-plus.js","./diisoo-mission-electronique.js","./diisoo-abc.js",
   "./diisoo-examens-hub.js",
   "./diisoo-universel.js",
   "./diisoo-reseau.js",

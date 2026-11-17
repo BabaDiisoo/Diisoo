@@ -5333,6 +5333,301 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-mission-artisanat.js",e);}
 
 try{
+/* ---- diisoo-agence-plus.js ---- */
+/* diisoo-tour_agence-plus.js v1 : Business, Agence (mode et beauté) enrichi
+   Wolof des phrases existantes complété, +15 phrases, 1 dialogue. Wolof relu par Babacar.
+   Desactivable : ?tour_agence=0 */
+(function () {
+  "use strict";
+  if (window.__diisooAgencePlus || /[?&]tour_agence=0/.test(location.search)) return;
+  var C, D;
+  try { C = CHINA_TRADE_WOLOF; D = BUSINESS_DIALOGUES; } catch (e) { return; }
+  if (!C || !C.tour_agence) return;
+  window.__diisooAgencePlus = true;
+  var V = [
+{
+"niveau": "debutant",
+"en": "What is your name, please?",
+"fr": "Quel est votre nom, s'il vous plaît ?",
+"wo": "Naka nga tudd, bu la neexee ?"
+},
+{
+"niveau": "debutant",
+"en": "How many people are travelling?",
+"fr": "Combien de personnes voyagent ?",
+"wo": "Ñaata nit ñoo di tukki ?"
+},
+{
+"niveau": "debutant",
+"en": "Here is your ticket.",
+"fr": "Voici votre billet.",
+"wo": "Sa tike bi mii ngi nii."
+},
+{
+"niveau": "debutant",
+"en": "Please sign here.",
+"fr": "Signez ici, s'il vous plaît.",
+"wo": "Siñeel fii, bu la neexee."
+},
+{
+"niveau": "debutant",
+"en": "Is it your first trip abroad?",
+"fr": "C'est votre premier voyage à l'étranger ?",
+"wo": "Ndax sa tukki bu njëkk ci biti réew la ?"
+},
+{
+"niveau": "intermediaire",
+"en": "Which airline do you prefer?",
+"fr": "Quelle compagnie aérienne préférez-vous ?",
+"wo": "Ban kompañi awiyoŋ nga gën a bëgg ?"
+},
+{
+"niveau": "intermediaire",
+"en": "The visa takes about two weeks.",
+"fr": "Le visa prend environ deux semaines.",
+"wo": "Wisa bi dafay jël lu tollook ñaari ayu-bés."
+},
+{
+"niveau": "intermediaire",
+"en": "You can pay in two instalments.",
+"fr": "Vous pouvez payer en deux fois.",
+"wo": "Mën nga fay ci ñaari yoon."
+},
+{
+"niveau": "intermediaire",
+"en": "I will send the ticket to your WhatsApp.",
+"fr": "J'envoie le billet sur votre WhatsApp.",
+"wo": "Dinaa yónnee tike bi ci sa WhatsApp."
+},
+{
+"niveau": "intermediaire",
+"en": "Do you have a vaccination certificate?",
+"fr": "Vous avez un carnet de vaccination ?",
+"wo": "Ndax am nga karne bu vaksinasiyoŋ ?"
+},
+{
+"niveau": "avance",
+"en": "The flight is delayed. We will inform you as soon as we know more.",
+"fr": "Le vol est retardé. Nous vous informons dès que nous en savons plus.",
+"wo": "Vol bi yeex na. Dinanu la xamal bu nu xamee lu ci gën a leer."
+},
+{
+"niveau": "avance",
+"en": "I need to change the name on the ticket. There is a spelling mistake.",
+"fr": "Je dois changer le nom sur le billet. Il y a une faute d'orthographe.",
+"wo": "War naa soppi tur bi ci tike bi. Am na njuumte ci mbind mi."
+},
+{
+"niveau": "avance",
+"en": "Can you book a package with flight, hotel and airport transfer?",
+"fr": "Vous pouvez réserver un forfait avec vol, hôtel et transfert ?",
+"wo": "Ndax mën nga reserwe pak bu am vol, otel ak transfer ?"
+},
+{
+"niveau": "avance",
+"en": "My visa was refused. What can I do?",
+"fr": "Mon visa a été refusé. Que puis-je faire ?",
+"wo": "Sama wisa dañu ko bañ."
+},
+{
+"niveau": "avance",
+"en": "I would like a refund for the unused part of the trip.",
+"fr": "Je voudrais un remboursement pour la partie non utilisée du voyage.",
+"wo": "Dama bëgg ñu delloo ma xaalis bi ngir wàll gi ma tukkiwul."
+}
+];
+  var L = [
+{
+"role": "client",
+"en": "Hello. I would like to go to Casablanca in December.",
+"fr": "Bonjour. Je voudrais aller à Casablanca en décembre.",
+"wo": "Jàmm nga fanaan. Dama bëgg a dem Kasablanka ci desàmbar.",
+"scene": "✈️ Réserver un voyage pour le Maroc"
+},
+{
+"role": "agent",
+"en": "Very well. For how many days?",
+"fr": "Très bien. Pour combien de jours ?",
+"wo": "Baax na. Ngir ñaata fan ?"
+},
+{
+"role": "client",
+"en": "Seven days. I want a hotel near the city centre.",
+"fr": "Sept jours. Je veux un hôtel près du centre-ville.",
+"wo": "Juróom-ñaari fan. Dama bëgg otel bu jege digg dëkk bi."
+},
+{
+"role": "agent",
+"en": "Okay. The flight and the hotel together cost five hundred thousand francs.",
+"fr": "D'accord. Le vol et l'hôtel ensemble coûtent cinq cent mille francs.",
+"wo": "Waaw. Vol bi ak otel bi, boole leen, juróom-téeméeri junni farã la."
+},
+{
+"role": "client",
+"en": "Do I need a visa?",
+"fr": "J'ai besoin d'un visa ?",
+"wo": "Ndax soxla naa wisa ?"
+},
+{
+"role": "agent",
+"en": "No, Senegalese citizens do not need a visa for Morocco.",
+"fr": "Non, les Sénégalais n'ont pas besoin de visa pour le Maroc.",
+"wo": "Déedéet, doomi Senegaal soxlawuñu wisa ngir Maroog."
+},
+{
+"role": "client",
+"en": "Perfect. Can I pay half now and half next week?",
+"fr": "Parfait. Je peux payer la moitié maintenant et la moitié la semaine prochaine ?",
+"wo": "Baax na lool. Ndax mën naa fay genn-wàll gi léegi, beneen genn-wàll bi ayu-bés bi di ñëw ?"
+},
+{
+"role": "agent",
+"en": "Yes. Please give me your passport to confirm the booking.",
+"fr": "Oui. Donnez-moi votre passeport pour confirmer la réservation.",
+"wo": "Waaw. Joxal ma sa paspoor ngir dëggal reserwaasiyoŋ bi."
+}
+];
+  var FIX = {"One way or return?": "Dem rekk walla dem ak dellusi ?", "Your ticket is confirmed": "Sa tike bi wóor na.", "The flight leaves at eight in the morning": "Awiyoŋ bi dafay dem ci juróom-ñetti waxtu ci suba.", "Do you want a direct flight or with a stopover?": "Ndax bëgg nga vol bu direkt walla bu am eskaal ?", "The price includes a twenty-three kilo bag": "Njëg li dafa boole saaku bu ñaar-fukk ak ñetti kilo.", "You must arrive at the airport three hours before": "War nga àggsi ci aeroport bi ñetti waxtu balaa dem bi.", "Your passport must be valid for six months": "Sa paspoor war na am juróom-benni weer yu des ci kaw.", "Do you need a visa for this country?": "Ndax soxla nga wisa ngir réew mii ?", "I can reserve a hotel for you near the city centre": "Mën naa la reserwe otel bu jege digg dëkk bi.", "Would you like travel insurance?": "Ndax bëgg nga asirans ngir tukki bi ?", "The cheapest fare is non-refundable. A flexible ticket costs more.": "Njëg li gën a yomb amul delloo xaalis. Tike bu ñu mën a soppi dafa gën a seer.", "To change the date, there is a fee of fifty euros plus the fare difference.": "Ngir soppi bés bi, am na fay bu juróom-fukki ero ak li yokku ci njëg li.", "Your visa application needs a bank statement, a hotel booking and a return ticket.": "Sa laaj bu wisa soxla na relewe bànk, reserwaasiyoŋ otel ak tike bu dem ak dellusi.", "I will prepare a complete itinerary and send you a quotation today.": "Dinaa defar benn yoonu tukki bu mat te yónnee la devis tey.", "The airline cancelled your flight. We can rebook you or refund you.": "Kompañi awiyoŋ bi anile na sa vol. Mën nanu la dugal ci beneen walla delloo la xaalis bi.", "For a group of ten, we can negotiate a special rate with the airline.": "Ngir gurup bu fukki nit, mën nanu waxtaan ak kompañi bi ngir njëg lu gën a yomb.", "Please pay a deposit of thirty percent to confirm the booking.": "Fayal awãas bu fanweeri pursaŋ ngir dëggal reserwaasiyoŋ bi."};
+  C.tour_agence.vocab.forEach(function (v) { if (FIX[v.en]) v.wo = FIX[v.en]; });
+  var ORDRE = { debutant: 0, intermediaire: 1, avance: 2 };
+  var deja = {}; C.tour_agence.vocab.forEach(function (v) { deja[v.en] = 1; });
+  V.forEach(function (v) { if (!deja[v.en]) { C.tour_agence.vocab.push(v); deja[v.en] = 1; } });
+  var tri = C.tour_agence.vocab.map(function (v, i) { return [v, i]; });
+  tri.sort(function (a, b) { var x = ORDRE[a[0].niveau], y = ORDRE[b[0].niveau]; return (x === y ? a[1] - b[1] : x - y); });
+  C.tour_agence.vocab.length = 0; tri.forEach(function (t) { C.tour_agence.vocab.push(t[0]); });
+  D.tour_agence = D.tour_agence || [];
+  var vus = {}; D.tour_agence.forEach(function (l) { vus[l.en] = 1; });
+  L.forEach(function (l) { if (!vus[l.en]) D.tour_agence.push(l); });
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-agence-plus.js",e);}
+
+try{
+/* ---- diisoo-mission-agence.js ---- */
+/* diisoo-mission-agence.js v1 : Mission « Vendre un billet d'avion »
+   L'app joue le vendeur (voix), la personne repond a voix haute (micro). 5 questions, 4 bonnes reponses sur 5 = badge « Agence ».
+   Bouton place en haut du secteur « Agence de voyage » (Business). Essai : https://diisoo.sn/?mission=agence */
+(function () {
+  "use strict";
+  if (window.DiisooMissionAgence) return;
+  var Q = [
+    { q: "Hello. I would like to travel to Paris next month.", kw: /yes|sure|paris|welcome|of course|how many|when|date|travel|help|ok|okay|dates/i, m: "Of course. What dates do you want to travel?" },
+    { q: "I want to leave on the tenth. One way or return?", kw: /return|one way|one-way|round|both|ticket|which|do you|would you/i, m: "Would you like a one way or a return ticket?" },
+    { q: "Return, please. How much is the ticket?", kw: /thousand|francs|\d|price|cost|ticket|euro|it is|total/i, m: "The return ticket is three hundred and eighty thousand francs." },
+    { q: "Is the luggage included?", kw: /yes|no|included|include|luggage|bag|suitcase|kilo|kilos|twenty|extra/i, m: "Yes, one suitcase of twenty-three kilos is included." },
+    { q: "Okay. Can I pay half now and half next week?", kw: /yes|sure|pay|half|deposit|instalment|installment|ok|okay|passport|confirm|please/i, m: "Yes. Please give me your passport to confirm the booking." }
+  ];
+
+
+
+
+
+  function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function parler(t) { try { if (typeof speak === "function") return speak(t, "en-US", 0.9); } catch (e) {} }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#mae{position:fixed;inset:0;z-index:99991;background:linear-gradient(180deg,#0B0F1C,#1B1426);color:#F6F1E7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center}" +
+    "#mae .k{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F0906B}" +
+    "#mae .q{background:#F6F1E7;color:#141828;border-radius:20px;padding:14px 18px;font-size:20px;font-weight:800;line-height:1.25;max-width:320px}" +
+    "#mae .r{min-height:70px;font-size:16px;font-weight:700;line-height:1.3;max-width:320px}" +
+    "#mae button{border:0;border-radius:18px;font-weight:800;min-height:50px;padding:10px 18px;font-size:16px;width:100%;max-width:320px}" +
+    "#mae .b1{background:linear-gradient(135deg,#C2542D,#E1693F);color:#fff}#mae .b2{background:#141A2B;color:#F6F1E7;border:1px solid #2A3454}#mae .b3{background:transparent;color:#A69C86;min-height:40px;font-size:14px}" +
+    "#mae .m{width:88px;height:88px;border-radius:50%;max-width:88px;padding:0;font-size:34px;background:#E1693F;color:#fff}" +
+    "#mae .m.on{animation:mgq 1s infinite}@keyframes mgq{0%{box-shadow:0 0 0 0 rgba(225,105,63,.6)}100%{box-shadow:0 0 0 26px rgba(225,105,63,0)}}" +
+    "#mae .ok{color:#25D366}#mae .or{color:#FFAA3C}" +
+    "#mae-btn{width:100%;min-height:52px;border-radius:16px;border:1px solid #2A3454;background:#141A2B;color:#F6F1E7;font-weight:800;font-size:14.5px;text-align:left;padding:8px 14px;display:flex;align-items:center;gap:10px}" +
+    "#mae-btn small{display:block;font-size:12px;font-weight:600;color:#A69C86}";
+  document.head.appendChild(st);
+
+  function ouvrir() {
+    if (document.getElementById("mae")) return;
+    var i = 0, score = 0, tentative = false, enCours = false;
+    var o = document.createElement("div"); o.id = "mae";
+    document.body.appendChild(o);
+
+    function ecran() {
+      var cur = Q[i];
+      tentative = false;
+      o.innerHTML = '<div class="k">✈️ Agence · question ' + (i + 1) + '/' + Q.length + '</div>' +
+        '<div class="q">' + esc(cur.q) + '</div>' +
+        '<div class="r" id="mae-r">Touche le micro et réponds en anglais.</div>' +
+        '<button class="m" id="mae-mic" type="button" aria-label="Répondre au micro">🎤</button>' +
+        '<button class="b2" id="mae-ec" type="button">🔊 Réécouter la question</button>' +
+        '<button class="b1" id="mae-next" type="button" style="display:none">Suivant</button>' +
+        '<button class="b3" id="mae-skip" type="button">Passer</button>' +
+        '<button class="b3" id="mae-x" type="button">Quitter la mission</button>';
+      var r = document.getElementById("mae-r"), mic = document.getElementById("mae-mic"), nx = document.getElementById("mae-next");
+      document.getElementById("mae-ec").onclick = function () { parler(cur.q); };
+      document.getElementById("mae-x").onclick = function () { o.remove(); };
+      document.getElementById("mae-skip").onclick = function () { r.innerHTML = 'Réponse possible : <b>' + esc(cur.m) + '</b>'; nx.style.display = "block"; };
+      nx.onclick = function () { i++; if (i >= Q.length) fin(); else { ecran(); setTimeout(function () { parler(Q[i].q); }, 500); } };
+      mic.onclick = function () {
+        if (enCours) return;
+        if (typeof startListening !== "function") { r.textContent = "Ton micro n'est pas disponible ici."; return; }
+        enCours = true; mic.classList.add("on"); r.textContent = "Je t'écoute...";
+        var h = null; try { h = startListening("en-US", 8000, false); } catch (e) { h = null; }
+        Promise.resolve(h && h.promise ? h.promise : h).then(function (res) {
+          enCours = false; mic.classList.remove("on");
+          var t = res && res.text ? String(res.text).trim() : "";
+          if (res && (res.unsupported || (res.error && !t))) { r.textContent = "Micro bloqué. Autorise-le dans le navigateur, puis réessaie."; return; }
+          if (!t) { r.innerHTML = '<span class="or">Je n\'ai rien entendu.</span> Rapproche le téléphone et réessaie.'; return; }
+          var bon = t.split(/\s+/).length >= 3 && cur.kw.test(t);
+          if (bon) { if (!tentative) score++; tentative = true; r.innerHTML = '<span class="ok">✅ Très bien !</span><br>« ' + esc(t) + ' »'; nx.style.display = "block"; }
+          else { tentative = true; r.innerHTML = '<span class="or">Pas tout à fait.</span> « ' + esc(t) + ' »<br>Exemple : <b>' + esc(cur.m) + '</b><br>Réessaie, ou touche Suivant.'; nx.style.display = "block"; }
+        }).catch(function () { enCours = false; mic.classList.remove("on"); r.textContent = "Réessaie dans un instant."; });
+      };
+    }
+
+    function fin() {
+      var ok = score >= 4;
+      if (ok) {
+        try { if (typeof BADGES !== "undefined" && !BADGES["agence"]) BADGES["agence"] = { icon: "✈️", label: "Agence", desc: "Vente d'un billet réussie à l'oral" }; } catch (e) {}
+        try { if (typeof awardBadge === "function") awardBadge("agence"); } catch (e) {}
+      }
+      noter("mission_agence", score + "/" + Q.length);
+      o.innerHTML = '<div class="k">✈️ Mission Agence</div><div class="q">' + (ok ? "Bien joué ! 🎉" : "Pas encore…") + '</div>' +
+        '<div class="r">' + (ok ? 'Score : <b class="ok">' + score + '/' + Q.length + '</b><br>Badge « Agence » débloqué.' : 'Score : <b class="or">' + score + '/' + Q.length + '</b><br>Il faut 4 sur 5. Révise les phrases du secteur Agence et réessaie.') + '</div>' +
+        (ok ? '<button class="b1" id="mae-sh" type="button">Partager sur WhatsApp</button>' : '<button class="b1" id="mae-re" type="button">Réessayer</button>') +
+        '<button class="b3" id="mae-x2" type="button">Fermer</button>';
+      document.getElementById("mae-x2").onclick = function () { o.remove(); };
+      var re = document.getElementById("mae-re"); if (re) re.onclick = function () { o.remove(); ouvrir(); };
+      var sh = document.getElementById("mae-sh");
+      if (sh) sh.onclick = function () {
+        var t = "J'ai réussi ma vente de billet d'avion en anglais sur Diisoo ✈️ (" + score + "/" + Q.length + "). Teste-toi, c'est gratuit : https://diisoo.sn/?source=mission";
+        noter("mission_partage");
+        try { if (navigator.share) { navigator.share({ text: t }); return; } } catch (e) {}
+        window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+      };
+    }
+    noter("mission_vue");
+    ecran();
+    setTimeout(function () { parler(Q[0].q); }, 600);
+  }
+
+  function monter() {
+    var box = document.getElementById("business-content");
+    if (!box || box.classList.contains("hidden") || document.getElementById("mae-btn")) return;
+    var id = ""; try { id = businessModule; } catch (e) {}
+    if (id !== "tour_agence") return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "mae-btn";
+    b.innerHTML = '<span style="font-size:22px">✈️</span><span>Mission : vendre un billet d\'avion<small>5 questions à voix haute, badge à la clé</small></span>';
+    b.onclick = ouvrir;
+    var h = box.querySelector("h4"); if (h && h.nextSibling) box.insertBefore(b, h.nextSibling); else box.insertBefore(b, box.firstChild);
+  }
+  try {
+    var box0 = document.getElementById("business-content");
+    if (box0) new MutationObserver(function () { try { monter(); } catch (e) {} }).observe(box0, { childList: true, attributes: true });
+  } catch (e) {}
+  setInterval(function () { try { monter(); } catch (e) {} }, 1500);
+  window.DiisooMissionAgence = { ouvrir: ouvrir };
+  if (/[?&]mission=agence/.test(location.search)) setTimeout(ouvrir, 3000);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-mission-agence.js",e);}
+
+try{
 /* ---- diisoo-bazar-plus.js ---- */
 /* diisoo-bazar-plus.js v1 : Business, Bazar (mode et beauté) enrichi
    +15 phrases et un dialogue. Wolof relu par Babacar.
