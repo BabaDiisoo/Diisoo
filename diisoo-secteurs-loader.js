@@ -46,8 +46,16 @@
     "diisoo-premium.js",
     "diisoo-guide.js",
     "diisoo-seance.js", "diisoo-conversation.js", "diisoo-indulgence.js", "diisoo-priorites.js", "diisoo-continuer.js","diisoo-examens-hub.js","diisoo-lecons-plus.js","diisoo-universel.js","diisoo-arrivee.js","diisoo-question-jour.js","diisoo-quete.js", "diisoo-aujourdhui.js", "diisoo-accueil2.js", "diisoo-diag.js", "diisoo-ligue.js", "diisoo-invite-moment.js", "diisoo-ecoute.js", "diisoo-abc.js",
-    "diisoo-access.js", "diisoo-suivi.js"
+    "diisoo-access.js", "diisoo-suivi.js",
+    "diisoo-entree.js"
   ];
+
+  /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
+  try {
+    var e0 = document.createElement("script");
+    e0.src = "diisoo-entree.js";
+    (document.head || document.documentElement).appendChild(e0);
+  } catch (e) {}
 
   function sequentiel(i) {
     if (i >= FICHIERS.length) return;
