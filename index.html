@@ -4937,7 +4937,7 @@ async function loadPairsList() {
         data.forEach(row => {
             const card = document.createElement("div");
             card.className = "bg-[#141A2B] border border-[#1E2740] rounded-xl p-3 flex items-center justify-between";
-            card.innerHTML = "<span class=\"text-xs font-semibold text-[#C9BFA8]\">" + (row.first_name || "Apprenante") + "</span>" +
+            card.innerHTML = "<span class=\"text-xs font-semibold text-[#C9BFA8]\">" + esc(row.first_name || "Apprenante") + "</span>" +
                 (row.audio_url ? "<button type=\"button\" data-audio=\"" + esc(row.audio_url) + "\" class=\"text-[11px] text-[#EE85A3] font-semibold\">▶️ Écouter</button>" : "");
             box.appendChild(card);
         });

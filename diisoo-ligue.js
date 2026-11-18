@@ -89,7 +89,7 @@
     } else {
       var medal = ["🥇", "🥈", "🥉"];
       (r.top || []).forEach(function (l) {
-        h += '<div class="ln' + (l.moi ? " moi" : "") + '"><i>' + (medal[l.rang - 1] || l.rang) + "</i><span>" + esc(l.prenom) + (l.moi ? " (toi)" : "") + "</span><em>" + l.xp + " XP</em></div>";
+        h += '<div class="ln' + (l.moi ? " moi" : "") + '"><i>' + (medal[l.rang - 1] || (Number(l.rang) || 0)) + "</i><span>" + esc(l.prenom) + (l.moi ? " (toi)" : "") + "</span><em>" + (Number(l.xp) || 0) + " XP</em></div>";
       });
       if (r.mon_rang && r.mon_rang > 10) h += '<div class="ln moi"><i>' + r.mon_rang + "</i><span>Toi</span><em>" + r.mon_xp + " XP</em></div>";
       if (r.mon_rang && r.mon_rang > 1 && r.xp_suivant != null) h += "<p>Encore " + Math.max(1, r.xp_suivant - r.mon_xp + 1) + " XP pour passer " + (r.mon_rang - 1) + (r.mon_rang === 2 ? "er" : "e") + ".</p>";
