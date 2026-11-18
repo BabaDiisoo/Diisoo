@@ -47,7 +47,8 @@
     "diisoo-guide.js",
     "diisoo-seance.js", "diisoo-conversation.js", "diisoo-indulgence.js", "diisoo-priorites.js", "diisoo-continuer.js","diisoo-examens-hub.js","diisoo-lecons-plus.js","diisoo-universel.js","diisoo-arrivee.js","diisoo-question-jour.js","diisoo-quete.js", "diisoo-aujourdhui.js", "diisoo-accueil2.js", "diisoo-diag.js", "diisoo-ligue.js", "diisoo-invite-moment.js", "diisoo-ecoute.js", "diisoo-abc.js",
     "diisoo-access.js", "diisoo-suivi.js",
-    "diisoo-entree.js"
+    "diisoo-entree.js",
+    "diisoo-accueil3.js"
   ];
 
   /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
