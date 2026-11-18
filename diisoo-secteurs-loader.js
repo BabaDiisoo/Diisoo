@@ -50,7 +50,8 @@
     "diisoo-entree.js",
     "diisoo-accueil3.js",
     "diisoo-accueil4.js",
-    "diisoo-fin1.js"
+    "diisoo-fin1.js",
+    "diisoo-wolof-plus.js"
   ];
 
   /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
