@@ -58,13 +58,32 @@
     document.body.appendChild(s);
   }
 
+  function bundleUnique() {
+    var b = document.createElement("script");
+    b.src = "diisoo-bundle.js";
+    var repli = function () { if (!window.__diisooBundle) { console.warn("Diisoo : chargement fichier par fichier"); sequentiel(0); } };
+    b.onload = repli; b.onerror = repli;
+    document.body.appendChild(b);
+  }
+
+  /* Demarrage en 6 morceaux : le telephone respire entre chaque morceau. ?lent=0 = ancien bundle unique. */
+  function morceaux(i) {
+    if (i > 6) return;
+    var s = document.createElement("script");
+    s.src = "diisoo-b" + i + ".js";
+    s.onload = function () { setTimeout(function () { morceaux(i + 1); }, 30); };
+    s.onerror = function () {
+      console.error("Diisoo : morceau introuvable " + i);
+      if (i === 1) bundleUnique(); else morceaux(i + 1);
+    };
+    document.body.appendChild(s);
+  }
+
   function demarrer() {
     setTimeout(function () {
-      var b = document.createElement("script");
-      b.src = "diisoo-bundle.js";
-      var repli = function () { if (!window.__diisooBundle) { console.warn("Diisoo : chargement fichier par fichier"); sequentiel(0); } };
-      b.onload = repli; b.onerror = repli;
-      document.body.appendChild(b);
+      var unique = false;
+      try { unique = new URLSearchParams(location.search).get("lent") === "0"; } catch (e) {}
+      if (unique) bundleUnique(); else morceaux(1);
     }, 100);
   }
 
