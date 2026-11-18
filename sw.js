@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v157";
+const VERSION = "diisoo-cache-v158";
 const SHELL = [
   "./",
   "./index.html",
@@ -7,6 +7,22 @@ const SHELL = [
   "./icon-512.png",
   "./icon-maskable-512.png",
   "./diisoo-update.js",
+  "./diisoo-biz-plus.js",
+  "./diisoo-assistant.js",
+  "./diisoo-coach2.js",
+  "./diisoo-parrainage.js",
+  "./diisoo-oral.js",
+  "./diisoo-exams2.js",
+  "./diisoo-premium.js",
+  "./diisoo-guide.js",
+  "./diisoo-seance.js",
+  "./diisoo-conversation.js",
+  "./diisoo-indulgence.js",
+  "./diisoo-priorites.js",
+  "./diisoo-continuer.js",
+  "./diisoo-access.js",
+  "./diisoo-suivi.js",
+  "./diisoo-bundle.js",
   "./diisoo-pro.js",
   "./synchro.js",
   "./pwa-install.js",
