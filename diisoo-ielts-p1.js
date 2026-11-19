@@ -106,6 +106,9 @@
     w.appendChild(bouton("", '<div class="ie-n">2. Voir les 7 examens</div><div class="ie-s">Academic, General Training, UKVI, Life Skills</div>', catalogue));
     w.appendChild(bouton("", '<div class="ie-n">3. Test de positionnement</div><div class="ie-s">12 questions, environ 5 minutes</div>', positionnement));
     if (window.DiisooIelts && window.DiisooIelts.entrainement) w.appendChild(bouton("", '<div class="ie-n">4. S\'entraîner : Écoute et Lecture</div><div class="ie-s">Exercices corrigés avec explications</div>', function () { window.DiisooIelts.entrainement(); }));
+    w.appendChild(bouton("", '<div class="ie-n">5. Simulation orale (Format réel)</div><div class="ie-s">Parle avec ta voix, correction après chaque réponse</div>', function () {
+      fermer(); try { window.DiisooExams2.ouvrir("ielts"); } catch (e) { console.warn("IELTS oral", e); }
+    }));
     w.appendChild(el("div", "ie-note", "Diisoo est un outil d'entraînement. Il ne délivre aucun score officiel IELTS. Les contenus sont créés par Diisoo : ce ne sont pas les sujets officiels."));
   }
 
@@ -113,18 +116,19 @@
   function catalogue(surligner) {
     vider(); entete("Les 7 examens", accueil);
     chargerCatalogue().then(function (d) {
+      if (!d || !d.exams) throw new Error("catalogue vide");
       d.exams.forEach(function (x) {
         var ls = x.code.indexOf("life_skills") === 0;
         var b = el("div", "", "");
         b.style.cssText = "border:1px solid #1E2740;background:#141A2B;border-radius:16px;padding:12px 14px";
-        if (surligner && surligner.indexOf(x.code) >= 0) b.style.borderColor = "#3FAE74";
+        if (Array.isArray(surligner) && surligner.indexOf(x.code) >= 0) b.style.borderColor = "#3FAE74";
         b.innerHTML = '<div class="ie-n">' + esc(x.nom) + '</div><div class="ie-s">' + esc(x.objectif) + "</div>" +
           '<div class="ie-s">Compétences : ' + (x.competences || []).map(function (k) { return NOM_SKILL[k] || k; }).join(", ") + "</div>" +
           '<span class="ie-tag">' + (ls ? "Test distinct : réussi ou non (pas de note 0 à 9)" : "Note de 0 à 9 pour le test officiel") + "</span>";
         w.appendChild(b);
       });
       w.appendChild(el("div", "ie-note", "UKVI est une version sécurisée d'Academic et de General Training. Life Skills est un test à part, limité à l'écoute et à l'oral."));
-    });
+    }).catch(function (e) { console.error("IELTS catalogue", e); w.appendChild(el("p", "", "Affichage impossible. Réessaie.")); });
   }
 
   /* ---------- objectif (R5) ---------- */
@@ -222,6 +226,13 @@
     if (!st) { st = el("style"); st.id = "ie-style"; st.textContent = CSS; document.head.appendChild(st); }
     var b = el("button", "xh-big", '<span class="xh-i">🇬🇧</span><span class="xh-n">IELTS : mon parcours<small>Objectif, examens, test de niveau</small></span>');
     b.id = "ie-btn"; b.type = "button"; b.onclick = function () { window.DiisooIelts.ouvrir(); };
+    /* La tuile IELTS d'origine ouvre désormais le parcours complet (le Format réel oral reste accessible dedans) */
+    var tuile = null;
+    Array.prototype.forEach.call(h.querySelectorAll(".xh-g button"), function (t) { if (!tuile && /IELTS/.test(t.textContent)) tuile = t; });
+    if (tuile) {
+      tuile.addEventListener("click", function (ev) { ev.stopImmediatePropagation(); ev.preventDefault(); window.DiisooIelts.ouvrir(); }, true);
+      return;
+    }
     var grille = h.querySelector(".xh-g"); h.insertBefore(b, grille || null);
   }
   try {
