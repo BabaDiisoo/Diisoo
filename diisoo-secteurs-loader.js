@@ -74,6 +74,9 @@
     var ie = document.createElement("script");
     ie.src = "diisoo-ielts-p1.js";
     (document.head || document.documentElement).appendChild(ie);
+    var ie2 = document.createElement("script");
+    ie2.src = "diisoo-ielts-p2.js";
+    (document.head || document.documentElement).appendChild(ie2);
   } catch (e) {}
 
   function sequentiel(i) {

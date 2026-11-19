@@ -105,6 +105,7 @@
     w.appendChild(bouton("ie-p", "1. Choisir mon objectif", objectifs));
     w.appendChild(bouton("", '<div class="ie-n">2. Voir les 7 examens</div><div class="ie-s">Academic, General Training, UKVI, Life Skills</div>', catalogue));
     w.appendChild(bouton("", '<div class="ie-n">3. Test de positionnement</div><div class="ie-s">12 questions, environ 5 minutes</div>', positionnement));
+    if (window.DiisooIelts && window.DiisooIelts.entrainement) w.appendChild(bouton("", '<div class="ie-n">4. S\'entraîner : Écoute et Lecture</div><div class="ie-s">Exercices corrigés avec explications</div>', function () { window.DiisooIelts.entrainement(); }));
     w.appendChild(el("div", "ie-note", "Diisoo est un outil d'entraînement. Il ne délivre aucun score officiel IELTS. Les contenus sont créés par Diisoo : ce ne sont pas les sujets officiels."));
   }
 
@@ -228,6 +229,9 @@
     ajouterBouton();
   } catch (e) {}
 
-  window.DiisooIelts = { ouvrir: function () { ouvrirEcran(); accueil(); }, fermer: fermer };
+  window.DiisooIelts = {
+    ouvrir: function () { ouvrirEcran(); accueil(); }, fermer: fermer,
+    ui: { vider: vider, entete: entete, bouton: bouton, el: el, esc: esc, sb: sb, ref: ref, accueil: accueil, racine: function () { return w; } }
+  };
   try { if (new URLSearchParams(location.search).get("ielts") === "1") setTimeout(function () { window.DiisooIelts.ouvrir(); }, 800); } catch (e) {}
 })();
