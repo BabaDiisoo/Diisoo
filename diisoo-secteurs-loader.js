@@ -69,6 +69,13 @@
     (document.head || document.documentElement).appendChild(e0);
   } catch (e) {}
 
+  /* Module IELTS phase 1 : fichier autonome, hors bundle (pas de régénération à faire) */
+  try {
+    var ie = document.createElement("script");
+    ie.src = "diisoo-ielts-p1.js";
+    (document.head || document.documentElement).appendChild(ie);
+  } catch (e) {}
+
   function sequentiel(i) {
     if (i >= FICHIERS.length) return;
     var s = document.createElement("script");
