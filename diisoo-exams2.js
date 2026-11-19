@@ -137,7 +137,7 @@
 
   /* ---------- lecteur ---------- */
   var ov = null, jeton = 0, minuteur = null, ecoute = null, vadT = null, autoT = null;
-  function AUTO() { try { return localStorage.getItem("diisoo_fmt_auto") === "1"; } catch (e) { return false; } }
+  function AUTO() { return true; }
 
   function nettoyer() {
     jeton++;
@@ -278,7 +278,7 @@
     var box = cadre("Format réel");
     box.appendChild(el("h3", null, ex.nom));
     var minutes = Math.max(1, Math.round(ex.taches.reduce(function (s, t) {
-      return s + (t.type === "info" ? t.nb * ((t.lecture_s || 0) / Math.max(1, t.nb) + 20) : t.nb * ((t.prep_s || 0) + (t.rep_s || 10) + 8));
+      return s + (t.type === "info" ? t.nb * ((t.lecture_s || 0) / Math.max(1, t.nb) + 20) : t.nb * ((t.rep_s || 10) + 8));
     }, 0) / 60));
     var st = el("div", "fm-st");
     st.appendChild(el("span", "fm-chip", "⏱ ~" + minutes + " min"));
@@ -307,11 +307,6 @@
     box.appendChild(grille);
     var fb = faibles();
     if (fb.length) bouton(box, "📌 Mots à revoir (" + fb.length + ")", function () { revoir(cle); }, "s");
-    var ba = bouton(box, "", function () {
-      try { localStorage.setItem("diisoo_fmt_auto", AUTO() ? "0" : "1"); } catch (e) {}
-      ba.textContent = "⚙️ Question suivante automatique : " + (AUTO() ? "oui" : "non");
-    }, "s");
-    ba.textContent = "⚙️ Question suivante automatique : " + (AUTO() ? "oui" : "non");
     var dt = el("details"); dt.appendChild(el("summary", null, "À propos de ce test"));
     dt.appendChild(el("p", "fm-src", ex.confiance + " Dernière vérification : " + ex.verifie_le + ". Tests créés par Diisoo, sans affiliation avec les organismes d'examen."));
     box.appendChild(dt);
@@ -507,31 +502,26 @@
         if (e.mon !== jeton) return;
         if (ty === "question") e.visible = texteDe(e);
         if (ty === "retell") e.visible = "";
-        var pp = e.tache.prep_s || (ty === "question" ? 5 : 0);
-        if (pp) preparer(e, pp, "Prends ton temps : réfléchis, puis parle", function () { parler(e); }, true);
-        else parler(e);
+        parler(e);
       }, function () { if (e.mon === jeton) { e.visible = texteDe(e); parler(e); } });
     }
 
     function lire(e) {
       var go = function () { parler(e); };
       e.visible = texteDe(e);
-      if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, go, false);
-      else go();
+      go();
     }
     function consigne(e) {
       e.visible = texteDe(e);
       var run = function () {
-        if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, function () { parler(e); }, true);
-        else parler(e);
+        parler(e);
       };
       if (e.tache.lue) { try { speak(e.visible, "en-US", 0.95); } catch (x) {} }
       run();
     }
     function decrire(e) {
       e.visible = "";
-      if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, function () { parler(e); }, true);
-      else { var b = cadre(e.titre, e.prog); puce(b, courte(e.tache.consigne)); support(b, e); bouton(b, "🎙️ Commencer à parler", function () { parler(e); }); }
+      { var b = cadre(e.titre, e.prog); puce(b, courte(e.tache.consigne)); support(b, e); bouton(b, "🎙️ Commencer à parler", function () { parler(e); }); }
     }
 
     function resultat(e, res, dur) {

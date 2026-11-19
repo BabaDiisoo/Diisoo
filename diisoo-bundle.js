@@ -515,6 +515,27 @@ try{
 }catch(e){console.error("Diisoo : erreur dans diisoo-controle-oolel.js",e);}
 
 try{
+/* ---- diisoo-fixe.js ---- */
+/* Écran fixe : pas de zoom, pas de rebond, pas de saut. Désactiver : ?fixe=0 */
+(function () {
+  if (/[?&]fixe=0/.test(location.search)) return;
+  try {
+    var m = document.querySelector('meta[name="viewport"]');
+    if (m) m.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
+    var s = document.createElement("style");
+    s.textContent = "html,body{overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}" +
+      "html,body,button,a,input,select,textarea,[onclick]{touch-action:manipulation}" +
+      "body{-webkit-user-select:none;user-select:none}input,textarea{-webkit-user-select:text;user-select:text}" +
+      "html{scrollbar-gutter:stable}";
+    document.head.appendChild(s);
+    ["gesturestart", "gesturechange", "gestureend"].forEach(function (n) { document.addEventListener(n, function (e) { e.preventDefault(); }, { passive: false }); });
+    document.addEventListener("dblclick", function (e) { e.preventDefault(); }, { passive: false });
+  } catch (e) {}
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-fixe.js",e);}
+
+try{
 /* ---- diisoo-voix-court.js ---- */
 /* diisoo-voix-court.js
  * Corrige les mots wolof courts (Waaw, Ndëk...) ou la voix Oolel ajoute des sons inventes apres le mot.
@@ -13329,7 +13350,7 @@ try{
 
   /* ---------- lecteur ---------- */
   var ov = null, jeton = 0, minuteur = null, ecoute = null, vadT = null, autoT = null;
-  function AUTO() { try { return localStorage.getItem("diisoo_fmt_auto") === "1"; } catch (e) { return false; } }
+  function AUTO() { return true; }
 
   function nettoyer() {
     jeton++;
@@ -13470,7 +13491,7 @@ try{
     var box = cadre("Format réel");
     box.appendChild(el("h3", null, ex.nom));
     var minutes = Math.max(1, Math.round(ex.taches.reduce(function (s, t) {
-      return s + (t.type === "info" ? t.nb * ((t.lecture_s || 0) / Math.max(1, t.nb) + 20) : t.nb * ((t.prep_s || 0) + (t.rep_s || 10) + 8));
+      return s + (t.type === "info" ? t.nb * ((t.lecture_s || 0) / Math.max(1, t.nb) + 20) : t.nb * ((t.rep_s || 10) + 8));
     }, 0) / 60));
     var st = el("div", "fm-st");
     st.appendChild(el("span", "fm-chip", "⏱ ~" + minutes + " min"));
@@ -13499,11 +13520,6 @@ try{
     box.appendChild(grille);
     var fb = faibles();
     if (fb.length) bouton(box, "📌 Mots à revoir (" + fb.length + ")", function () { revoir(cle); }, "s");
-    var ba = bouton(box, "", function () {
-      try { localStorage.setItem("diisoo_fmt_auto", AUTO() ? "0" : "1"); } catch (e) {}
-      ba.textContent = "⚙️ Question suivante automatique : " + (AUTO() ? "oui" : "non");
-    }, "s");
-    ba.textContent = "⚙️ Question suivante automatique : " + (AUTO() ? "oui" : "non");
     var dt = el("details"); dt.appendChild(el("summary", null, "À propos de ce test"));
     dt.appendChild(el("p", "fm-src", ex.confiance + " Dernière vérification : " + ex.verifie_le + ". Tests créés par Diisoo, sans affiliation avec les organismes d'examen."));
     box.appendChild(dt);
@@ -13699,31 +13715,26 @@ try{
         if (e.mon !== jeton) return;
         if (ty === "question") e.visible = texteDe(e);
         if (ty === "retell") e.visible = "";
-        var pp = e.tache.prep_s || (ty === "question" ? 5 : 0);
-        if (pp) preparer(e, pp, "Prends ton temps : réfléchis, puis parle", function () { parler(e); }, true);
-        else parler(e);
+        parler(e);
       }, function () { if (e.mon === jeton) { e.visible = texteDe(e); parler(e); } });
     }
 
     function lire(e) {
       var go = function () { parler(e); };
       e.visible = texteDe(e);
-      if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, go, false);
-      else go();
+      go();
     }
     function consigne(e) {
       e.visible = texteDe(e);
       var run = function () {
-        if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, function () { parler(e); }, true);
-        else parler(e);
+        parler(e);
       };
       if (e.tache.lue) { try { speak(e.visible, "en-US", 0.95); } catch (x) {} }
       run();
     }
     function decrire(e) {
       e.visible = "";
-      if (e.tache.prep_s) preparer(e, e.tache.prep_s, e.tache.consigne, function () { parler(e); }, true);
-      else { var b = cadre(e.titre, e.prog); puce(b, courte(e.tache.consigne)); support(b, e); bouton(b, "🎙️ Commencer à parler", function () { parler(e); }); }
+      { var b = cadre(e.titre, e.prog); puce(b, courte(e.tache.consigne)); support(b, e); bouton(b, "🎙️ Commencer à parler", function () { parler(e); }); }
     }
 
     function resultat(e, res, dur) {
@@ -16850,5 +16861,764 @@ try{
 })();
 
 }catch(e){console.error("Diisoo : erreur dans diisoo-suivi.js",e);}
+
+try{
+/* ---- diisoo-entree.js ---- */
+/* diisoo-entree.js : entree la plus simple possible.
+ * Ecran d'accueil : un seul bouton "Commencer", prenom facultatif, plus de barre d'etapes, plus de carte "Ecoute d'abord",
+ * Google en simple lien discret. Aucun faux profil : un seul appui de la personne est necessaire.
+ * Interrupteur : ?entree=0 remet l'ancien ecran. Aucun fichier existant modifie. */
+(function () {
+  "use strict";
+  if (window.__entreeOK) return; window.__entreeOK = true;
+  try { if (new URLSearchParams(location.search).get("entree") === "0") return; } catch (e) {}
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#screen-onboarding > div:first-child{display:none!important}" +
+    "#diisoo-essai{display:none!important}" +
+    "#screen-onboarding > p.text-center{display:none!important}" +
+    "#btn-google{background:transparent!important;border:0!important;box-shadow:none!important;color:#A69C86!important;font-size:12px!important;padding:4px!important;text-decoration:underline}" +
+    "#btn-google svg{display:none!important}";
+  (document.head || document.documentElement).appendChild(st);
+
+  function txt(el, t) { if (el && el.textContent !== t) el.textContent = t; }
+  function adapter() {
+    try {
+      var ob = document.getElementById("screen-onboarding");
+      if (!ob) return;
+      var h2 = ob.querySelector("h2");
+      txt(h2, "Bienvenue 👋");
+      var p = h2 && h2.nextElementSibling;
+      if (p && p.tagName === "P") txt(p, "Apprends l'anglais et le wolof. Commence tout de suite.");
+      var champ = document.getElementById("user-firstname");
+      if (champ) { champ.required = false; champ.placeholder = "Ton prénom (facultatif)"; }
+      txt(ob.querySelector('label[for="user-firstname"]'), "Ton prénom (facultatif)");
+      var b = document.getElementById("btn-submit-onboarding");
+      if (b && !b.disabled) txt(b, "Commencer");
+      var g = document.getElementById("btn-google");
+      if (g) {
+        var n = g.lastChild;
+        if (n && n.nodeType === 3 && n.textContent.trim() !== "J'ai déjà un compte (Google)") n.textContent = " J'ai déjà un compte (Google)";
+      }
+    } catch (e) {}
+  }
+  [300, 1000, 2500, 5000].forEach(function (t) { setTimeout(adapter, t); });
+
+  /* Accueil : "Bonjour" sans nom si le prenom est vide */
+  function corrigerBonjour() {
+    try { var w = document.getElementById("welcome-tag"); if (w && /^Bonjour\s*$/.test(w.textContent)) w.textContent = "Bonjour 👋"; } catch (e) {}
+  }
+  var essais = 0, tm = setInterval(function () {
+    var w = document.getElementById("welcome-tag");
+    if (w && typeof MutationObserver === "function") { clearInterval(tm); new MutationObserver(corrigerBonjour).observe(w, { childList: true, characterData: true, subtree: true }); corrigerBonjour(); }
+    else if (++essais > 100) clearInterval(tm);
+  }, 200);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-entree.js",e);}
+
+try{
+/* ---- diisoo-accueil3.js ---- */
+/* diisoo-accueil3.js : un seul gros bouton d'action sur l'accueil.
+ * - Utilisateur qui revient : « Continuer » passe en premier, la carte micro devient une ligne discrete.
+ * - Nouvel utilisateur : bouton « Commencer ma premiere lecon » en premier.
+ * Interrupteur : ?accueil3=0 remet l'ancien accueil. Aucun fichier existant modifie. */
+(function () {
+  "use strict";
+  if (window.__accueil3) return; window.__accueil3 = true;
+  try { if (new URLSearchParams(location.search).get("accueil3") === "0") return; } catch (e) {}
+  function $(id) { return document.getElementById(id); }
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#dg-open.dg-compact{padding:8px 12px!important;border:1px dashed #2A3454!important;background:transparent!important;animation:none!important;box-shadow:none!important;border-radius:14px!important}" +
+    "#dg-open.dg-compact .dg-mic{width:30px!important;height:30px!important;font-size:16px!important}" +
+    "#dg-open.dg-compact .dg-s{display:none!important}" +
+    "#dg-open.dg-compact b{font-size:13px!important;font-weight:600!important;color:#C9BFA8}" +
+    "#dstart{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px;border-radius:18px;background:linear-gradient(135deg,#E1693F,#F3A94E);color:#1a1208;border:0;min-height:64px}" +
+    "#dstart .p{flex:none;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:18px}" +
+    "#dstart b{display:block;font-size:17px;line-height:1.2}#dstart small{display:block;font-size:13px;opacity:.9;margin-top:2px}";
+  document.head.appendChild(st);
+
+  function demarrer() {
+    try {
+      if (window.DiisooVoixGuide && window.DiisooVoixGuide.aller) window.DiisooVoixGuide.aller({ type: "anglais", cle: "intro", niv: 1 });
+    } catch (e) {}
+  }
+
+  function ajuster() {
+    try {
+      var d = $("screen-dashboard"), g = $("dg-open"), c = $("dcont"), s = $("dstart");
+      if (!d || d.classList.contains("hidden") || !g) return;
+      if (c) {
+        if (s) s.remove();
+        g.classList.add("dg-compact");
+        if (c.nextElementSibling !== g && c.compareDocumentPosition(g) & 2) { /* g avant c : on remet c avant g */ }
+        if (g.compareDocumentPosition(c) & 4) g.parentNode.insertBefore(c, g); /* c apres g : on le place avant */
+      } else {
+        g.classList.remove("dg-compact");
+        if (!s) {
+          s = document.createElement("button");
+          s.type = "button"; s.id = "dstart";
+          s.innerHTML = '<span class="p">▶</span><span><b>Commencer ma première leçon</b><small>Se présenter en anglais, 1 minute</small></span>';
+          s.onclick = demarrer;
+          g.parentNode.insertBefore(s, g);
+        }
+      }
+    } catch (e) {}
+  }
+  setInterval(ajuster, 800);
+  setTimeout(ajuster, 500);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-accueil3.js",e);}
+
+try{
+/* ---- diisoo-accueil4.js ---- */
+/* diisoo-accueil4.js : accueil plus clair.
+ * Les icones du bandeau portent un mot : Ligue pour le trophee, Rappel pour la cloche (sans casser la ligne sur petit ecran).
+ * Interrupteur : ?accueil4=0 remet l'ancien affichage. Aucun fichier existant modifie. */
+(function () {
+  "use strict";
+  if (window.__accueil4) return; window.__accueil4 = true;
+  try { if (new URLSearchParams(location.search).get("accueil4") === "0") return; } catch (e) {}
+  var st = document.createElement("style");
+  st.textContent =
+    "#xp-label{white-space:nowrap!important;font-size:12px!important}" +
+    "#xp-label *{white-space:nowrap!important}" +
+    "#dii-ligue-c{padding-left:8px!important;padding-right:8px!important;white-space:nowrap}" +
+    "#streak-counter{white-space:nowrap}" +
+    "*:has(> #dii-ligue-c){flex-wrap:wrap!important;row-gap:8px!important}" +
+    "#dii-ligue-c::after{content:' Ligue';font-size:11.5px;font-weight:700;margin-left:3px}" +
+    "body.rp-off #streak-counter::after{content:' 🔔 Rappel'!important;font-size:11.5px}";
+  document.head.appendChild(st);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-accueil4.js",e);}
+
+try{
+/* ---- diisoo-fin1.js ---- */
+/* diisoo-fin1.js : fin de la premiere lecon = UNE seule question.
+ * Apres le premier exercice, l'app proposait une fiche de 4 questions (but, rythme, duree, heure).
+ * Ici : « Bravo ! On te rappelle demain a quelle heure ? » avec 3 boutons (Matin, Midi, Soir).
+ * Le reste utilise la fiche existante (aucune logique de rappel dupliquee). Lien discret pour choisir ses objectifs en detail.
+ * Interrupteur : ?fin1=0 remet l'ancienne fiche. Aucun fichier existant modifie. */
+(function () {
+  "use strict";
+  if (window.__fin1) return; window.__fin1 = true;
+  try { if (new URLSearchParams(location.search).get("fin1") === "0") return; } catch (e) {}
+
+  var st = document.createElement("style");
+  st.textContent =
+    "#dii-fin1{position:fixed;inset:0;z-index:9992;background:rgba(5,8,16,.86);display:flex;align-items:flex-end;justify-content:center}" +
+    "#dii-fin1 .f-box{width:100%;max-width:480px;background:#0B0F1C;border:1px solid #1E2740;border-radius:22px 22px 0 0;padding:20px 16px 24px;color:#F6F1E7;text-align:center}" +
+    "#dii-fin1 h3{font-size:20px;font-weight:800;margin:0 0 6px}" +
+    "#dii-fin1 p{font-size:14px;color:#C9BFA8;margin:0 0 14px}" +
+    "#dii-fin1 .f-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}" +
+    "#dii-fin1 .f-c{min-height:72px;border-radius:14px;background:#141A2B;border:2px solid #1E2740;color:#F6F1E7;font-size:14px;font-weight:700}" +
+    "#dii-fin1 .f-c small{display:block;font-size:12px;font-weight:400;color:#A69C86}" +
+    "#dii-fin1 .f-c:active{border-color:#25D366;background:#12351F}" +
+    "#dii-fin1 .f-no{width:100%;min-height:44px;margin-top:10px;background:none;border:0;color:#A69C86;font-size:13px}" +
+    "#dii-fin1 .f-lien{background:none;border:0;color:#A69C86;font-size:12px;text-decoration:underline;min-height:36px}";
+  document.head.appendChild(st);
+
+  function traiter(ov) {
+    try {
+      var plus = ov.querySelector("#ob-plus");
+      if (!plus || plus.textContent.trim() !== "Plus tard") return; /* fiche ouverte volontairement : on ne touche pas */
+      if (document.getElementById("dii-fin1")) return;
+      ov.style.display = "none";
+      var m = document.createElement("div"); m.id = "dii-fin1";
+      m.innerHTML =
+        '<div class="f-box"><h3>🎉 Bravo, première leçon faite !</h3>' +
+        "<p>Reviens demain pour garder ta série. On te rappelle à quelle heure ?</p>" +
+        '<div class="f-g">' +
+        '<button type="button" class="f-c" data-h="06:30">🌅<small>Matin 6h30</small></button>' +
+        '<button type="button" class="f-c" data-h="12:30">☀️<small>Midi 12h30</small></button>' +
+        '<button type="button" class="f-c" data-h="20:30">🌙<small>Soir 20h30</small></button></div>' +
+        '<button type="button" class="f-no">Plus tard</button>' +
+        '<button type="button" class="f-lien">Choisir mes objectifs en détail</button></div>';
+      document.body.appendChild(m);
+      Array.prototype.forEach.call(m.querySelectorAll(".f-c"), function (b) {
+        b.onclick = function () {
+          var h = ov.querySelector("#ob-heure");
+          if (h) h.value = b.getAttribute("data-h");
+          m.remove();
+          var v = ov.querySelector("#ob-valider");
+          if (v) v.click(); else ov.remove();
+        };
+      });
+      m.querySelector(".f-no").onclick = function () { m.remove(); if (plus) plus.click(); else ov.remove(); };
+      m.querySelector(".f-lien").onclick = function () { m.remove(); ov.style.display = ""; };
+    } catch (e) { try { ov.style.display = ""; } catch (x) {} }
+  }
+
+  function observer() {
+    if (!document.body || typeof MutationObserver !== "function") return;
+    new MutationObserver(function (list) {
+      list.forEach(function (r) {
+        Array.prototype.forEach.call(r.addedNodes, function (n) { if (n && n.id === "dii-obj") traiter(n); });
+      });
+    }).observe(document.body, { childList: true });
+  }
+  if (document.body) observer(); else document.addEventListener("DOMContentLoaded", observer);
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-fin1.js",e);}
+
+try{
+/* ---- diisoo-wolof-plus.js ---- */
+/* diisoo-wolof-plus.js : Anglais Wolof passe de 10 a 18 themes (8 nouveaux, 12 mots chacun, wolof relu par Babacar).
+   Les themes sont ajoutes a la fin : les niveaux (Debutant, Intermediaire, Avance) se repartissent automatiquement par tiers (6, 6, 6).
+   Aucun fichier existant modifie. */
+(function () {
+  "use strict";
+  if (window.__wolofPlus) return; window.__wolofPlus = true;
+  var NOUVEAUX = [
+{
+"id": "nature",
+"title": "Nature & animaux",
+"words": [
+{
+"en": "Tree",
+"wo": "Garab",
+"fr": "Arbre"
+},
+{
+"en": "Sun",
+"wo": "Jant",
+"fr": "Soleil"
+},
+{
+"en": "Moon",
+"wo": "Weer",
+"fr": "Lune"
+},
+{
+"en": "Rain",
+"wo": "Taw",
+"fr": "Pluie"
+},
+{
+"en": "Wind",
+"wo": "Ngelaw",
+"fr": "Vent"
+},
+{
+"en": "Sea",
+"wo": "Géej",
+"fr": "Mer"
+},
+{
+"en": "River",
+"wo": "Dex",
+"fr": "Fleuve"
+},
+{
+"en": "Dog",
+"wo": "Xaj",
+"fr": "Chien"
+},
+{
+"en": "Cat",
+"wo": "Muus",
+"fr": "Chat"
+},
+{
+"en": "Horse",
+"wo": "Fas",
+"fr": "Cheval"
+},
+{
+"en": "Bird",
+"wo": "Picc",
+"fr": "Oiseau"
+},
+{
+"en": "Fish",
+"wo": "Jën",
+"fr": "Poisson"
+}
+]
+},
+{
+"id": "sentiments",
+"title": "Sentiments",
+"words": [
+{
+"en": "Happy",
+"wo": "Bég",
+"fr": "Content"
+},
+{
+"en": "Sad",
+"wo": "Naqar",
+"fr": "Triste"
+},
+{
+"en": "Angry",
+"wo": "Mer",
+"fr": "En colère"
+},
+{
+"en": "Afraid",
+"wo": "Ragal",
+"fr": "Avoir peur"
+},
+{
+"en": "Patience",
+"wo": "Muñ",
+"fr": "Patience"
+},
+{
+"en": "Hope",
+"wo": "Yaakaar",
+"fr": "Espoir"
+},
+{
+"en": "Trust",
+"wo": "Wóolu",
+"fr": "Confiance"
+},
+{
+"en": "Respect",
+"wo": "Kersa",
+"fr": "Respect"
+},
+{
+"en": "Friend",
+"wo": "Xarit",
+"fr": "Ami"
+},
+{
+"en": "Peace",
+"wo": "Jàmm",
+"fr": "Paix"
+},
+{
+"en": "I love you",
+"wo": "Bëgg naa la",
+"fr": "Je t'aime"
+},
+{
+"en": "I miss you",
+"wo": "Dama la nammoon",
+"fr": "Tu me manques"
+}
+]
+},
+{
+"id": "ecole",
+"title": "École & études",
+"words": [
+{
+"en": "School",
+"wo": "Ekool",
+"fr": "École"
+},
+{
+"en": "Teacher",
+"wo": "Jàngalekat",
+"fr": "Enseignant"
+},
+{
+"en": "Student",
+"wo": "Jàngkat",
+"fr": "Élève"
+},
+{
+"en": "Book",
+"wo": "Téere",
+"fr": "Livre"
+},
+{
+"en": "Notebook",
+"wo": "Kaye",
+"fr": "Cahier"
+},
+{
+"en": "Pen",
+"wo": "Stilo",
+"fr": "Stylo"
+},
+{
+"en": "Lesson",
+"wo": "Njàng",
+"fr": "Leçon"
+},
+{
+"en": "Exam",
+"wo": "Ekzamen",
+"fr": "Examen"
+},
+{
+"en": "To read",
+"wo": "Jàng",
+"fr": "Lire"
+},
+{
+"en": "To write",
+"wo": "Bind",
+"fr": "Écrire"
+},
+{
+"en": "Question",
+"wo": "Laaj",
+"fr": "Question"
+},
+{
+"en": "Answer",
+"wo": "Tontu",
+"fr": "Réponse"
+}
+]
+},
+{
+"id": "telephone",
+"title": "Téléphone & internet",
+"words": [
+{
+"en": "Phone",
+"wo": "Telefon",
+"fr": "Téléphone"
+},
+{
+"en": "Call",
+"wo": "Woote",
+"fr": "Appel"
+},
+{
+"en": "Message",
+"wo": "Bataaxal",
+"fr": "Message"
+},
+{
+"en": "Credit",
+"wo": "Kredi",
+"fr": "Crédit"
+},
+{
+"en": "Charger",
+"wo": "Cargeur",
+"fr": "Chargeur"
+},
+{
+"en": "Battery",
+"wo": "Batri",
+"fr": "Batterie"
+},
+{
+"en": "Internet",
+"wo": "Intërnet",
+"fr": "Internet"
+},
+{
+"en": "Network",
+"wo": "Rezo",
+"fr": "Réseau"
+},
+{
+"en": "Number",
+"wo": "Nimero",
+"fr": "Numéro"
+},
+{
+"en": "Video call",
+"wo": "Woote wideo",
+"fr": "Appel vidéo"
+},
+{
+"en": "Photo",
+"wo": "Nataal",
+"fr": "Photo"
+},
+{
+"en": "Screen",
+"wo": "Ekraŋ",
+"fr": "Écran"
+}
+]
+},
+{
+"id": "metiers",
+"title": "Métiers courants",
+"words": [
+{
+"en": "Driver",
+"wo": "Cofër",
+"fr": "Chauffeur"
+},
+{
+"en": "Mechanic",
+"wo": "Mekanisiyeŋ",
+"fr": "Mécanicien"
+},
+{
+"en": "Tailor",
+"wo": "Tayoor",
+"fr": "Tailleur"
+},
+{
+"en": "Doctor",
+"wo": "Doktoor",
+"fr": "Médecin"
+},
+{
+"en": "Nurse",
+"wo": "Infirmiye",
+"fr": "Infirmier"
+},
+{
+"en": "Builder",
+"wo": "Maasoŋ",
+"fr": "Maçon"
+},
+{
+"en": "Electrician",
+"wo": "Elektrisien",
+"fr": "Électricien"
+},
+{
+"en": "Hairdresser",
+"wo": "Kuafëer",
+"fr": "Coiffeur"
+},
+{
+"en": "Guard",
+"wo": "Garde",
+"fr": "Gardien"
+},
+{
+"en": "Boss",
+"wo": "Patroŋ",
+"fr": "Patron"
+},
+{
+"en": "Employee",
+"wo": "Liggéeykat",
+"fr": "Employé"
+},
+{
+"en": "Apprentice",
+"wo": "Apranti",
+"fr": "Apprenti"
+}
+]
+},
+{
+"id": "fetes",
+"title": "Fêtes & traditions",
+"words": [
+{
+"en": "Tabaski",
+"wo": "Tabaski",
+"fr": "Tabaski"
+},
+{
+"en": "Korité",
+"wo": "Koriteh",
+"fr": "Korité"
+},
+{
+"en": "Magal",
+"wo": "Màggal",
+"fr": "Magal"
+},
+{
+"en": "Gamou",
+"wo": "Gàmmu",
+"fr": "Gamou"
+},
+{
+"en": "Wedding",
+"wo": "Céet",
+"fr": "Mariage"
+},
+{
+"en": "Baptism",
+"wo": "Ngénte",
+"fr": "Baptême"
+},
+{
+"en": "Prayer",
+"wo": "Julli",
+"fr": "Prière"
+},
+{
+"en": "Mosque",
+"wo": "Jàkka",
+"fr": "Mosquée"
+},
+{
+"en": "Guest",
+"wo": "Gan",
+"fr": "Invité"
+},
+{
+"en": "Gift",
+"wo": "Kado",
+"fr": "Cadeau"
+},
+{
+"en": "Dance",
+"wo": "Fecc",
+"fr": "Danse"
+},
+{
+"en": "Song",
+"wo": "Woy",
+"fr": "Chanson"
+}
+]
+},
+{
+"id": "papiers",
+"title": "Administration",
+"words": [
+{
+"en": "Passport",
+"wo": "Paaspoor",
+"fr": "Passeport"
+},
+{
+"en": "ID card",
+"wo": "Kart d'identité",
+"fr": "Carte d'identité"
+},
+{
+"en": "Form",
+"wo": "Formilaar",
+"fr": "Formulaire"
+},
+{
+"en": "Office",
+"wo": "Biro",
+"fr": "Bureau"
+},
+{
+"en": "Document",
+"wo": "Kayit",
+"fr": "Document"
+},
+{
+"en": "Signature",
+"wo": "Sinatiir",
+"fr": "Signature"
+},
+{
+"en": "Fee",
+"wo": "Fere",
+"fr": "Frais"
+},
+{
+"en": "Appointment",
+"wo": "Randevu",
+"fr": "Rendez-vous"
+},
+{
+"en": "Visa",
+"wo": "Wisa",
+"fr": "Visa"
+},
+{
+"en": "Queue",
+"wo": "Rang",
+"fr": "File d'attente"
+},
+{
+"en": "Stamp",
+"wo": "Tampon",
+"fr": "Tampon"
+},
+{
+"en": "Request",
+"wo": "Demaand",
+"fr": "Demande"
+}
+]
+},
+{
+"id": "banque",
+"title": "Banque & argent",
+"words": [
+{
+"en": "Money",
+"wo": "Xaalis",
+"fr": "Argent"
+},
+{
+"en": "Bank",
+"wo": "Bànk",
+"fr": "Banque"
+},
+{
+"en": "Account",
+"wo": "Kompt",
+"fr": "Compte"
+},
+{
+"en": "Cash",
+"wo": "Xaalis ci loxo",
+"fr": "Espèces"
+},
+{
+"en": "Send money",
+"wo": "Yónnee xaalis",
+"fr": "Envoyer de l'argent"
+},
+{
+"en": "Withdraw",
+"wo": "Génne xaalis",
+"fr": "Retirer"
+},
+{
+"en": "Deposit",
+"wo": "Dugal xaalis",
+"fr": "Déposer"
+},
+{
+"en": "Balance",
+"wo": "Sold",
+"fr": "Solde"
+},
+{
+"en": "Loan",
+"wo": "Leb",
+"fr": "Prêt"
+},
+{
+"en": "Savings",
+"wo": "Denc xaalis",
+"fr": "Épargne"
+},
+{
+"en": "To pay",
+"wo": "Fay",
+"fr": "Payer"
+},
+{
+"en": "Receipt",
+"wo": "Reesi",
+"fr": "Reçu"
+}
+]
+}
+];
+  try {
+    if (typeof WOLOF_THEMES === "undefined") return;
+    NOUVEAUX.forEach(function (n) {
+      if (WOLOF_THEMES.some(function (t) { return t.id === n.id; })) return;
+      WOLOF_THEMES.push(n);
+    });
+    if (typeof LEXICON !== "undefined") {
+      var deja = {};
+      LEXICON.forEach(function (w) { deja[w.cat + "|" + w.en + "|" + w.wo] = 1; });
+      NOUVEAUX.forEach(function (t) { t.words.forEach(function (w) { if (!deja[t.id + "|" + w.en + "|" + w.wo]) LEXICON.push({ cat: t.id, en: w.en, wo: w.wo, fr: w.fr, audio: null }); }); });
+    }
+  } catch (e) { console.warn("[diisoo] wolof-plus", e); }
+})();
+
+}catch(e){console.error("Diisoo : erreur dans diisoo-wolof-plus.js",e);}
 
 window.__diisooBundle=true;
