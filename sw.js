@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v167";
+const VERSION = "diisoo-cache-v168";
 const SHELL = [
   "./",
   "./index.html",
@@ -64,6 +64,7 @@ const SHELL = [
   "./diisoo-examens-coach.js",
   "./diisoo-pron-business.js",
   "./diisoo-ios-audio.js",
+  "./diisoo-ios-fix.js",
   "./diisoo-direct.js",
   "./diisoo-orga.js",
   "./diisoo-wamic.js",
@@ -91,9 +92,22 @@ const SHELL = [
 ];
 const EXCLUS = ["version.json", "supabase.co", "supabase.in", "query.wikidata.org", "hf.space", "huggingface.co", "gradio.live", "paytech.sn", "soynade"];
 
+/* Préchargement par petits lots (au lieu de 155 téléchargements simultanés). Sur iPhone, lots de 6 et sans le bundle
+   unique (1,1 Mo, simple secours) ni les bibliothèques externes : Safari manque de mémoire et ferme la page sinon. */
+const IOS_SW = /iPhone|iPad|iPod/.test(self.navigator.userAgent || "");
+const INUTILES_IOS = ["./diisoo-bundle.js", "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm", "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js", "./wolof_extraction_v1.json"];
+function liste() {
+  return IOS_SW ? SHELL.filter((u) => !INUTILES_IOS.includes(u)) : SHELL;
+}
+async function prechargerParLots(c, urls, taille) {
+  for (let i = 0; i < urls.length; i += taille) {
+    await Promise.all(urls.slice(i, i + taille).map((u) => c.add(u).catch(() => {})));
+  }
+}
+
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(VERSION).then((c) => Promise.all(SHELL.map((u) => c.add(u).catch(() => {}))))
+    caches.open(VERSION).then((c) => prechargerParLots(c, liste(), IOS_SW ? 6 : 12))
   );
 });
 

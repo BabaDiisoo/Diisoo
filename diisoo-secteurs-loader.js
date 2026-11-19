@@ -55,6 +55,13 @@
     "diisoo-wolof-plus.js"
   ];
 
+  /* Correctif iPhone : charge en tout premier, avant tout contexte audio (sans effet hors iOS) */
+  try {
+    var ix = document.createElement("script");
+    ix.src = "diisoo-ios-fix.js";
+    (document.head || document.documentElement).appendChild(ix);
+  } catch (e) {}
+
   /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
   try {
     var e0 = document.createElement("script");
