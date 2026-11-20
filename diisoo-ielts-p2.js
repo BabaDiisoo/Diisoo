@@ -11,6 +11,7 @@
     var I = window.DiisooIelts;
     if (!I || !I.ui || I.entrainement) return !!(I && I.entrainement);
     var U = I.ui, el = U.el, esc = U.esc, bouton = U.bouton;
+    var FILTRE = "";
     var MODE = "practice", EX = null, REP = {}, IDX = 0, T0 = 0, chrono = null, ecoutes = 0, lecture = false;
 
     function sb() { return U.sb(); }
@@ -31,6 +32,7 @@
       var c = sb();
       if (!c) { w.appendChild(el("p", "", "Connexion indisponible.")); return; }
       c.rpc("ielts_liste_exercices", { p_skill: null }).then(function (r) {
+        if (r.data) r.data = r.data.filter(function (x) { return FILTRE ? x.code.indexOf(FILTRE) === 0 : x.code.indexOf("lsk-") !== 0; });
         if (r.error || !r.data || !r.data.length) { w.appendChild(el("p", "", "Aucun exercice disponible pour l'instant.")); return; }
         var NOM = { listening: "🎧 Écoute", reading: "📖 Lecture" };
         r.data.forEach(function (x) {
@@ -143,7 +145,7 @@
       w.appendChild(bouton("ie-p", "Autre exercice", liste));
     }
 
-    I.entrainement = liste;
+    I.entrainement = function (prefixe) { FILTRE = typeof prefixe === "string" ? prefixe : ""; liste(); };
     return true;
   }
   /* p1 peut se charger après p2 : on réessaie brièvement */
