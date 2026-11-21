@@ -97,21 +97,22 @@
   /* ---------- écran 1 : accueil / catalogue ---------- */
   function accueil() {
     vider(); entete("IELTS : ton parcours");
-    w.appendChild(el("p", "", "Choisis ton objectif, vois les examens possibles, puis fais un test de niveau."));
-    var etat = lire();
-    if (etat.niveau) {
-      w.appendChild(bouton("", '<div class="ie-n">Ton niveau estimé : ' + esc(etat.niveau) + '</div><div class="ie-s">Estimation interne Diisoo. Refaire le test</div>', positionnement));
-    }
-    w.appendChild(bouton("ie-p", "1. Choisir mon objectif", objectifs));
-    w.appendChild(bouton("", '<div class="ie-n">2. Voir les 7 examens</div><div class="ie-s">Academic, General Training, UKVI, Life Skills</div>', catalogue));
-    w.appendChild(bouton("", '<div class="ie-n">3. Test de positionnement</div><div class="ie-s">12 questions, environ 5 minutes</div>', positionnement));
-    if (window.DiisooIelts && window.DiisooIelts.entrainement) w.appendChild(bouton("", '<div class="ie-n">4. S\'entraîner : Écoute et Lecture</div><div class="ie-s">Exercices corrigés avec explications</div>', function () { window.DiisooIelts.entrainement(); }));
-    if (window.DiisooIelts && window.DiisooIelts.lifeskills) w.appendChild(bouton("", '<div class="ie-n">6. Life Skills A1, A2, B1</div><div class="ie-s">Écoute et oral, parcours distinct</div>', function () { window.DiisooIelts.lifeskills(); }));
-    if (window.DiisooIelts && window.DiisooIelts.ecriture) w.appendChild(bouton("", '<div class="ie-n">7. Écriture (Writing)</div><div class="ie-s">Task 1 et Task 2, retour automatique</div>', function () { window.DiisooIelts.ecriture(); }));
-    if (window.DiisooIelts && window.DiisooIelts.blanc) w.appendChild(bouton("", '<div class="ie-n">8. Examens blancs</div><div class="ie-s">Simulations chronométrées, résultat et corrections</div>', function () { window.DiisooIelts.blanc(); }));
-    w.appendChild(bouton("", '<div class="ie-n">5. Simulation orale (Format réel)</div><div class="ie-s">Parle avec ta voix, correction après chaque réponse</div>', function () {
+    var etat = lire(), I = window.DiisooIelts || {};
+    function carte(titre, sous, fn, primaire) { return bouton(primaire ? "ie-p" : "", '<div class="ie-n">' + titre + '</div><div class="ie-s"' + (primaire ? ' style="color:#fff;opacity:.92"' : "") + ">" + sous + "</div>", fn); }
+    function section(t) { var h = el("h2", "", t); h.style.cssText = "margin:10px 0 2px;font-size:15px;opacity:.85"; w.appendChild(h); }
+    w.appendChild(el("p", "", etat.niveau ? "Ton niveau estimé : " + esc(etat.niveau) + ". Continue avec l'entraînement." : "Tu débutes ? Commence par l'étape 1, puis suis les étapes dans l'ordre."));
+    section("Étape 1 · Commencer ici");
+    w.appendChild(carte("Test de positionnement", "12 questions, environ 5 minutes" + (etat.niveau ? ". Refaire le test" : ""), positionnement, !etat.niveau));
+    w.appendChild(carte("Choisir mon objectif", "Études, travail, visa : quel examen te faut-il ?", objectifs));
+    w.appendChild(carte("Voir les 7 examens", "Academic, General Training, UKVI, Life Skills", catalogue));
+    section("Étape 2 · S'entraîner");
+    if (I.entrainement) w.appendChild(carte("Écoute et Lecture", "Exercices corrigés avec explications", function () { I.entrainement(); }, !!etat.niveau));
+    if (I.ecriture) w.appendChild(carte("Écriture (Writing)", "Task 1 et Task 2, retour automatique", function () { I.ecriture(); }));
+    w.appendChild(carte("Oral (Speaking)", "Parle avec ta voix, correction après chaque réponse", function () {
       fermer(); try { window.DiisooExams2.ouvrir("ielts"); } catch (e) { console.warn("IELTS oral", e); }
     }));
+    if (I.blanc) { section("Étape 3 · Te tester"); w.appendChild(carte("Examens blancs", "Simulations chronométrées, résultat et corrections", function () { I.blanc(); })); }
+    if (I.lifeskills) { section("Pour un visa familial : Life Skills"); w.appendChild(carte("Life Skills A1, A2, B1", "Test distinct : écoute et oral", function () { I.lifeskills(); })); }
     w.appendChild(el("div", "ie-note", "Diisoo est un outil d'entraînement. Il ne délivre aucun score officiel IELTS. Les contenus sont créés par Diisoo : ce ne sont pas les sujets officiels."));
   }
 
