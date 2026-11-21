@@ -101,6 +101,9 @@
     var dl = document.createElement("script");
     dl.src = "diisoo-duolingo.js";
     (document.head || document.documentElement).appendChild(dl);
+    var pt = document.createElement("script");
+    pt.src = "diisoo-pte.js";
+    (document.head || document.documentElement).appendChild(pt);
   } catch (e) {}
 
   function sequentiel(i) {
