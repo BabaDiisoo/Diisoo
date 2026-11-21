@@ -82,6 +82,11 @@ const srv = http.createServer((q, r) => {
       await p.click("#ie-ov >> text=Life Skills A1, A2, B1"); await p.click("#ie-ov >> text=Life Skills A1"); await p.click("#ie-ov >> text=Écoute");
       await p.waitForSelector("#ie-ov >> text=Se présenter", { timeout: 3000 });
       (await p.locator("#ie-ov >> text=Avis").count()) === 0 ? ok("Life Skills : écoute filtrée (pas de mélange avec IELTS)") : ko("l'écoute Life Skills affiche des exercices IELTS");
+      await p.goto(base + "/?ielts=1"); await p.waitForTimeout(3000);
+      await p.click("#ie-ov >> text=Écriture (Writing)"); await p.click("#ie-ov >> text=Task 2 : essai d'opinion"); await p.click("#ie-ov >> text=Sujet 1");
+      await p.fill("#ie-wr", "In my opinion, children should learn English early because it helps them. However, some parents worry about local languages.\n\nFor example, a child can learn both at home and at school. Moreover, English opens many doors for work.\n\nOn the other hand, teachers need good training. Therefore, the government must invest.\n\nIn conclusion, I believe early English is useful.");
+      await p.click("#ie-ov >> text=Voir mon retour"); await p.waitForSelector("#ie-ov >> text=pas une note IELTS", { timeout: 3000 });
+      (await p.locator("#ie-ov >> text=Conclusion").count()) > 0 ? ok("Écriture : brouillon et retour automatique") : ko("Écriture : retour incomplet");
     } catch (e) { ko("parcours interrompu : " + e.message.split("\n")[0]); }
     await c.close();
   }

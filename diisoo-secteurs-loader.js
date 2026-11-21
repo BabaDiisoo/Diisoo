@@ -80,6 +80,9 @@
     var ie3 = document.createElement("script");
     ie3.src = "diisoo-ielts-p3.js";
     (document.head || document.documentElement).appendChild(ie3);
+    var ie4 = document.createElement("script");
+    ie4.src = "diisoo-ielts-p4.js";
+    (document.head || document.documentElement).appendChild(ie4);
   } catch (e) {}
 
   function sequentiel(i) {

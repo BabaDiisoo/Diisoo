@@ -107,6 +107,7 @@
     w.appendChild(bouton("", '<div class="ie-n">3. Test de positionnement</div><div class="ie-s">12 questions, environ 5 minutes</div>', positionnement));
     if (window.DiisooIelts && window.DiisooIelts.entrainement) w.appendChild(bouton("", '<div class="ie-n">4. S\'entraîner : Écoute et Lecture</div><div class="ie-s">Exercices corrigés avec explications</div>', function () { window.DiisooIelts.entrainement(); }));
     if (window.DiisooIelts && window.DiisooIelts.lifeskills) w.appendChild(bouton("", '<div class="ie-n">6. Life Skills A1, A2, B1</div><div class="ie-s">Écoute et oral, parcours distinct</div>', function () { window.DiisooIelts.lifeskills(); }));
+    if (window.DiisooIelts && window.DiisooIelts.ecriture) w.appendChild(bouton("", '<div class="ie-n">7. Écriture (Writing)</div><div class="ie-s">Task 1 et Task 2, retour automatique</div>', function () { window.DiisooIelts.ecriture(); }));
     w.appendChild(bouton("", '<div class="ie-n">5. Simulation orale (Format réel)</div><div class="ie-s">Parle avec ta voix, correction après chaque réponse</div>', function () {
       fermer(); try { window.DiisooExams2.ouvrir("ielts"); } catch (e) { console.warn("IELTS oral", e); }
     }));
