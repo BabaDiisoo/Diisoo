@@ -68,7 +68,7 @@
     function suivant() { k++; if (k >= items.length) terminer(false); else page(); }
     function page() {
       entetePage(); var it = items[k];
-      if (it.kind === "mcq") pMcq(it); else if (it.kind === "ctw") pCtw(it); else if (it.kind === "bas") pBas(it); else pEcrit(it);
+      if (it.kind === "custom") it.render({ w: ui.racine(), R: R, opt: opt, suivant: suivant, btnSuite: btnSuite, arreterVoix: arreterVoix, last: k + 1 >= items.length }); else if (it.kind === "mcq") pMcq(it); else if (it.kind === "ctw") pCtw(it); else if (it.kind === "bas") pBas(it); else pEcrit(it);
     }
     function btnSuite(fn) { var b = ui.bouton("ie-p", k + 1 >= items.length ? "Terminer" : "Suivant →", fn); ui.racine().appendChild(b); }
     function pMcq(it) {

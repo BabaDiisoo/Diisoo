@@ -98,6 +98,9 @@
     var cb = document.createElement("script");
     cb.src = "diisoo-cambridge.js";
     (document.head || document.documentElement).appendChild(cb);
+    var dl = document.createElement("script");
+    dl.src = "diisoo-duolingo.js";
+    (document.head || document.documentElement).appendChild(dl);
   } catch (e) {}
 
   function sequentiel(i) {
