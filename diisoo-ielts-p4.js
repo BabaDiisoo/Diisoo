@@ -17,13 +17,20 @@
       t1: { titre: "Task 1 : lettre (General Training)", min: 150, minutes: 20, sujets: [
         { id: "t1a", q: "You live in a rented flat. The heating has not worked for two weeks. Write a letter to your landlord. Explain the problem, say what you have already done, and ask him to repair it quickly.", formel: true },
         { id: "t1b", q: "You are going to miss an English class next week. Write a letter to your teacher. Explain why you cannot come, ask what you will miss, and say how you will catch up.", formel: false },
-        { id: "t1c", q: "You bought a phone online, but it arrived damaged. Write a letter to the shop. Describe the problem, say what you want them to do, and ask for an answer soon.", formel: true }
+        { id: "t1c", q: "You bought a phone online, but it arrived damaged. Write a letter to the shop. Describe the problem, say what you want them to do, and ask for an answer soon.", formel: true },
+        { id: "t1d", q: "You saw an advertisement for a part-time job at a local shop. Write a letter to the manager. Say why you are interested, describe your experience, and ask when you can come for an interview.", formel: true },
+        { id: "t1e", q: "A friend is coming to visit you for a weekend. Write a letter to your friend. Say what you have planned, tell him what to bring, and explain how to get to your home.", formel: false },
+        { id: "t1f", q: "You were charged too much on your electricity bill. Write a letter to the electricity company. Explain what is wrong, say what you have checked, and ask them to correct the bill.", formel: true }
       ] },
       t2: { titre: "Task 2 : essai d'opinion", min: 250, minutes: 40, sujets: [
         { id: "t2a", q: "Some people think children should start learning English at primary school. Others think it is better to wait until secondary school. Discuss both views and give your own opinion." },
         { id: "t2b", q: "Many young people leave their villages to work in big cities. What are the advantages and disadvantages of this?" },
         { id: "t2c", q: "Some people say that mobile phones make life easier. Others say they cause problems. To what extent do you agree or disagree?" },
-        { id: "t2d", q: "Some people believe that governments should spend more money on public transport than on roads. Do you agree or disagree?" }
+        { id: "t2d", q: "Some people believe that governments should spend more money on public transport than on roads. Do you agree or disagree?" },
+        { id: "t2e", q: "Some people think that young people should do a period of national or community service. Do you agree or disagree?" },
+        { id: "t2f", q: "In many countries, more people are buying food from supermarkets instead of local markets. Is this a positive or a negative development?" },
+        { id: "t2g", q: "Some people think that learning a foreign language is more useful than learning other subjects. To what extent do you agree or disagree?" },
+        { id: "t2h", q: "Many people now work from home. What are the advantages and disadvantages of this trend for workers and for society?" }
       ] }
     };
     var LIENS = /\b(however|moreover|furthermore|in addition|for example|for instance|on the other hand|as a result|therefore|because|although|while|firstly|secondly|finally|in conclusion|to conclude|besides|despite)\b/gi;
