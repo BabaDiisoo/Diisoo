@@ -146,6 +146,14 @@
   function sauverReglage(cle, val) { var r = reglages(); r[cle] = val; try { localStorage.setItem("diisoo_exam_reglages", JSON.stringify(r)); } catch (e) {} }
   function AUTO() { return reglages().auto; }
   var pauseCb = null, courant = 0;
+  /* reprise : la question en cours est gardee 24 h, pour reprendre apres une coupure ou un depart */
+  function repriseLire(cle) {
+    try { var r = JSON.parse(localStorage.getItem("diisoo_exam_reprise") || "null");
+      if (r && r.cle === cle && r.k > 0 && Date.now() - r.t < 86400000) return r; } catch (e) {}
+    return null;
+  }
+  function repriseEcrire(cle, ti, k, n) { try { localStorage.setItem("diisoo_exam_reprise", JSON.stringify({ cle: cle, ti: ti, k: k, n: n, t: Date.now() })); } catch (e) {} }
+  function repriseEffacer() { try { localStorage.removeItem("diisoo_exam_reprise"); } catch (e) {} }
 
   function nettoyer() {
     jeton++;
@@ -305,6 +313,12 @@
     });
     box.appendChild(tl);
     var libre = false; try { libre = typeof aAcces === "function" && aAcces("premium"); } catch (e) {}
+    var rp = repriseLire(cle);
+    if (rp && ex.tests[rp.ti]) {
+      var br = el("button", "fm-b", "▶ Reprendre le test " + (rp.ti + 1) + " (question " + (rp.k + 1) + " / " + rp.n + ")"); br.type = "button";
+      br.onclick = function () { lancer(cle, rp.ti, rp.k); };
+      box.appendChild(br);
+    }
     var grille = el("div", "fm-grid");
     ex.tests.forEach(function (t, i) {
       var verrou = i >= (ex.gratuits || 1) && !libre;
@@ -344,7 +358,7 @@
   }
 
   /* ---------- déroulé d'un test ---------- */
-  function lancer(cle, ti) {
+  function lancer(cle, ti, depart) {
     var ex = REG.examens[cle], test = ex.tests[ti], etapes = [];
     ex.taches.forEach(function (t) {
       var banque = test[t.banque || t.type] || [];
@@ -381,7 +395,7 @@
     function etape(k) {
       if (k >= etapes.length) return fin(cle, ti, bilan);
       var e = etapes[k], mon = ++jeton, ty = e.tache.type;
-      courant = k; e.k = k; e.mon = mon; e.prog = k / etapes.length; e.titre = e.tache.titre + (e.n > 1 ? " " + (e.i + 1) + "/" + e.n : "");
+      courant = k; repriseEcrire(cle, ti, k, etapes.length); e.k = k; e.mon = mon; e.prog = k / etapes.length; e.titre = e.tache.titre + (e.n > 1 ? " " + (e.i + 1) + "/" + e.n : "");
       if (ty === "readaloud") return lire(e);
       if (ty === "prompt") return consigne(e);
       if (ty === "describe") return decrire(e);
@@ -676,11 +690,11 @@
       else if (ty === "short") bilan.courtes.push(v);
       else bilan.oraux.push({ mots: n, obj: Math.round(e.tache.rep_s * 1.2), manuel: v });
     }
-    etape(0);
+    etape(depart > 0 && depart < etapes.length ? depart : 0);
   }
 
   function fin(cle, ti, bilan) {
-    pauseCb = null; nettoyer();
+    repriseEffacer(); pauseCb = null; nettoyer();
     var ex = REG.examens[cle];
     var box = cadre("Bilan");
     function moy(a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; }
@@ -764,5 +778,5 @@
   } catch (e) {}
   charger().then(brancher);
 
-  window.DiisooExams2 = { version: 6, ouvrir: ouvrir, registre: function () { return REG; } };
+  window.DiisooExams2 = { version: 7, ouvrir: ouvrir, registre: function () { return REG; } };
 })();
