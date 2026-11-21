@@ -2844,7 +2844,7 @@ try{
       var h;
       try {
         h = startListening("en-US", 7000, false, function (t) {
-          if (mon !== S.jeton) return;
+          if ((!S || mon !== S.jeton)) return;
           var el = $("dsn-heard"); if (el) el.textContent = "« " + t + " »";
           try { if (voixJuste(norm(t), norm(cible))) h.stop(); } catch (e) {}
         });
@@ -2880,15 +2880,15 @@ try{
     var passer = false, reecouter = false;
     $("dsn-skip").onclick = function () { passer = true; try { S.h && S.h.stop(); } catch (e) {} };
     $("dsn-again").onclick = function () { reecouter = true; try { S.h && S.h.stop(); stopAllAudio(); } catch (e) {} };
-    var dit = (S.key !== "general" && w.wo && essai === 0) ? dire(w.wo, "wo").then(function () { return mon === S.jeton && pause(250); }) : Promise.resolve();
-    return dit.then(function () { return mon === S.jeton && dire(w.en, "en-US"); }).then(function () {
-      if (mon !== S.jeton) return "stop";
+    var dit = (S.key !== "general" && w.wo && essai === 0) ? dire(w.wo, "wo").then(function () { return (S && mon === S.jeton) && pause(250); }) : Promise.resolve();
+    return dit.then(function () { return (S && mon === S.jeton) && dire(w.en, "en-US"); }).then(function () {
+      if ((!S || mon !== S.jeton)) return "stop";
       var orb = $("dsn-orb"), msg = $("dsn-msg");
       if (orb) { orb.textContent = "🎙️"; orb.className = "dsn-orb on"; }
       if (msg) msg.textContent = "À toi : répète en anglais";
       return ecouterMot(w.en, mon);
     }).then(function (r) {
-      if (r === "stop" || mon !== S.jeton) return "stop";
+      if (r === "stop" || (!S || mon !== S.jeton)) return "stop";
       var orb = $("dsn-orb"), msg = $("dsn-msg");
       if (reecouter) return carte(w, i, 1, mon);
       if (passer) return "suite";
@@ -2946,7 +2946,7 @@ try{
         };
         $("dsn-opts").appendChild(b);
       });
-    }).then(function () { return mon === S.jeton ? "suite" : "stop"; });
+    }).then(function () { return (S && mon === S.jeton) ? "suite" : "stop"; });
   }
 
   /* ---------- le bilan et le thème suivant ---------- */
