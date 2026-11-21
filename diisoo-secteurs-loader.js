@@ -95,6 +95,9 @@
     var tc = document.createElement("script");
     tc.src = "diisoo-toeic.js";
     (document.head || document.documentElement).appendChild(tc);
+    var cb = document.createElement("script");
+    cb.src = "diisoo-cambridge.js";
+    (document.head || document.documentElement).appendChild(cb);
   } catch (e) {}
 
   function sequentiel(i) {

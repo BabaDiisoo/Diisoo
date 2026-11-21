@@ -114,15 +114,22 @@
       w.appendChild(go);
     }
     function pCtw(it) {
-      var w = ui.racine(), champs = [];
-      w.appendChild(el("p", "", "Complète chaque mot : les premières lettres sont données, écris la fin."));
+      var w = ui.racine(), champs = [], ec = 0;
+      if (it.audio) {
+        var bp = ui.bouton("ie-p", "🔊 Écouter", function () {
+          if (opt.examen && ec >= 1) return; ec++; bp.disabled = true;
+          try { window.Diisoo.voix.debloquer(); Promise.resolve(window.Diisoo.voix.jouer(it.audio, "en", {})).then(function () { bp.disabled = !!opt.examen; bp.textContent = opt.examen ? "Écoute terminée" : "🔊 Réécouter"; }, function () { bp.disabled = false; }); } catch (e) { bp.disabled = false; }
+        });
+        w.appendChild(bp);
+      }
+      w.appendChild(el("p", "", it.complet ? "Écris le mot qui manque dans chaque blanc." : "Complète chaque mot : les premières lettres sont données, écris la fin."));
       var box = el("div", "ie-ctx"); box.style.lineHeight = "2.3";
       it.texte.split(/(\[\[[^\]]+\]\])/).forEach(function (part) {
         var m = part.match(/^\[\[([^\]]+)\]\]$/);
         if (!m) { box.appendChild(document.createTextNode(part)); return; }
-        var mot = m[1], cut = Math.ceil(mot.length / 2), pre = mot.slice(0, cut), reste = mot.slice(cut);
+        var mot = m[1], cut = it.complet ? 0 : Math.ceil(mot.length / 2), pre = mot.slice(0, cut), reste = mot.slice(cut);
         var sp = el("span"); sp.style.whiteSpace = "nowrap"; sp.appendChild(document.createTextNode(pre));
-        var inp = document.createElement("input"); inp.type = "text"; inp.size = Math.max(2, reste.length); inp.maxLength = reste.length + 2;
+        var inp = document.createElement("input"); inp.type = "text"; inp.size = Math.max(2, reste.length); inp.maxLength = reste.length + 3;
         inp.autocapitalize = "off"; inp.autocomplete = "off"; inp.spellcheck = false;
         inp.style.cssText = "background:#0B0F1C;color:#F6F1E7;border:0;border-bottom:2px solid #E1693F;font:inherit;width:" + (reste.length + 1) + "ch;text-align:left;padding:0 2px";
         sp.appendChild(inp); box.appendChild(sp); champs.push({ inp: inp, reste: reste, mot: mot });
@@ -130,8 +137,8 @@
       w.appendChild(box);
       var go = ui.bouton("ie-p", opt.examen ? (k + 1 >= items.length ? "Terminer" : "Suivant →") : "Corriger", function () {
         champs.forEach(function (c) { R.tot++; var ok = c.inp.value.trim().toLowerCase() === c.reste; if (ok) R.ok++; c._ok = ok; });
-        if (opt.examen) return suivant();
-        go.remove();
+        if (opt.examen) { arreterVoix(); return suivant(); }
+        go.remove(); arreterVoix();
         champs.forEach(function (c) { c.inp.disabled = true; c.inp.style.borderBottomColor = c._ok ? "#5FC98F" : "#F0906B"; if (!c._ok) c.inp.value = c.reste; c.inp.style.color = c._ok ? "#5FC98F" : "#F0906B"; });
         btnSuite(suivant);
       });
@@ -163,18 +170,25 @@
       w.appendChild(go);
     }
     function pEcrit(it) {
-      var w = ui.racine(), x = it.x, email = it.kind === "email", cle = "diisoo_toefl_br_" + it.kind + "_" + k;
+      var w = ui.racine(), x = it.x, libre = it.kind === "libre", email = it.kind === "email", cle = "diisoo_toefl_br_" + it.kind + "_" + k;
+      if (libre) {
+        w.appendChild(el("p", "", "Temps conseillé : " + (x.tps || 10) + " minutes · " + x.min + " mots ou plus."));
+        if (x.scene) { var sc = el("div", "ie-ctx", x.scene); sc.style.cssText = "font-size:44px;text-align:center"; w.appendChild(sc); }
+        w.appendChild(el("div", "ie-ctx", ui.esc(x.s)));
+        if (x.pts) w.appendChild(el("div", "ie-note", "À inclure : " + x.pts.map(ui.esc).join(" · ")));
+      } else
       w.appendChild(el("p", "", email ? "Write an email. Temps conseillé : 7 minutes · 80 mots ou plus." : "Write for an academic discussion. Temps conseillé : 10 minutes · 100 mots ou plus."));
-      if (email) { w.appendChild(el("div", "ie-ctx", ui.esc(x.s))); w.appendChild(el("div", "ie-note", "À inclure : " + x.pts.map(ui.esc).join(" · "))); }
+      if (libre) {} else if (email) { w.appendChild(el("div", "ie-ctx", ui.esc(x.s))); w.appendChild(el("div", "ie-note", "À inclure : " + x.pts.map(ui.esc).join(" · "))); }
       else w.appendChild(el("div", "ie-ctx", "<b>" + ui.esc(x.prof) + "</b><br><br>" + ui.esc(x.a) + "<br><br>" + ui.esc(x.b)));
       var ta = document.createElement("textarea"); ta.rows = 9; ta.placeholder = "Write here…";
       ta.style.cssText = "width:100%;box-sizing:border-box;background:#141A2B;color:#F6F1E7;border:1px solid #1E2740;border-radius:14px;padding:12px;font:inherit;font-size:15px";
       var cp = el("div", "ie-note", "0 mot"); ta.oninput = function () { cp.textContent = nbMots(ta.value) + " mots"; };
       w.appendChild(ta); w.appendChild(cp);
       var go = ui.bouton("ie-p", opt.examen ? (k + 1 >= items.length ? "Terminer" : "Suivant →") : "Vérifier mon texte", function () {
-        var t = ta.value, n = nbMots(t), min = email ? 80 : 100, v = [];
+        var t = ta.value, n = nbMots(t), min = libre ? x.min : email ? 80 : 100, v = [];
         var ver = [["Longueur suffisante (" + min + "+ mots)", n >= min]];
-        if (email) { ver.push(["Formule d'appel (Dear…)", /\b(dear|hello|hi)\b/i.test(t)]); ver.push(["Formule de fin (Sincerely, Best regards…)", /(sincerely|regards|thank you|thanks|yours)/i.test(t)]); ver.push(["Demande claire (please / could / would)", /\b(please|could you|would you|i would like|i am writing)\b/i.test(t)]); }
+        if (libre) { ver.push(["Phrases avec majuscule et point", /(^|[.!?]\s+)[A-Z]/.test(t) && /[.!?]/.test(t)]); ver.push(["Mots de liaison (and, but, because, then, so, when…)", /\b(and|but|because|so|then|when|after|before|also)\b/i.test(t)]); if (x.kw) ver.push(["Tu parles du sujet demandé", x.kw.test(t)]); if (x.rec) ver.push(["Formule d'appel et de fin", /\b(dear|hi|hello)\b/i.test(t) && /(regards|best wishes|see you|love|yours|thanks|thank you)/i.test(t)]); }
+        else if (email) { ver.push(["Formule d'appel (Dear…)", /\b(dear|hello|hi)\b/i.test(t)]); ver.push(["Formule de fin (Sincerely, Best regards…)", /(sincerely|regards|thank you|thanks|yours)/i.test(t)]); ver.push(["Demande claire (please / could / would)", /\b(please|could you|would you|i would like|i am writing)\b/i.test(t)]); }
         else { ver.push(["Opinion claire (I think / I believe / In my opinion)", /\b(i think|i believe|in my opinion|i agree|i disagree|i would argue)\b/i.test(t)]); ver.push(["Raison ou exemple (because / for example)", /\b(because|for example|for instance|since)\b/i.test(t)]); ver.push(["Lien avec un autre étudiant (Anna / Tom… said)", /\b(however|also|agree with|disagree with|unlike|as .* said|mentioned)\b/i.test(t)]); }
         var sc = ver.filter(function (z) { return z[1]; }).length; R.ecr.push({ n: n, sc: sc, tot: ver.length });
         if (opt.examen) return suivant();

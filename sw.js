@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v182";
+const VERSION = "diisoo-cache-v183";
 const SHELL = [
   "./",
   "./index.html",
@@ -75,6 +75,8 @@ const SHELL = [
   "./toefl-data.json",
   "./diisoo-toeic.js",
   "./toeic-data.json",
+  "./diisoo-cambridge.js",
+  "./cambridge-data.json",
   "./diisoo-direct.js",
   "./diisoo-orga.js",
   "./diisoo-wamic.js",
