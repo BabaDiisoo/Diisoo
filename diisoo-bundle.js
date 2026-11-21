@@ -16858,6 +16858,25 @@ try{
     noter("erreur", "promesse: " + m, "");
   });
 
+
+  /* ---- erreurs avalees par les sections protegees ("[diisoo-xxx] ...") et parcours IELTS ---- */
+  try {
+    var ce = console.error;
+    console.error = function () {
+      try { var m = String(arguments[0] || ""); if (/^\[diisoo-/.test(m)) noter("erreur", m.slice(0, 80), String(arguments[1] && (arguments[1].message || arguments[1]) || "").slice(0, 200)); } catch (e) {}
+      return ce.apply(this, arguments);
+    };
+  } catch (e) {}
+  document.addEventListener("click", function (ev) {
+    try {
+      var b = ev.target && ev.target.closest && ev.target.closest("button");
+      if (!b) return;
+      var t = (b.getAttribute("aria-label") || b.textContent || "").trim().slice(0, 30);
+      if (document.getElementById("ie-ov") && /Voir les 7|Life Skills|Écoute|Oral|Terminer/.test(t)) noter("action", "ielts_clic", t);
+      else if (b.getAttribute("aria-label") === "Pause") noter("action", "examen_pause", "");
+    } catch (e) {}
+  }, true);
+
   /* ---- actions : on entoure les fonctions existantes sans les modifier ---- */
   function entourer(obj, nom, action, detail) {
     try {
