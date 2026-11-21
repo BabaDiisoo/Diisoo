@@ -92,6 +92,9 @@
     var tf = document.createElement("script");
     tf.src = "diisoo-toefl.js";
     (document.head || document.documentElement).appendChild(tf);
+    var tc = document.createElement("script");
+    tc.src = "diisoo-toeic.js";
+    (document.head || document.documentElement).appendChild(tc);
   } catch (e) {}
 
   function sequentiel(i) {

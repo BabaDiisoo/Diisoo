@@ -73,7 +73,8 @@
     function btnSuite(fn) { var b = ui.bouton("ie-p", k + 1 >= items.length ? "Terminer" : "Suivant →", fn); ui.racine().appendChild(b); }
     function pMcq(it) {
       var w = ui.racine(), ecoutes = 0, rep = [], lu = false;
-      if (it.texte && !it.audio) w.appendChild(el("div", "ie-ctx", ui.esc(it.texte)));
+      if (it.scene) { var sc = el("div", "ie-ctx", it.scene); sc.style.cssText = "font-size:64px;text-align:center;line-height:1.2"; w.appendChild(sc); }
+      if (it.texte && !it.audio) w.appendChild(el("div", "ie-ctx", ui.esc(it.texte).replace(/\n/g, "<br>")));
       if (it.audio) {
         var bp = ui.bouton("ie-p", "🔊 Écouter", function () {
           if (opt.examen && ecoutes >= 1) return;
@@ -290,7 +291,7 @@
     var h = hist(); h.push({ t: titre, p: g, d: Date.now() }); try { localStorage.setItem(LS, JSON.stringify(h.slice(-20))); } catch (e) {}
     w.appendChild(ui.bouton("ie-p", "Retour au parcours TOEFL", accueil));
   }
-  T = { ouvrir: ouvrir }; window.DiisooToefl = T;
+  T = { ouvrir: ouvrir, lancer: lancer, init: function () { ui = U(); }, mel: mel, mmss: mmss, niveau: niveau, nbMots: nbMots }; window.DiisooToefl = T;
 
   /* ---------- tuile TOEFL du hub Examens ---------- */
   function brancher() {
