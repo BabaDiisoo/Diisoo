@@ -96,6 +96,8 @@ const srv = http.createServer((q, r) => {
       await p.click("#ie-ov >> text=3"); await p.click("#ie-ov >> text=Terminer cette partie");
       await p.waitForSelector("#ie-ov >> text=pas une note IELTS", { timeout: 3000 });
       ok("Examen blanc : chrono, envoi, résultat sans band");
+      await p.goto(base + "/?ielts=stats"); await p.waitForSelector("#ie-ov >> text=Accès réservé", { timeout: 5000 });
+      ok("Statistiques : refusées sans droit administrateur");
     } catch (e) { ko("parcours interrompu : " + e.message.split("\n")[0]); }
     await c.close();
   }
