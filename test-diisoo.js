@@ -14,6 +14,8 @@ const TYPES = { ".js": "application/javascript; charset=utf-8", ".html": "text/h
 const MOCK_RPC = {
   ielts_liste_exercices: [{ code: "x", skill: "reading", level: "A2", titre: "Avis", nb_questions: 1, duree_min: 5 }, { code: "lsk-a1-presentation", skill: "listening", level: "A1", titre: "Se présenter", nb_questions: 3, duree_min: 4 }],
   ielts_questions_positionnement: [{ id: 1, skill: "grammar", level: "A1", prompt: "She ___", options: ["is", "are"] }],
+  ielts_charger_exercice: { code: "x", skill: "reading", level: "A2", titre: "Avis", duree_min: 5, texte: "Platform 3.", questions: [{ id: 1, prompt: "Which platform?", options: ["1", "3"] }] },
+  ielts_soumettre: { bons: 1, total: 1, taux: 100, mode: "exam", details: [{ id: 1, ok: true, choix: 1, bonne_option: 1 }] },
   ielts_corriger_positionnement: { niveau: "A1", bons: 1, total: 1, par_skill: { grammar: { bons: 1, total: 1 } }, details: [] }
 };
 let echecs = 0;
@@ -87,6 +89,13 @@ const srv = http.createServer((q, r) => {
       await p.fill("#ie-wr", "In my opinion, children should learn English early because it helps them. However, some parents worry about local languages.\n\nFor example, a child can learn both at home and at school. Moreover, English opens many doors for work.\n\nOn the other hand, teachers need good training. Therefore, the government must invest.\n\nIn conclusion, I believe early English is useful.");
       await p.click("#ie-ov >> text=Voir mon retour"); await p.waitForSelector("#ie-ov >> text=pas une note IELTS", { timeout: 3000 });
       (await p.locator("#ie-ov >> text=Conclusion").count()) > 0 ? ok("Écriture : brouillon et retour automatique") : ko("Écriture : retour incomplet");
+      await p.goto(base + "/?ielts=1"); await p.waitForTimeout(3000);
+      p.on("dialog", (d) => d.accept());
+      await p.click("#ie-ov >> text=Examens blancs"); await p.click("#ie-ov >> text=Lecture seule"); await p.click("#ie-ov >> text=Commencer la partie");
+      await p.waitForSelector("#ie-chrono", { timeout: 3000 });
+      await p.click("#ie-ov >> text=3"); await p.click("#ie-ov >> text=Terminer cette partie");
+      await p.waitForSelector("#ie-ov >> text=pas une note IELTS", { timeout: 3000 });
+      ok("Examen blanc : chrono, envoi, résultat sans band");
     } catch (e) { ko("parcours interrompu : " + e.message.split("\n")[0]); }
     await c.close();
   }

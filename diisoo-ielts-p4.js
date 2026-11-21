@@ -140,6 +140,7 @@
     }
 
     I.ecriture = menu;
+    I.ecritureOutils = { TACHES: TACHES, analyse: analyse, nbMots: nbMots };
     return true;
   }
   if (!demarrer()) { var n = 0, t = setInterval(function () { if (demarrer() || ++n > 40) clearInterval(t); }, 250); }
