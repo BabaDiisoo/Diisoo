@@ -1,4 +1,4 @@
-/* diisoo-exams2.js v5 : « Format réel » des examens, piloté par un registre
+/* diisoo-exams2.js v6 (pause, temps de réflexion réglable, passage automatique coupé par défaut, micro plus patient) ; base v5 : « Format réel » des examens, piloté par un registre
    Lit exam-formats.json : pour chaque examen, les tâches (type, nombre, préparation, durée de réponse) et les tests.
    Types gérés : repeat (écoute et répète), readaloud (lire à voix haute), question (réponse orale chronométrée),
    prompt (consigne affichée), describe (photo ou graphique), info (document puis questions),
@@ -137,7 +137,15 @@
 
   /* ---------- lecteur ---------- */
   var ov = null, jeton = 0, minuteur = null, ecoute = null, vadT = null, autoT = null;
-  function AUTO() { return true; }
+  /* Réglages de l'élève : temps de réflexion avant de parler, passage automatique à la question suivante */
+  var DUREES = { court: 8, normal: 20, long: 45, libre: 0 };
+  function reglages() {
+    var r = {}; try { r = JSON.parse(localStorage.getItem("diisoo_exam_reglages") || "{}") || {}; } catch (e) {}
+    return { reflexion: DUREES[r.reflexion] !== undefined ? r.reflexion : "normal", auto: r.auto === true };
+  }
+  function sauverReglage(cle, val) { var r = reglages(); r[cle] = val; try { localStorage.setItem("diisoo_exam_reglages", JSON.stringify(r)); } catch (e) {} }
+  function AUTO() { return reglages().auto; }
+  var pauseCb = null, courant = 0;
 
   function nettoyer() {
     jeton++;
@@ -147,7 +155,7 @@
     if (ecoute) { try { ecoute.stop(); } catch (e) {} ecoute = null; }
     try { if (typeof stopAllAudio === "function") stopAllAudio(); } catch (e) {}
   }
-  function fermer() { nettoyer(); if (ov) { ov.remove(); ov = null; } }
+  function fermer() { pauseCb = null; nettoyer(); if (ov) { ov.remove(); ov = null; } }
 
   var BADGE = "";
   function cadre(titre, prog) {
@@ -162,7 +170,11 @@
     var mid = el("div", "fm-tt"); mid.style.display = "flex"; mid.style.flexDirection = "column"; mid.style.alignItems = "center"; mid.style.gap = "3px";
     if (BADGE) mid.appendChild(el("span", "fm-bd", BADGE));
     mid.appendChild(el("span", null, titre || ""));
-    top.appendChild(mid); top.appendChild(el("div")); top.lastChild.style.width = "44px";
+    top.appendChild(mid);
+    if (pauseCb && titre !== "Pause") {
+      var pz0 = el("button", "fm-x", "⏸"); pz0.type = "button"; pz0.setAttribute("aria-label", "Pause"); pz0.onclick = function () { pauseCb(); };
+      top.appendChild(pz0);
+    } else { top.appendChild(el("div")); top.lastChild.style.width = "44px"; }
     box.appendChild(top);
     if (prog != null) { var pg = el("div", "fm-pg"); var i = el("i"); i.style.width = Math.round(prog * 100) + "%"; pg.appendChild(i); box.appendChild(pg); }
     return box;
@@ -348,12 +360,28 @@
       for (var i = 0; i < t.nb && i < banque.length; i++) etapes.push({ tache: t, i: i, n: Math.min(t.nb, banque.length), item: banque[i] });
     });
     var bilan = { precision: [], courtes: [], oraux: [], cles: [], corr: [], mots: [], expr: [] };
+    pauseCb = function () {
+      var kk = courant; nettoyer();
+      var box = cadre("Pause", null);
+      box.appendChild(el("div", "fm-ico", "⏸"));
+      box.appendChild(el("div", "fm-state", "Examen en pause : rien ne bouge"));
+      bouton(box, "▶ Reprendre cette question", function () { etape(kk); });
+      box.appendChild(el("div", "fm-hr", "Temps de réflexion avant de parler"));
+      var row = el("div", "fm-row"), cur = reglages();
+      [["court", "8 s"], ["normal", "20 s"], ["long", "45 s"], ["libre", "Libre"]].forEach(function (o) {
+        var b = el("button", "fm-b " + (cur.reflexion === o[0] ? "" : "s"), o[1]); b.type = "button"; b.style.minHeight = "44px";
+        b.onclick = function () { sauverReglage("reflexion", o[0]); pauseCb(); }; row.appendChild(b);
+      });
+      box.appendChild(row);
+      bouton(box, "Passage automatique : " + (cur.auto ? "oui" : "non"), function () { sauverReglage("auto", !cur.auto); pauseCb(); }, "s");
+      bouton(box, "Quitter l'examen", fermer, "s");
+    };
 
     function texteDe(e) { var it = e.item; return typeof it === "string" ? it : (it.t || it.q || it.consigne || ""); }
     function etape(k) {
       if (k >= etapes.length) return fin(cle, ti, bilan);
       var e = etapes[k], mon = ++jeton, ty = e.tache.type;
-      e.k = k; e.mon = mon; e.prog = k / etapes.length; e.titre = e.tache.titre + (e.n > 1 ? " " + (e.i + 1) + "/" + e.n : "");
+      courant = k; e.k = k; e.mon = mon; e.prog = k / etapes.length; e.titre = e.tache.titre + (e.n > 1 ? " " + (e.i + 1) + "/" + e.n : "");
       if (ty === "readaloud") return lire(e);
       if (ty === "prompt") return consigne(e);
       if (ty === "describe") return decrire(e);
@@ -390,10 +418,10 @@
 
     function silenceMs(t) {
       if (t.silence_ms) return t.silence_ms;
-      if (t.type === "short") return 2400;
-      if (t.type === "repeat") return 2400;
-      if (t.type === "question") return t.rep_s <= 20 ? 3600 : (t.rep_s <= 30 ? 4000 : 4500);
-      return 4500;
+      if (t.type === "short") return 3200;
+      if (t.type === "repeat") return 3000;
+      if (t.type === "question") return t.rep_s <= 20 ? 5000 : (t.rep_s <= 30 ? 5500 : 6000);
+      return 6000;
     }
 
     /* lecture karaoké : chaque mot s'allume quand tu le dis (cacher = mots masqués, comme à l'examen) */
@@ -454,7 +482,7 @@
       var ring = null, etat = el("div", "fm-state rec", "● Je t'écoute");
       var live = el("div", "fm-hr", "");
       var debut = Date.now(), fini = false, aParle = false, dernier = Date.now();
-      var seuil = silenceMs(t), minM = ty === "repeat" ? 2 : 1, attenteMax = Math.min(9000, t.rep_s * 600);
+      var seuil = silenceMs(t), minM = ty === "repeat" ? 2 : 1, attenteMax = Math.max(12000, Math.min(20000, t.rep_s * 1000));
       function terminer(res) {
         if (fini || e.mon !== jeton) return; fini = true;
         if (vadT) { clearInterval(vadT); vadT = null; }
@@ -487,6 +515,20 @@
       bouton(box, "✋ J'ai fini", function () { try { ecoute && ecoute.stop(); } catch (x) {} }, "s");
     }
 
+    /* temps de réflexion avant de parler : durée réglable, ou illimité jusqu'au bouton « Je suis prêt » */
+    function reflechir(e) {
+      var ty = e.tache.type;
+      if (ty !== "question" && ty !== "retell" && ty !== "prompt") return parler(e);
+      var secs = DUREES[reglages().reflexion], box = cadre(e.titre, e.prog);
+      puce(box, courte(e.tache.consigne));
+      support(box, e);
+      var go = function () { if (e.mon === jeton) { arret(); parler(e); } };
+      if (secs) compte(box, secs, go, false);
+      box.appendChild(el("div", "fm-state", secs ? "Réfléchis, puis parle" : "Prends ton temps"));
+      bouton(box, "🎙️ Je suis prêt, je parle", go);
+      bouton(box, "🔊 Réécouter la question", function () { try { speak(texteDe(e), "en-US", 0.95); } catch (x) {} }, "s");
+    }
+
     /* la consigne est dite une seule fois, puis préparation éventuelle, puis réponse */
     function ecouter(e) {
       var ty = e.tache.type, box = cadre(e.titre, e.prog);
@@ -502,8 +544,8 @@
         if (e.mon !== jeton) return;
         if (ty === "question") e.visible = texteDe(e);
         if (ty === "retell") e.visible = "";
-        parler(e);
-      }, function () { if (e.mon === jeton) { e.visible = texteDe(e); parler(e); } });
+        reflechir(e);
+      }, function () { if (e.mon === jeton) { e.visible = texteDe(e); reflechir(e); } });
     }
 
     function lire(e) {
@@ -514,7 +556,7 @@
     function consigne(e) {
       e.visible = texteDe(e);
       var run = function () {
-        parler(e);
+        reflechir(e);
       };
       if (e.tache.lue) { try { speak(e.visible, "en-US", 0.95); } catch (x) {} }
       run();
@@ -638,7 +680,7 @@
   }
 
   function fin(cle, ti, bilan) {
-    nettoyer();
+    pauseCb = null; nettoyer();
     var ex = REG.examens[cle];
     var box = cadre("Bilan");
     function moy(a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; }
@@ -722,5 +764,5 @@
   } catch (e) {}
   charger().then(brancher);
 
-  window.DiisooExams2 = { version: 5, ouvrir: ouvrir, registre: function () { return REG; } };
+  window.DiisooExams2 = { version: 6, ouvrir: ouvrir, registre: function () { return REG; } };
 })();

@@ -52,6 +52,14 @@ const srv = http.createServer((q, r) => {
       return route.fulfill({ status: 200, contentType: "text/plain", body: "" });
     });
     try {
+      const c2 = await b.newContext({ ...opt, serviceWorkers: "block" }); const p2 = await c2.newPage();
+      await p2.route(/^https?:\/\/(?!localhost)/, (r) => r.fulfill({ status: 200, contentType: "application/json", body: "[]" }));
+      await p2.goto(base + "/"); await p2.waitForTimeout(3500); await p2.click("#btn-submit-onboarding"); await p2.waitForTimeout(1000);
+      const ec = await p2.evaluate(() => [...document.querySelectorAll("[id^=screen-]")].filter((e) => e.offsetParent !== null).map((e) => e.id));
+      (ec.length === 1 && ec[0] === "screen-dashboard") ? ok("Commencer : accès direct au menu (1 clic, sans réseau)") : ko("Commencer n'ouvre pas le menu : " + ec.join(","));
+      await c2.close();
+    } catch (e) { ko("entrée : " + e.message.split("\n")[0]); }
+    try {
       await p.goto(base + "/?ielts=1", { waitUntil: "load" });
       await p.waitForTimeout(6000);
       manquants.length ? ko("fichiers introuvables : " + [...new Set(manquants)].join(", ")) : ok("tous les fichiers chargés");
