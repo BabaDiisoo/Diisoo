@@ -89,6 +89,9 @@
     var ie6 = document.createElement("script");
     ie6.src = "diisoo-ielts-p6.js";
     (document.head || document.documentElement).appendChild(ie6);
+    var tf = document.createElement("script");
+    tf.src = "diisoo-toefl.js";
+    (document.head || document.documentElement).appendChild(tf);
   } catch (e) {}
 
   function sequentiel(i) {
