@@ -677,7 +677,7 @@ try{
 
 try{
 /* ---- diisoo-arrivee.js ---- */
-/* diisoo-arrivee.js v2 : arrivee par lien (?source=tiktok) = mini-lecon d'1 minute. Par defaut : entretien visa. Avec &mini=wolof : Wolof > Anglais #2 (Nanga def, Jerejef, Ndank ndank). &revoir=1 force l'affichage. */
+/* diisoo-arrivee.js v4 : arrivee par lien (?source=tiktok) = mini-lecon d'1 minute. Par defaut : entretien visa. Avec &mini=wolof : Wolof > Anglais #2 (Nanga def, Jerejef, Ndank ndank). &revoir=1 force l'affichage. */
 (function () {
   "use strict";
   function lire(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -691,6 +691,8 @@ try{
   ecrire("diisoo_source", src);
   function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
   setTimeout(function () { noter("arrivee", src); }, 3000);
+  /* v4 : plus de mini-lecon par defaut (son/micro bloques dans le navigateur de TikTok). Seulement si &mini=1, &mini=wolof ou &revoir=1. */
+  if (q.mini !== "1" && String(q.mini || "").toLowerCase() !== "wolof" && q.revoir !== "1") return;
   if (lire(CLE_VU) === "1" && q.mini !== "1" && q.revoir !== "1") return;
 
   var QUESTION = "Why do you want to study in Canada?";
@@ -741,7 +743,7 @@ try{
         '<button class="m" id="dw-mic" type="button" aria-label="Répéter" style="display:none">🎙️</button>' +
         '<div class="r" id="dw-r"></div>' +
         '<button class="b1" id="dw-suite" type="button" style="display:none">' + (i < 2 ? "Mot suivant" : "Terminer") + '</button>' +
-        '<button class="b3" id="dw-pass" type="button">Passer</button>';
+        '<button class="b2" id="dw-pass" type="button">Ouvrir toute l\'application Diisoo</button>';
       var en = document.getElementById("dw-en"), r = document.getElementById("dw-r"), mic = document.getElementById("dw-mic"), suite = document.getElementById("dw-suite"), voir = document.getElementById("dw-voir");
       document.getElementById("dw-ec").onclick = function () { dire(m.say, "wo", 0.8); };
       document.getElementById("dw-pass").onclick = function () { noter("mini_wo_passer", src + ":" + (i + 1)); fermer(); };
@@ -794,7 +796,7 @@ try{
     var o = document.createElement("div"); o.id = "dar";
     o.innerHTML =
       '<div class="k">Entretien visa · 1 minute</div>' +
-      '<h1>Écoute la question, réponds à voix haute</h1>' +
+      '<h1>Écoute la question, réponds à voix haute</h1><div class="d">Un petit aperçu de Diisoo : anglais, wolof, visa et examens, gratuit.</div>' +
       '<div class="q" id="dar-q">' + QUESTION + '</div>' +
       '<button class="b2" id="dar-ec" type="button">🔊 Écouter la question</button>' +
       '<button class="m" id="dar-mic" type="button" aria-label="Parler">🎙️</button>' +
@@ -803,7 +805,7 @@ try{
       '<button class="b2" id="dar-mod" type="button">🔊 Écouter une réponse modèle</button>' +
       '<button class="b1" id="dar-visa" type="button">Continuer l\'entretien visa</button>' +
       '<button class="b2" id="dar-ex" type="button">Voir tous les examens</button></div>' +
-      '<button class="b3" id="dar-pass" type="button">Passer</button>' +
+      '<button class="b2" id="dar-pass" type="button">Ouvrir toute l\'application Diisoo</button>' +
       '<div class="d">Préparation indépendante. Diisoo n\'est pas affilié aux organismes d\'examen.</div>';
     document.body.appendChild(o);
     var r = document.getElementById("dar-r"), mic = document.getElementById("dar-mic"), fin = document.getElementById("dar-fin");
