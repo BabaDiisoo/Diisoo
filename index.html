@@ -857,7 +857,7 @@ function celebrate() {
     }
 }
 
-function getXP() { return store.get("diisoo_xp") || { total: 0 }; }
+function getXP() { const v = store.get("diisoo_xp"); return (v && typeof v === "object" && isFinite(v.total)) ? v : { total: 0 }; }
 function getLevel(total) { return Math.floor(total / 50) + 1; }
 
 function addXP(n) {
@@ -881,7 +881,7 @@ function bumpDailyXPLog(n) {
     store.set("diisoo_daily_xp", log);
 }
 
-function getBadges() { return store.get("diisoo_badges") || []; }
+function getBadges() { const v = store.get("diisoo_badges"); return Array.isArray(v) ? v : []; }
 function awardBadge(id) {
     const list = getBadges();
     if (list.includes(id)) return;

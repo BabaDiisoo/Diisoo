@@ -2165,6 +2165,20 @@ try{
     if (w && typeof MutationObserver === "function") { clearInterval(tm); new MutationObserver(corrigerBonjour).observe(w, { childList: true, characterData: true, subtree: true }); corrigerBonjour(); }
     else if (++essais > 100) clearInterval(tm);
   }, 200);
+
+  /* Acces direct : "Commencer" ouvre le menu tout de suite, sans reseau ni module externe. */
+  document.addEventListener("submit", function (ev) {
+    try {
+      var f = ev.target;
+      if (!f || f.id !== "form-onboarding") return;
+      ev.preventDefault(); ev.stopImmediatePropagation();
+      var v = function (id) { var e = document.getElementById(id); return e ? e.value.trim() : ""; };
+      var prenom = v("user-firstname") || "Ami";
+      try { localStorage.setItem("diisoo_tuto_seen", JSON.stringify(true)); } catch (e2) {}
+      if (typeof window.terminerInscription === "function") window.terminerInscription({ first_name: prenom, last_name: v("user-lastname"), email: v("user-email").toLowerCase() || null, phone: null, whatsapp_optin: false });
+      else if (typeof window.continuerSansCompte === "function") window.continuerSansCompte();
+    } catch (e) { console.error("entree", e); }
+  }, true);
 })();
 
 }catch(e){console.error("Diisoo : erreur dans diisoo-entree.js",e);}
