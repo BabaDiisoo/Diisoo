@@ -4618,6 +4618,74 @@
       "v": [
        "*"
       ]
+     },
+     {
+      "q": "Do you have any family members living in the country you want to visit?",
+      "cles": [
+       "yes|no|have",
+       "brother|sister|cousin|uncle|family|nobody"
+      ],
+      "modele": "Yes, I have a cousin who lives there, but I am not going to stay with him. I will go back to my job in Senegal.",
+      "v": [
+       "tourisme",
+       "famille"
+      ]
+     },
+     {
+      "q": "Have you ever been deported or asked to leave a country?",
+      "cles": [
+       "no|never|not",
+       "country|deported|asked"
+      ],
+      "modele": "No, never. I have always respected the rules of every country I visited.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "Have you ever worked or studied abroad?",
+      "cles": [
+       "yes|no|never",
+       "abroad|studied|worked|Senegal"
+      ],
+      "modele": "No, I have always lived and worked in Senegal. This will be my first long stay abroad.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "Do you hold a valid passport? Since when?",
+      "cles": [
+       "yes|passport|valid",
+       "since|year|expires|issued"
+      ],
+      "modele": "Yes, my passport is valid. It was issued two years ago and it expires in eight years.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "Have you ever had a visa for another country? Which one?",
+      "cles": [
+       "yes|no|visa",
+       "Morocco|Turkey|Schengen|Europe|never"
+      ],
+      "modele": "Yes, I had a visa for Morocco two years ago. I used it and came back on time.",
+      "v": [
+       "tourisme",
+       "affaires"
+      ]
+     },
+     {
+      "q": "Has anyone in your family been refused a visa for this country?",
+      "cles": [
+       "no|yes|not",
+       "family|brother|sister|never"
+      ],
+      "modele": "No, nobody in my family has been refused. My brother visited this country last year and came back.",
+      "v": [
+       "*"
+      ]
      }
     ],
     "suivi": [
@@ -4723,6 +4791,167 @@
       "modele": "Because my plan is clear, my documents are complete and I will return to my family and my job.",
       "v": [
        "*"
+      ]
+     },
+     {
+      "q": "Your passport has few stamps. Why do you want to travel now?",
+      "cles": [
+       "because|now|first",
+       "time|saved|plan|ready|job"
+      ],
+      "modele": "Because I now have savings, a stable job and a clear plan. Before, I was not ready.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "Who will pay for your ticket and your hotel?",
+      "cles": [
+       "I|my|will",
+       "pay|myself|company|employer|savings"
+      ],
+      "modele": "I will pay myself from my savings. I can show my bank statements.",
+      "v": [
+       "tourisme",
+       "affaires"
+      ]
+     },
+     {
+      "q": "What is your monthly income?",
+      "cles": [
+       "income|salary|earn",
+       "month|francs|CFA|euros|about"
+      ],
+      "modele": "I earn about four hundred thousand CFA francs per month from my business.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "Why should I believe that you will come back to Senegal?",
+      "cles": [
+       "because|I|will",
+       "family|job|business|house|children|wife"
+      ],
+      "modele": "Because my family, my job and my business are in Senegal. I have too much to lose.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "What will your employer do while you are away?",
+      "cles": [
+       "employer|company|my",
+       "leave|colleague|replace|approved|allowed"
+      ],
+      "modele": "My employer approved my leave. A colleague will replace me for two weeks.",
+      "v": [
+       "tourisme",
+       "affaires",
+       "famille"
+      ]
+     },
+     {
+      "q": "Which documents did you bring today?",
+      "cles": [
+       "I|have|brought",
+       "passport|bank|letter|invitation|ticket|insurance"
+      ],
+      "modele": "I brought my passport, bank statements, employer letter, hotel booking and travel insurance.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "What is the address of the hotel where you will stay?",
+      "cles": [
+       "hotel|address|name",
+       "street|city|booked|reservation|located"
+      ],
+      "modele": "I booked the Hotel Central, in the city centre. I have the reservation with me.",
+      "v": [
+       "tourisme",
+       "affaires"
+      ]
+     },
+     {
+      "q": "Have you bought your plane ticket already?",
+      "cles": [
+       "yes|no|not",
+       "ticket|reservation|booked|after|visa"
+      ],
+      "modele": "No, I have only a reservation. I will buy the ticket after I get my visa.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "How will you move around the city during your stay?",
+      "cles": [
+       "I|will|use",
+       "bus|metro|taxi|train|walk|public"
+      ],
+      "modele": "I will use public transport and I will also walk. I checked the metro map before coming.",
+      "v": [
+       "*"
+      ]
+     },
+     {
+      "q": "What if you fall sick during your trip?",
+      "cles": [
+       "if|insurance|doctor",
+       "hospital|covered|travel|pay|clinic"
+      ],
+      "modele": "I have travel insurance that covers medical costs, so I can go to a hospital without problem.",
+      "v": [
+       "tourisme",
+       "famille",
+       "affaires"
+      ]
+     },
+     {
+      "q": "Can you tell me about your sponsor's job?",
+      "cles": [
+       "he|she|works",
+       "job|company|engineer|nurse|teacher|business"
+      ],
+      "modele": "He works as an engineer in a company in Lyon. He has lived there for ten years.",
+      "v": [
+       "famille",
+       "etudes"
+      ]
+     },
+     {
+      "q": "What is the purpose of the meeting you will attend?",
+      "cles": [
+       "meeting|conference|purpose",
+       "business|partner|contract|products|supplier"
+      ],
+      "modele": "I will meet my supplier to sign a contract and see his products.",
+      "v": [
+       "affaires"
+      ]
+     },
+     {
+      "q": "Why did you choose this school and not one in Senegal?",
+      "cles": [
+       "because|school|program",
+       "course|quality|field|not|offer"
+      ],
+      "modele": "Because this program is not offered in Senegal and the school is known for this field.",
+      "v": [
+       "etudes"
+      ]
+     },
+     {
+      "q": "Who will pay for your treatment and your stay?",
+      "cles": [
+       "I|my|family|insurance",
+       "pay|treatment|hospital|savings|sponsor"
+      ],
+      "modele": "My family will pay for the treatment and I have the hospital's estimate with me.",
+      "v": [
+       "soins"
       ]
      }
     ]
