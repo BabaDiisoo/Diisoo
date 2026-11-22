@@ -16936,7 +16936,18 @@ try{
     if (window.DiisooConversation) entourer(window.DiisooConversation, "demarrer", "conversation_debut", function (s, n, t) { return t; });
     if (window.DiisooExams2) entourer(window.DiisooExams2, "ouvrir", "examen", function (k) { return k; });
     if (typeof window.selectBusinessModule === "function") entourer(window, "selectBusinessModule", "secteur_business", function (k) { return k; });
+    /* v188 : étapes entre « j'ouvre » et « je reviens » (écoute, micro, rappel) */
+    if (window.Diisoo && window.Diisoo.voix) entourer(window.Diisoo.voix, "jouer", "voix_jouee", function (t, l) { return l || ""; });
+    if (window.DiisooCoach) entourer(window.DiisooCoach, "ouvrir", "coach_ouvert");
+    if (window.DiisooRappel) { entourer(window.DiisooRappel, "proposer", "rappel_propose"); entourer(window.DiisooRappel, "activer", "rappel_active"); }
+    if (typeof window.startListening === "function") entourer(window, "startListening", "micro_demarre", function (l) { return l; });
   }
+  document.addEventListener("click", function (ev) {
+    try { var b = ev.target && ev.target.closest && ev.target.closest(".f-c[data-h]"); if (b) noter("action", "rappel_choix", b.getAttribute("data-h")); } catch (e) {}
+  }, true);
+  document.addEventListener("submit", function (ev) {
+    try { if (ev.target && ev.target.id === "form-onboarding") noter("action", "commencer", ""); } catch (e) {}
+  }, true);
 
   /* ---- fins de séance, de conversation, d'examen : on regarde apparaître l'écran de bilan ---- */
   var fins = { "dsn-end": "seance_fin", "dcv-end": "conversation_fin" }, deja = {};
