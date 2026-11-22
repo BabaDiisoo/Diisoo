@@ -1,4 +1,4 @@
-/* diisoo-arrivee.js v4 : arrivee par lien (?source=tiktok) = mini-lecon d'1 minute. Par defaut : entretien visa. Avec &mini=wolof : Wolof > Anglais #2 (Nanga def, Jerejef, Ndank ndank). &revoir=1 force l'affichage. */
+/* diisoo-arrivee.js v5 (mini-lecon supprimee partout, seul &revoir=1 la montre) : arrivee par lien (?source=tiktok) = mini-lecon d'1 minute. Par defaut : entretien visa. Avec &mini=wolof : Wolof > Anglais #2 (Nanga def, Jerejef, Ndank ndank). &revoir=1 force l'affichage. */
 (function () {
   "use strict";
   function lire(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -13,7 +13,7 @@
   function noter(n, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", n, d || ""); } catch (e) {} }
   setTimeout(function () { noter("arrivee", src); }, 3000);
   /* v4 : plus de mini-lecon par defaut (son/micro bloques dans le navigateur de TikTok). Seulement si &mini=1, &mini=wolof ou &revoir=1. */
-  if (q.mini !== "1" && String(q.mini || "").toLowerCase() !== "wolof" && q.revoir !== "1") return;
+  if (q.revoir !== "1") return;
   if (lire(CLE_VU) === "1" && q.mini !== "1" && q.revoir !== "1") return;
 
   var QUESTION = "Why do you want to study in Canada?";
