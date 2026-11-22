@@ -13571,10 +13571,35 @@ try{
   }
 
   /* ---------- déroulé d'un test ---------- */
+  /* Entretien visa : questions tirées au sort dans une grande réserve, jamais les mêmes d'une séance à l'autre */
+  function vusLire() { try { return JSON.parse(localStorage.getItem("diisoo_visa_vus") || "{}") || {}; } catch (e) { return {}; } }
+  function tirer(ex, test, t, ti, depart) {
+    var pool = (ex.pool && ex.pool[t.banque]) || [], ses = null;
+    try { ses = JSON.parse(localStorage.getItem("diisoo_visa_session") || "null"); } catch (e) {}
+    if (depart && ses && ses.ti === ti && ses.p && ses.p[t.banque]) {
+      var rep = ses.p[t.banque].map(function (q) { return pool.filter(function (x) { return x.q === q; })[0]; }).filter(Boolean);
+      if (rep.length) return rep;
+    }
+    var cand = pool.filter(function (x) { return test.dyn === "mixte" || !x.v || x.v.indexOf("*") > -1 || x.v.indexOf(test.dyn) > -1; });
+    var vus = vusLire(), deja = vus[t.banque] || [];
+    var neuves = cand.filter(function (x) { return deja.indexOf(x.q) < 0; });
+    if (neuves.length < t.nb) { deja = []; neuves = cand.slice(); }
+    neuves.sort(function () { return Math.random() - .5; });
+    var pris = neuves.slice(0, t.nb);
+    vus[t.banque] = deja.concat(pris.map(function (x) { return x.q; }));
+    try {
+      localStorage.setItem("diisoo_visa_vus", JSON.stringify(vus));
+      if (!ses || ses.ti !== ti) ses = { ti: ti, p: {} };
+      ses.p[t.banque] = pris.map(function (x) { return x.q; });
+      localStorage.setItem("diisoo_visa_session", JSON.stringify(ses));
+    } catch (e) {}
+    return pris;
+  }
   function lancer(cle, ti, depart) {
     var ex = REG.examens[cle], test = ex.tests[ti], etapes = [];
+    if (test.dyn && !depart) { try { localStorage.removeItem("diisoo_visa_session"); } catch (e) {} }
     ex.taches.forEach(function (t) {
-      var banque = test[t.banque || t.type] || [];
+      var banque = test.dyn ? tirer(ex, test, t, ti, depart) : (test[t.banque || t.type] || []);
       if (t.type === "info") {
         banque.forEach(function (g) {
           g.questions.forEach(function (q, j) {
