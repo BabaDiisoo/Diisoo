@@ -1,4 +1,4 @@
-const VERSION = "diisoo-cache-v194";
+const VERSION = "diisoo-cache-v195";
 const SHELL = [
   "./",
   "./index.html",

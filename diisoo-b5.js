@@ -3002,6 +3002,35 @@ try{
     }
     return null;
   }
+  /* Fin de la toute premiere seance : victoire, promesse du lendemain, puis choix libre de ce que la personne veut faire. */
+  function allerA(motif) {
+    fin();
+    var acc = null; Array.prototype.forEach.call(document.querySelectorAll("button"), function (b) { if (!acc && b.offsetParent && /Accueil/.test(b.textContent)) acc = b; });
+    if (acc) acc.click();
+    setTimeout(function () {
+      var cible = null; Array.prototype.forEach.call(document.querySelectorAll("#screen-dashboard button, #screen-dashboard a"), function (b) { if (!cible && b.offsetParent && motif.test(b.textContent)) cible = b; });
+      if (cible) cible.click();
+    }, 600);
+  }
+  function bilanPremier(n, key) {
+    ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-stars">🎉</div><div class="dsn-big">Bravo !</div>' +
+      '<div class="dsn-msg">' + n + ' mots appris. Ta série commence : 🔥 1 jour.</div>' +
+      '<div class="dsn-fr">Reviens demain pour 5 nouveaux mots.</div>' +
+      '<div class="dsn-lab" style="margin-top:14px">Maintenant, tu veux quoi ?</div></div>' +
+      '<div class="dsn-row" style="flex-direction:column">' +
+      '<button class="dsn-b p" type="button" id="dsn-p-ex">✈️ Examens &amp; visa</button>' +
+      '<button class="dsn-b" type="button" id="dsn-p-bz">💼 Business et métiers</button>' +
+      '<button class="dsn-b" type="button" id="dsn-p-wo">🇸🇳 Wolof ↔ Anglais</button>' +
+      '<button class="dsn-b" type="button" id="dsn-p-en">📚 Continuer l\'anglais</button>' +
+      '<button class="dsn-b" type="button" id="dsn-end">Plus tard</button></div>';
+    liens();
+    $("dsn-end").onclick = fin;
+    $("dsn-p-ex").onclick = function () { allerA(/Examens/); };
+    $("dsn-p-bz").onclick = function () { allerA(/Business/); };
+    $("dsn-p-wo").onclick = function () { allerA(/Wolof/); };
+    $("dsn-p-en").onclick = function () { fin(); demarrer(key); };
+    try { if (typeof speak === "function") speak("Bravo", "en-US"); } catch (e) {}
+  }
   function bilan() {
     var n = S.mots.length, total = n + S.quiz.length, bons = S.bons + S.qbons;
     var pct = total ? Math.round(bons / total * 100) : 0;
@@ -3009,6 +3038,7 @@ try{
     var phrase = pct >= 85 ? "Excellent ! Tu maîtrises ce thème." : pct >= 60 ? "Très bien ! Encore un peu et c'est parfait." : "Bon début ! Refais la séance pour progresser.";
     var key = S.key;
     maj(100);
+    if (S.court) { bilanPremier(n, key); return; }
     ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-stars">' + etoiles + '</div><div class="dsn-big">' + pct + ' %</div>' +
       '<div class="dsn-msg">' + phrase + '</div><div class="dsn-fr">' + S.bons + ' mots répétés sur ' + n + ' · ' + S.qbons + ' bonnes réponses au quiz</div>' +
       (S.revoir.length ? '<div class="dsn-fr">À revoir : ' + esc(S.revoir.map(function (w) { return w.en; }).join(", ")) + '</div>' : "") + '</div>' +
@@ -3032,8 +3062,9 @@ try{
     var th = themeCourant(key);
     if (!th || !th.mots.length) { try { toast("Ouvre d'abord un thème"); } catch (e) {} return; }
     if (max > 0 && th.mots.length > max) th = { id: th.id, titre: th.titre, mots: th.mots.slice(0, max) }; /* v2 : premiere seance courte */
+    var court = max > 0;
     if (S) fin();
-    S = { key: key, id: th.id, mots: th.mots, jeton: 1, bons: 0, qbons: 0, revoir: [], quiz: [], pct: 0, h: null };
+    S = { key: key, court: court, id: th.id, mots: th.mots, jeton: 1, bons: 0, qbons: 0, revoir: [], quiz: [], pct: 0, h: null };
     S.quiz = questions();
     var mon = S.jeton;
     ov.classList.remove("hidden");
