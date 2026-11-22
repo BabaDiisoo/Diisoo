@@ -14796,10 +14796,11 @@ try{
   }
 
   /* ---------- déroulé ---------- */
-  function demarrer(key) {
+  function demarrer(key, max) {
     monter();
     var th = themeCourant(key);
     if (!th || !th.mots.length) { try { toast("Ouvre d'abord un thème"); } catch (e) {} return; }
+    if (max > 0 && th.mots.length > max) th = { id: th.id, titre: th.titre, mots: th.mots.slice(0, max) }; /* v2 : premiere seance courte */
     if (S) fin();
     S = { key: key, id: th.id, mots: th.mots, jeton: 1, bons: 0, qbons: 0, revoir: [], quiz: [], pct: 0, h: null };
     S.quiz = questions();
@@ -17072,6 +17073,16 @@ try{
     try {
       if (window.DiisooVoixGuide && window.DiisooVoixGuide.aller) window.DiisooVoixGuide.aller({ type: "anglais", cle: "intro", niv: 1 });
     } catch (e) {}
+    /* v2 : la premiere lecon s'ouvre directement en seance guidee (un seul gros bouton), pas sur la page aux 15 boutons. Contenu universel : Se presenter. */
+    var essais = 0, t = setInterval(function () {
+      essais++;
+      try {
+        if (window.DiisooSeance && window.DiisooSeance.demarrer && document.querySelector("#screen-general:not(.hidden)")) {
+          clearInterval(t); window.DiisooSeance.demarrer("general", 5); return;
+        }
+      } catch (e) {}
+      if (essais > 15) clearInterval(t);
+    }, 300);
   }
 
   function ajuster() {

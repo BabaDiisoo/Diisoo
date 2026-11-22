@@ -23,6 +23,16 @@
     try {
       if (window.DiisooVoixGuide && window.DiisooVoixGuide.aller) window.DiisooVoixGuide.aller({ type: "anglais", cle: "intro", niv: 1 });
     } catch (e) {}
+    /* v2 : la premiere lecon s'ouvre directement en seance guidee (un seul gros bouton), pas sur la page aux 15 boutons. Contenu universel : Se presenter. */
+    var essais = 0, t = setInterval(function () {
+      essais++;
+      try {
+        if (window.DiisooSeance && window.DiisooSeance.demarrer && document.querySelector("#screen-general:not(.hidden)")) {
+          clearInterval(t); window.DiisooSeance.demarrer("general", 5); return;
+        }
+      } catch (e) {}
+      if (essais > 15) clearInterval(t);
+    }, 300);
   }
 
   function ajuster() {

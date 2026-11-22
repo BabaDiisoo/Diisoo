@@ -3027,10 +3027,11 @@ try{
   }
 
   /* ---------- déroulé ---------- */
-  function demarrer(key) {
+  function demarrer(key, max) {
     monter();
     var th = themeCourant(key);
     if (!th || !th.mots.length) { try { toast("Ouvre d'abord un thème"); } catch (e) {} return; }
+    if (max > 0 && th.mots.length > max) th = { id: th.id, titre: th.titre, mots: th.mots.slice(0, max) }; /* v2 : premiere seance courte */
     if (S) fin();
     S = { key: key, id: th.id, mots: th.mots, jeton: 1, bons: 0, qbons: 0, revoir: [], quiz: [], pct: 0, h: null };
     S.quiz = questions();
