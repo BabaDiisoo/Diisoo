@@ -65,6 +65,16 @@ try:
         for x in lst:
             if not x.get("cles") or not x.get("modele"): bloquants.append("Question visa incomplète : %s" % x.get("q", "")[:40])
 except Exception as e: bloquants.append("exam-formats.json : " + str(e)[:80])
+# 5b. voix anglaise pré-enregistrées : index cohérent avec les paquets
+try:
+    ix = json.load(open("audio-en/index.json", encoding="utf-8"))
+    taille = {}
+    for k, (n, off, ln) in ix["i"].items():
+        f = "audio-en/p%03d.mp3" % n
+        if f not in taille: taille[f] = os.path.getsize(f) if os.path.exists(f) else -1
+        if taille[f] < 0: bloquants.append("Paquet audio manquant : %s" % f); break
+        if off + ln > taille[f]: bloquants.append("Index audio hors limites : %s" % k); break
+except FileNotFoundError: avis.append("Pas de dossier audio-en (voix anglaise pré-enregistrée absente)")
 # 6. secrets
 for f in glob.glob("*.js") + glob.glob("*.html") + glob.glob("*.json"):
     s = lire(f)

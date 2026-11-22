@@ -104,6 +104,12 @@
     var pt = document.createElement("script");
     pt.src = "diisoo-pte.js";
     (document.head || document.documentElement).appendChild(pt);
+    var ve = document.createElement("script");
+    ve.src = "diisoo-voix-en.js";
+    (document.head || document.documentElement).appendChild(ve);
+    var vw = document.createElement("script");
+    vw.src = "diisoo-voix-wo.js";
+    (document.head || document.documentElement).appendChild(vw);
   } catch (e) {}
 
   function sequentiel(i) {

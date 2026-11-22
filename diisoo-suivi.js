@@ -107,7 +107,7 @@
     if (window.DiisooExams2) entourer(window.DiisooExams2, "ouvrir", "examen", function (k) { return k; });
     if (typeof window.selectBusinessModule === "function") entourer(window, "selectBusinessModule", "secteur_business", function (k) { return k; });
     /* v188 : étapes entre « j'ouvre » et « je reviens » (écoute, micro, rappel) */
-    if (window.Diisoo && window.Diisoo.voix) entourer(window.Diisoo.voix, "jouer", "voix_jouee", function (t, l) { return l || ""; });
+    if (window.Diisoo && window.Diisoo.voix) entourer(window.Diisoo.voix, "jouer", "voix_jouee", function (t, l) { return (l || "") + "|" + String(t || "").replace(/\s+/g, " ").slice(0, 70); });
     if (window.DiisooCoach) entourer(window.DiisooCoach, "ouvrir", "coach_ouvert");
     if (window.DiisooRappel) { entourer(window.DiisooRappel, "proposer", "rappel_propose"); entourer(window.DiisooRappel, "activer", "rappel_active"); }
     if (typeof window.startListening === "function") entourer(window, "startListening", "micro_demarre", function (l) { return l; });
