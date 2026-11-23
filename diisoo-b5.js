@@ -3103,6 +3103,49 @@ try{
     }
   }
 
+  /* ---------- le Mini-bilan : 5 questions, sans réapprendre, jamais obligatoire ---------- */
+  function trace(nom, d) { try { if (window.DiisooSuivi && DiisooSuivi.noter) DiisooSuivi.noter("action", nom, d || ""); } catch (e) {} }
+  function miniBilan(key) {
+    monter();
+    var th = themeCourant(key);
+    if (!th || !th.mots.length) { try { toast("Ouvre d'abord un thème"); } catch (e) {} return; }
+    if (S) fin();
+    S = { key: key, court: false, id: th.id, mots: th.mots, jeton: 1, bons: 0, qbons: 0, revoir: [], quiz: [], pct: 0, h: null, mini: true };
+    var mon = S.jeton, Qs = []; try { Qs = questions(); } catch (e) {}
+    if (!S || mon !== S.jeton) return;
+    S.quiz = Qs.slice(0, 5);
+    if (!S.quiz.length) { fin(); return; }
+    S.mots = [];
+    trace("minibilan_debut", th.id);
+    ov.classList.remove("hidden");
+    ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-lab">Mini-bilan</div><div class="dsn-big">' + esc(th.titre) + '</div>' +
+      '<div class="dsn-fr">' + S.quiz.length + ' questions · 1 minute</div></div>' +
+      '<div class="dsn-row"><button class="dsn-b p" type="button" id="dsn-go">▶️ C\'est parti</button></div>';
+    liens();
+    $("dsn-go").onclick = function () { suite(0); };
+    function suite(k) {
+      if (!S || mon !== S.jeton) return;
+      if (k >= S.quiz.length) { finMini(th); return; }
+      question(k, mon).then(function (r) { if (r === "stop") return; suite(k + 1); });
+    }
+  }
+  function finMini(th) {
+    var n = S.quiz.length, b = S.qbons, key = S.key, ok = b >= Math.ceil(n * 0.8);
+    maj(100); trace("minibilan_fin", th.id + "|" + b + "/" + n);
+    ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-stars">' + (ok ? "🏅" : "💪") + '</div><div class="dsn-big">' + b + ' / ' + n + '</div>' +
+      '<div class="dsn-msg">' + (ok ? "Badge « " + esc(th.titre) + " » gagné !" : "Presque. Refais la séance guidée, puis retente.") + '</div></div>' +
+      '<div class="dsn-row" style="flex-direction:column">' +
+      (suivantExiste(key) ? '<button class="dsn-b p" type="button" id="dsn-next">➡️ Thème suivant</button>' : "") +
+      '<button class="dsn-b" type="button" id="dsn-redo">🔁 Retenter</button><button class="dsn-b" type="button" id="dsn-end">Terminer</button></div>';
+    liens();
+    if (ok) { try { addXP(10); var o = JSON.parse(localStorage.getItem("diisoo_badges") || "{}"); o[key + ":" + th.id] = new Date().toISOString().slice(0, 10); localStorage.setItem("diisoo_badges", JSON.stringify(o)); } catch (e) {} }
+    $("dsn-end").onclick = fin;
+    $("dsn-redo").onclick = function () { fin(); miniBilan(key); };
+    var nx = $("dsn-next");
+    if (nx) nx.onclick = function () { var bt = boutonSuivant(key); fin(); if (bt) bt.click(); };
+    try { if (typeof speak === "function") speak(ok ? "Bravo" : "Almost", "en-US"); } catch (e) {}
+  }
+
   /* ---------- le bouton dans chaque thème ---------- */
   function poser() {
     ["general", "wolof", "business"].forEach(function (key) {
@@ -3111,6 +3154,9 @@ try{
       var visible = ecran && !ecran.classList.contains("hidden");
       var b = $(id);
       if (!bar || !visible) { if (b) b.remove(); return; }
+      var pil = key === "general" && window.generalThemeId === "intro" || (key === "general" && typeof generalThemeId !== "undefined" && generalThemeId === "intro"), mb = $("dsn-mb-" + key);
+      if (mb && !pil) mb.remove();
+      if (b && pil && !mb) { mb = document.createElement("button"); mb.type = "button"; mb.id = "dsn-mb-" + key; mb.className = "dsn-go"; mb.style.background = "#141A2B"; mb.style.color = "#F6F1E7"; mb.style.border = "1px solid #1E2740"; mb.innerHTML = "🎯 Mini-bilan : 5 questions, 1 minute"; mb.onclick = function () { miniBilan(key); }; b.parentNode.insertBefore(mb, b.nextSibling); }
       if (b) return;
       b = document.createElement("button"); b.type = "button"; b.id = id; b.className = "dsn-go";
       b.innerHTML = "▶️ Séance guidée : je te guide, tu répètes";
@@ -3121,7 +3167,7 @@ try{
   css();
   setInterval(function () { try { poser(); } catch (e) {} }, 600);
 
-  window.DiisooSeance = { version: 1, demarrer: demarrer };
+  window.DiisooSeance = { version: 1, demarrer: demarrer, miniBilan: miniBilan };
 })();
 
 }catch(e){console.error("Diisoo : erreur dans diisoo-seance.js",e);}
