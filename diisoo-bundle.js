@@ -14785,6 +14785,9 @@ try{
     ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-stars">🎉</div><div class="dsn-big">Bravo !</div>' +
       '<div class="dsn-msg">' + n + ' mots appris. Ta série commence : 🔥 1 jour.</div>' +
       '<div class="dsn-fr">Reviens demain pour 5 nouveaux mots.</div>' +
+      '<div class="dsn-lab" style="margin-top:14px">🔔 Je te rappelle demain à quelle heure ?</div>' +
+      '<div class="dsn-row" style="margin-top:8px"><button class="dsn-b" type="button" data-h="06:30" id="dsn-h1">🌅 6h30</button><button class="dsn-b" type="button" data-h="12:30" id="dsn-h2">☀️ 12h30</button><button class="dsn-b" type="button" data-h="20:30" id="dsn-h3">🌙 20h30</button></div>' +
+      '<div class="dsn-msg" id="dsn-hmsg"></div>' +
       '<div class="dsn-lab" style="margin-top:14px">Maintenant, tu veux quoi ?</div></div>' +
       '<div class="dsn-row" style="flex-direction:column">' +
       '<button class="dsn-b p" type="button" id="dsn-p-ex">✈️ Examens &amp; visa</button>' +
@@ -14793,6 +14796,16 @@ try{
       '<button class="dsn-b" type="button" id="dsn-p-en">📚 Continuer l\'anglais</button>' +
       '<button class="dsn-b" type="button" id="dsn-end">Plus tard</button></div>';
     liens();
+    ["dsn-h1", "dsn-h2", "dsn-h3"].forEach(function (id) {
+      var bt = $(id); if (!bt) return;
+      bt.onclick = function () {
+        var h = bt.getAttribute("data-h");
+        try { var o = JSON.parse(localStorage.getItem("diisoo_obj") || "null") || {}; o.heure = h; if (!o.debut) o.debut = new Date().toISOString().slice(0, 10); localStorage.setItem("diisoo_obj", JSON.stringify(o)); } catch (e) {}
+        var m = $("dsn-hmsg"); if (m) m.textContent = "⏳ Un instant…";
+        var fini = function (bon) { var mm = $("dsn-hmsg"); if (mm) mm.textContent = bon ? "✅ C'est noté : rappel à " + h.replace(":", "h") : "Autorise les notifications pour recevoir le rappel."; };
+        try { if (window.DiisooRappel && DiisooRappel.activer) DiisooRappel.activer({ heure: h }).then(fini); else fini(false); } catch (e) { fini(false); }
+      };
+    });
     $("dsn-end").onclick = fin;
     $("dsn-p-ex").onclick = function () { allerA(/Examens/); };
     $("dsn-p-bz").onclick = function () { allerA(/Business/); };
@@ -14834,8 +14847,10 @@ try{
     var court = max > 0;
     if (S) fin();
     S = { key: key, court: court, id: th.id, mots: th.mots, jeton: 1, bons: 0, qbons: 0, revoir: [], quiz: [], pct: 0, h: null };
-    S.quiz = questions();
     var mon = S.jeton;
+    var Qs = []; try { Qs = questions(); } catch (e) {}
+    if (!S || mon !== S.jeton) return; /* v3 : la seance a pu etre fermee pendant la preparation du quiz */
+    S.quiz = Qs;
     ov.classList.remove("hidden");
     ov.innerHTML = entete() + '<div class="dsn-c"><div class="dsn-lab">Séance guidée</div><div class="dsn-big">' + esc(th.titre) + '</div>' +
       '<div class="dsn-fr">' + th.mots.length + ' mots · ' + S.quiz.length + ' questions · environ ' + Math.max(2, Math.round(th.mots.length * 0.35)) + ' min</div>' +
