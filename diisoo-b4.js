@@ -2997,6 +2997,17 @@ try{
   setTimeout(victoire, 5000);
   if (/[?&]defi=1/.test(q)) setTimeout(proposer, 3500);
 
+  /* v2 : le defi ne coupe plus un exercice. Il attend le retour a l'accueil (aucune seance ni fenetre ouverte). */
+  var attente = false;
+  setInterval(function () {
+    if (!attente) return;
+    var acc = $("screen-dashboard"), sn = $("dsn");
+    if (!acc || acc.classList.contains("hidden")) return;
+    if (sn && !sn.classList.contains("hidden")) return;
+    if ($("dii-obj") || $("dar") || $("dsr") || $("dii-defi")) return;
+    attente = false; proposer();
+  }, 1500);
+
   var essais = 0, t = setInterval(function () {
     essais++;
     if (typeof window.bumpDailyGoal === "function" && !window.bumpDailyGoal.__d) {
@@ -3007,7 +3018,7 @@ try{
         var r = f.apply(this, arguments);
         var apres = 0; try { apres = getDailyGoal().done; } catch (e) {}
         if (avant < cible && apres >= cible) {
-          setTimeout(function () { victoire(); if (!$("dii-obj") && !$("dar")) proposer(); }, 2200);
+          setTimeout(function () { victoire(); attente = true; }, 2200);
         }
         return r;
       };
