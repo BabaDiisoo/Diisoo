@@ -38,9 +38,11 @@
     if (window.__convStub) return Promise.resolve(window.__convStub(corps));
     try { return db.functions.invoke(FONCTION, { body: corps }); } catch (e) { return Promise.reject(e); }
   }
-  function demander(texte) {
+  function demander(texte, audio) {
     compter();
-    return appeler({ scene: S.scene, niveau: S.niveau, hist: S.hist, texte: texte || "" }).then(function (r) {
+    var corps = { scene: S.scene, niveau: S.niveau, hist: S.hist, texte: audio ? "" : (texte || "") };
+    if (audio) corps.audio = audio;
+    return appeler(corps).then(function (r) {
       var d = r && r.data;
       if (typeof d === "string") { try { d = JSON.parse(d); } catch (e) { d = null; } }
       if (!d || d.erreur || !d.reply) return { erreur: (d && d.erreur) || (r && r.error && "ia") || "ia" };
@@ -63,6 +65,11 @@
       "#dcv .fix b{color:#5FC98F}#dcv .tip{color:#C9BFA8;font-size:13px;margin-top:4px}" +
       "#dcv .orb{align-self:center;width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;background:#141A2B;border:2px solid #1E2740}" +
       "#dcv .orb.on{background:linear-gradient(135deg,#F3A94E,#E1693F);border-color:transparent;animation:dcvp 1s infinite}@keyframes dcvp{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}" +
+      "#dcv .hold{width:100%;min-height:64px;border-radius:999px;border:0;background:#25D366;color:#fff;font-weight:800;font-size:16px;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 2px 10px rgba(37,211,102,.35);transition:transform .15s,box-shadow .15s}" +
+      "#dcv .hold.on{background:#00A884;transform:scale(1.04);box-shadow:0 0 0 10px rgba(37,211,102,.2),0 0 0 22px rgba(37,211,102,.08)}" +
+      "#dcv .moi .rd{display:inline-block;width:10px;height:10px;border-radius:50%;background:#F15C6D;margin-right:8px;animation:dcvb 1s infinite}#dcv .moi #dcv-t{font-weight:700;margin-right:10px}" +
+      "#dcv .wv{display:inline-flex;align-items:center;gap:3px;height:20px;margin-right:10px;vertical-align:middle}#dcv .wv i{display:block;width:3px;border-radius:2px;background:#25D366;height:5px;animation:dcvw .9s ease-in-out infinite}#dcv .wv i:nth-child(2){animation-delay:.15s}#dcv .wv i:nth-child(3){animation-delay:.3s}#dcv .wv i:nth-child(4){animation-delay:.45s}#dcv .wv i:nth-child(5){animation-delay:.6s}" +
+      "@keyframes dcvb{0%,100%{opacity:1}50%{opacity:.25}}@keyframes dcvw{0%,100%{height:5px}50%{height:18px}}" +
       "#dcv .msg{text-align:center;font-size:14px;color:#C9BFA8;min-height:20px}" +
       "#dcv .row{display:flex;gap:10px}#dcv .b{flex:1;min-height:56px;border-radius:16px;font-weight:800;font-size:15px;background:#141A2B;border:1px solid #1E2740;color:#F6F1E7}#dcv .b.p{background:linear-gradient(135deg,#F3A94E,#E1693F);color:#241505;border:0}";
     document.head.appendChild(s);
@@ -97,6 +104,65 @@
     });
   }
 
+
+  /* ---------- v2 : enregistrement vocal envoye a Gemini (comprend les accents, marche partout) ---------- */
+  var MAXREC = 15000;
+  function aWav(buf, sr) {
+    var n = buf.length, v = new DataView(new ArrayBuffer(44 + n * 2));
+    function ec(o, t) { for (var i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); }
+    ec(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); ec(8, "WAVEfmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); ec(36, "data"); v.setUint32(40, n * 2, true);
+    for (var i = 0; i < n; i++) { var x = Math.max(-1, Math.min(1, buf[i])); v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7FFF, true); }
+    var u = new Uint8Array(v.buffer), bin = "", k = 0;
+    for (; k < u.length; k += 8192) bin += String.fromCharCode.apply(null, u.subarray(k, k + 8192));
+    return btoa(bin);
+  }
+  function convertir(blob) {
+    return blob.arrayBuffer().then(function (ab) {
+      var AC = window.AudioContext || window.webkitAudioContext, c = new AC();
+      return new Promise(function (ok, ko) { c.decodeAudioData(ab, ok, ko); }).then(function (au) {
+        try { c.close(); } catch (e) {}
+        var len = Math.max(1, Math.ceil(au.duration * 16000)), oc = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, len, 16000);
+        var src = oc.createBufferSource(); src.buffer = au; src.connect(oc.destination); src.start(0);
+        return new Promise(function (ok2, ko2) { var r = oc.startRendering(); if (r && r.then) r.then(ok2, ko2); else oc.oncomplete = function (e) { ok2(e.renderedBuffer); }; });
+      }).then(function (rb) { return { wav: aWav(rb.getChannelData(0), 16000), duree: rb.duration }; });
+    });
+  }
+  function vocalDispo() { return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder && (window.AudioContext || window.webkitAudioContext) && !window.__convSansVocal); }
+
+  function enregistrer(mon) {
+    return new Promise(function (res) {
+      var zone = $("dcv-rec"); if (!zone) { res({ texte: "", indispo: true }); return; }
+      zone.innerHTML = '<button class="hold" type="button" id="dcv-hold">🎤 Maintiens pour parler</button>';
+      var bt = $("dcv-hold"), rec = null, flux = null, morceaux = [], t0 = 0, iv = null, annule = false, fini = false, debut = 0;
+      function sortir(r) { if (fini) return; fini = true; clearInterval(iv); try { flux && flux.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} zone.innerHTML = ""; res(r); }
+      function arreter(an) { annule = !!an; try { if (rec && rec.state !== "inactive") rec.stop(); else sortir({ texte: "" }); } catch (e) { sortir({ texte: "" }); } }
+      S.h = { stop: function () { arreter(true); } };
+      function pill() { var h = $("dcv-heard"); if (h) { h.style.visibility = "visible"; h.innerHTML = '<span class="rd"></span><span id="dcv-t">0:00</span><span class="wv"><i></i><i></i><i></i><i></i><i></i></span><span style="color:#8C8064;font-size:13px">‹ Glisse pour annuler</span>'; } }
+      function demarrerRec(ev) {
+        if (rec || fini) return;
+        debut = ev.clientX;
+        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function (f) {
+          if (fini || !S || mon !== S.jeton) { f.getTracks().forEach(function (t) { t.stop(); }); return; }
+          flux = f; var mt = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"].filter(function (t) { try { return MediaRecorder.isTypeSupported(t); } catch (e) { return false; } })[0];
+          rec = mt ? new MediaRecorder(f, { mimeType: mt }) : new MediaRecorder(f);
+          rec.ondataavailable = function (e) { if (e.data && e.data.size) morceaux.push(e.data); };
+          rec.onstop = function () {
+            if (annule || !morceaux.length || Date.now() - t0 < 500) { sortir({ texte: "", court: !annule }); return; }
+            convertir(new Blob(morceaux, { type: rec.mimeType || "audio/webm" })).then(function (a) { sortir({ audio: a.wav, texte: "(voix)", duree: a.duree }); }, function () { sortir({ texte: "", indispo: false, erreurAudio: true }); });
+          };
+          t0 = Date.now(); rec.start(); bt.classList.add("on"); bt.textContent = "🎤 Parle... relâche pour envoyer"; pill(); try { navigator.vibrate && navigator.vibrate(15); } catch (e) {}
+          iv = setInterval(function () { var s = Math.floor((Date.now() - t0) / 1000), e = $("dcv-t"); if (e) e.textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); if (Date.now() - t0 > MAXREC) arreter(false); }, 250);
+        }).catch(function () { sortir({ texte: "", indispo: true }); });
+      }
+      bt.addEventListener("pointerdown", function (ev) { ev.preventDefault(); try { bt.setPointerCapture(ev.pointerId); } catch (e) {} demarrerRec(ev); });
+      bt.addEventListener("pointermove", function (ev) { if (rec && ev.clientX - debut < -90) { var h = $("dcv-heard"); if (h) h.textContent = "🗑️ Annulé"; arreter(true); } });
+      bt.addEventListener("pointerup", function () { if (rec) arreter(false); });
+      bt.addEventListener("pointercancel", function () { if (rec) arreter(true); });
+      bt.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    });
+  }
+
   function erreurEcran(code) {
     var m = code === "limite" ? "Tu as beaucoup parlé aujourd'hui ! Reviens demain pour continuer." :
       code === "insufficient_quota" ? "L'IA n'est pas encore activée. Essaie le jeu de rôle en attendant." :
@@ -110,7 +176,7 @@
     var dernierIA = S.hist.length ? S.hist[S.hist.length - 1].content : "";
     var pct = Math.round(i / TOURS * 100);
     ov.innerHTML = entete(pct) + '<div class="zone"><div class="ia">' + esc(dernierIA) + '</div><div id="dcv-fix"></div><div class="moi" id="dcv-heard" style="visibility:hidden"></div></div>' +
-      '<div class="orb" id="dcv-orb">🔊</div><div class="msg" id="dcv-msg">Écoute...</div>' +
+      '<div class="orb" id="dcv-orb">🔊</div><div class="msg" id="dcv-msg">Écoute...</div><div id="dcv-rec"></div>' +
       '<div class="row" style="margin-top:10px"><button class="b" type="button" id="dcv-skip">Passer</button></div>';
     liens();
     var passer = false;
@@ -121,16 +187,23 @@
       if (o) { o.textContent = "🎙️"; o.className = "orb on"; }
       if (m) m.textContent = "À toi : réponds en anglais";
       if (hh) hh.style.visibility = "visible";
-      return ecouter(mon);
+      var vocal = vocalDispo(); S.vocal = vocal;
+      return vocal ? enregistrer(mon) : ecouter(mon);
     }).then(function (r) {
       if (!S || mon !== S.jeton || !r) return null;
       if (r.indispo) { var m = $("dcv-msg"); if (m) m.textContent = "Micro indisponible. Autorise le micro et réessaie."; return null; }
-      if (passer || !r.texte) { var mm = $("dcv-msg"); if (mm) mm.textContent = "Je n'ai rien entendu. On réessaie."; return pause(1000).then(function () { return jouer(i, mon); }); }
+      if (r.court) { var mc = $("dcv-msg"); if (mc) mc.textContent = "Maintiens le bouton pendant que tu parles."; return pause(1200).then(function () { return jouer(i, mon); }); }
+      if (r.erreurAudio) { window.__convSansVocal = true; return jouer(i, mon); }
+      if (passer || (!r.texte && !r.audio)) { var mm = $("dcv-msg"); if (mm) mm.textContent = "Je n'ai rien entendu. On réessaie."; return pause(1000).then(function () { return jouer(i, mon); }); }
       var o2 = $("dcv-orb"); if (o2) { o2.textContent = "💭"; o2.className = "orb"; }
       var m2 = $("dcv-msg"); if (m2) m2.textContent = "L'IA réfléchit...";
-      return demander(r.texte).then(function (d) {
+      return demander(r.texte, r.audio).then(function (d) {
         if (!S || mon !== S.jeton) return null;
         if (d.erreur) { erreurEcran(d.erreur); return null; }
+        if (r.audio) {
+          if (!d.heard || !String(d.heard).trim()) { var mn = $("dcv-msg"); if (mn) mn.textContent = "Je n'ai pas bien entendu. On réessaie."; return pause(1200).then(function () { return jouer(i, mon); }); }
+          r = { texte: String(d.heard).trim() }; var hh2 = $("dcv-heard"); if (hh2) { hh2.style.visibility = "visible"; hh2.textContent = "« " + r.texte + " »"; }
+        }
         S.hist.push({ role: "user", content: r.texte });
         S.hist.push({ role: "assistant", content: d.reply });
         if (d.fix && d.fix.trim().toLowerCase() !== r.texte.trim().toLowerCase()) S.fixes.push({ avant: r.texte, apres: d.fix, tip: d.tip || "" });
