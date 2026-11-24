@@ -11,22 +11,28 @@
   /* CSS */
   var st = document.createElement("style");
   st.textContent =
-    "[data-practice][onclick^='practice']{background:#25D366!important;color:#fff!important;min-height:40px;" +
-    "border-radius:999px!important;font-size:11px!important;font-weight:700!important}" +
-    "[data-practice][onclick^='practice'].mic-pulsing-whatsapp{background:#128C7E!important;transform:scale(1.04)}" +
-    "#wa-pill{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:9999;display:none;" +
-    "align-items:center;gap:10px;background:#1F2C34;color:#fff;padding:10px 16px;border-radius:999px;" +
-    "font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.45);white-space:nowrap}" +
-    "#wa-pill .dot{width:10px;height:10px;border-radius:50%;background:#F44336;animation:wablink 1s infinite}" +
-    "#wa-pill.annule{background:#B3261E}" +
-    "@keyframes wablink{0%,100%{opacity:1}50%{opacity:.25}}";
+    "[data-practice][onclick^='practice']{background:#25D366!important;color:#fff!important;min-height:44px;" +
+    "border-radius:999px!important;font-size:12px!important;font-weight:700!important;box-shadow:0 2px 8px rgba(37,211,102,.35);transition:transform .15s,box-shadow .15s}" +
+    "[data-practice][onclick^='practice'].mic-pulsing-whatsapp{background:#00A884!important;transform:scale(1.12);box-shadow:0 0 0 10px rgba(37,211,102,.22),0 0 0 22px rgba(37,211,102,.10)}" +
+    "#wa-pill{position:fixed;left:10px;right:10px;bottom:14px;max-width:480px;margin:0 auto;z-index:9999;display:none;" +
+    "align-items:center;gap:10px;background:#1F2C34;color:#E9EDEF;padding:12px 16px;border-radius:999px;" +
+    "font-size:14px;box-shadow:0 6px 22px rgba(0,0,0,.5);white-space:nowrap;overflow:hidden}" +
+    "#wa-pill .dot{width:11px;height:11px;border-radius:50%;background:#F15C6D;flex:none;animation:wablink 1s infinite}" +
+    "#wa-pill #wa-time{font-variant-numeric:tabular-nums;font-weight:600;min-width:34px}" +
+    "#wa-pill .wv{display:flex;align-items:center;gap:3px;height:22px;flex:none}" +
+    "#wa-pill .wv i{display:block;width:3px;border-radius:2px;background:#25D366;height:6px;animation:wavebar .9s ease-in-out infinite}" +
+    "#wa-pill .wv i:nth-child(2){animation-delay:.12s}#wa-pill .wv i:nth-child(3){animation-delay:.24s}#wa-pill .wv i:nth-child(4){animation-delay:.36s}#wa-pill .wv i:nth-child(5){animation-delay:.48s}#wa-pill .wv i:nth-child(6){animation-delay:.6s}" +
+    "#wa-pill #wa-hint{flex:1;text-align:center;color:#8696A0;font-size:13px;will-change:transform,opacity}" +
+    "#wa-pill.annule{background:#5A1A1A;color:#fff}#wa-pill.annule .dot{animation:none;background:#fff}#wa-pill.annule #wa-hint{color:#fff;font-weight:700}" +
+    "@keyframes wablink{0%,100%{opacity:1}50%{opacity:.25}}" +
+    "@keyframes wavebar{0%,100%{height:5px}50%{height:20px}}";
   document.head.appendChild(st);
 
   function monterPill() {
     if (pill) return pill;
     pill = document.createElement("div");
     pill.id = "wa-pill";
-    pill.innerHTML = '<span class="dot"></span><span id="wa-time">0:00</span><span id="wa-hint">‹ Glisse pour annuler</span>';
+    pill.innerHTML = '<span class="dot"></span><span id="wa-time">0:00</span><span class="wv"><i></i><i></i><i></i><i></i><i></i><i></i></span><span id="wa-hint">‹ Glisse pour annuler</span>';
     document.body.appendChild(pill);
     return pill;
   }
@@ -61,7 +67,7 @@
     var p = monterPill();
     p.classList.remove("annule");
     document.getElementById("wa-time").textContent = "0:00";
-    document.getElementById("wa-hint").textContent = "‹ Glisse pour annuler";
+    var h0 = document.getElementById("wa-hint"); h0.textContent = "‹ Glisse pour annuler"; h0.style.transform = ""; h0.style.opacity = "";
     p.style.display = "flex";
     clearInterval(timer);
     timer = setInterval(function () { document.getElementById("wa-time").textContent = fmt(Date.now() - t0); }, 200);
@@ -70,10 +76,12 @@
 
   document.addEventListener("pointermove", function (ev) {
     if (!holdBtn || cancelled) return;
-    if (ev.clientX - startX < -80) {
+    var dx = ev.clientX - startX, hint = document.getElementById("wa-hint");
+    if (hint && dx < 0) { hint.style.transform = "translateX(" + Math.round(dx * 0.5) + "px)"; hint.style.opacity = String(Math.max(0.2, 1 + dx / 100)); }
+    if (dx < -80) {
       cancelled = true;
       window.__waCancel = true;
-      if (pill) { pill.classList.add("annule"); document.getElementById("wa-hint").textContent = "Annulé"; }
+      if (pill) { pill.classList.add("annule"); document.getElementById("wa-hint").textContent = "🗑️ Annulé"; }
       vib([20, 40, 20]);
       /* declenche le relachement du systeme existant (arret immediat du micro) */
       document.dispatchEvent(new Event("pointerup"));
