@@ -120,7 +120,7 @@
   function convertir(blob) {
     return blob.arrayBuffer().then(function (ab) {
       var AC = window.AudioContext || window.webkitAudioContext, c = new AC();
-      return new Promise(function (ok, ko) { c.decodeAudioData(ab, ok, ko); }).then(function (au) {
+      return new Promise(function (ok, ko) { c.decodeAudioData(ab, ok, function (e) { try { c.close(); } catch (x) {} ko(e); }); }).then(function (au) {
         try { c.close(); } catch (e) {}
         var len = Math.max(1, Math.ceil(au.duration * 16000)), oc = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, len, 16000);
         var src = oc.createBufferSource(); src.buffer = au; src.connect(oc.destination); src.start(0);
@@ -134,7 +134,7 @@
     return new Promise(function (res) {
       var zone = $("dcv-rec"); if (!zone) { res({ texte: "", indispo: true }); return; }
       zone.innerHTML = '<button class="hold" type="button" id="dcv-hold">🎤 Maintiens pour parler</button>';
-      var bt = $("dcv-hold"), rec = null, flux = null, morceaux = [], t0 = 0, iv = null, annule = false, fini = false, debut = 0;
+      var bt = $("dcv-hold"), tenu = false, rec = null, flux = null, morceaux = [], t0 = 0, iv = null, annule = false, fini = false, debut = 0;
       function sortir(r) { if (fini) return; fini = true; clearInterval(iv); try { flux && flux.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {} zone.innerHTML = ""; res(r); }
       function arreter(an) { annule = !!an; try { if (rec && rec.state !== "inactive") rec.stop(); else sortir({ texte: "" }); } catch (e) { sortir({ texte: "" }); } }
       S.h = { stop: function () { arreter(true); } };
@@ -144,6 +144,8 @@
         debut = ev.clientX;
         navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function (f) {
           if (fini || !S || mon !== S.jeton) { f.getTracks().forEach(function (t) { t.stop(); }); return; }
+          /* iPhone : la 1re fois, la demande d'autorisation annule le geste. Si le doigt n'est plus la, on n'enregistre pas dans le vide. */
+          if (!tenu) { f.getTracks().forEach(function (t) { t.stop(); }); bt.textContent = "🎤 Micro autorisé : maintiens et parle"; return; }
           flux = f; var mt = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"].filter(function (t) { try { return MediaRecorder.isTypeSupported(t); } catch (e) { return false; } })[0];
           rec = mt ? new MediaRecorder(f, { mimeType: mt }) : new MediaRecorder(f);
           rec.ondataavailable = function (e) { if (e.data && e.data.size) morceaux.push(e.data); };
@@ -155,10 +157,10 @@
           iv = setInterval(function () { var s = Math.floor((Date.now() - t0) / 1000), e = $("dcv-t"); if (e) e.textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); if (Date.now() - t0 > MAXREC) arreter(false); }, 250);
         }).catch(function () { sortir({ texte: "", indispo: true }); });
       }
-      bt.addEventListener("pointerdown", function (ev) { ev.preventDefault(); try { bt.setPointerCapture(ev.pointerId); } catch (e) {} demarrerRec(ev); });
+      bt.addEventListener("pointerdown", function (ev) { ev.preventDefault(); tenu = true; try { bt.setPointerCapture(ev.pointerId); } catch (e) {} demarrerRec(ev); });
       bt.addEventListener("pointermove", function (ev) { if (rec && ev.clientX - debut < -90) { var h = $("dcv-heard"); if (h) h.textContent = "🗑️ Annulé"; arreter(true); } });
-      bt.addEventListener("pointerup", function () { if (rec) arreter(false); });
-      bt.addEventListener("pointercancel", function () { if (rec) arreter(true); });
+      bt.addEventListener("pointerup", function () { tenu = false; if (rec) arreter(false); });
+      bt.addEventListener("pointercancel", function () { tenu = false; if (rec) arreter(true); });
       bt.addEventListener("contextmenu", function (e) { e.preventDefault(); });
     });
   }
