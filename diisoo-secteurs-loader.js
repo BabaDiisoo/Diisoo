@@ -62,6 +62,13 @@
     (document.head || document.documentElement).appendChild(ix);
   } catch (e) {}
 
+  /* Sonde iPhone : test du son et detection des fermetures brutales (sans effet hors iOS) */
+  try {
+    var so = document.createElement("script");
+    so.src = "diisoo-ios-sonde.js";
+    (document.head || document.documentElement).appendChild(so);
+  } catch (e) {}
+
   /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
   try {
     var e0 = document.createElement("script");
