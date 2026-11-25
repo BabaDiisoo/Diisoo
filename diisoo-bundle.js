@@ -12618,6 +12618,43 @@ try{
   window.DiisooInstaller = { version: 1, ouvrir: ouvrir };
 })();
 
+/* ---- v2 : bandeau « ouvre dans ton navigateur » pour TikTok / Instagram / Facebook (stockage, son et micro limités dans ces fenêtres) ---- */
+(function () {
+  "use strict";
+  var UA = navigator.userAgent || "", RX = /musical_ly|TikTok|Bytedance|Instagram|FBAN|FBAV|Snapchat/i;
+  if (!RX.test(UA) || window.__diisooInapp) return; window.__diisooInapp = true;
+  try { if (new URLSearchParams(location.search).get("inapp") === "0") return; } catch (e) {}
+  var IOS = /iPhone|iPad|iPod/.test(UA), NOM = /TikTok|musical_ly|Bytedance/i.test(UA) ? "TikTok" : /Instagram/i.test(UA) ? "Instagram" : /FBAN|FBAV/.test(UA) ? "Facebook" : "Snapchat";
+  function lire(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function ecrire(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function note(n) { try { window.DiisooSuivi && DiisooSuivi.noter && DiisooSuivi.noter("action", n, NOM + (IOS ? " iOS" : " Android")); } catch (e) {} }
+  function occupe() { return !!document.querySelector("#dsn:not(.hidden), #dcv:not(.hidden), #dii-fmt, #dar, #dsr, #dii-obj, #dii-defi, .dii4-ov, [role='dialog'], [aria-modal='true']"); }
+  function montrer() {
+    if (document.getElementById("dii-inapp") || occupe()) return false;
+    var d = document.createElement("div"); d.id = "dii-inapp";
+    d.style.cssText = "position:fixed;left:10px;right:10px;bottom:12px;z-index:9000;max-width:520px;margin:0 auto;background:#141A2B;border:1px solid #F3A94E;border-radius:18px;padding:14px;color:#F6F1E7;box-shadow:0 8px 30px rgba(0,0,0,.55);font-family:inherit";
+    d.innerHTML = '<div style="font-weight:800;font-size:15px">📲 Garde ta progression et le son</div>' +
+      '<div style="font-size:13px;color:#C9BFA8;margin:6px 0 10px;line-height:1.4">Dans ' + NOM + ', l\'app peut oublier ta progression et couper le son. Touche <b>⋯</b> ou <b>↗</b>, puis <b>' + (IOS ? "« Ouvrir dans Safari »" : "« Ouvrir dans le navigateur »") + '</b>.</div>' +
+      '<div style="display:flex;gap:8px"><button type="button" id="dii-inapp-c" style="flex:1;min-height:46px;border:0;border-radius:14px;background:linear-gradient(135deg,#F3A94E,#E1693F);color:#1a0f00;font-weight:800;font-size:14px">📋 Copier le lien</button>' +
+      '<button type="button" id="dii-inapp-x" style="min-height:46px;padding:0 16px;border-radius:14px;background:#0B0F1C;border:1px solid #1E2740;color:#C9BFA8;font-size:13px">Plus tard</button></div>';
+    document.body.appendChild(d); note("inapp_vu");
+    document.getElementById("dii-inapp-x").onclick = function () { d.remove(); note("inapp_plus_tard"); };
+    document.getElementById("dii-inapp-c").onclick = function () {
+      var b = this, u = "https://diisoo.sn/", ok = function () { b.textContent = "✅ Copié : colle-le dans Safari"; note("inapp_copie"); setTimeout(function () { d.remove(); }, 2600); };
+      try { navigator.clipboard.writeText(u).then(ok, function () { throw 0; }); } catch (e) {
+        try { var t = document.createElement("textarea"); t.value = u; t.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); ok(); } catch (e2) { b.textContent = u; }
+      }
+    };
+    return true;
+  }
+  /* une fois par jour au plus, jamais pendant un exercice, après 12 s de présence */
+  setTimeout(function () {
+    var j = new Date().toISOString().slice(0, 10), n = 0;
+    if (lire("diisoo_inapp_j") === j) return;
+    var t = setInterval(function () { n++; if (n > 40) { clearInterval(t); return; } if (montrer()) { clearInterval(t); ecrire("diisoo_inapp_j", j); } }, 3000);
+  }, 12000);
+})();
+
 }catch(e){console.error("Diisoo : erreur dans diisoo-installer.js",e);}
 
 try{
