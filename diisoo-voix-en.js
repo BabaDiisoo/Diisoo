@@ -75,10 +75,16 @@
         if (mon !== JETON) return false;
         var dec = await new Promise(function (ok, ko) { try { var p = ctx.decodeAudioData(seg, ok, ko); if (p && p.then) p.then(ok, ko); } catch (x) { ko(x); } });
         if (mon !== JETON) return false;
+        /* iPhone : un moteur audio suspendu ne joue rien et ne se termine jamais. On le reveille (1 s max), sinon repli sur l'ancien chemin. */
+        if (ctx.state !== "running") { try { await Promise.race([ctx.resume(), new Promise(function (r) { setTimeout(r, 1000); })]); } catch (x) {} }
+        if (ctx.state !== "running") { tentes++; if (tentes < 50) console.error("[diisoo-voix-en] moteur suspendu"); return jouerOrig.apply(self, args); }
+        if (mon !== JETON) return false;
         if (o.onDebut) { try { o.onDebut(); } catch (x) {} }
         return await new Promise(function (fin) {
-          var s = ctx.createBufferSource(); s.buffer = dec; s.connect(ctx.destination); SRC = s;
-          s.onended = function () { if (SRC === s) SRC = null; fin(mon === JETON); };
+          var s = ctx.createBufferSource(), fini = false; s.buffer = dec; s.connect(ctx.destination); SRC = s;
+          function clore() { if (fini) return; fini = true; if (SRC === s) SRC = null; fin(mon === JETON); }
+          s.onended = clore;
+          setTimeout(clore, Math.round((dec.duration || 3) * 1000) + 2500);  /* garde-fou : ne jamais bloquer la suite */
           s.start(0);
         });
       } catch (err) {
