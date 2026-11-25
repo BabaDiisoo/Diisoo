@@ -17045,7 +17045,7 @@ try{
   }
   function appareil() {
     var u = navigator.userAgent || "", m = /Android [^;)]*; ([^;)]*)/.exec(u);
-    return (m ? "Android " + m[1] : /iPhone|iPad/.test(u) ? "iOS" : /Windows|Mac|Linux/.test(u) ? "Ordinateur" : "Autre").slice(0, 160);
+    return (m ? "Android " + m[1] : /iPhone|iPad/.test(u) ? ("iOS" + ((/OS (\d+)[_.](\d+)/.exec(u) || []).length ? " " + /OS (\d+)[_.](\d+)/.exec(u)[1] + "." + /OS (\d+)[_.](\d+)/.exec(u)[2] : "") + (/musical_ly|TikTok|Bytedance/i.test(u) ? " TikTok" : /Instagram/i.test(u) ? " Instagram" : /FBAN|FBAV/.test(u) ? " Facebook" : /CriOS/.test(u) ? " Chrome" : /Safari/.test(u) ? " Safari" : " integre")) : /Windows|Mac|Linux/.test(u) ? "Ordinateur" : "Autre").slice(0, 160);
   }
 
   function envoyer(garde) {
