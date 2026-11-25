@@ -13488,7 +13488,7 @@ try{
       var ph = {}; (t.phases || []).forEach(function (p) { ph[p.id] = p.questions || []; });
       var th = t.topic, tl = th.toLowerCase().replace(/&/g, "and"), sc = SCN[t.id] || "cafe";
       var q1 = (ph["1b"] || []).slice(0, 5), q2 = ph["2b"] || [], id = "x-" + t.id;
-      var sens = String(rec[t.id] || "").split(/(?<=[.!?])\s+/).filter(function (x) { return x.split(/\s+/).length >= 3; }).slice(0, 7);
+      var sens = String(rec[t.id] || "").replace(/([.!?])\s+/g, "$1\u0001").split("\u0001").filter(function (x) { return x.split(/\s+/).length >= 3; }).slice(0, 7);
       function add(k, test) { var ex = REG.examens[k]; if (!ex || ex.tests.some(function (x) { return x.id === id; })) return; test.id = id; test.titre = th; ex.tests.push(test); }
       add("toefl", { repeat: sens.length >= 3 ? sens : q1,
         question: ["What do you think about " + tl + "? Explain your answer.", q2[0] || "Why is " + tl + " important?", q2[1] || "Tell me about your experience with " + tl + ".", "Tell me about a time related to " + tl + ". What happened?"] });
