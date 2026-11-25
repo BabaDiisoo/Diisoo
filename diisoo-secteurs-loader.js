@@ -1,3 +1,40 @@
+/* diisoo-ios-perf.js : allege l'app sur iPhone. Une quarantaine de modules surveillent la page entiere (MutationObserver sur body,
+ * sous-arbre complet) et se reveillent a CHAQUE changement : sur un ecran qui bouge (chronometre, conversation) l'iPhone fige.
+ * Ici, les observateurs de la page entiere sont regroupes : au plus un reveil toutes les 250 ms, avec tous les changements d'un coup.
+ * Sans effet hors iPhone/iPad. Interrupteur : ?perf=0 */
+(function () {
+  "use strict";
+  if (window.__perfIosOK) return; window.__perfIosOK = true;
+  if (!/iPhone|iPad|iPod/.test(navigator.userAgent || "")) return;
+  try { if (new URLSearchParams(location.search).get("perf") === "0") return; } catch (e) {}
+  var MO = window.MutationObserver || window.WebKitMutationObserver;
+  if (!MO || MO.__diisooPerf) return;
+  var DELAI = 250, stats = { reveils: 0, regroupes: 0 };
+  function Regroupe(cb) {
+    var self = this, file = [], minuteur = null, large = false;
+    var vrai = new MO(function (recs) {
+      if (!large) { stats.reveils++; try { cb.call(self, recs, self); } catch (e) { setTimeout(function () { throw e; }); } return; }
+      for (var i = 0; i < recs.length; i++) file.push(recs[i]);
+      if (file.length > 500) file.splice(0, file.length - 500);
+      stats.regroupes++;
+      if (minuteur) return;
+      minuteur = setTimeout(function () {
+        minuteur = null; var lot = file; file = []; stats.reveils++;
+        try { cb.call(self, lot, self); } catch (e) { setTimeout(function () { throw e; }); }
+      }, DELAI);
+    });
+    this.observe = function (cible, opts) {
+      try { if (opts && opts.subtree && (cible === document.body || cible === document.documentElement || cible === document)) large = true; } catch (e) {}
+      return vrai.observe(cible, opts);
+    };
+    this.disconnect = function () { if (minuteur) { clearTimeout(minuteur); minuteur = null; } file = []; return vrai.disconnect(); };
+    this.takeRecords = function () { var r = vrai.takeRecords(); return file.concat(r); };
+  }
+  Regroupe.__diisooPerf = true;
+  try { window.MutationObserver = Regroupe; window.WebKitMutationObserver = Regroupe; } catch (e) {}
+  window.DiisooIosPerf = { stats: function () { return stats; } };
+})();
+
 /* diisoo-secteurs-loader.js v2
  * Charge Diisoo en UN seul fichier (diisoo-bundle.js) : l'app démarre plus vite sur réseau mobile.
  * Si ce fichier est absent ou invalide, retour automatique au chargement fichier par fichier (ancienne méthode).
