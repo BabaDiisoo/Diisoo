@@ -1,7 +1,7 @@
 /* diisoo-voix-en.js : voix anglaise pré-enregistrée (gratuite), lue avant OpenAI et avant la voix du téléphone.
  * Les phrases sont rangées dans audio-en/ (index.json + 2 gros paquets pNNN.mp3, lus par tranches). Une phrase absente repasse par l'ancien chemin
  * et est signalée (événement « [diisoo-voix-en] absente ») pour être ajoutée au lot suivant. Interrupteur : ?voixen=0
- * v4 : phrases ajoutées une par une dans audio-en/m/ (index.json : {"texte": "v001.mp3"}), un petit MP3 entier par phrase. */
+ * v5 : phrases ajoutées dans un paquet audio-en/m001.mp3 (index-m.json : {"texte": [début, longueur]}). */
 (function () {
   "use strict";
   if (window.__voixEnOK) return; window.__voixEnOK = true;
@@ -32,23 +32,20 @@
     if (!FEMP) FEMP = fetch("audio-en/index-f.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { FEM = j; return j; }).catch(function () { FEM = { i: {} }; return FEM; });
     return FEMP;
   }
-  /* v4 : phrases ajoutees une par une (audio-en/m/index.json). Cle = texte normalise. Fichier absent ou vide : aucun effet. */
+  /* v5 : phrases ajoutees (audio-en/index-m.json : {"texte": [debut, longueur]}) dans un seul paquet audio-en/m001.mp3. Cle = texte normalise. Fichiers absents : aucun effet. */
   function indexM() {
     if (MAN) return Promise.resolve(MAN);
-    if (!MANP) MANP = fetch("audio-en/m/index.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { var m = {}; for (var k in j) { if (Object.prototype.hasOwnProperty.call(j, k)) m[norm(k)] = j[k]; } MAN = m; return m; }).catch(function () { MAN = {}; return MAN; });
+    if (!MANP) MANP = fetch("audio-en/index-m.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { var m = {}; for (var k in j) { if (Object.prototype.hasOwnProperty.call(j, k)) m[norm(k)] = j[k]; } MAN = m; return m; }).catch(function () { MAN = {}; return MAN; });
     return MANP;
   }
-  var TM = {};
-  function entier(nom) {
-    if (TM[nom]) return TM[nom];
-    TM[nom] = (async function () {
-      try {
-        var r = await fetch("audio-en/m/" + nom);
-        if (!r.ok) throw 0;
-        return await r.arrayBuffer();
-      } catch (x) { delete TM[nom]; return null; }
-    })();
-    return TM[nom];
+  var PM = null;
+  function paquetM() {
+    if (!PM) PM = fetch("audio-en/m001.mp3").then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); }).catch(function () { PM = null; return null; });
+    return PM;
+  }
+  async function entier(man) {
+    var ab = await paquetM();
+    return ab ? ab.slice(man[0], man[0] + man[1]) : null;
   }
   var TR = {}, GROS = {};
   function nomPaquet(n, f) { return "audio-en/" + (f ? "f" : "p") + ("00" + n).slice(-3) + ".mp3"; }
