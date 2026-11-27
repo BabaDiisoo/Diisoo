@@ -833,10 +833,10 @@ try{
 /* ---- v2 : bandeau « ouvre dans ton navigateur » pour TikTok / Instagram / Facebook (stockage, son et micro limités dans ces fenêtres) ---- */
 (function () {
   "use strict";
-  var UA = navigator.userAgent || "", RX = /musical_ly|TikTok|Bytedance|Instagram|FBAN|FBAV|Snapchat/i;
+  var UA = navigator.userAgent || "", RX = /musical_ly|TikTok|Bytedance|Instagram|FBAN|FBAV|Snapchat|GSA\//i;
   if (!RX.test(UA) || window.__diisooInapp) return; window.__diisooInapp = true;
   try { if (new URLSearchParams(location.search).get("inapp") === "0") return; } catch (e) {}
-  var IOS = /iPhone|iPad|iPod/.test(UA), NOM = /TikTok|musical_ly|Bytedance/i.test(UA) ? "TikTok" : /Instagram/i.test(UA) ? "Instagram" : /FBAN|FBAV/.test(UA) ? "Facebook" : "Snapchat";
+  var IOS = /iPhone|iPad|iPod/.test(UA), NOM = /TikTok|musical_ly|Bytedance/i.test(UA) ? "TikTok" : /Instagram/i.test(UA) ? "Instagram" : /FBAN|FBAV/.test(UA) ? "Facebook" : /GSA\//.test(UA) ? "Google" : "Snapchat";
   function lire(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function ecrire(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   function note(n) { try { window.DiisooSuivi && DiisooSuivi.noter && DiisooSuivi.noter("action", n, NOM + (IOS ? " iOS" : " Android")); } catch (e) {} }
