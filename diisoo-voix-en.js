@@ -1,11 +1,12 @@
 /* diisoo-voix-en.js : voix anglaise pré-enregistrée (gratuite), lue avant OpenAI et avant la voix du téléphone.
  * Les phrases sont rangées dans audio-en/ (index.json + 2 gros paquets pNNN.mp3, lus par tranches). Une phrase absente repasse par l'ancien chemin
- * et est signalée (événement « [diisoo-voix-en] absente ») pour être ajoutée au lot suivant. Interrupteur : ?voixen=0 */
+ * et est signalée (événement « [diisoo-voix-en] absente ») pour être ajoutée au lot suivant. Interrupteur : ?voixen=0
+ * v4 : phrases ajoutées une par une dans audio-en/m/ (index.json : {"texte": "v001.mp3"}), un petit MP3 entier par phrase. */
 (function () {
   "use strict";
   if (window.__voixEnOK) return; window.__voixEnOK = true;
   try { if (new URLSearchParams(location.search).get("voixen") === "0") return; } catch (e) {}
-  var CACHE = "diisoo-audio-en", IDX = null, IDXP = null, FEM = null, FEMP = null, CTX = null, SRC = null, JETON = 0, tentes = 0;
+  var CACHE = "diisoo-audio-en", IDX = null, IDXP = null, FEM = null, FEMP = null, MAN = null, MANP = null, CTX = null, SRC = null, JETON = 0, tentes = 0;
 
   function norm(t) { return String(t).replace(/\s+/g, " ").trim().toLowerCase(); }
   function cle(t) {  /* cyrb53, identique à make_audio_en.py */
@@ -30,6 +31,24 @@
     if (FEM) return Promise.resolve(FEM);
     if (!FEMP) FEMP = fetch("audio-en/index-f.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { FEM = j; return j; }).catch(function () { FEM = { i: {} }; return FEM; });
     return FEMP;
+  }
+  /* v4 : phrases ajoutees une par une (audio-en/m/index.json). Cle = texte normalise. Fichier absent ou vide : aucun effet. */
+  function indexM() {
+    if (MAN) return Promise.resolve(MAN);
+    if (!MANP) MANP = fetch("audio-en/m/index.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { var m = {}; for (var k in j) { if (Object.prototype.hasOwnProperty.call(j, k)) m[norm(k)] = j[k]; } MAN = m; return m; }).catch(function () { MAN = {}; return MAN; });
+    return MANP;
+  }
+  var TM = {};
+  function entier(nom) {
+    if (TM[nom]) return TM[nom];
+    TM[nom] = (async function () {
+      try {
+        var r = await fetch("audio-en/m/" + nom);
+        if (!r.ok) throw 0;
+        return await r.arrayBuffer();
+      } catch (x) { delete TM[nom]; return null; }
+    })();
+    return TM[nom];
   }
   var TR = {}, GROS = {};
   function nomPaquet(n, f) { return "audio-en/" + (f ? "f" : "p") + ("00" + n).slice(-3) + ".mp3"; }
@@ -66,14 +85,17 @@
       var args = arguments, self = this;
       try {
         var idx = await index(); if (!idx) return jouerOrig.apply(self, args);
-        var ck = cle(texte), fm = await indexF(), ef = fm && fm.i ? fm.i[ck] : null, e = ef || idx.i[ck];
-        if (!e) { console.error("[diisoo-voix-en] absente", String(texte).slice(0, 160)); return jouerOrig.apply(self, args); }
+        var ck = cle(texte), fm = await indexF(), ef = fm && fm.i ? fm.i[ck] : null, e = ef || idx.i[ck], man = null;
+        if (!e) { var mm = await indexM(); man = mm[norm(texte)] || null; }
+        if (!e && !man) { console.error("[diisoo-voix-en] absente", String(texte).slice(0, 160)); return jouerOrig.apply(self, args); }
         if (!ctx) return jouerOrig.apply(self, args);
         V.arreter(); var mon = JETON;
-        if (o.onAttente && !TR[nomPaquet(e[0], !!ef) + "?r=" + e[1] + "-" + (e[1] + e[2] - 1)]) o.onAttente();
-        var seg = await tranche(e, !!ef); if (!seg) return jouerOrig.apply(self, args);
+        if (o.onAttente && e && !TR[nomPaquet(e[0], !!ef) + "?r=" + e[1] + "-" + (e[1] + e[2] - 1)]) o.onAttente();
+        var seg = e ? await tranche(e, !!ef) : await entier(man); if (!seg) return jouerOrig.apply(self, args);
         if (mon !== JETON) return false;
-        var dec = await new Promise(function (ok, ko) { try { var p = ctx.decodeAudioData(seg, ok, ko); if (p && p.then) p.then(ok, ko); } catch (x) { ko(x); } });
+        /* on decode une copie : decodeAudioData vide le tampon d'origine, ce qui empechait de rejouer la meme phrase */
+        var copie = seg.slice(0);
+        var dec = await new Promise(function (ok, ko) { try { var p = ctx.decodeAudioData(copie, ok, ko); if (p && p.then) p.then(ok, ko); } catch (x) { ko(x); } });
         if (mon !== JETON) return false;
         /* iPhone : un moteur audio suspendu ne joue rien et ne se termine jamais. On le reveille (1 s max), sinon repli sur l'ancien chemin. */
         if (ctx.state !== "running") { try { await Promise.race([ctx.resume(), new Promise(function (r) { setTimeout(r, 1000); })]); } catch (x) {} }
@@ -92,7 +114,7 @@
         return jouerOrig.apply(self, args);
       }
     };
-    window.__voixEn = { cle: cle, index: index, indexF: indexF };
+    window.__voixEn = { cle: cle, index: index, indexF: indexF, indexM: indexM };
   }
   var essais = 0, t = setInterval(function () {
     essais++;
