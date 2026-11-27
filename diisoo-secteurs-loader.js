@@ -106,6 +106,13 @@
     (document.head || document.documentElement).appendChild(so);
   } catch (e) {}
 
+  /* Premier pas : la premiere lecon guidee s'ouvre toute seule apres "Commencer" (premiere visite) */
+  try {
+    var pp = document.createElement("script");
+    pp.src = "diisoo-premier-pas.js";
+    (document.head || document.documentElement).appendChild(pp);
+  } catch (e) {}
+
   /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
   try {
     var e0 = document.createElement("script");
