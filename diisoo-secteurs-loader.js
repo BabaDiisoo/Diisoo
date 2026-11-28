@@ -113,6 +113,13 @@
     (document.head || document.documentElement).appendChild(pp);
   } catch (e) {}
 
+  /* Lecture automatique des cartes (Anglais puis Wolof) : fichier autonome, hors bundle. Interrupteur : ?auto=0 */
+  try {
+    var au = document.createElement("script");
+    au.src = "diisoo-auto.js";
+    (document.head || document.documentElement).appendChild(au);
+  } catch (e) {}
+
   /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
   try {
     var e0 = document.createElement("script");
