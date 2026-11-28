@@ -120,6 +120,13 @@
     (document.head || document.documentElement).appendChild(au);
   } catch (e) {}
 
+  /* Accueil unique des examens (grille de tuiles, sans defilement) : fichier autonome. Interrupteur : ?examen2=0 */
+  try {
+    var xa = document.createElement("script");
+    xa.src = "diisoo-examen-accueil.js";
+    (document.head || document.documentElement).appendChild(xa);
+  } catch (e) {}
+
   /* Entree simplifiee : chargee tout de suite, avant le reste, pour que le premier ecran soit deja le bon */
   try {
     var e0 = document.createElement("script");
