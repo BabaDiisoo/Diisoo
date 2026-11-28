@@ -1,0 +1,22 @@
+name: Regenerer voix wolof v2
+on:
+  workflow_dispatch:
+    inputs:
+      max:
+        description: "Nombre de phrases (3 pour tester, 0 pour toutes)"
+        default: "3"
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node regenerer-wolof.mjs
+        env:
+          MAX: ${{ github.event.inputs.max }}
+          SUPABASE_URL: https://jkwtyoefqvafnlqkhium.supabase.co
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SOYNADE_API_KEY: ${{ secrets.SOYNADE_API_KEY }}
