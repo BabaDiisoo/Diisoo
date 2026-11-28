@@ -1,7 +1,7 @@
 /* diisoo-voix-en.js : voix anglaise pré-enregistrée (gratuite), lue avant OpenAI et avant la voix du téléphone.
  * Les phrases sont rangées dans audio-en/ (index.json + 2 gros paquets pNNN.mp3, lus par tranches). Une phrase absente repasse par l'ancien chemin
  * et est signalée (événement « [diisoo-voix-en] absente ») pour être ajoutée au lot suivant. Interrupteur : ?voixen=0
- * v5 : phrases ajoutées dans un paquet audio-en/m001.mp3 (index-m.json : {"texte": [début, longueur]}). */
+ * v6 : phrases ajoutées dans un paquet audio-en/m001.mp3 (lu par tranches Range) (index-m.json : {"texte": [début, longueur]}). */
 (function () {
   "use strict";
   if (window.__voixEnOK) return; window.__voixEnOK = true;
@@ -38,14 +38,24 @@
     if (!MANP) MANP = fetch("audio-en/index-m.json").then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { var m = {}; for (var k in j) { if (Object.prototype.hasOwnProperty.call(j, k)) m[norm(k)] = j[k]; } MAN = m; return m; }).catch(function () { MAN = {}; return MAN; });
     return MANP;
   }
-  var PM = null;
-  function paquetM() {
-    if (!PM) PM = fetch("audio-en/m001.mp3").then(function (r) { if (!r.ok) throw 0; return r.arrayBuffer(); }).catch(function () { PM = null; return null; });
-    return PM;
-  }
+  var GM = null;
+  /* v6 : tranche de m001.mp3 par requete Range (mise en cache par tranche), repli sur le fichier entier si le serveur ne gere pas Range. */
   async function entier(man) {
-    var ab = await paquetM();
-    return ab ? ab.slice(man[0], man[0] + man[1]) : null;
+    var deb = man[0], fin = man[0] + man[1] - 1, cl = "audio-en/m001.mp3?r=" + deb + "-" + fin;
+    try {
+      var c = window.caches ? await caches.open(CACHE) : null, r = c ? await c.match(cl) : null;
+      if (r) return await r.arrayBuffer();
+      var ab = null;
+      if (GM) ab = GM.slice(deb, fin + 1);
+      else {
+        var rep = await fetch("audio-en/m001.mp3", { headers: { Range: "bytes=" + deb + "-" + fin } });
+        if (rep.status === 206) ab = await rep.arrayBuffer();
+        else if (rep.ok) { GM = await rep.arrayBuffer(); ab = GM.slice(deb, fin + 1); }
+        else throw 0;
+      }
+      if (c && ab && ab.byteLength === man[1]) { try { await c.put(cl, new Response(ab.slice(0))); } catch (x) {} }
+      return ab;
+    } catch (x) { return null; }
   }
   var TR = {}, GROS = {};
   function nomPaquet(n, f) { return "audio-en/" + (f ? "f" : "p") + ("00" + n).slice(-3) + ".mp3"; }
